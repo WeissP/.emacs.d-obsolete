@@ -1,0 +1,50 @@
+;;;; Emacs Bookmark Format Version 1 ;;;; -*- coding: utf-8-emacs -*- 
+;;; This format is meant to be slightly human-readable;
+;;; nevertheless, you probably don't want to edit it.
+;;; -*- End Of Bookmark File Format Version Stamp -*-
+(("xah-fly-keys.el"
+ (filename . "~/.emacs.d/straight/repos/xah-fly-keys/xah-fly-keys.el")
+ (front-context-string . "\n;; This file is")
+ (rear-context-string . "cs_vi_mode.html\n")
+ (position . 418))
+("weiss_magit.el"
+ (filename . "~/.emacs.d/weiss_magit.el")
+ (front-context-string . ")\n\n;;;;;;;;;;;;;")
+ (rear-context-string . " 'weiss_magit.el")
+ (position . 6812))
+("Journey.org"
+ (filename . "~/Documents/Org/Journey.org")
+ (front-context-string . "* Diary\n* Journe")
+ (rear-context-string)
+ (position . 1))
+("Kenntnisse.org"
+ (filename . "~/Documents/Org/Kenntnisse.org")
+ (front-context-string . "eitung\n** CSS: C")
+ (rear-context-string . "公用品最好的例子。\n\n* Anl")
+ (position . 67886))
+("Vorlesungen.org"
+ (filename . "~/Documents/Org/Vorlesungen.org")
+ (front-context-string . "* Modellierung v")
+ (rear-context-string . "wendungsschicht\n")
+ (position . 89245))
+("weiss_ui.el"
+ (filename . "~/.emacs.d/weiss_ui.el")
+ (front-context-string)
+ (rear-context-string . " 'doom-one-light")
+ (position . 54))
+("weiss_dired.el"
+ (filename . "~/.emacs.d/weiss_dired.el")
+ (front-context-string . "\n  \"to be run as")
+ (rear-context-string . "ed-mode-setup ()")
+ (position . 112))
+("weiss_init.el"
+ (filename . "~/.emacs.d/weiss_init.el")
+ (front-context-string . ";;; ~/Documents/")
+ (rear-context-string)
+ (position . 1))
+("weiss_keybinding.el"
+ (filename . "~/.emacs.d/weiss_keybinding.el")
+ (front-context-string . ";;; ~/Documents/")
+ (rear-context-string)
+ (position . 1))
+)
