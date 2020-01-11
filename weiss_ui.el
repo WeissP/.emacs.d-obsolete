@@ -2,8 +2,49 @@
 (load-theme 'doom-one-light t)
 
 (use-package doom-modeline
-      :ensure t
-      :hook (after-init . doom-modeline-mode))
+  ;; :diminish doom-modeline-mode
+  :hook (after-init . doom-modeline-mode)
+  )
+
+(use-package emojify
+  ;; :hook (after-init . global-emojify-mode)
+  )
+
+;; ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓highlight-indent-guides
+
+(defun my-highlighter (level responsive display)
+  ;; (if (or (< level 2)(= 0 (mod level 2)))
+  ;; (if (= 0 (mod level 2))
+  (if (or (< level 1))
+      nil
+    (highlight-indent-guides--highlighter-default level responsive display)))
+
+(use-package highlight-indent-guides
+  :config
+  ;; character style
+  ;; (setq highlight-indent-guides-method 'character)
+  ;; (setq highlight-indent-guides-character ?\>)
+  ;; (setq highlight-indent-guides-highlighter-function 'my-highlighter)
+
+  ;; column style
+  (setq highlight-indent-guides-auto-enabled nil)
+  (setq highlight-indent-guides-method 'column)
+  ;; (setq highlight-indent-guides-auto-odd-face-perc #a9a9a9)
+  (set-face-background 'highlight-indent-guides-odd-face "#f5f5f5")
+  (set-face-background 'highlight-indent-guides-even-face "#FAFAFA")
+  ;; (setq highlight-indent-guides-auto-even-face-perc 15)
+  )
+
+;; ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑
+;; --------------------------------------------------
+
+
+(use-package elispfl
+  ;; :disabled
+  :straight (elispfl :type git
+                     :host github
+                     :repo "cireu/elispfl")
+  :hook (elisp-mode . elispfl-mode))
 
 ;; Fonts
 (defun font-installed-p (font-name)
@@ -27,7 +68,7 @@
   ;; Specify font for Chinese characters
   (cl-loop for font in '("WenQuanYi Micro Hei" "Microsoft Yahei")
            when (font-installed-p font)
-          return (set-fontset-font t '(#x4e00 . #x9fff) font)))
+           return (set-fontset-font t '(#x4e00 . #x9fff) font)))
 
 
 ;; Icons

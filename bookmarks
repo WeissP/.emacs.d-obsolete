@@ -2,7 +2,42 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("xah-fly-keys.el"
+(("weiss_org.el"
+ (filename . "~/.emacs.d/weiss_org.el")
+ (front-context-string . "\n  ;; ;; Pomodor")
+ (rear-context-string . "tline-level 2))\n")
+ (position . 12180))
+("bookmarks"
+ (filename . "~/.emacs.d/bookmarks")
+ (front-context-string . ";;;; Emacs Bookm")
+ (rear-context-string)
+ (position . 1))
+("todo"
+ (filename . "~/Documents/Org/todo.org")
+ (front-context-string . "#+TAGS: jederzei")
+ (rear-context-string . "ROPERTIES STATE\n")
+ (position . 36))
+("weiss_ivy.el"
+ (filename . "~/.emacs.d/weiss_ivy.el")
+ (front-context-string . ";;; init-ivy.el ")
+ (rear-context-string)
+ (position . 1))
+("Dotfiles"
+ (filename . "~/Documents/Org/Dotfiles.org")
+ (front-context-string . "#+TITLE: Dotfile")
+ (rear-context-string)
+ (position . 1))
+("weiss_company.el"
+ (filename . "~/.emacs.d/weiss_company.el")
+ (front-context-string . ";; init-company.")
+ (rear-context-string)
+ (position . 2))
+("weiss_edit.el"
+ (filename . "~/.emacs.d/weiss_edit.el")
+ (front-context-string . "                ")
+ (rear-context-string . "   :host github\n")
+ (position . 93))
+("xah-fly-keys.el"
  (filename . "~/.emacs.d/straight/repos/xah-fly-keys/xah-fly-keys.el")
  (front-context-string . "\n;; This file is")
  (rear-context-string . "cs_vi_mode.html\n")
@@ -12,17 +47,17 @@
  (front-context-string . ")\n\n;;;;;;;;;;;;;")
  (rear-context-string . " 'weiss_magit.el")
  (position . 6812))
-("Journey.org"
+("Journey"
  (filename . "~/Documents/Org/Journey.org")
  (front-context-string . "* Diary\n* Journe")
  (rear-context-string)
  (position . 1))
-("Kenntnisse.org"
+("Kenntnisse"
  (filename . "~/Documents/Org/Kenntnisse.org")
  (front-context-string . "eitung\n** CSS: C")
  (rear-context-string . "公用品最好的例子。\n\n* Anl")
  (position . 67886))
-("Vorlesungen.org"
+("Vorlesungen"
  (filename . "~/Documents/Org/Vorlesungen.org")
  (front-context-string . "* Modellierung v")
  (rear-context-string . "wendungsschicht\n")

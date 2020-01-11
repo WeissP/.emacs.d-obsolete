@@ -86,18 +86,55 @@ To solve this problem, when your code only knows the relative path of another fi
 (when (fboundp 'horizontal-scroll-bar-mode)
   (horizontal-scroll-bar-mode -1))
 
-(if (fboundp 'display-line-numbers-mode)
-    (global-display-line-numbers-mode 1)
-  (global-linum-mode 1))
+
+;; Recent files
+;; recentf-cleanup will update recentf-list
+(use-package recentf
+  :straight nil
+  :hook (after-init . recentf-mode)
+  :preface
+  (defun snug/recentf-save-list-silence ()
+    (interactive)
+    (let ((message-log-max nil))
+      (if (fboundp 'shut-up)
+          (shut-up (recentf-save-list))
+        (recentf-save-list)))
+    (message ""))
+  (defun snug/recentf-cleanup-silence ()
+    (interactive)
+    (let ((message-log-max nil))
+      (if (fboundp 'shut-up)
+          (shut-up (recentf-cleanup))
+        (recentf-cleanup)))
+    (message ""))
+  :config
+  (run-at-time nil (* 5 60) 'snug/recentf-save-list-silence)
+
+  (setq
+   ;; recentf-max-menu-items 150
+   ;; recentf-max-saved-items 150
+   recentf-auto-cleanup '60
+   ;; Recentf blacklist
+   recentf-exclude '(
+                     ".*autosave$"
+                     ".*archive$"
+                     ".*.jpg$"
+                     ".*.png$"
+                     ".*.gif$"
+                     ".cache"
+                     "cache"
+                     ))
+  )
 
 ;; Basic modes
-(recentf-mode 1)
 (ignore-errors (savehist-mode 1))
+(global-linum-mode 1)
 (save-place-mode 1)
 (show-paren-mode 1)
 (delete-selection-mode 1)
 (global-auto-revert-mode 1)
 
+(setq display-line-numbers 't)
 
 (setq electric-pair-inhibit-predicate 'electric-pair-conservative-inhibit)
 (electric-pair-mode 1)
@@ -134,10 +171,9 @@ To solve this problem, when your code only knows the relative path of another fi
   :hook (after-init . server-mode))
 
 (use-package super-save
-  :init
   :config
-  (super-save-mode +1)
   (add-to-list 'super-save-triggers 'find-file)
+  (super-save-mode +1)
   )
 
 (use-package german-holidays
@@ -151,7 +187,24 @@ To solve this problem, when your code only knows the relative path of another fi
   (keyfreq-autosave-mode 1)
   )
 
-(load (xah-get-fullpath "weiss_keybinding"))
+(defun weiss-eval-last-sexp()
+  (interactive)
+  (end-of-line)
+  (eval-last-sexp()))
+
 (load (xah-get-fullpath "weiss_ui"))
 (load (xah-get-fullpath "weiss_dired"))
+(load (xah-get-fullpath "weiss_edit"))
+(load (xah-get-fullpath "weiss_keybinding"))
+(load (xah-get-fullpath "weiss_company"))
+(load (xah-get-fullpath "weiss_lang"))
+(load (xah-get-fullpath "weiss_ivy"))
+(load (xah-get-fullpath "weiss_org"))
 (load (xah-get-fullpath "weiss_magit"))
+
+(weiss-xfk-addon-command)
+
+;; (add-hook 'prog-mode-hook 'xah-fly-command-mode-activate)
+;; (add-hook 'elisp-mode-hook 'xah-fly-command-mode-activate)
+;; (add-hook 'org-mode-hook 'xah-fly-command-mode-activate)
+
