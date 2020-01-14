@@ -2,7 +2,17 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("weiss_org.el"
+(("org-capture-last-stored"
+ (filename . "~/Documents/Org/Vorlesungen.org")
+ (front-context-string . "* exercises_shee")
+ (rear-context-string . "78981938)\n:END:\n")
+ (position . 274176))
+("weiss_pdf.el"
+ (filename . "~/.emacs.d/weiss_pdf.el")
+ (front-context-string . "minor-modes', `p")
+ (rear-context-string . "df-tools-enable-")
+ (position . 2296))
+("weiss_org.el"
  (filename . "~/.emacs.d/weiss_org.el")
  (front-context-string . "\n  ;; ;; Pomodor")
  (rear-context-string . "tline-level 2))\n")

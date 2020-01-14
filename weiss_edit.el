@@ -17,6 +17,7 @@
                             ("left" "right" "top" "bottom")
                             ("Background" "Foreground")
                             ("background" "foreground")
+                            ("next" "previous")
                             ("beginning" "end")
                             ("up" "down")
                             ("Up" "Down")

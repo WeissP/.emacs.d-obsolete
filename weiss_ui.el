@@ -6,6 +6,12 @@
   :hook (after-init . doom-modeline-mode)
   )
 
+(font-lock-add-keywords 'org-mode
+                        '(("^.*:Frage:.*$" . font-lock-keyword-face)))
+
+(line-number-mode -1)
+(setq line-number-display-limit-width 200)
+
 (use-package emojify
   ;; :hook (after-init . global-emojify-mode)
   )

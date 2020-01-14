@@ -1,48 +1,23 @@
 ;; init-org.el --- Initialize org configurations.	-*- lexical-binding: t -*-
 
-;; Copyright (C) 2006-2020 Vincent Zhang
-
-;; Author: Vincent Zhang <seagle0128@gmail.com>
-;; URL: https://github.com/seagle0128/.emacs.d
-
-;; This file is not part of GNU Emacs.
-;;
-;; This program is free software; you can redistribute it and/or
-;; modify it under the terms of the GNU General Public License as
-;; published by the Free Software Foundation; either version 2, or
-;; (at your option) any later version.
-;;
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this program; see the file COPYING.  If not, write to
-;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth
-;; Floor, Boston, MA 02110-1301, USA.
-;;
-
-;;; Commentary:
-;;
-;; Org configurations.
-;;
-
 ;;; Code:
 
-(use-package org
-  :straight nil
-  :custom-face (org-ellipsis ((t (:foreground nil))))
+;; (use-package org-functions
+;;   :straight (org-functions
+;;              :type git
+;;              :host github
+;;              :repo "hlissner/doom-emacs"
+;;              :files ("modules/lang/org/autoload/*.el")
+;;              )
+;;   :bind (:map org-mode-map
+;;               ("RET" . +org/dwim-at-point))
+;;   )
 
-  ;; :bind (("C-c a" . org-agenda)
-  ;;        ("C-c b" . org-switchb)
-  ;;        :map org-mode-map
-  ;;        ("<" . (lambda ()
-  ;;                 "Insert org template."
-  ;;                 (interactive)
-  ;;                 (if (or (region-active-p) (looking-back "^\s*" 1))
-  ;;                     (org-hydra/body)
-  ;;                   (self-insert-command 1)))))
+
+
+(use-package org
+  :straight org-plus-contrib
+  :custom-face (org-ellipsis ((t (:foreground nil))))
 
   :hook ((org-mode . (lambda ()
                        "Beautify org symbols."
@@ -78,51 +53,56 @@
          ;;                      (make-variable-buffer-local 'show-paren-mode)
          ;;                      (setq show-paren-mode nil))))
          )
-  :init (setq
-         org-directory "~/Documents/Org/"
-         org-agenda-files (list org-directory)
-         org-todo-keywords '((sequence "INPROGRESS(i)" "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c@)"))
-         ;; (sequence "⚑(T)" "🏴(I)" "❓(H)" "|" "✔(D)" "✘(C)"))
-         org-cycle-max-level 15
-         org-agenda-skip-scheduled-if-done t
-         org-log-done 'time
-         org-fast-tag-selection-single-key t
-         org-agenda-include-diary t
-         cdlatex-math-symbol-alist '(
-                                     ( ?v  ("\\vee"   "\\vDash"         ))
-                                     ( ?+  ("\\cup"   "\\equiv"         ))
-                                     ( ?{  ("\\subset" "\\subseteq"        ))
-                                     ( ?}  ("\\supset"  "\\supseteq"       ))
-                                     )
-         org-priority-faces '((65 :foreground "#de3d2f" :weight bold)
-                              (66 :foreground "#da8548")
-                              (67 :foreground "#0098dd"))
-         org-agenda-custom-commands
-         '(
-           ("c" "Custom agenda"
-            ((agenda ""))
-            (
-             (org-agenda-tag-filter-preset '("+dailyagenda"))
-             (org-agenda-hide-tags-regexp (concat org-agenda-hide-tags-regexp "\\|dailyagenda"))
-             (org-agenda-span 20)
-             ))
-           ("b" occur-tree "Bookmarks")
-           )
-         org-tags-column -80
-         ;; org-log-done 'time
-         org-catch-invisible-edits 'smart
-         org-fontify-done-headline t
-         org-agenda-compact-blocks t
-         org-image-actual-width '(600)
-         org-capture-templates   '(("o" "org-noter" entry (file "~/Documents/Org/Vorlesungen.org")
-                                    "* %f \n :PROPERTIES: \n :NOTER_DOCUMENT: %F \n :END: \n [[%F][Filepath]]")
-                                   )
-         org-startup-indented t
-         org-ellipsis (if (char-displayable-p ?) "  " nil)
-         org-pretty-entities nil
-         org-hide-emphasis-markers t)
 
+  :init
+  ;; (autoload '+org/dwim-at-point "+org" nil t)
+  ;; (bind-key "RET" #'+org/dwim-at-point org-mode-map)
+  (setq
+   org-directory "~/Documents/Org/"
+   org-agenda-files (list org-directory)
+   org-todo-keywords '((sequence "INPROGRESS(i)" "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c@)"))
+   ;; (sequence "⚑(T)" "🏴(I)" "❓(H)" "|" "✔(D)" "✘(C)"))
+   org-cycle-max-level 15
+   org-agenda-skip-scheduled-if-done t
+   org-hide-leading-stars t
+   org-hide-leading-stars-before-indent-mode t
+   org-list-description-max-indent 4
+   org-startup-indented t
+   org-log-done 'time
+   org-fast-tag-selection-single-key t
+   org-agenda-include-diary t
+   
+   org-priority-faces '((65 :foreground "#de3d2f" :weight bold)
+                        (66 :foreground "#da8548")
+                        (67 :foreground "#0098dd"))
+   org-agenda-custom-commands
+   '(
+     ("c" "Custom agenda"
+      ((agenda ""))
+      (
+       (org-agenda-tag-filter-preset '("+dailyagenda"))
+       (org-agenda-hide-tags-regexp (concat org-agenda-hide-tags-regexp "\\|dailyagenda"))
+       (org-agenda-span 20)
+       ))
+     ("b" occur-tree "Bookmarks")
+     )
+   org-tags-column -80
+   org-log-done 'time
+   org-catch-invisible-edits 'smart
+   org-fontify-done-headline t
+   org-agenda-compact-blocks t
+   org-image-actual-width '(600)
+   org-capture-templates   '(("o" "org-noter" entry (file "~/Documents/Org/Vorlesungen.org")
+                              "* %f \n :PROPERTIES: \n :NOTER_DOCUMENT: %F \n :END: \n [[%F][Filepath]]")
+                             )
+   ;; org-startup-indented t
+   org-ellipsis (if (char-displayable-p ?) "  " nil)
+   org-pretty-entities nil
+   org-hide-emphasis-markers t)
+  
   :config
+  
+
   (set-face-attribute 'bold nil
                       :weight 'bold
                       :underline 'nil
@@ -245,6 +225,19 @@
   ;; (org-babel-do-load-languages 'org-babel-load-languages
   ;;                              load-language-list)
 
+  ;; (use-package auctex)
+
+  ;; (use-package cdlatex
+  ;;   :init
+  ;;   (plist-put org-format-latex-options :scale 1.5)
+  ;;   (setq cdlatex-math-symbol-alist '(
+  ;;                                     ( ?v  ("\\vee"   "\\vDash"         ))
+  ;;                                     ( ?+  ("\\cup"   "\\equiv"         ))
+  ;;                                     ( ?{  ("\\subset" "\\subseteq"        ))
+  ;;                                     ( ?}  ("\\supset"  "\\supseteq"       ))
+  ;;                                     )
+          
+          
   ;; Rich text clipboard
   (use-package org-rich-yank
     :bind (:map org-mode-map
@@ -293,12 +286,16 @@
   ;;   (org-pomodoro-mode-line-break ((t (:inherit success))))
   ;;   :bind (:map org-agenda-mode-map
   ;;               ("P" . org-pomodoro))))
+  (load (xah-get-fullpath "+org"))  
+  (bind-key "RET" #'+org/dwim-at-point org-mode-map)  
   )
+
 
 (defun weiss-org-option ()
   (interactive)
   (company-mode -1)
   (linum-mode -1)
+  (display-line-numbers-mode nil)
   (iimage-mode)
   (emojify-mode)
   (make-local-variable 'shiftless-upper-rules)
@@ -312,7 +309,11 @@
   )
 (add-hook 'org-mode-hook 'weiss-org-option)
 
-(provide 'init-org)
+
+
+
+
+(provide 'weiss_org)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; init-org.el ends here
+;;; weiss_org.el ends here

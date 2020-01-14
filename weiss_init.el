@@ -112,7 +112,7 @@ To solve this problem, when your code only knows the relative path of another fi
 
   (setq
    ;; recentf-max-menu-items 150
-   ;; recentf-max-saved-items 150
+   recentf-max-saved-items 150
    recentf-auto-cleanup '60
    ;; Recentf blacklist
    recentf-exclude '(
@@ -187,6 +187,20 @@ To solve this problem, when your code only knows the relative path of another fi
   (keyfreq-autosave-mode 1)
   )
 
+(use-package save-place
+  :straight nil
+  :init (setq save-place t)
+  :hook (after-init . save-place-mode)
+  )
+
+(use-package switch-buffer-functions
+  ;; :disabled
+  :straight (switch-buffer-functions :type git
+                                     :host github
+                                     :repo "10sr/switch-buffer-functions-el"))
+
+;; (load "/home/weiss/weiss/switch-buffer-functions-el/switch-buffer-functions.elc") 
+
 (defun weiss-eval-last-sexp()
   (interactive)
   (end-of-line)
@@ -201,6 +215,10 @@ To solve this problem, when your code only knows the relative path of another fi
 (load (xah-get-fullpath "weiss_ivy"))
 (load (xah-get-fullpath "weiss_org"))
 (load (xah-get-fullpath "weiss_magit"))
+(load (xah-get-fullpath "weiss_pdf"))
+
+;; (update-file-autoloads  "/home/weiss/.emacs.d/autoloads/+org.el" t "/home/weiss/.emacs.d/autoloads/+org-autoloads.el")
+;; (require '+org-autoloads)
 
 (weiss-xfk-addon-command)
 
