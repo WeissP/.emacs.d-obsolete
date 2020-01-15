@@ -24,102 +24,42 @@
    ((eq major-mode 'org-mode) (call-interactively 'doom-org-dwim-at-point))
    (t nil)))
 
-(defun weiss-xfk-j-key ()
-  (interactive)
-  (cond
-   ((eq major-mode 'pdf-view-mode) (call-interactively 'pdf-view-scroll-up-or-next-page))
-   (t (call-interactively 'next-line))))
-
-(defun weiss-xfk-k-key ()
-  (interactive)
-  (cond
-   ((eq major-mode 'pdf-view-mode) (call-interactively 'pdf-view-scroll-down-or-previous-page))
-   (t (call-interactively 'previous-line))))
-
-
-(defun weiss-xfk-=-key ()
-  (interactive)
-  (cond
-   ((eq major-mode 'pdf-view-mode) (call-interactively 'pdf-view-enlarge))
-   (t (call-interactively 'xah-backward-punct))))
-
-
-(defun weiss-xfk---key ()
-  " '-' key"
-  (interactive)
-  (cond
-   ((eq major-mode 'pdf-view-mode) (call-interactively 'pdf-view-shrink))
-   (t (call-interactively 'xah-backward-punct))))
-
-
-(defun weiss-xfk-0-key ()
-  (interactive)
-  (cond
-   ((eq major-mode 'pdf-view-mode) (call-interactively 'pdf-view-scale-reset))
-   (t (call-interactively 'universal-argument))))
-
-
-(defun weiss-xfk-1-key ()
-  (interactive)
-  (cond
-   ((eq major-mode 'pdf-view-mode) (call-interactively 'weiss-pdf-view-previous-page-quickly))
-   (t (call-interactively 'scroll-down))))
-
-
-(defun weiss-xfk-2-key ()
-  (interactive)
-  (cond
-   ((eq major-mode 'pdf-view-mode) (call-interactively 'weiss-pdf-view-next-page-quickly))
-   (t (call-interactively 'scroll-up))))
-
-
-(defun weiss-xfk-h-key ()
-  (interactive)
-  (cond
-   ((eq major-mode 'pdf-view-mode) (call-interactively 'pdf-view-fit-height-to-window))
-   (t (call-interactively 'backward-char))))
-
-
-(defun weiss-xfk-p-key ()
-  (interactive)
-  (cond
-   ((eq major-mode 'pdf-view-mode) (call-interactively 'pdf-view-fit-page-to-window))
-   (t (call-interactively 'weiss-insert-line))))
-
-(defun weiss-xfk-w-key ()
-  (interactive)
-  (cond
-   ((eq major-mode 'pdf-view-mode) (call-interactively 'pdf-view-fit-width-to-window))
-   (t (call-interactively 'xah-shrink-whitespaces))))
-
-(defun weiss-xfk-d-key ()
-  (interactive)
-  (cond
-   ((eq major-mode 'pdf-view-mode) (call-interactively 'weiss-direct-insert-note))
-   (t (call-interactively 'xah-delete-backward-char-or-bracket-text))))
-
-(defun weiss-xfk-s-key ()
-  (interactive)
-  (cond
-   ((eq major-mode 'pdf-view-mode) (call-interactively 'weiss-direct-annot-and-insert-note))
-   (t (call-interactively 'open-line))))
-
-
 
 (defun weiss-xfk-addon-command ()
   (interactive)
   ;; f
   (define-key xah-fly-leader-key-map (kbd "f") 'weiss-switch-buffer-and-refresh-xfk)
+  ;; k-keymap
+  (define-key xah-fly-t-keymap (kbd "j") 'weiss-xfk-close-current-buffer-and-refresh-xfk)  
   ;; i-keymap
   (define-key xah-fly-c-keymap (kbd "o") 'weiss-counsel-bookmark-and-refresh-xfk)
   (define-key xah-fly-c-keymap (kbd "j") 'counsel-recentf)
   ;; ,-keymap
   (define-key xah-fly-w-keymap (kbd "m") 'weiss-eval-last-sexp)
-  ;; e-key map
+  ;; l-keymap
+  (define-key xah-fly-n-keymap (kbd "t") 'weiss-org-latex-preview-all)  
+  ;; e-keymap
   (define-prefix-command 'weiss-xfk-leader-e-keymap)
   (define-key xah-fly-leader-key-map (kbd "e") weiss-xfk-leader-e-keymap)
-  (define-key weiss-xfk-leader-e-keymap (kbd "c") 'org-capture)
-  (define-key weiss-xfk-leader-e-keymap (kbd "o") 'org-noter)
+  (weiss--define-keys weiss-xfk-leader-e-keymap
+                      '(
+                        ("a" . weiss-org-screenshot)
+                        ("c" . org-capture)
+                        ("o" . org-noter)
+                        ("s" . org-noter-sync-current-note)
+                        )
+                      )
+  ;; d-keymap
+  (define-prefix-command 'weiss-xfk-leader-d-keymap)
+  (define-key xah-fly-leader-key-map (kbd "d") weiss-xfk-leader-d-keymap)
+  (weiss--define-keys weiss-xfk-leader-d-keymap
+                      '(
+                        ("b" . org-babel-tangle)
+                        ("d" . weiss-custom-daily-agenda)
+                        ("r" . weiss-switch-and-Bookmarks-search)
+                        ("v" . vterm-other-window)
+                        )
+                      )
   )
 
 (add-hook 'xah-fly-command-mode-activate-hook 'weiss-xfk-addon-command)
@@ -149,6 +89,7 @@ Version 2019-02-12"
 
      ("SPC" . xah-fly-leader-key-map)
      ("DEL" . xah-fly-leader-key-map)
+  ;;   ("RET" . newline)
 
      ("'" . xah-cycle-hyphen-underscore-space)
      ("," . weiss-switch-frame-and-refresh-xfk)
@@ -205,84 +146,21 @@ Version 2019-02-12"
      ("w" . xah-shrink-whitespaces)
      ("x" . xah-cut-line-or-region)
      ("y" . undo)
-     ("z" . xah-comment-dwim))))
+     ("z" . xah-comment-dwim)
+     )))
 
-(defun weiss-pdf-command-mode-define-keys ()
-  (weiss--define-keys
-   xah-fly-key-map
-   '(
 
-     ("~" . nil)
-     (":" . nil)
-
-     ("SPC" . xah-fly-leader-key-map)
-     ("DEL" . xah-fly-leader-key-map)
-
-     ("'" . xah-cycle-hyphen-underscore-space)
-     ("," . weiss-switch-frame-and-refresh-xfk)
-     ("-" . pdf-view-shrink)
-     ("." . xah-forward-right-bracket)
-     (";" . xah-end-of-line-or-block)
-     ("/" . xah-goto-matching-bracket)
-     ("\\" . nil)
-     ("=" . pdf-view-enlarge)
-     ("[" . hippie-expand )
-     ("]" . nil)
-     ("`" . other-frame)
-
-     ("<backtab>" . weiss-indent)
-     ("V" . weiss-paste-with-linebreak)
-
-     ;; ("#" . xah-backward-quote)
-     ;; ("$" . xah-forward-punct)
-
-     ("1" . weiss-pdf-view-previous-page-quickly)
-     ("2" . weiss-pdf-view-next-page-quickly)
-     ("3" . delete-other-windows)
-     ("4" . split-window-below)
-     ("5" . delete-char)
-     ("6" . xah-select-block)
-     ("7" . xah-select-line)
-     ("8" . xah-extend-selection)
-     ("9" . xah-select-text-in-quote)
-     ("0" . pdf-view-scale-reset)
-
-     ("a" . execute-extended-command)
-     ("b" . xah-toggle-letter-case)
-     ("c" . xah-copy-line-or-region)
-     ("d" . weiss-direct-insert-note)
-     ("e" . xah-backward-kill-word)
-     ("f" . xah-fly-insert-mode-activate)
-     ("g" . xah-delete-current-text-block)
-     ("h" . pdf-view-fit-height-to-window)
-     ("i" . xah-beginning-of-line-or-block)
-     ("j" . pdf-view-scroll-up-or-next-page)
-     ("k" . pdf-view-scroll-down-or-previous-page)
-     ;; ("l" . xah-fly-insert-mode-activate-space-before)
-     ("l" . forward-char)
-     ("m" . xah-backward-left-bracket)
-     ("n" . isearch-forward)
-     ("o" . forward-word)
-     ("p" . pdf-view-fit-page-to-window)
-     ("q" . xah-reformat-lines)
-     ("r" . xah-kill-word)
-     ("s" . weiss-direct-annot-and-insert-note)
-     ("t" . set-mark-command)
-     ("u" . backward-word)
-     ("v" . xah-paste-or-paste-previous)
-     ("w" . pdf-view-fit-width-to-window)
-     ("x" . xah-cut-line-or-region)
-     ("y" . undo)
-     ("z" . xah-comment-dwim))))
 
 (defun weiss-xfk-command-mode-init ()
   "Set command mode keys.
 Version 2017-01-21"
   (interactive)
   ;; (weiss-prog-command-mode-define-keys)
+  (weiss-prog-command-mode-define-keys)
   (cond
    ((eq major-mode 'pdf-view-mode) (weiss-pdf-command-mode-define-keys))
-   (t (weiss-prog-command-mode-define-keys))
+ ;;  ((eq major-mode 'org-mode) (weiss-org-command-mode-define-keys))
+   (t nil)
    )
   (define-key xah-fly-key-map (kbd (xah-fly--key-char "a"))
     (cond ((fboundp 'smex) 'smex)
@@ -351,7 +229,7 @@ Version 2017-07-07"
   (xah-fly-command-mode-activate)
   )
 
-(defun xah-close-current-buffer-and-refresh-xfk ()
+(defun weiss-xfk-close-current-buffer-and-refresh-xfk ()
   (interactive)
   (xah-close-current-buffer)
   (xah-fly-command-mode-activate)
@@ -361,6 +239,7 @@ Version 2017-07-07"
 (defun weiss-xfk-addon-insert ()
   (interactive)
   (define-key xah-fly-key-map (kbd "!") 'nil)
+;;  (define-key xah-fly-key-map (kbd "RET") 'newline)
   (define-key xah-fly-key-map (kbd "V") 'nil)
   (define-key xah-fly-key-map (kbd "J") 'nil)  
   (define-key xah-fly-key-map (kbd "K") 'nil)  

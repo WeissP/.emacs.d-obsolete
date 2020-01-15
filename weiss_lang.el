@@ -29,3 +29,5 @@
     :hook (python-mode . yapf-mode)))
 
 (use-package fsharp-mode)
+
+;; (use-package xah-elisp-mode)

@@ -200,11 +200,25 @@ To solve this problem, when your code only knows the relative path of another fi
                                      :repo "10sr/switch-buffer-functions-el"))
 
 ;; (load "/home/weiss/weiss/switch-buffer-functions-el/switch-buffer-functions.elc") 
+(defun test-bind (prev cur)
+  (define-key xah-fly-key-map (kbd "0") 'nil)  
+  )
+
+(add-hook 'switch-buffer-functions 'test-bind)
 
 (defun weiss-eval-last-sexp()
   (interactive)
   (end-of-line)
   (eval-last-sexp()))
+
+;; (use-package xah-fly-keys
+;; :config
+;; (xah-fly-keys-set-layout "qwerty")
+;; (xah-fly-keys 1)
+;; (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
+;; )
+
+
 
 (load (xah-get-fullpath "weiss_ui"))
 (load (xah-get-fullpath "weiss_dired"))
@@ -213,14 +227,16 @@ To solve this problem, when your code only knows the relative path of another fi
 (load (xah-get-fullpath "weiss_company"))
 (load (xah-get-fullpath "weiss_lang"))
 (load (xah-get-fullpath "weiss_ivy"))
-(load (xah-get-fullpath "weiss_org"))
+(load (xah-get-fullpath "weiss_org"))   
 (load (xah-get-fullpath "weiss_magit"))
-(load (xah-get-fullpath "weiss_pdf"))
+(load (xah-get-fullpath "weiss_pdf"))   
+(load (xah-get-fullpath "weiss_shell_or_terminal"))
 
+(require 'org)
 ;; (update-file-autoloads  "/home/weiss/.emacs.d/autoloads/+org.el" t "/home/weiss/.emacs.d/autoloads/+org-autoloads.el")
 ;; (require '+org-autoloads)
 
-(weiss-xfk-addon-command)
+;; (weiss-xfk-addon-command)               
 
 ;; (add-hook 'prog-mode-hook 'xah-fly-command-mode-activate)
 ;; (add-hook 'elisp-mode-hook 'xah-fly-command-mode-activate)

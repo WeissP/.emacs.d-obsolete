@@ -18,7 +18,13 @@
 (use-package org
   :straight org-plus-contrib
   :custom-face (org-ellipsis ((t (:foreground nil))))
-
+  :bind
+  ("M-j" . org-metadown)                         
+  ("M-k" . org-metaup)                         
+  ("M-h" . org-metaleft)                         
+  ("M-l" . org-metaright)                         
+  ("M-S-h" . org-shiftmetaleft)                         
+  ("M-S-l" . org-shiftmetaright)                         
   :hook ((org-mode . (lambda ()
                        "Beautify org symbols."
 
@@ -55,6 +61,82 @@
          )
 
   :init
+  (defun weiss-org-command-mode-define-keys ()
+    (weiss--define-keys
+     xah-fly-key-map
+     '(
+       ;; ("~" . nil) 
+       ;; (":" . nil)
+
+       ("SPC" . xah-fly-leader-key-map)
+       ;; ("DEL" . xah-fly-leader-key-map)
+       ;; ("RET" . +org/dwim-at-point)
+
+       ;; ("'" . xah-cycle-hyphen-underscore-space)
+       ;; ("," . weiss-switch-frame-and-refresh-xfk)
+       ;; ("-" . xah-backward-punct)
+       ;; ("." . xah-forward-right-bracket)
+       ;; (";" . xah-end-of-line-or-block)
+       ;; ("/" . xah-goto-matching-bracket)
+       ;; ("\\" . nil)
+       ;; ("=" . xah-forward-equal-sign)
+       ;; ("[" . hippie-expand )
+       ;; ("]" . nil)
+       ;; ("`" . other-frame)
+
+       ;; ("<backtab>" . weiss-indent)
+       ;; ("V" . weiss-paste-with-linebreak)
+       ;; ("!" . rotate-text)
+       ;; ("#" . xah-backward-quote)
+       ;; ("$" . xah-forward-punct)
+
+       ;; ("1" . scroll-down)
+       ;; ("2" . scroll-up)
+       ;; ("3" . delete-other-windows)
+       ;; ("4" . split-window-below)
+       ;; ("5" . delete-char)
+       ;; ("6" . xah-select-block)
+       ;; ("7" . xah-select-line)
+       ;; ("8" . xah-extend-selection)
+       ;; ("9" . xah-select-text-in-quote)
+       ;; ("0" . xah-pop-local-mark-ring)
+
+       ;; ("a" . execute-extended-command)
+       ;; ("b" . xah-toggle-letter-case)
+       ;; ("c" . xah-copy-line-or-region)
+       ;; ("d" . xah-delete-backward-char-or-bracket-text)
+       ;; ("e" . xah-backward-kill-word)
+       ;; ("f" . xah-fly-insert-mode-activate)
+       ;; ("g" . xah-delete-current-text-block)
+       ;; ("h" . backward-char)
+       ;; ("i" . xah-beginning-of-line-or-block)
+       ;; ("j" . next-line)
+       ;; ("k" . previous-line)
+       ;; ("l" . xah-fly-insert-mode-activate-space-before)
+       ;; ("l" . forward-char)
+       ;; ("m" . xah-backward-left-bracket)
+       ;; ("n" . swiper-isearch)
+       ;; ("o" . forward-word)
+       ;; ("p" . weiss-insert-line)
+       ;; ("q" . xah-reformat-lines)
+       ;; ("r" . xah-kill-word)
+       ;; ("s" . open-line)
+       ;; ("t" . set-mark-command)
+       ;; ("u" . backward-word)
+       ;; ("v" . xah-paste-or-paste-previous)
+       ;; ("w" . xah-shrink-whitespaces)
+       ;; ("x" . xah-cut-line-or-region)
+       ;; ("y" . undo)
+       ;; ("z" . xah-comment-dwim)
+       )))
+
+  (defun weiss-switch-and-Bookmarks-search()
+    (interactive)
+    (find-file "~/Documents/Org/Einsammlung.org")
+    (org-agenda nil "b")
+    )
+
+  
   ;; (autoload '+org/dwim-at-point "+org" nil t)
   ;; (bind-key "RET" #'+org/dwim-at-point org-mode-map)
   (setq
@@ -176,6 +258,38 @@
     (call-interactively 'org-latex-preview)
     )
 
+  (defun weiss-org-screenshot ()
+    "Take a screenshot into a time stamped unique-named file in the
+same directory as the org-buffer and insert a link to this file."
+    (interactive)
+    ;; (setq filename
+    ;;       (concat
+    ;;        (make-temp-name
+    ;;         (concat (buffer-file-name)
+    ;;                 "_"
+    ;;                 (format-time-string "%Y%m%d_%H%M%S_")) ) ".png"))
+    (setq pathFileName
+          (concat "./Bilder/"
+                  (concat
+                   (make-temp-name
+                    (concat (buffer-name)
+                            "_"
+                            (format-time-string "%Y%m%d_%H%M%S_")) ) ".png")
+                  )
+          )
+    (call-process "import" nil nil nil pathFileName)
+    (insert (concat "[[" pathFileName "]]"))
+    (org-display-inline-images))
+
+  ;;https://stackoverflow.com/questions/17435995/paste-an-image-on-clipboard-to-emacs-org-mode-file-without-saving-it
+
+
+  (defun weiss-custom-daily-agenda()
+    (interactive)
+    (org-agenda nil "c")
+    )
+  ;; (getenv "PATH")
+
   (use-package org-fancy-priorities
     :after org
     :hook (org-mode . org-fancy-priorities-mode)
@@ -193,37 +307,42 @@
   ;; Enable markdown backend
   (add-to-list 'org-export-backends 'md)
 
-  ;; ;; Babel
-  ;; (setq org-confirm-babel-evaluate nil
-  ;;       org-src-fontify-natively t
-  ;;       org-src-tab-acts-natively t)
+  ;; Babel
+  (setq org-confirm-babel-evaluate nil
+        org-src-fontify-natively t
+        org-src-tab-acts-natively t)
 
-  ;; (defvar load-language-list '((emacs-lisp . t)
-  ;;                              (perl . t)
-  ;;                              (python . t)
-  ;;                              (ruby . t)
-  ;;                              (js . t)
-  ;;                              (css . t)
-  ;;                              (sass . t)
-  ;;                              (C . t)
-  ;;                              (java . t)
-  ;;                              (plantuml . t)))
+  (defvar load-language-list '((emacs-lisp . t)
+                               (perl . t)
+                               (python . t)
+                               (ruby . t)
+                               (js . t)
+                               (css . t)
+                               (sass . t)
+                               (C . t)
+                               (java . t)
+                               (plantuml . t)))
 
-  ;; ;; ob-sh renamed to ob-shell since 26.1.
-  ;; (cl-pushnew '(shell . t) load-language-list)
+  ;; ob-sh renamed to ob-shell since 26.1.
+  (cl-pushnew '(shell . t) load-language-list)
 
-  ;; (use-package ob-go
-  ;;   :init (cl-pushnew '(go . t) load-language-list))
+  (use-package ob-fsharp
+    :init (cl-pushnew '(fsharp . t) load-language-list))
 
-  ;; (use-package ob-rust
-  ;;   :init (cl-pushnew '(rust . t) load-language-list))
 
-  ;; (use-package ob-ipython
-  ;;   :if (executable-find "jupyter")     ; DO NOT remove
-  ;;   :init (cl-pushnew '(ipython . t) load-language-list))
 
-  ;; (org-babel-do-load-languages 'org-babel-load-languages
-  ;;                              load-language-list)
+  (use-package ob-go
+    :init (cl-pushnew '(go . t) load-language-list))
+
+  (use-package ob-rust
+    :init (cl-pushnew '(rust . t) load-language-list))
+
+  (use-package ob-ipython
+    :if (executable-find "jupyter")     ; DO NOT remove
+    :init (cl-pushnew '(ipython . t) load-language-list))
+
+  (org-babel-do-load-languages 'org-babel-load-languages
+                               load-language-list)
 
   ;; (use-package auctex)
 
@@ -236,8 +355,8 @@
   ;;                                     ( ?{  ("\\subset" "\\subseteq"        ))
   ;;                                     ( ?}  ("\\supset"  "\\supseteq"       ))
   ;;                                     )
-          
-          
+
+
   ;; Rich text clipboard
   (use-package org-rich-yank
     :bind (:map org-mode-map
@@ -286,8 +405,19 @@
   ;;   (org-pomodoro-mode-line-break ((t (:inherit success))))
   ;;   :bind (:map org-agenda-mode-map
   ;;               ("P" . org-pomodoro))))
-  (load (xah-get-fullpath "+org"))  
-  (bind-key "RET" #'+org/dwim-at-point org-mode-map)  
+  (load "/home/weiss/.emacs.d/+org.el")  
+  ;; (bind-key "RET" #'+org/dwim-at-point org-mode-map)  
+  
+  ;; (defun weiss-org-RET-key ()
+  ;;   (interactive)
+  ;;   (cond
+  ;;    ((eq 'cursor-type "t") (message "t"))
+  ;;    ((eq 'cursor-type "bar") (message "bar"))
+  ;;    (t     (message "other: %s" cursor-type)))
+  ;;   )
+  ;; (define-key xah-fly-key-map (kbd "0") 'weiss-org-RET-key)
+  ;; (define-key global-map (kbd "0") 'weiss-org-RET-key)
+
   )
 
 
