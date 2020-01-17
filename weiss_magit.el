@@ -4,6 +4,96 @@
 
 ;; Git
 (use-package magit
+  :init
+  (defun weiss-magit-commit-and-switch-to-that-buffer()
+    (interactive)
+    (magit-commit-create)
+    (sleep-for 1)
+    (switch-to-buffer "COMMIT_EDITMSG"))
+
+  (defun weiss-magit-command-mode-define-keys ()
+    (weiss--define-keys
+     xah-fly-key-map
+     '(
+       ;; ("~" . nil)
+       ;; (":" . nil)
+
+       ;; ("SPC" . xah-fly-leader-key-map)
+       ;; ("DEL" . xah-fly-leader-key-map)
+       ;;   ("RET" . newline)
+
+       ;; ("'" . xah-cycle-hyphen-underscore-space)
+       ;; ("," . xah-next-window-or-frame)
+       ;; ("-" . xah-backward-punct)
+       ;; ("." . xah-forward-right-bracket)
+       ;; (";" . xah-end-of-line-or-block)
+       ;; ("/" . xah-goto-matching-bracket)
+       ;; ("\\" . nil)
+       ;; ("=" . xah-forward-equal-sign)
+       ;; ("[" . hippie-expand )
+       ;; ("]" . nil)
+       ;; ("`" . other-frame)
+
+       ;; ("<backtab>" . weiss-indent)
+       ;; ("V" . weiss-paste-with-linebreak)
+       ;; ("!" . rotate-text)
+       ;; ("#" . xah-backward-quote)
+       ;; ("$" . xah-forward-punct)
+
+       ;; ("1" . scroll-down)
+       ;; ("2" . scroll-up)
+       ;; ("3" . delete-other-windows)
+       ;; ("4" . split-window-below)
+       ;; ("5" . delete-char)
+       ;; ("6" . xah-select-block)
+       ;; ("7" . xah-select-line)
+       ;; ("8" . xah-extend-selection)
+       ;; ("9" . xah-select-text-in-quote)
+       ;; ("0" . xah-pop-local-mark-ring)
+
+       ;; ("a" . execute-extended-command)
+       ;; ("b" . xah-toggle-letter-case)
+       ("c" . weiss-magit-commit-and-switch-to-that-buffer)
+       ;; ("d" . xah-delete-backward-char-or-bracket-text)
+       ;; ("e" . xah-backward-kill-word)
+       ;; ("f" . xah-fly-insert-mode-activate)
+       ;; ("g" . xah-delete-current-text-block)
+       ;; ("h" . backward-char)
+       ;; ("i" . xah-beginning-of-line-or-block)
+       ;; ("j" . next-line)
+       ;; ("k" . previous-line)
+       ;; ("l" . forward-char)
+       ;; ("m" . xah-backward-left-bracket)
+       ;; ("n" . swiper-isearch)
+       ;; ("o" . forward-word)
+       ;; ("p" . weiss-insert-line)
+       ("q" . magit-mode-bury-buffer)
+       ;; ("r" . xah-kill-word)
+       ;; ("s" . open-line)
+       ;; ("t" . set-mark-command)
+       ;; ("u" . backward-word)
+       ;; ("v" . xah-paste-or-paste-previous)
+       ;; ("w" . xah-shrink-whitespaces)
+       ;; ("x" . xah-cut-line-or-region)
+       ;; ("y" . undo)
+       ;; ("z" . xah-comment-dwim)
+       )))
+  
+  ;; open magit in current window
+  (setq magit-display-buffer-function
+        (lambda (buffer)
+          (display-buffer
+           buffer (if (and (derived-mode-p 'magit-mode)
+                           (memq (with-current-buffer buffer major-mode)
+                                 '(magit-process-mode
+                                   magit-revision-mode
+                                   magit-diff-mode
+                                   magit-stash-mode
+                                   magit-status-mode)))
+                      nil
+                    '(display-buffer-same-window)))))
+  
+
   :config
   ;; Access Git forges from Magit
   (when (executable-find "cc")
@@ -32,6 +122,7 @@
     :init (setq git-messenger:show-detail t
                 git-messenger:use-magit-popup t)
     :config
+    
     (with-no-warnings
       (defun my-git-messenger:format-detail (vcs commit-id author message)
         (if (eq vcs 'git)
@@ -53,17 +144,17 @@
       (advice-add #'git-messenger:popup-message :override #'my-git-messenger:popup-message)))
   )
 
-  ;; Open github/gitlab/bitbucket page
-  (use-package browse-at-remote
-    :bind (:map vc-prefix-map
-                ("B" . browse-at-remote)))
+;; Open github/gitlab/bitbucket page
+(use-package browse-at-remote
+  :bind (:map vc-prefix-map
+              ("B" . browse-at-remote)))
 
-  ;; Git related modes
-  (use-package gitattributes-mode)
-  (use-package gitconfig-mode)
-  (use-package gitignore-mode)
+;; Git related modes
+(use-package gitattributes-mode)
+(use-package gitconfig-mode)
+(use-package gitignore-mode)
 
-  (provide 'weiss_magit.el)
+(provide 'weiss_magit.el)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init-vcs.el ends here

@@ -13,18 +13,35 @@
 ;;               ("RET" . +org/dwim-at-point))
 ;;   )
 
-
+(defun test ()
+  (message "a"))
 
 (use-package org
   :straight org-plus-contrib
   :custom-face (org-ellipsis ((t (:foreground nil))))
   :bind
-  ("M-j" . org-metadown)                         
-  ("M-k" . org-metaup)                         
-  ("M-h" . org-metaleft)                         
-  ("M-l" . org-metaright)                         
-  ("M-S-h" . org-shiftmetaleft)                         
-  ("M-S-l" . org-shiftmetaright)                         
+  (
+   :map org-mode-map
+   ("M-j" . org-metadown)                         
+   ("M-k" . org-metaup)                         
+   ("M-h" . org-metaleft)                         
+   ("M-l" . org-metaright)                         
+   ("M-H" . org-shiftmetaleft)                         
+   ("M-L" . org-shiftmetaright)
+   ("RET" . weiss-org-RET-key)
+   ("<shifttab>" . org-shifttab)
+
+   ;; (defun evil-org--populate-navigation-bindings ()
+   ;;   "Configures gj/gk/gh/gl for navigation."
+   ;;   (let-alist evil-org-movement-bindings
+   ;;     (evil-define-key 'motion evil-org-mode-map
+   ;;                      (kbd (concat "g" .left)) 'org-up-element
+   ;;                      (kbd (concat "g" .right)) 'org-down-element
+   ;;                      (kbd (concat "g" .up)) 'org-backward-element
+   ;;                      (kbd (concat "g" .down)) 'org-forward-element
+   ;;                      (kbd (concat "g" (capitalize .left))) 'evil-org-top)))
+   )
+
   :hook ((org-mode . (lambda ()
                        "Beautify org symbols."
 
@@ -61,14 +78,18 @@
          )
 
   :init
+
+  (define-prefix-command 'weiss-org-xfk-g-keymap)
+
   (defun weiss-org-command-mode-define-keys ()
+    (define-key xah-fly-key-map (kbd "g") weiss-org-xfk-g-keymap)
     (weiss--define-keys
      xah-fly-key-map
      '(
        ;; ("~" . nil) 
        ;; (":" . nil)
 
-       ("SPC" . xah-fly-leader-key-map)
+       ;; ("SPC" . xah-fly-leader-key-map)
        ;; ("DEL" . xah-fly-leader-key-map)
        ;; ("RET" . +org/dwim-at-point)
 
@@ -84,9 +105,9 @@
        ;; ("]" . nil)
        ;; ("`" . other-frame)
 
-       ;; ("<backtab>" . weiss-indent)
+       ("<backtab>" . org-shifttab)
        ;; ("V" . weiss-paste-with-linebreak)
-       ;; ("!" . rotate-text)
+       ("!" . rotate-text)
        ;; ("#" . xah-backward-quote)
        ;; ("$" . xah-forward-punct)
 
@@ -104,10 +125,11 @@
        ;; ("a" . execute-extended-command)
        ;; ("b" . xah-toggle-letter-case)
        ;; ("c" . xah-copy-line-or-region)
+       ("C" . org-copy-subtree)
        ;; ("d" . xah-delete-backward-char-or-bracket-text)
        ;; ("e" . xah-backward-kill-word)
        ;; ("f" . xah-fly-insert-mode-activate)
-       ;; ("g" . xah-delete-current-text-block)
+       ;; ("g" . weiss-xfk-g-keymap)
        ;; ("h" . backward-char)
        ;; ("i" . xah-beginning-of-line-or-block)
        ;; ("j" . next-line)
@@ -125,10 +147,35 @@
        ;; ("u" . backward-word)
        ;; ("v" . xah-paste-or-paste-previous)
        ;; ("w" . xah-shrink-whitespaces)
-       ;; ("x" . xah-cut-line-or-region)
+       ("x" . org-kill-line)
        ;; ("y" . undo)
        ;; ("z" . xah-comment-dwim)
        )))
+  
+  (weiss--define-keys
+   weiss-org-xfk-g-keymap
+   '(
+     ("h" . org-up-element)
+     ("l" . org-down-element)
+     ("k" . org-backward-element)
+     ("j" . org-forward-element)
+
+     ("t" . org-set-tags-command)
+     ("q" . org-todo)
+     )
+   )
+
+
+
+  (defun weiss-org-RET-key ()
+    (interactive)
+    (cond
+     ((string= xfk-command-flag "t") (+org/dwim-at-point))
+     ((string= xfk-command-flag "nil") (org-return))
+     (t     (message "other: %s" xfk-command-flag)))
+    )
+
+  
 
   (defun weiss-switch-and-Bookmarks-search()
     (interactive)
@@ -167,6 +214,14 @@
        (org-agenda-span 20)
        ))
      ("b" occur-tree "Bookmarks")
+     )
+   org-link-frame-setup
+   '(
+     (vm . vm-visit-folder)
+     (vm-imap . vm-visit-imap-folder)
+     (gnus . gnus)
+     (file . find-file)
+     (wl . wl-frame)
      )
    org-tags-column -80
    org-log-done 'time
@@ -408,16 +463,6 @@ same directory as the org-buffer and insert a link to this file."
   (load "/home/weiss/.emacs.d/+org.el")  
   ;; (bind-key "RET" #'+org/dwim-at-point org-mode-map)  
   
-  ;; (defun weiss-org-RET-key ()
-  ;;   (interactive)
-  ;;   (cond
-  ;;    ((eq 'cursor-type "t") (message "t"))
-  ;;    ((eq 'cursor-type "bar") (message "bar"))
-  ;;    (t     (message "other: %s" cursor-type)))
-  ;;   )
-  ;; (define-key xah-fly-key-map (kbd "0") 'weiss-org-RET-key)
-  ;; (define-key global-map (kbd "0") 'weiss-org-RET-key)
-
   )
 
 

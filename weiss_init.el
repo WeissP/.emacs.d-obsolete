@@ -6,7 +6,7 @@
  straight-recipes-gnu-elpa-use-mirror    t
  straight-repository-branch              "develop"
  straight-vc-git-default-clone-depth     1
- ;; straight-enable-use-package-integration nil
+;; straight-enable-use-package-integration nil
  straight-check-for-modifications        '(find-when-checking)
  straight-use-package-by-default  t
  )
@@ -126,6 +126,10 @@ To solve this problem, when your code only knows the relative path of another fi
                      ))
   )
 
+;;Bookmarks
+(bookmark-delete "org-capture-last-stored")
+(bookmark-delete "org-refile-last-stored")
+
 ;; Basic modes
 (ignore-errors (savehist-mode 1))
 (global-linum-mode 1)
@@ -200,11 +204,6 @@ To solve this problem, when your code only knows the relative path of another fi
                                      :repo "10sr/switch-buffer-functions-el"))
 
 ;; (load "/home/weiss/weiss/switch-buffer-functions-el/switch-buffer-functions.elc") 
-(defun test-bind (prev cur)
-  (define-key xah-fly-key-map (kbd "0") 'nil)  
-  )
-
-(add-hook 'switch-buffer-functions 'test-bind)
 
 (defun weiss-eval-last-sexp()
   (interactive)
@@ -221,7 +220,6 @@ To solve this problem, when your code only knows the relative path of another fi
 
 
 (load (xah-get-fullpath "weiss_ui"))
-(load (xah-get-fullpath "weiss_dired"))
 (load (xah-get-fullpath "weiss_edit"))
 (load (xah-get-fullpath "weiss_keybinding"))
 (load (xah-get-fullpath "weiss_company"))
@@ -231,6 +229,8 @@ To solve this problem, when your code only knows the relative path of another fi
 (load (xah-get-fullpath "weiss_magit"))
 (load (xah-get-fullpath "weiss_pdf"))   
 (load (xah-get-fullpath "weiss_shell_or_terminal"))
+(load (xah-get-fullpath "weiss_dired"))
+
 
 (require 'org)
 ;; (update-file-autoloads  "/home/weiss/.emacs.d/autoloads/+org.el" t "/home/weiss/.emacs.d/autoloads/+org-autoloads.el")

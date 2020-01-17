@@ -27,12 +27,13 @@
 
 (defun weiss-xfk-addon-command ()
   (interactive)
+  (setq xfk-command-flag "t")
   ;; f
-  (define-key xah-fly-leader-key-map (kbd "f") 'weiss-switch-buffer-and-refresh-xfk)
-  ;; k-keymap
-  (define-key xah-fly-t-keymap (kbd "j") 'weiss-xfk-close-current-buffer-and-refresh-xfk)  
+  (define-key xah-fly-leader-key-map (kbd "f") 'ivy-switch-buffer)
+  ;; l-keymap
+  (define-key xah-fly-n-keymap (kbd "r") '(lambda()(interactive)(dired-toggle-read-only)(xah-fly-command-mode-activate)))    
+  (define-key xah-fly-n-keymap (kbd "m") 'dired-collapse-mode)
   ;; i-keymap
-  (define-key xah-fly-c-keymap (kbd "o") 'weiss-counsel-bookmark-and-refresh-xfk)
   (define-key xah-fly-c-keymap (kbd "j") 'counsel-recentf)
   ;; ,-keymap
   (define-key xah-fly-w-keymap (kbd "m") 'weiss-eval-last-sexp)
@@ -54,6 +55,7 @@
   (define-key xah-fly-leader-key-map (kbd "d") weiss-xfk-leader-d-keymap)
   (weiss--define-keys weiss-xfk-leader-d-keymap
                       '(
+                        ("m" . magit-status)
                         ("b" . org-babel-tangle)
                         ("d" . weiss-custom-daily-agenda)
                         ("r" . weiss-switch-and-Bookmarks-search)
@@ -89,10 +91,10 @@ Version 2019-02-12"
 
      ("SPC" . xah-fly-leader-key-map)
      ("DEL" . xah-fly-leader-key-map)
-  ;;   ("RET" . newline)
+     ;;   ("RET" . newline)
 
      ("'" . xah-cycle-hyphen-underscore-space)
-     ("," . weiss-switch-frame-and-refresh-xfk)
+     ("," . xah-next-window-or-frame)
      ("-" . xah-backward-punct)
      ("." . xah-forward-right-bracket)
      (";" . xah-end-of-line-or-block)
@@ -155,11 +157,14 @@ Version 2019-02-12"
   "Set command mode keys.
 Version 2017-01-21"
   (interactive)
-  ;; (weiss-prog-command-mode-define-keys)
   (weiss-prog-command-mode-define-keys)
   (cond
+   ((eq major-mode 'magit-status-mode) (weiss-magit-command-mode-define-keys))
    ((eq major-mode 'pdf-view-mode) (weiss-pdf-command-mode-define-keys))
- ;;  ((eq major-mode 'org-mode) (weiss-org-command-mode-define-keys))
+   ((eq major-mode 'org-mode) (weiss-org-command-mode-define-keys))
+   ((eq major-mode 'org-agenda-mode) (weiss-org-command-mode-define-keys))
+   ((eq major-mode 'dired-mode) (weiss-dired-command-mode-define-keys))
+   ((eq major-mode 'wdired-mode) nil)
    (t nil)
    )
   (define-key xah-fly-key-map (kbd (xah-fly--key-char "a"))
@@ -203,12 +208,9 @@ Version 2017-07-07"
   (interactive)
   (weiss-xfk-command-mode-init))
 
-(add-hook 'find-file-hook 'xah-fly-command-mode-activate)
+;; (add-hook 'find-file-hook 'xah-fly-command-mode-activate)
 ;; (add-hook 'kill-buffer-hook 'xah-fly-command-mode-activate) 
 ;; (add-hook 'kill-buffer-hook 'test)
-
-(defun test()
-  (message "1"))
 
 (defun weiss-switch-buffer-and-refresh-xfk()
   (interactive)
@@ -235,15 +237,36 @@ Version 2017-07-07"
   (xah-fly-command-mode-activate)
   )
 
+(defun test-bind (prev cur)
+  (define-key xah-fly-key-map (kbd "0") 'nil)  
+  )
+
+(defun change-keybinding (prev cur)
+  (interactive)
+  ;; (message "a")                         
+  (if (minibuffer-window-active-p (selected-window))
+      nil (xah-fly-command-mode-activate))
+  )
+
+
+
+(add-hook 'switch-buffer-functions 'change-keybinding) 
+
+
 
 (defun weiss-xfk-addon-insert ()
   (interactive)
+  (setq xfk-command-flag "nil")
   (define-key xah-fly-key-map (kbd "!") 'nil)
-;;  (define-key xah-fly-key-map (kbd "RET") 'newline)
+  ;;  (define-key xah-fly-key-map (kbd_"RET") 'newline)
   (define-key xah-fly-key-map (kbd "V") 'nil)
   (define-key xah-fly-key-map (kbd "J") 'nil)  
   (define-key xah-fly-key-map (kbd "K") 'nil)  
+  (define-key xah-fly-key-map (kbd "S") 'nil)  
+  (define-key xah-fly-key-map (kbd "C") 'nil)  
+  (define-key xah-fly-key-map (kbd "U") 'nil)  
   (define-key xah-fly-key-map (kbd "(") 'nil)  
+  (define-key xah-fly-key-map (kbd "<backtab>") 'nil)  
   )
 
 

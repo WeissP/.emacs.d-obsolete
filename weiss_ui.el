@@ -2,6 +2,7 @@
 (load-theme 'doom-one-light t)
 
 (use-package doom-modeline
+  ;; :disabled                            
   ;; :diminish doom-modeline-mode
   :hook (after-init . doom-modeline-mode)
   )
@@ -11,6 +12,8 @@
 
 (line-number-mode -1)
 (setq line-number-display-limit-width 200)
+
+;; (+global-word-wrap-mode t) ;truncate  lines
 
 (use-package emojify
   ;; :hook (after-init . global-emojify-mode)

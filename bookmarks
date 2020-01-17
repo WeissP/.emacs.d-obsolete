@@ -2,7 +2,22 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("weiss_lang.el"
+(("Einsammlung"
+ (filename . "~/Documents/Org/Einsammlung.org")
+ (front-context-string . " erotisch\n** [[h")
+ (rear-context-string . "JaC2Hbc3.png]]\n*")
+ (position . 34640))
+("weiss_shell_or_terminal.el"
+ (filename . "~/.emacs.d/weiss_shell_or_terminal.el")
+ (front-context-string . "--rename-buffer-")
+ (rear-context-string . "))\n\n(defun vterm")
+ (position . 295))
+("Zusammenhang"
+ (filename . "~/Documents/Org/Zusammenhang.org")
+ (front-context-string)
+ (rear-context-string . "政治情况也有了不少了解，哈哈。\n")
+ (position . 11814))
+("weiss_lang.el"
  (filename . "~/.emacs.d/weiss_lang.el")
  (front-context-string . ";; Python Mode\n;")
  (rear-context-string)
@@ -17,11 +32,6 @@
  (front-context-string . "\n  ;; ;; Pomodor")
  (rear-context-string . "tline-level 2))\n")
  (position . 12180))
-("bookmarks"
- (filename . "~/.emacs.d/bookmarks")
- (front-context-string . ";;;; Emacs Bookm")
- (rear-context-string)
- (position . 1))
 ("todo"
  (filename . "~/Documents/Org/todo.org")
  (front-context-string . "#+TAGS: jederzei")

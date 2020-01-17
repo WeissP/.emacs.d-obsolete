@@ -78,7 +78,7 @@
       (if (eq real-last-command this-command)
           (progn (yank-pop 1)) 
         (progn (open-line 1)  (yank)))))
-  (weiss-indent)
+  (if (eq major-mode 'org-mode) nil (weiss-indent))
   )
 
 

@@ -1,5 +1,5 @@
 (use-package aweshell
-  :disabled
+  ;; :disabled                             
   :straight (aweshell
              :type git
              :host github
