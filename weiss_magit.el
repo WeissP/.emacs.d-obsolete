@@ -9,7 +9,9 @@
     (interactive)
     (magit-commit-create)
     (sleep-for 0.5)
-    (switch-to-buffer "COMMIT_EDITMSG"))
+    (switch-to-buffer "COMMIT_EDITMSG")
+    (xah-fly-insert-mode-activate)
+    )
 
   (defun weiss-magit-command-mode-define-keys ()
     (weiss--define-keys
