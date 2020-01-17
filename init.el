@@ -3,3 +3,5 @@
 ;; (find-file "/home/weiss/Documents/Org/Notes.org")
 
 (put 'dired-find-alternate-file 'disabled nil)
+(put 'narrow-to-region 'disabled nil)
+(put 'narrow-to-page 'disabled nil)

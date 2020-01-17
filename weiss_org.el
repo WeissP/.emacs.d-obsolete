@@ -200,6 +200,7 @@
    org-log-done 'time
    org-fast-tag-selection-single-key t
    org-agenda-include-diary t
+   org-agenda-window-setup 'current-window
    
    org-priority-faces '((65 :foreground "#de3d2f" :weight bold)
                         (66 :foreground "#da8548")
@@ -484,6 +485,80 @@ same directory as the org-buffer and insert a link to this file."
   )
 (add-hook 'org-mode-hook 'weiss-org-option)
 
+(fset 'org-agenda-done
+      "td")
+
+(with-eval-after-load 'org-agenda
+  (defun weiss-org-agenda-command-mode-define-keys ()
+    (weiss--define-keys
+     xah-fly-key-map
+     '(
+       ;; ("~" . nil) 
+       ;; (":" . nil)
+
+       ;; ("SPC" . xah-fly-leader-key-map)
+       ;; ("DEL" . xah-fly-leader-key-map)
+       ;; ("RET" . +org/dwim-at-point)
+
+       ;; ("'" . xah-cycle-hyphen-underscore-space)
+       ;; ("," . xah-next-window-or-frame)
+       ;; ("-" . xah-backward-punct)
+       ;; ("." . xah-forward-right-bracket)
+       ;; (";" . xah-end-of-line-or-block)
+       ;; ("/" . xah-goto-matching-bracket)
+       ;; ("\\" . nil)
+       ;; ("=" . xah-forward-equal-sign)
+       ;; ("[" . hippie-expand )
+       ;; ("]" . nil)
+       ;; ("`" . other-frame)
+
+       ;; ("<backtab>" . org-shifttab)
+       ;; ("V" . weiss-paste-with-linebreak)
+       ;; ("!" . rotate-text)
+       ;; ("#" . xah-backward-quote)
+       ;; ("$" . xah-forward-punct)
+
+       ;; ("1" . scroll-down)
+       ;; ("2" . scroll-up)
+       ;; ("3" . delete-other-windows)
+       ;; ("4" . split-window-below)
+       ;; ("5" . delete-char)
+       ;; ("6" . xah-select-block)
+       ;; ("7" . xah-select-line)
+       ;; ("8" . xah-extend-selection)
+       ;; ("9" . xah-select-text-in-quote)
+       ;; ("0" . xah-pop-local-mark-ring)
+
+       ;; ("a" . execute-extended-command)
+       ;; ("b" . xah-toggle-letter-case)
+       ;; ("c" . xah-copy-line-or-region)
+       ;; ("C" . org-copy-subtree)
+       ("d" . org-agenda-done)
+       ;; ("e" . xah-backward-kill-word)
+       ;; ("f" . xah-fly-insert-mode-activate)
+       ;; ("g" . weiss-xfk-g-keymap)
+       ;; ("h" . backward-char)
+       ;; ("i" . xah-beginning-of-line-or-block)
+       ;; ("j" . next-line)
+       ;; ("k" . previous-line)
+       ;; ("l" . xah-fly-insert-mode-activate-space-before)
+       ;; ("l" . forward-char)
+       ;; ("m" . xah-backward-left-bracket)
+       ;; ("n" . swiper-isearch)
+       ;; ("o" . forward-word)
+       ;; ("p" . weiss-insert-line)
+       ("q" . org-agenda-exit)
+       ("r" . org-agenda-redo)
+       ;; ("s" . open-line)
+       ("t" . org-agenda-todo)
+       ;; ("u" . backward-word)
+       ;; ("v" . xah-paste-or-paste-previous)
+       ;; ("w" . xah-shrink-whitespaces)
+       ;; ("x" . org-kill-line)
+       ;; ("y" . undo)
+       ;; ("z" . xah-comment-dwim)
+       )))
+  )
 
 
 

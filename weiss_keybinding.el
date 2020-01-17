@@ -162,7 +162,7 @@ Version 2017-01-21"
    ((eq major-mode 'magit-status-mode) (weiss-magit-command-mode-define-keys))
    ((eq major-mode 'pdf-view-mode) (weiss-pdf-command-mode-define-keys))
    ((eq major-mode 'org-mode) (weiss-org-command-mode-define-keys))
-   ((eq major-mode 'org-agenda-mode) (weiss-org-command-mode-define-keys))
+   ((eq major-mode 'org-agenda-mode) (weiss-org-agenda-command-mode-define-keys))
    ((eq major-mode 'dired-mode) (weiss-dired-command-mode-define-keys))
    ((eq major-mode 'wdired-mode) nil)
    (t nil)

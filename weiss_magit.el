@@ -8,7 +8,7 @@
   (defun weiss-magit-commit-and-switch-to-that-buffer()
     (interactive)
     (magit-commit-create)
-    (sleep-for 1)
+    (sleep-for 0.5)
     (switch-to-buffer "COMMIT_EDITMSG"))
 
   (defun weiss-magit-command-mode-define-keys ()
@@ -66,7 +66,7 @@
        ;; ("m" . xah-backward-left-bracket)
        ;; ("n" . swiper-isearch)
        ;; ("o" . forward-word)
-       ;; ("p" . weiss-insert-line)
+       ("p" . magit-push-current-to-pushremote)
        ("q" . magit-mode-bury-buffer)
        ;; ("r" . xah-kill-word)
        ;; ("s" . open-line)
