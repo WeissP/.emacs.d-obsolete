@@ -148,9 +148,8 @@
   (setq
    ;; lsp-auto-guess-root t        ; Detect project root
    lsp-keep-workspace-alive nil ; Auto-kill LSP server
-   lsp-prefer-flymake nil       ; Use lsp-ui and flycheck
+   ;; lsp-prefer-flymake nil       ; Use lsp-ui and flycheck
    flymake-fringe-indicator-position 'right-fringe)
-  (setq lsp-fsharp-server-install-dir "~/.emacs.d/lsp-fsharp")
   :config
 
   ;; ;; Configure LSP clients
@@ -242,6 +241,17 @@
             (append '("compile_commands.json"
                       ".ccls")
                     projectile-project-root-files-top-down-recurring))))
+
+  (use-package lsp-fsharp
+    :straight (lsp-fsharp
+               :type git
+               :host github
+               :repo "emacs-lsp/lsp-mode")
+    :hook (fsharp-mode . (lambda () (require 'lsp-fsharp)))
+    ;; :init
+    ;; (setq lsp-fsharp-server-install-dir "~/.emacs.d/lsp-fsharp")
+
+    )
 
   ;; Julia support
   (use-package lsp-julia

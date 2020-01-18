@@ -1,12 +1,17 @@
 ;;; ~/Documents/pi/weiss_init.el -*- lexical-binding: t; -*-
 
 ;;; code:
+(let (;; 加载的时候临时增大`gc-cons-threshold'以加速启动速度。
+      (gc-cons-threshold most-positive-fixnum)
+      ;; 清空避免加载远程文件的时候分析文件。
+      (file-name-handler-alist nil))
+
 ;;; straight.el
 (setq
  straight-recipes-gnu-elpa-use-mirror    t
  straight-repository-branch              "develop"
  straight-vc-git-default-clone-depth     1
-;; straight-enable-use-package-integration nil
+ ;; straight-enable-use-package-integration nil
  straight-check-for-modifications        '(find-when-checking)
  straight-use-package-by-default  t
  )
@@ -180,11 +185,6 @@ To solve this problem, when your code only knows the relative path of another fi
   (super-save-mode +1)
   )
 
-(use-package german-holidays
-  :config
-  (setq calendar-holidays holiday-german-RP-holidays)
-  )
-
 (use-package keyfreq
   :config
   (keyfreq-mode 1)
@@ -225,12 +225,13 @@ To solve this problem, when your code only knows the relative path of another fi
 (load (xah-get-fullpath "weiss_company"))
 (load (xah-get-fullpath "weiss_lang"))
 (load (xah-get-fullpath "weiss_ivy"))
-(load (xah-get-fullpath "weiss_org"))   
 (load (xah-get-fullpath "weiss_magit"))
 (load (xah-get-fullpath "weiss_pdf"))   
 (load (xah-get-fullpath "weiss_shell_or_terminal"))
 (load (xah-get-fullpath "weiss_dired"))
-
+(load (xah-get-fullpath "weiss_org"))   
+(load (xah-get-fullpath "weiss_calendar"))
+(load (xah-get-fullpath "weiss_flycheck"))
 
 (require 'org)
 ;; (update-file-autoloads  "/home/weiss/.emacs.d/autoloads/+org.el" t "/home/weiss/.emacs.d/autoloads/+org-autoloads.el")
@@ -242,3 +243,4 @@ To solve this problem, when your code only knows the relative path of another fi
 ;; (add-hook 'elisp-mode-hook 'xah-fly-command-mode-activate)
 ;; (add-hook 'org-mode-hook 'xah-fly-command-mode-activate)
 
+)

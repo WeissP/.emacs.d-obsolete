@@ -22,7 +22,7 @@
   :bind
   (
    :map org-mode-map
-   ("M-j" . org-metadown)                         
+   ("M-j" . org-metadown)
    ("M-k" . org-metaup)                         
    ("M-h" . org-metaleft)                         
    ("M-l" . org-metaright)                         
@@ -78,6 +78,8 @@
          )
 
   :init
+
+  (provide 'org-version)
 
   (define-prefix-command 'weiss-org-xfk-g-keymap)
 
@@ -202,9 +204,6 @@
    org-agenda-include-diary t
    org-agenda-window-setup 'current-window
    
-   org-priority-faces '((65 :foreground "#de3d2f" :weight bold)
-                        (66 :foreground "#da8548")
-                        (67 :foreground "#0098dd"))
    org-agenda-custom-commands
    '(
      ("c" "Custom agenda"
@@ -350,7 +349,13 @@ same directory as the org-buffer and insert a link to this file."
     :after org
     :hook (org-mode . org-fancy-priorities-mode)
     :config
-    (setq org-fancy-priorities-list '("⚡⚡" "⚡" "❄")))
+    
+    (setq org-fancy-priorities-list '("⚡⚡" "⚡" "❄")
+          org-priority-faces '((65 :foreground "#de3d2f" :weight bold)
+                               (66 :foreground "#da8548" :weight bold)
+                               (67 :foreground "#0098dd"))
+          
+          ))
 
   (use-package org-bullets
     :after org

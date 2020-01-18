@@ -81,5 +81,8 @@
   (if (eq major-mode 'org-mode) nil (weiss-indent))
   )
 
+(defun weiss-insert-date()
+  (interactive)
+  (insert (format-time-string "%d.%m.%Y")))
 
-
+(use-package yasnippet)

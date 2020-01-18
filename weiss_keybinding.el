@@ -35,6 +35,7 @@
   (define-key xah-fly-n-keymap (kbd "m") 'dired-collapse-mode)
   ;; i-keymap
   (define-key xah-fly-c-keymap (kbd "j") 'counsel-recentf)
+  (define-key xah-fly-c-keymap (kbd "d") 'weiss-insert-date)  
   ;; ,-keymap
   (define-key xah-fly-w-keymap (kbd "m") 'weiss-eval-last-sexp)
   ;; l-keymap
@@ -42,26 +43,29 @@
   ;; e-keymap
   (define-prefix-command 'weiss-xfk-leader-e-keymap)
   (define-key xah-fly-leader-key-map (kbd "e") weiss-xfk-leader-e-keymap)
-  (weiss--define-keys weiss-xfk-leader-e-keymap
-                      '(
-                        ("a" . weiss-org-screenshot)
-                        ("c" . org-capture)
-                        ("o" . org-noter)
-                        ("s" . org-noter-sync-current-note)
-                        )
-                      )
+  (weiss--define-keys
+   weiss-xfk-leader-e-keymap
+   '(
+     ("a" . weiss-org-screenshot)
+     ("c" . org-capture)
+     ("o" . org-noter)
+     ("s" . org-noter-sync-current-note)
+     )
+   )
   ;; d-keymap
   (define-prefix-command 'weiss-xfk-leader-d-keymap)
   (define-key xah-fly-leader-key-map (kbd "d") weiss-xfk-leader-d-keymap)
-  (weiss--define-keys weiss-xfk-leader-d-keymap
-                      '(
-                        ("m" . magit-status)
-                        ("b" . org-babel-tangle)
-                        ("d" . weiss-custom-daily-agenda)
-                        ("r" . weiss-switch-and-Bookmarks-search)
-                        ("v" . vterm-other-window)
-                        )
-                      )
+  (weiss--define-keys
+   weiss-xfk-leader-d-keymap
+   '(
+     ("m" . magit-status)
+     ("b" . org-babel-tangle)
+     ("c" . open-calendar)
+     ("d" . weiss-custom-daily-agenda)
+     ("r" . weiss-switch-and-Bookmarks-search)
+     ("v" . vterm-other-window)
+     )
+   )
   )
 
 (add-hook 'xah-fly-command-mode-activate-hook 'weiss-xfk-addon-command)
@@ -165,6 +169,8 @@ Version 2017-01-21"
    ((eq major-mode 'org-agenda-mode) (weiss-org-agenda-command-mode-define-keys))
    ((eq major-mode 'dired-mode) (weiss-dired-command-mode-define-keys))
    ((eq major-mode 'wdired-mode) nil)
+   ((eq major-mode 'cfw:calendar-mode) (weiss-calendar-command-mode-define-keys))
+   ((eq major-mode 'cfw:details-mode) (weiss-calendar-command-mode-define-keys))
    (t nil)
    )
   (define-key xah-fly-key-map (kbd (xah-fly--key-char "a"))

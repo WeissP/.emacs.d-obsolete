@@ -8,7 +8,11 @@
   )
 
 (font-lock-add-keywords 'org-mode
-                        '(("^.*:Frage:.*$" . font-lock-keyword-face)))
+                        '(("^.*:Frage:.*$" . 'font-lock-keyword-face )))
+
+;; (font-lock-add-keywords nil
+;;                         '(("^.*:Frage:.*$" . 'font-lock-keyword-face )))
+
 
 (line-number-mode -1)
 (setq line-number-display-limit-width 200)

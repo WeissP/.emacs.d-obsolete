@@ -47,7 +47,7 @@
        ;; ("2" . scroll-up)
        ;; ("3" . delete-other-windows)
        ;; ("4" . split-window-below)
-       ;; ("5" . delete-char)
+       ("5" . revert-buffer)
        ;; ("6" . xah-select-block)
        ;; ("7" . xah-select-line)
        ;; ("8" . xah-extend-selection)
@@ -72,7 +72,8 @@
        ("o" . xah-open-in-external-app)
        ("p" . peep-dired)
        ("q" . quit-window)
-       ("r" . dired-do-rename)
+       ("r" . dired-rsync)
+       ("R" . dired-do-rename)
        ("s" . dired-sort-toggle-or-edit)
        ("S" . hydra-dired-quick-sort/body)
        ;; ("t" . set-mark-command)
@@ -103,85 +104,88 @@
   ;;       '/' to directories, etc.
   ;; --group-directories-first
   (setq dired-listing-switches "-alGh") ; default: "-al"
+  
+
+  (use-package dired-hacks-utils)
+
+  (use-package dired-filter)
+
+  (use-package dired-avfs)
+
+  (use-package dired-open
+    :disabled)
+
+  (use-package dired-rainbow
+    :disabled)
+
+  (use-package dired-narrow
+    :disabled)
+
+  (use-package dired-collapse)
+
+  (use-package dired-quick-sort)
+
+  (use-package dired-rsync)
+
+  (use-package ivy-dired-history
+    :init
+    (add-to-list 'savehist-additional-variables 'ivy-dired-history-variable)
+    )
+
+  ;; Colourful dired
+  (use-package diredfl
+    :init (diredfl-global-mode 1))
+
+  ;; Shows icons
+  (use-package all-the-icons-dired
+    :diminish
+    :hook (dired-mode . all-the-icons-dired-mode)
+    :config
+    (with-no-warnings
+      (defun my-all-the-icons-dired--display ()
+        "Display the icons of files in a dired buffer."
+        (when dired-subdir-alist
+          (let ((inhibit-read-only t))
+            (save-excursion
+              ;; TRICK: Use TAB to align icons
+              (setq-local tab-width 1)
+              (goto-char (point-min))
+              (while (not (eobp))
+                (when (dired-move-to-filename nil)
+                  (insert " ")
+                  (let ((file (dired-get-filename 'verbatim t)))
+                    (unless (member file '("." ".."))
+                      (let ((filename (dired-get-filename nil t)))
+                        (if (file-directory-p filename)
+                            (insert (all-the-icons-icon-for-dir filename nil ""))
+                          (insert (all-the-icons-icon-for-file file :v-adjust -0.05))))
+                      ;; Align and keep one space for refeshing after some operations
+                      (insert "\t "))))
+                (forward-line 1))))))
+      (advice-add #'all-the-icons-dired--display
+                  :override #'my-all-the-icons-dired--display)))
+
+  (use-package peep-dired                 ;preview files
+    ;; :disabled                             
+    :init
+    ;; (setq peep-dired-cleanup-eagerly t)   
+    ;; (setq peep-dired-enable-on-directories t)
+    (setq peep-dired-cleanup-on-disable t)
+    (setq peep-dired-ignored-extensions nil)
+    )
+
+  (defun weiss-dired-mode-setup ()
+    "to be run as hook for `dired-mode'."
+    (dired-hide-details-mode 1)
+    (dired-collapse-mode)
+    (dired-utils-format-information-line-mode)
+    (setq dired-auto-revert-buffer 't)
+    ;; (xah-fly-insert-mode-activate)
+    )
+  (add-hook 'dired-mode-hook 'weiss-dired-mode-setup)
+
   )
-
-(use-package dired-hacks-utils)
-
-(use-package dired-filter)
-
-(use-package dired-avfs)
-
-(use-package dired-open
-  :disabled)
-
-(use-package dired-rainbow
-  :disabled)
-
-(use-package dired-narrow
-  :disabled)
-
-(use-package dired-collapse)
-
-(use-package dired-quick-sort)
-
-(use-package dired-rsync)
-
-;; Colourful dired
-(use-package diredfl
-  :init (diredfl-global-mode 1))
-
-;; Shows icons
-(use-package all-the-icons-dired
-  :diminish
-  :hook (dired-mode . all-the-icons-dired-mode)
-  :config
-  (with-no-warnings
-    (defun my-all-the-icons-dired--display ()
-      "Display the icons of files in a dired buffer."
-      (when dired-subdir-alist
-        (let ((inhibit-read-only t))
-          (save-excursion
-            ;; TRICK: Use TAB to align icons
-            (setq-local tab-width 1)
-            (goto-char (point-min))
-            (while (not (eobp))
-              (when (dired-move-to-filename nil)
-                (insert " ")
-                (let ((file (dired-get-filename 'verbatim t)))
-                  (unless (member file '("." ".."))
-                    (let ((filename (dired-get-filename nil t)))
-                      (if (file-directory-p filename)
-                          (insert (all-the-icons-icon-for-dir filename nil ""))
-                        (insert (all-the-icons-icon-for-file file :v-adjust -0.05))))
-                    ;; Align and keep one space for refeshing after some operations
-                    (insert "\t "))))
-              (forward-line 1))))))
-    (advice-add #'all-the-icons-dired--display
-                :override #'my-all-the-icons-dired--display)))
-
-
 
 (with-eval-after-load "wdired"
   (define-key wdired-mode-map (kbd "C-q") '(lambda()(interactive)(wdired-finish-edit)(xah-fly-command-mode-activate))))
 
-
-
-
-(use-package peep-dired                 ;preview files
-  ;; :disabled                             
-  :init
-  ;; (setq peep-dired-cleanup-eagerly t)   
-  ;; (setq peep-dired-enable-on-directories t)
-  (setq peep-dired-cleanup-on-disable t)
-  (setq peep-dired-ignored-extensions nil)
-  )
-
-(defun weiss-dired-mode-setup ()
-  "to be run as hook for `dired-mode'."
-  (dired-hide-details-mode 1)
-  (dired-collapse-mode)
-  (dired-utils-format-information-line-mode)
-  (setq dired-auto-revert-buffer 't)
-  ;; (xah-fly-insert-mode-activate)
-  )
-(add-hook 'dired-mode-hook 'weiss-dired-mode-setup)
