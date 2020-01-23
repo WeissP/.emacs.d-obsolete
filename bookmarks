@@ -2,7 +2,12 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("Einsammlung"
+(("weiss_calendar.el"
+ (filename . "~/.emacs.d/weiss_calendar.el")
+ (front-context-string . "orward-equal-sig")
+ (rear-context-string . " ;; (\"=\" . xah-f")
+ (position . 1506))
+("Einsammlung"
  (filename . "~/Documents/Org/Einsammlung.org")
  (front-context-string . " erotisch\n** [[h")
  (rear-context-string . "JaC2Hbc3.png]]\n*")

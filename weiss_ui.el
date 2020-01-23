@@ -121,3 +121,4 @@
           (memoize-restore f)
           (memoize f)))
       (message "Reset all-the-icons"))))
+

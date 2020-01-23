@@ -1,4 +1,5 @@
 (use-package pdf-tools
+  ;; need to M-x pdf-tools-install
   :mode ("\\.[pP][dD][fF]\\'" . pdf-view-mode)
   :magic ("%PDF" . pdf-view-mode)
   :init
@@ -39,20 +40,20 @@
        ;; ("6" . xah-select-block)
        ;; ("7" . xah-select-line)
        ;; ("8" . xah-extend-selection)
-       ;; ("9" . xah-select-text-in-quote)
-       ("0" . pdf-view-scale-reset)
+       ("9" . pdf-view-scale-reset)
+       ;; ("0" . pdf-view-scale-reset)
 
        ;; ("a" . execute-extended-command)
        ;; ("b" . xah-toggle-letter-case)
-       ;; ("c" . xah-copy-line-or-region)
+       ("c" . pdf-view-kill-ring-save)
        ("d" . weiss-direct-insert-note)
        ;; ("e" . xah-backward-kill-word)
        ;; ("f" . xah-fly-insert-mode-activate)
        ;; ("g" . xah-delete-current-text-block)
-       ("h" . pdf-view-fit-height-to-window)
+       ("H" . pdf-view-fit-height-to-window)
        ;; ("i" . xah-beginning-of-line-or-block)
-       ("j" . pdf-view-scroll-up-or-next-page)
-       ("k" . pdf-view-scroll-down-or-previous-page)
+       ("j" . (lambda()(interactive)(pdf-view-scroll-up-or-next-page 2)))
+       ("k" . (lambda()(interactive)(pdf-view-scroll-down-or-previous-page 2)))
        ;; ("l" . xah-fly-insert-mode-activate-space-before)
        ;; ("l" . forward-char)
        ;; ("m" . xah-backward-left-bracket)

@@ -148,7 +148,7 @@
   (setq
    ;; lsp-auto-guess-root t        ; Detect project root
    lsp-keep-workspace-alive nil ; Auto-kill LSP server
-   ;; lsp-prefer-flymake nil       ; Use lsp-ui and flycheck
+   lsp-prefer-flymake nil       ; Use lsp-ui and flycheck
    flymake-fringe-indicator-position 'right-fringe)
   :config
 
@@ -185,7 +185,7 @@
                 lsp-ui-doc-border (face-foreground 'default)
                 lsp-eldoc-enable-hover nil ; Disable eldoc displays in minibuffer
 
-                lsp-ui-imenu-enable t
+                lsp-ui-imenu-enable nil
                 lsp-ui-imenu-colors `(,(face-foreground 'font-lock-keyword-face)
                                       ,(face-foreground 'font-lock-string-face)
                                       ,(face-foreground 'font-lock-constant-face)
@@ -261,6 +261,9 @@
   (use-package lsp-java
     :hook (java-mode . (lambda () (require 'lsp-java)))))
 
+;; lsp blacklist
+;; (setf (lsp-session-folders-blacklist (lsp-session)) nil)
+;; (lsp--persist-session (lsp-session))
 
 (provide 'weiss_company)
 

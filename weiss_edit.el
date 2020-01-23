@@ -1,11 +1,10 @@
 (use-package shiftless
-  :straight (shiftless :type git
-                       :host github
-                       :repo "WeissP/shiftless.el")
+  :load-path "/home/weiss/elisp/shiftless.el/"
+  :straight nil
   :config
   (shiftless-programming)
-  (setq shiftless-delay 0.45)
-  (setq shiftless-interval 0.06)
+  (setq shiftless-delay 0.6)
+  (setq shiftless-interval 0.08)
   ;; (advice-add 'sp--post-self-insert-hook-handler :around #'shiftless--prevent-advice)
   (shiftless-mode 1)
   )

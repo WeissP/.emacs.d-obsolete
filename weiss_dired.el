@@ -72,18 +72,18 @@
        ("o" . xah-open-in-external-app)
        ("p" . peep-dired)
        ("q" . quit-window)
-       ("r" . dired-rsync)
-       ("R" . dired-do-rename)
+       ("r" . dired-do-rename)
+       ("R" . dired-rsync)
        ("s" . dired-sort-toggle-or-edit)
        ("S" . hydra-dired-quick-sort/body)
-       ;; ("t" . set-mark-command)
+       ("t" . dired-toggle-marks)
        ("u" . dired-unmark)
        ("U" . dired-unmark-all-marks)
        ;; ("v" . xah-paste-or-paste-previous)
        ;; ("w" . xah-shrink-whitespaces)
        ("x" . dired-do-flagged-delete)
-       ;; ("y" . undo)
-       ;; ("z" . xah-comment-dwim)
+       ;; ("y" . dired-copy-filename-as-kill)
+       ("z" . dired-atool-do-unpack)
        )))
   :config
   (setq
@@ -97,13 +97,14 @@
   ;; Dired listing switches
   ;;  -a : Do not ignore entries starting with .
   ;;  -l : Use long listing format.
+  ;;  -t : sort by time
   ;;  -G : Do not print group names like 'users'
   ;;  -h : Human-readable sizes like 1K, 234M, ..
   ;;  -v : Do natural sort .. so the file names starting with . will show up first.
   ;;  -F : Classify filenames by appending '*' to executables,
   ;;       '/' to directories, etc.
   ;; --group-directories-first
-  (setq dired-listing-switches "-alGh") ; default: "-al"
+  (setq dired-listing-switches "-altGh") ; default: "-al"
   
 
   (use-package dired-hacks-utils)
@@ -111,6 +112,8 @@
   (use-package dired-filter)
 
   (use-package dired-avfs)
+
+  (use-package dired-atool)
 
   (use-package dired-open
     :disabled)
@@ -179,6 +182,7 @@
     (dired-hide-details-mode 1)
     (dired-collapse-mode)
     (dired-utils-format-information-line-mode)
+    (dired-omit-mode)
     (setq dired-auto-revert-buffer 't)
     ;; (xah-fly-insert-mode-activate)
     )

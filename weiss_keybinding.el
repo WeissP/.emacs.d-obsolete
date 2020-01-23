@@ -98,7 +98,7 @@ Version 2019-02-12"
      ;;   ("RET" . newline)
 
      ("'" . xah-cycle-hyphen-underscore-space)
-     ("," . xah-next-window-or-frame)
+     ("," . xah-pop-local-mark-ring)
      ("-" . xah-backward-punct)
      ("." . xah-forward-right-bracket)
      (";" . xah-end-of-line-or-block)
@@ -124,7 +124,7 @@ Version 2019-02-12"
      ("7" . xah-select-line)
      ("8" . xah-extend-selection)
      ("9" . xah-select-text-in-quote)
-     ("0" . xah-pop-local-mark-ring)
+     ("0" . xah-next-window-or-frame)
 
      ("a" . execute-extended-command)
      ("b" . xah-toggle-letter-case)
@@ -266,6 +266,7 @@ Version 2017-07-07"
   (define-key xah-fly-key-map (kbd "!") 'nil)
   ;;  (define-key xah-fly-key-map (kbd_"RET") 'newline)
   (define-key xah-fly-key-map (kbd "V") 'nil)
+  (define-key xah-fly-key-map (kbd "H") 'nil)
   (define-key xah-fly-key-map (kbd "J") 'nil)  
   (define-key xah-fly-key-map (kbd "K") 'nil)  
   (define-key xah-fly-key-map (kbd "S") 'nil)  

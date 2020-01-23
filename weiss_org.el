@@ -232,7 +232,6 @@
    org-capture-templates   '(("o" "org-noter" entry (file "~/Documents/Org/Vorlesungen.org")
                               "* %f \n :PROPERTIES: \n :NOTER_DOCUMENT: %F \n :END: \n [[%F][Filepath]]")
                              )
-   ;; org-startup-indented t
    org-ellipsis (if (char-displayable-p ?) "  " nil)
    org-pretty-entities nil
    org-hide-emphasis-markers t)
@@ -482,6 +481,7 @@ same directory as the org-buffer and insert a link to this file."
   (make-local-variable 'shiftless-upper-rules)
   (shiftless-Umlaut)
   (make-local-variable 'display-line-numbers)
+  (visual-line-mode)
   (setq
    display-line-numbers 'nil)
   ;; (let ((current-prefix-arg '(16)))
