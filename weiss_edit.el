@@ -84,4 +84,10 @@
   (interactive)
   (insert (format-time-string "%d.%m.%Y")))
 
-(use-package yasnippet)
+(defun weiss-insert-dollar()
+  (interactive)
+  (turn-on-org-cdlatex)
+  (insert "$$")
+  (xah-fly-insert-mode-activate)
+  (backward-char)
+  )

@@ -151,19 +151,20 @@
    lsp-prefer-flymake nil       ; Use lsp-ui and flycheck
    flymake-fringe-indicator-position 'right-fringe)
   :config
+  (setq lsp-signature-auto-activate nil) ; disable doc in minibuffer
 
-  ;; ;; Configure LSP clients
-  ;; (use-package lsp-clients
-  ;;   :straight nil
-  ;;   :functions (lsp-format-buffer lsp-organize-imports)
-  ;;   :hook (go-mode . (lambda ()
-  ;;                      "Format and add/delete imports."
-  ;;                      (add-hook 'before-save-hook #'lsp-format-buffer t t)
-  ;;                      (add-hook 'before-save-hook #'lsp-organize-imports t t)))
-  ;;   :init
-  ;;   (setq lsp-clients-python-library-directories '("/usr/local/" "/usr/"))
-  ;;   (unless (executable-find "rls")
-  ;;     (setq lsp-rust-rls-server-command '("rustup" "run" "stable" "rls"))))
+  ;; Configure LSP clients
+  (use-package lsp-clients
+    :straight nil
+    :functions (lsp-format-buffer lsp-organize-imports)
+    :hook (go-mode . (lambda ()
+                       "Format and add/delete imports."
+                       (add-hook 'before-save-hook #'lsp-format-buffer t t)
+                       (add-hook 'before-save-hook #'lsp-organize-imports t t)))
+    :init
+    (setq lsp-clients-python-library-directories '("/usr/local/" "/usr/"))
+    (unless (executable-find "rls")
+      (setq lsp-rust-rls-server-command '("rustup" "run" "stable" "rls"))))
 
   (when (and lsp-auto-configure lsp-auto-require-clients)
     (require 'lsp-clients))
@@ -243,14 +244,14 @@
                     projectile-project-root-files-top-down-recurring))))
 
   (use-package lsp-fsharp
+    ;; :disabled                           
     :straight (lsp-fsharp
                :type git
                :host github
                :repo "emacs-lsp/lsp-mode")
     :hook (fsharp-mode . (lambda () (require 'lsp-fsharp)))
-    ;; :init
-    ;; (setq lsp-fsharp-server-install-dir "~/.emacs.d/lsp-fsharp")
-
+    :init
+    (setq lsp-fsharp-server-install-dir "~/.emacs.d/lsp-fsharp")
     )
 
   ;; Julia support
@@ -259,11 +260,23 @@
 
   ;; Java support
   (use-package lsp-java
-    :hook (java-mode . (lambda () (require 'lsp-java)))))
+    :hook (java-mode . (lambda () (require 'lsp-java))))
+  )
 
 ;; lsp blacklist
 ;; (setf (lsp-session-folders-blacklist (lsp-session)) nil)
 ;; (lsp--persist-session (lsp-session))
+
+;; tabnie
+(use-package company-tabnine
+  :disabled
+  )
+
+(use-package yasnippet
+  :diminish yas-minor-mode
+  :hook (after-init . yas-global-mode)
+  :config (use-package yasnippet-snippets))
+
 
 (provide 'weiss_company)
 

@@ -123,7 +123,7 @@ To solve this problem, when your code only knows the relative path of another fi
     (run-at-time nil (* 5 60) 'snug/recentf-save-list-silence)
 
     (setq
-     ;; recentf-max-menu-items 150
+     recentf-max-menu-items 150
      recentf-max-saved-items 150
      recentf-auto-cleanup '60
      ;; Recentf blacklist
@@ -141,6 +141,7 @@ To solve this problem, when your code only knows the relative path of another fi
   ;;Bookmarks
   (bookmark-delete "org-capture-last-stored")
   (bookmark-delete "org-refile-last-stored")
+  ;; (bookmark-delete "Kunste")
 
   ;; Basic modes
   (ignore-errors (savehist-mode 1))
@@ -217,37 +218,23 @@ To solve this problem, when your code only knows the relative path of another fi
     (end-of-line)
     (eval-last-sexp()))
 
-  ;; (use-package xah-fly-keys
-  ;; :config
-  ;; (xah-fly-keys-set-layout "qwerty")
-  ;; (xah-fly-keys 1)
-  ;; (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
-  ;; )
-
-;; (use-package xah-fly-keys
-;;   :config
-;;   (xah-fly-keys-set-layout "qwerty")
-;;   (xah-fly-keys 1)
-;;   (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
-;;   )
-
-
+  ;; (require 'org)
 
   (load (xah-get-fullpath "weiss_ui"))
   (load (xah-get-fullpath "weiss_edit"))
   (load (xah-get-fullpath "weiss_keybinding"))
-  (load (xah-get-fullpath "weiss_company"))
+  (load (xah-get-fullpath "weiss_completion"))
   (load (xah-get-fullpath "weiss_lang"))
   (load (xah-get-fullpath "weiss_ivy"))
   (load (xah-get-fullpath "weiss_magit"))
-  (load (xah-get-fullpath "weiss_pdf"))   
   (load (xah-get-fullpath "weiss_shell_or_terminal"))
   (load (xah-get-fullpath "weiss_dired"))
   (load (xah-get-fullpath "weiss_org"))   
+  (load (xah-get-fullpath "weiss_pdf"))   
   (load (xah-get-fullpath "weiss_calendar"))
   (load (xah-get-fullpath "weiss_flycheck"))
+  (load (xah-get-fullpath "weiss_translation"))
 
-  ;; (require 'org)
   ;; (update-file-autoloads  "/home/weiss/.emacs.d/autoloads/+org.el" t "/home/weiss/.emacs.d/autoloads/+org-autoloads.el")
   ;; (require '+org-autoloads)
 

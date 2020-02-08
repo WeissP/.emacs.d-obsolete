@@ -58,9 +58,12 @@
   (weiss--define-keys
    weiss-xfk-leader-d-keymap
    '(
+     ("4" . weiss-insert-dollar)
      ("m" . magit-status)
+     ("t" . youdao-dictionary-search-at-point-posframe)
      ("b" . org-babel-tangle)
      ("c" . open-calendar)
+     ("f" . counsel-fzf)
      ("d" . weiss-custom-daily-agenda)
      ("r" . weiss-switch-and-Bookmarks-search)
      ("v" . vterm-other-window)
@@ -267,11 +270,13 @@ Version 2017-07-07"
   ;;  (define-key xah-fly-key-map (kbd_"RET") 'newline)
   (define-key xah-fly-key-map (kbd "V") 'nil)
   (define-key xah-fly-key-map (kbd "H") 'nil)
+  (define-key xah-fly-key-map (kbd "R") 'nil)
   (define-key xah-fly-key-map (kbd "J") 'nil)  
   (define-key xah-fly-key-map (kbd "K") 'nil)  
   (define-key xah-fly-key-map (kbd "S") 'nil)  
   (define-key xah-fly-key-map (kbd "C") 'nil)  
   (define-key xah-fly-key-map (kbd "U") 'nil)  
+  (define-key xah-fly-key-map (kbd "X") 'nil)  
   (define-key xah-fly-key-map (kbd "(") 'nil)  
   (define-key xah-fly-key-map (kbd "<backtab>") 'nil)  
   )

@@ -2,7 +2,27 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("weiss_calendar.el"
+(("manuel"
+ (filename . "~/Documents/Org/org-Manuel-en.org")
+ (front-context-string . "* 1 Introduction")
+ (rear-context-string . ".”\n#+END_QUOTE\n\n")
+ (position . 1064))
+("Entschluss"
+ (filename . "~/Documents/Org/Entschluss.org")
+ (front-context-string)
+ (rear-context-string . "能硬件点评与推荐丨数字尾巴]]\n")
+ (position . 11206))
+("Gedächtnisstütze"
+ (filename . "~/Documents/Org/Gedächtnisstütze.org")
+ (front-context-string . "* Handynummer\n\n+")
+ (rear-context-string)
+ (position . 1))
+("weiss_completion.el"
+ (filename . "~/.emacs.d/weiss_completion.el")
+ (front-context-string . "\n\n\n(provide 'wei")
+ (rear-context-string . "ippet-snippets))")
+ (position . 13102))
+("weiss_calendar.el"
  (filename . "~/.emacs.d/weiss_calendar.el")
  (front-context-string . "orward-equal-sig")
  (rear-context-string . " ;; (\"=\" . xah-f")
@@ -17,11 +37,6 @@
  (front-context-string . "--rename-buffer-")
  (rear-context-string . "))\n\n(defun vterm")
  (position . 295))
-("Zusammenhang"
- (filename . "~/Documents/Org/Zusammenhang.org")
- (front-context-string)
- (rear-context-string . "政治情况也有了不少了解，哈哈。\n")
- (position . 11814))
 ("weiss_lang.el"
  (filename . "~/.emacs.d/weiss_lang.el")
  (front-context-string . ";; Python Mode\n;")
@@ -52,11 +67,6 @@
  (front-context-string . "#+TITLE: Dotfile")
  (rear-context-string)
  (position . 1))
-("weiss_company.el"
- (filename . "~/.emacs.d/weiss_company.el")
- (front-context-string . ";; init-company.")
- (rear-context-string)
- (position . 2))
 ("weiss_edit.el"
  (filename . "~/.emacs.d/weiss_edit.el")
  (front-context-string . "                ")

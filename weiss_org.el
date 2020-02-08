@@ -22,11 +22,11 @@
   :bind
   (
    :map org-mode-map
+   ("M-k" . org-metaup)
    ("M-j" . org-metadown)
-   ("M-k" . org-metaup)                         
-   ("M-h" . org-metaleft)                         
-   ("M-l" . org-metaright)                         
-   ("M-H" . org-shiftmetaleft)                         
+   ("M-h" . org-metaleft)
+   ("M-l" . org-metaright)
+   ("M-H" . org-shiftmetaleft)
    ("M-L" . org-shiftmetaright)
    ("RET" . weiss-org-RET-key)
    ("<shifttab>" . org-shifttab)
@@ -61,7 +61,9 @@
                        (push '("#+TITLE:" . ?🕮) prettify-symbols-alist)
 
                        (push '("#+BEGIN_SRC" . ?✎) prettify-symbols-alist)
-                       (push '("#+END_SRC" . ?□) prettify-symbols-alist)
+                       (push '("#+begin_src" . ?✎) prettify-symbols-alist)
+                       (push '("#+END_SRC" . ?⬝) prettify-symbols-alist)
+                       (push '("#+end_src" . ?⬝) prettify-symbols-alist)
                        (push '("#+BEGIN_QUOTE" . ?») prettify-symbols-alist)
                        (push '("#+END_QUOTE" . ?«) prettify-symbols-alist)
                        (push '("#+HEADERS" . ?☰) prettify-symbols-alist)
@@ -150,6 +152,7 @@
        ;; ("v" . xah-paste-or-paste-previous)
        ;; ("w" . xah-shrink-whitespaces)
        ("x" . org-kill-line)
+       ("X" . org-refile)
        ;; ("y" . undo)
        ;; ("z" . xah-comment-dwim)
        )))
@@ -185,12 +188,15 @@
     (org-agenda nil "b")
     )
 
+  ;; (defun weiss-show-the-days-of-the-week()
+    ;; )
   
   ;; (autoload '+org/dwim-at-point "+org" nil t)
   ;; (bind-key "RET" #'+org/dwim-at-point org-mode-map)
   (setq
    org-directory "~/Documents/Org/"
-   org-agenda-files (list org-directory)
+   org-agenda-files '("/home/weiss/Documents/Org/todo.org")
+   org-agenda-prefix-format "%t %s "     ;hide files name
    org-todo-keywords '((sequence "INPROGRESS(i)" "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c@)"))
    ;; (sequence "⚑(T)" "🏴(I)" "❓(H)" "|" "✔(D)" "✘(C)"))
    org-cycle-max-level 15
@@ -204,12 +210,16 @@
    org-agenda-include-diary t
    org-agenda-window-setup 'current-window
    
+   org-refile-targets (quote (("Kenntnisse.org" :level . 1)
+                              ("todo.org" :maxlevel . 2)
+                              ("Vorlesungen.org" :maxlevel . 2)
+                              ))   
    org-agenda-custom-commands
    '(
      ("c" "Custom agenda"
       ((agenda ""))
       (
-       (org-agenda-tag-filter-preset '("+dailyagenda"))
+       ;; (org-agenda-tag-filter-preset '("+dailyagenda"))
        (org-agenda-hide-tags-regexp (concat org-agenda-hide-tags-regexp "\\|dailyagenda"))
        (org-agenda-span 20)
        ))
@@ -234,11 +244,13 @@
                              )
    org-ellipsis (if (char-displayable-p ?) "  " nil)
    org-pretty-entities nil
-   org-hide-emphasis-markers t)
+   org-hide-emphasis-markers t)         ; hide ** //
   
   :config
-  
-
+  ;; (add-to-list 'org-tag-faces
+  ;; '("Frage" . (:foreground "tomato")))  
+  (font-lock-add-keywords 'org-mode
+                          '(("^.*:Frage:.*$" 0 'font-lock-keyword-face)))
   (set-face-attribute 'bold nil
                       :weight 'bold
                       :underline 'nil
@@ -260,7 +272,7 @@
                       :weight 'normal
                       :slant 'italic
                       :underline 'nil
-                      :foreground "#c0c0c0"
+                      :foreground "#999999"
                       :background nil)
   (set-face-attribute 'org-block nil
                       :background "#fafafa")
@@ -405,16 +417,6 @@ same directory as the org-buffer and insert a link to this file."
                                load-language-list)
 
   ;; (use-package auctex)
-
-  ;; (use-package cdlatex
-  ;;   :init
-  ;;   (plist-put org-format-latex-options :scale 1.5)
-  ;;   (setq cdlatex-math-symbol-alist '(
-  ;;                                     ( ?v  ("\\vee"   "\\vDash"         ))
-  ;;                                     ( ?+  ("\\cup"   "\\equiv"         ))
-  ;;                                     ( ?{  ("\\subset" "\\subseteq"        ))
-  ;;                                     ( ?}  ("\\supset"  "\\supseteq"       ))
-  ;;                                     )
 
 
   ;; Rich text clipboard
@@ -565,7 +567,22 @@ same directory as the org-buffer and insert a link to this file."
        )))
   )
 
+(use-package org-tempo ; for <s expand in org-babel
+  :after org
+  :straight nil
+  )
 
+(use-package cdlatex
+  :after org
+  :init
+  (plist-put org-format-latex-options :scale 1.5)
+  (setq cdlatex-math-symbol-alist '(
+                                    ( ?v  ("\\vee"   "\\vDash"         ))
+                                    ( ?+  ("\\cup"   "\\equiv"         ))
+                                    ( ?{  ("\\subset" "\\subseteq"        ))
+                                    ( ?}  ("\\supset"  "\\supseteq"       ))
+                                    )
+        ))
 
 
 (provide 'weiss_org)

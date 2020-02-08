@@ -1,14 +1,38 @@
 (use-package doom-themes)
 (load-theme 'doom-one-light t)
+;; (load-theme 'doom-tomorrow-day t)
 
 (use-package doom-modeline
   ;; :disabled                            
   ;; :diminish doom-modeline-mode
+  :init
+  ;; (setq doom-modeline-modal-icon nil)
   :hook (after-init . doom-modeline-mode)
   )
 
-(font-lock-add-keywords 'org-mode
-                        '(("^.*:Frage:.*$" . 'font-lock-keyword-face )))
+(use-package dashboard
+  :config
+  (dashboard-setup-startup-hook)
+  (set-face-attribute 'dashboard-footer nil :weight 'semi-light :slant 'italic)
+  (setq dashboard-items '(
+                          (agenda . 25)
+                          )
+        dashboard-init-info
+        (format "[Init: %.2fs] [GC: %dx]"
+                (float-time (time-subtract after-init-time before-init-time))
+                gcs-done)
+        ;; show-week-agenda-p t
+        dashboard-banner-logo-title ""
+        dashboard-startup-banner "/home/weiss/Documents/Org/Bilder/ue-light.png"
+        dashboard-show-shortcuts nil
+        dashboard-footer-icon (all-the-icons-octicon "dashboard"
+                                                     :height 1.1
+                                                     :v-adjust -0.05
+                                                     :face 'font-lock-keyword-face)
+        dashboard-footer (emacs-version)
+        )
+  )
+
 
 ;; (font-lock-add-keywords nil
 ;;                         '(("^.*:Frage:.*$" . 'font-lock-keyword-face )))
@@ -16,7 +40,6 @@
 
 (line-number-mode -1)
 (setq line-number-display-limit-width 200)
-
 ;; (+global-word-wrap-mode t) ;truncate  lines
 
 (use-package emojify
@@ -121,4 +144,6 @@
           (memoize-restore f)
           (memoize f)))
       (message "Reset all-the-icons"))))
+
+
 
