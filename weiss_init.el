@@ -129,6 +129,9 @@ To solve this problem, when your code only knows the relative path of another fi
      ;; Recentf blacklist
      recentf-exclude '(
                        ".*autosave$"
+                       "/ssh:"
+                       ;; "/sudo:"
+                       "recentf$"
                        ".*archive$"
                        ".*.jpg$"
                        ".*.png$"

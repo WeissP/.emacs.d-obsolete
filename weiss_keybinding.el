@@ -27,7 +27,7 @@
 
 (defun weiss-xfk-addon-command ()
   (interactive)
-  (setq xfk-command-flag "t")
+  ;; (setq xfk-command-flag "t")
   ;; f
   (define-key xah-fly-leader-key-map (kbd "f") 'ivy-switch-buffer)
   ;; l-keymap
@@ -140,7 +140,6 @@ Version 2019-02-12"
      ("i" . xah-beginning-of-line-or-block)
      ("j" . next-line)
      ("k" . previous-line)
-     ;; ("l" . xah-fly-insert-mode-activate-space-before)
      ("l" . forward-char)
      ("m" . xah-backward-left-bracket)
      ("n" . swiper-isearch)

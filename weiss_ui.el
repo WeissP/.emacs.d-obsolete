@@ -10,6 +10,27 @@
   :hook (after-init . doom-modeline-mode)
   )
 
+(use-package winner-mode
+  :straight nil
+  :hook (after-init . winner-mode)
+;; (C-c <Left>) winner-undo                
+;; (C-c <Right>) winner-redo
+)
+
+(use-package hideshow
+  :straight nil
+  :diminish hs-minor-mode
+  :bind (:map prog-mode-map
+         ("C-c TAB" . hs-toggle-hiding)
+         ("M-+" . hs-show-all))
+  :hook (prog-mode . hs-minor-mode)
+  :custom
+  (hs-special-modes-alist
+   (mapcar 'purecopy
+           '((c-mode "{" "}" "/[*/]" nil nil)
+             (c++-mode "{" "}" "/[*/]" nil nil)
+             (rust-mode "{" "}" "/[*/]" nil nil)))))
+
 (use-package dashboard
   :config
   (dashboard-setup-startup-hook)

@@ -174,10 +174,9 @@
 
   (defun weiss-org-RET-key ()
     (interactive)
-    (cond
-     ((string= xfk-command-flag "t") (+org/dwim-at-point))
-     ((string= xfk-command-flag "nil") (org-return))
-     (t     (message "other: %s" xfk-command-flag)))
+    (if xah-fly-insert-state-q
+        (org-return)
+      (+org/dwim-at-point))
     )
 
   
@@ -189,7 +188,7 @@
     )
 
   ;; (defun weiss-show-the-days-of-the-week()
-    ;; )
+  ;; )
   
   ;; (autoload '+org/dwim-at-point "+org" nil t)
   ;; (bind-key "RET" #'+org/dwim-at-point org-mode-map)

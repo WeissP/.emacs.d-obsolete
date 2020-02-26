@@ -2,7 +2,12 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("manuel"
+(("Blogeintrag1"
+ (filename . "~/Documents/Vorlesungen/Informatik und Gesellschaft/Blogeintrag1.org")
+ (front-context-string . "\n** 问题\n*** [[htt")
+ (rear-context-string . "Robodoc\n** 诊断机器人")
+ (position . 13955))
+("manuel"
  (filename . "~/Documents/Org/org-Manuel-en.org")
  (front-context-string . "* 1 Introduction")
  (rear-context-string . ".”\n#+END_QUOTE\n\n")

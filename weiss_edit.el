@@ -25,6 +25,7 @@
                             ("enable" "disable")
                             ("increase" "decrease")
                             ("shrink" "enlarge")
+                            ("show" "hide")
                             ("even" "odd"))))
 
 (use-package hydra
@@ -44,7 +45,9 @@
     ("j" next-error "next")
     ("k" previous-error "prev")
     ("v" recenter-top-bottom "recenter")
-    ("q" nil "quit")))
+    ("q" nil "quit"))
+  )
+
 
 (defun weiss-indent()
   (interactive)
