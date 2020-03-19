@@ -1,6 +1,6 @@
 ;;; xah-fly-keys.el --- ergonomic modal keybinding minor mode. -*- coding: utf-8; lexical-binding: t; -*-
 
-;; forked from weiss
+;; forked from xah-fly-keys
 
 ;; Copyright © 2013-2019, by Xah Lee
 
@@ -42,11 +42,39 @@ Version 2019-02-12"
    (lambda ($pair)
      (define-key @keymap-name (kbd (car $pair)) (cdr $pair))) @key-cmd-alist))
 
+(defun open-line-and-indent ()
+  "open line and indent"
+  (interactive)
+  (open-line 1)
+  (weiss-indent)
+  )
+
+(defun weiss-xah-comment-dwim ()
+  "Auto activate insert mode. Like `comment-dwim', but toggle comment if cursor is not at end of line.
+
+URL `http://ergoemacs.org/emacs/emacs_toggle_comment_by_line.html'
+Version 2016-10-25"
+  (interactive)
+  (if (region-active-p)
+      (comment-dwim nil)
+    (let (($lbp (line-beginning-position))
+          ($lep (line-end-position)))
+      (if (eq $lbp $lep)
+          (progn
+            (comment-dwim nil))
+        (if (eq (point) $lep)
+            (progn
+              (comment-dwim nil)
+              (xah-fly-insert-mode-activate)
+              )
+          (progn
+            (comment-or-uncomment-region $lbp $lep)
+            (forward-line )))))))
+
 (defun weiss-eval-last-sexp()
   (interactive)
   (end-of-line)
   (eval-last-sexp()))
-
 
 (defun weiss-replace-in-command-mode()
   "Weiss-replace-in-command-mode."
@@ -57,8 +85,17 @@ Version 2019-02-12"
     )
   ;; (hydra-insert-in-command-mode/body)
   (insert (read-string "replace with: "))
+  (backward-char)
   )
 
+(defun weiss-dired-toggle-read-only ()
+  "DOCSTRING"
+  (interactive)
+  (remove-hook 'dired-after-readin-hook 'all-the-icons-dired--display t)
+  (revert-buffer)
+  (dired-toggle-read-only)
+  (xah-fly-command-mode-activate)
+  )
 ;; keymaps
 
 ;; (defvar xah-fly-swapped-1-8-and-2-7-p nil "If non-nil, it means keys 1 and 8 are swapped, and 2 and 7 are swapped. See: http://xahlee.info/kbd/best_number_key_layout.html")
@@ -69,19 +106,23 @@ Version 2019-02-12"
 (xah-fly--define-keys
  (define-prefix-command 'xah-fly-dot-keymap)
  ;; 2019-02-22 experiment. this is now empty. so you can use this key space for all major mode custom keys or personal keys. These highlight command isn't used much in my experience
- '()
- ;; '(
- ;;   ("." . highlight-symbol-at-point)
- ;;   ("g" . unhighlight-regexp)
- ;;   ("c" . highlight-lines-matching-regexp)
- ;;   ("h" . highlight-regexp)
- ;;   ("t" . highlight-phrase)
- ;;   ("p" . isearch-forward-symbol-at-point)
- ;;   ;; ("c" . isearch-forward-symbol)
- ;;   ;; ("h" . isearch-forward-word)
+ '(
+   ("p" . narrow-to-page)
+   ("x" . widen)
+   ("r" . narrow-to-region)
+   ("d" . narrow-to-defun)
+   ;; '(
+   ;;   ("." . highlight-symbol-at-point)
+   ;;   ("g" . unhighlight-regexp)
+   ;;   ("c" . highlight-lines-matching-regexp)
+   ;;   ("h" . highlight-regexp)
+   ;;   ("t" . highlight-phrase)
+   ;;   ("p" . isearch-forward-symbol-at-point)
+   ;;   ;; ("c" . isearch-forward-symbol)
+   ;;   ;; ("h" . isearch-forward-word)
 
- ;;   ;;
- ;;   )
+   ;;   ;;
+   )
  )
 
 (xah-fly--define-keys
@@ -118,11 +159,12 @@ Version 2019-02-12"
  (define-prefix-command 'xah-fly-i-keymap)
  '(
    ("e" . find-file)
-   ("e" . weiss-insert-date)
+   ("m" . all-the-icons-insert)
+   ("d" . weiss-insert-date)
    ("f" . xah-open-file-at-cursor)
    ("g" . xah-copy-file-path)
-   ("j" . recentf-open-files)
-   ("n" . new-frame)
+   ("j" . counsel-recentf)
+   ("n" . make-frame-command)
    ("o" . bookmark-bmenu-list)
    ("p" . bookmark-set)
    ("w" . xah-open-in-external-app)
@@ -139,45 +181,52 @@ Version 2019-02-12"
  (define-prefix-command 'xah-fly-d-keymap)
  '(
    ("4" . weiss-insert-dollar)
-   ("m" . magit-status)
-   ("t" . youdao-dictionary-search-at-point-posframe)
+   ("a" . weiss-custom-daily-agenda)
    ("b" . org-babel-tangle)
-   ("c" . open-calendar)
+   ("c" . calendar)
+   ("d" . weiss-switch-and-Bookmarks-search)
    ("f" . counsel-fzf)
-   ("d" . weiss-custom-daily-agenda)
-   ("r" . weiss-switch-and-Bookmarks-search)
-   ("v" . vterm-other-window)
+   ("t" . telega)
+   ;; ("s" . youdao-dictionary-search-at-point-posframe)
+   ;; ("j" . youdao-dictionary-search-from-input)
+   ;; ("v" . youdao-dictionary-play-voice-at-point)
+   ("s" . yasdcv-translate-at-point)
+   ("j" . yasdcv-translate-input)
+   ("v" . youdao-dictionary-play-voice-at-point)
+   ("m" . magit-status)
    )
  )
 
 (weiss--define-keys
  (define-prefix-command 'xah-fly-j-keymap)
  '(
-   ("z" . Info-goto-emacs-command-node)
+   ("K" . Info-goto-emacs-key-command-node)
    ("a" . apropos-command)
    ("b" . describe-bindings)
    ("c" . describe-char)
    ("d" . apropos-documentation)
    ("e" . view-echo-area-messages)
-   ("f" . describe-face)
+   ("f" . describe-function)
    ("g" . info-lookup-symbol)
-   ("h" . describe-function)
+   ("h" . describe-face)
    ("i" . info)
    ("j" . man)
    ("k" . describe-key)
-   ("K" . Info-goto-emacs-key-command-node)
    ("l" . view-lossage)
    ("m" . xah-describe-major-mode)
-   ("n" . describe-variable)
+   ("n" . apropos-value)
    ("o" . describe-language-environment)
    ("p" . finder-by-keyword)
    ("r" . apropos-variable)
    ("s" . describe-syntax)
    ("u" . elisp-index-search)
-   ("v" . apropos-value)
-   ("z" . describe-coding-system)))
+   ("v" . describe-variable)
+   ("x" . describe-coding-system)
+   ("z" . Info-goto-emacs-command-node)
+   ))
 
 (weiss--define-keys
+ ;; toggle & shell
  (define-prefix-command 'xah-fly-l-keymap)
  '(
    ("SPC" . whitespace-mode)
@@ -186,44 +235,23 @@ Version 2019-02-12"
    ;; DEL
    ("," . abbrev-mode)
    ("." . toggle-frame-fullscreen)
-   ("'" . frame-configuration-to-register)
-   (";" . window-configuration-to-register)
-   ("1" . set-input-method)
-   ("2" . global-hl-line-mode)
-   ("4" . global-display-line-numbers-mode)
-   ("5" . visual-line-mode)
-   ("6" . calendar)
-   ("7" . calc)
-   ;; 8
-   ("9" . shell-command)
    ("0" . shell-command-on-region)
-   ("a" . text-scale-adjust)
+   ("7" . calc)
+   ("C" . toggle-case-fold-search)
    ("b" . toggle-debug-on-error)
-   ("c" . toggle-case-fold-search)
-   ("d" . narrow-to-page)
+   ("c" . dired-collapse-mode)
    ("e" . eshell)
-   ;; f
-   ("g" . xah-toggle-read-novel-mode)
-   ("h" . widen)
-   ("i" . make-frame-command)
-   ("j" . flyspell-buffer)
-   ("k" . menu-bar-open)
-   ("l" . toggle-word-wrap)
-   ("m" . dired-collapse-mode)
-   ("n" . narrow-to-region)
-   ("o" . variable-pitch-mode)
-   ;; ("p" . weiss-org-latex-preview-all)
-   ;; p
-   ;; q
-   ("r" . '(lambda()(interactive)(dired-toggle-read-only)(xah-fly-command-mode-activate)))
-   ;; s
-   ("t" . narrow-to-defun)
-   ("u" . shell)
-   ;; v
-   ("w" . eww)
-   ("x" . save-some-buffers)
-   ;; y
-   ("z" . abort-recursive-edit)))
+   ("h" . global-hl-line-mode)
+   ("l" . visual-line-mode)             ;wrap-line
+   ("m" . shell-command)
+   ("n" . global-display-line-numbers-mode)
+   ("p" . weiss-org-latex-preview-all)
+   ("r" . weiss-dired-toggle-read-only)
+   ("v" . vterm-other-window)
+   ("w" . toggle-word-wrap)
+   ))
+
+
 
 (weiss--define-keys
  ;; kinda replacement related
@@ -231,27 +259,31 @@ Version 2019-02-12"
  '(
    ("SPC" . rectangle-mark-mode)
    ("," . apply-macro-to-region-lines)
-   ("." . kmacro-start-macro)
+   ("m" . kmacro-start-macro)
    ("3" . number-to-register)
    ("4" . increment-register)
-   ("c" . yank-rectangle)
+   ("c" . copy-rectangle-as-kill)
+   ("v" . yank-rectangle)
    ("d" . delete-rectangle)
-   ("e" . call-last-kbd-macro)
-   ("g" . kill-rectangle)
-   ("l" . clear-rectangle)
-   ("i" . xah-space-to-newline)
+   ("/" . call-last-kbd-macro)
+   ("k" . kill-rectangle)
+   ;; ("s" . clear-rectangle)              ;clear with space
+   ("f" . xah-space-to-newline)
    ("n" . rectangle-number-lines)
-   ("o" . open-rectangle)
-   ("p" . kmacro-end-macro)
+   ("o" . open-rectangle)               ;add space
+   ("." . kmacro-end-macro)
    ("r" . replace-rectangle)
-   ("u" . xah-quote-lines)
-   ("y" . delete-whitespace-rectangle)))
+   ("q" . xah-quote-lines)
+   ;; ("y" . delete-whitespace-rectangle)
+   ))
 
 (weiss--define-keys
  (define-prefix-command 'xah-fly-k-keymap)
  '(
    ("SPC" . xah-clean-whitespace)
    ("TAB" . move-to-column)
+
+   ("-" . xah-cycle-hyphen-underscore-space)
 
    ("1" . xah-append-to-register-1)
    ("2" . xah-clear-register-1)
@@ -262,9 +294,9 @@ Version 2019-02-12"
    ("8" . xah-clear-register-1)
    ("7" . xah-append-to-register-1)
 
-   ("." . sort-lines)
-   ("," . sort-numeric-fields)
-   ("'" . reverse-region)
+   ("s" . sort-lines)
+   ("0" . sort-numeric-fields)
+   ("S" . reverse-region)
    ;; a
    ;; b
    ("c" . goto-char)
@@ -272,22 +304,22 @@ Version 2019-02-12"
    ("e" . list-matching-lines)
    ("f" . goto-line )
    ;; g
-   ("h" . xah-close-current-buffer )
+   ;; ("h" . xah-close-current-buffer)
    ("i" . delete-non-matching-lines)
-   ("j" . copy-to-register)
-   ("k" . insert-register)
+   ("j" . kill-current-buffer)
+   ;; ("k" . insert-register)
    ("l" . xah-escape-quotes)
    ("m" . xah-make-backup-and-save)
    ("n" . repeat-complex-command)
    ;; o
-   ("p" . query-replace-regexp)
-   ;; q
-   ("r" . copy-rectangle-to-register)
+   ("r" . anzu-query-replace-regexp)
+   ("q" . xah-reformat-lines)
+   ;; ("r" . copy-rectangle-to-register)
    ;; s
    ("t" . repeat)
    ("u" . delete-matching-lines)
    ;; v
-   ("w" . xah-next-window-or-frame)
+   ;; ("w" . xah-next-window-or-frame)
    ;; x
    ("y" . delete-duplicate-lines)
    ;; z
@@ -297,9 +329,12 @@ Version 2019-02-12"
  (define-prefix-command 'xah-fly-e-keymap)
  '(
    ("a" . weiss-org-screenshot)
+   ("e" . snails-eaf-backends)
    ("c" . org-capture)
+   ("f" . eaf-open-browser)
    ("o" . org-noter)
    ("s" . org-noter-sync-current-note)
+   ("l" . org-insert-link)
    )
  )
 
@@ -316,26 +351,47 @@ Version 2019-02-12"
    ("w" . delete-frame)
    ("j" . xah-run-current-file)))
 
-;; (weiss--define-keys
-;;  (define-prefix-command 'xah-coding-system-keymap)
-;;  '(
-;;    ("n" . set-file-name-coding-system)
-;;    ("s" . set-next-selection-coding-system)
-;;    ("c" . universal-coding-system-argument)
-;;    ("f" . set-buffer-file-coding-system)
-;;    ("k" . set-keyboard-coding-system)
-;;    ("l" . set-language-environment)
-;;    ("p" . set-buffer-process-coding-system)
-;;    ("r" . revert-buffer-with-coding-system)
-;;    ("t" . set-terminal-coding-system)
-;;    ("x" . set-selection-coding-system)))
+(weiss--define-keys
+ (define-prefix-command 'xah-coding-system-keymap)
+ '(
+   ("n" . set-file-name-coding-system)
+   ("s" . set-next-selection-coding-system)
+   ("c" . universal-coding-system-argument)
+   ("f" . set-buffer-file-coding-system)
+   ("k" . set-keyboard-coding-system)
+   ("l" . set-language-environment)
+   ("p" . set-buffer-process-coding-system)
+   ("r" . revert-buffer-with-coding-system)
+   ("t" . set-terminal-coding-system)
+   ("x" . set-selection-coding-system)))
 
 (weiss--define-keys
  ;; kinda replacement related
  (define-prefix-command 'xah-fly-w-keymap)
  '(
    ("k" . xref-find-definitions)
-   ("l" . xref-pop-marker-stack)))
+   ("l" . xref-pop-marker-stack)
+   ("y" . winner-undo)                  ;windows setting
+   ("r" . winner-redo)
+   ))
+
+(weiss--define-keys
+ ;; abbrev
+ (define-prefix-command 'xah-fly-v-keymap)
+ '(
+   ;; ("1" . abbrev-prefix-mark)
+   ("e" . edit-abbrevs)
+   ("s" . abbrev-edit-save-buffer)
+   ;; ("3" . expand-abbrev)
+   ;; ("4" . expand-region-abbrevs)
+   ;; ("5" . unexpand-abbrev)
+   ("g" . add-global-abbrev)
+   ("m" . add-mode-abbrev)
+   ;; ("8" . inverse-add-global-abbrev)
+   ;; ("9" . inverse-add-mode-abbrev)
+   ;; ("0" . expand-jump-to-next-slot)
+   ;; ("=" . expand-jump-to-previous-slot)
+   ))
 
 (weiss--define-keys
  (define-prefix-command 'xah-fly-leader-key-map)
@@ -360,7 +416,7 @@ Version 2019-02-12"
    ("d" . xah-fly-d-keymap)
    ("c" . xah-copy-all-or-region)
    ("e" . xah-fly-e-keymap)
-   ("f" . switch-to-buffer)
+   ("f" . execute-extended-command)
    ("g" . kill-line)
    ("h" . beginning-of-buffer)
    ("i" . xah-fly-i-keymap)
@@ -372,15 +428,15 @@ Version 2019-02-12"
    ("o" . xah-fly-o-keymap)
    ("p" . recenter-top-bottom)
    ("q" . xah-fill-or-unfill)
-   ("r" . query-replace)
+   ("r" . anzu-query-replace)
    ("s" . exchange-point-and-mark)
    ("t" . xah-show-kill-ring)
    ("u" . isearch-forward)
-   ("v" . xah-paste-or-paste-previous)
+   ("v" . xah-fly-v-keymap)
    ("w" . xah-fly-w-keymap)
    ("x" . xah-cut-all-or-region)
    ("y" . xah-search-current-word)
-   ;; z                                    
+   ("z" . xah-coding-system-keymap)
    ))
 
 
@@ -528,12 +584,13 @@ Version 2019-02-12"
   (progn
     (define-key xah-fly-key-map (kbd "<home>") 'xah-fly-command-mode-activate)
     (define-key xah-fly-key-map (kbd "<menu>") 'xah-fly-command-mode-activate)
+    (define-key xah-fly-key-map (kbd "<f12>") 'xah-fly-command-mode-activate)
     (define-key xah-fly-key-map (kbd "<f8>") 'xah-fly-command-mode-activate-no-hook)
 
     (define-key xah-fly-key-map (kbd "<f9>") xah-fly-leader-key-map)
 
     (define-key xah-fly-key-map (kbd "<f11>") 'xah-previous-user-buffer)
-    (define-key xah-fly-key-map (kbd "<f12>") 'xah-next-user-buffer)
+    ;; (define-key xah-fly-key-map (kbd "<f12>") 'xah-next-user-buffer)
     (define-key xah-fly-key-map (kbd "<C-f11>") 'xah-previous-emacs-buffer)
     (define-key xah-fly-key-map (kbd "<C-f12>") 'xah-next-emacs-buffer))
 
@@ -550,62 +607,7 @@ Version 2019-02-12"
     ;;
     )
   ;;
-  (when xah-fly-use-control-key
-    (progn
-
-      (define-key xah-fly-key-map (kbd "<C-S-prior>") 'xah-previous-emacs-buffer)
-      (define-key xah-fly-key-map (kbd "<C-S-next>") 'xah-next-emacs-buffer)
-
-      (define-key xah-fly-key-map (kbd "<C-tab>") 'xah-next-user-buffer)
-      (define-key xah-fly-key-map (kbd "<C-S-tab>") 'xah-previous-user-buffer)
-      (define-key xah-fly-key-map (kbd "<C-S-iso-lefttab>") 'xah-previous-user-buffer)
-
-      (define-key xah-fly-key-map (kbd "C-SPC") 'xah-fly-leader-key-map)
-
-      (define-key xah-fly-key-map (kbd "<C-prior>") 'xah-previous-user-buffer)
-      (define-key xah-fly-key-map (kbd "<C-next>") 'xah-next-user-buffer)
-
-      ;; (if xah-fly-swapped-1-8-and-2-7-p
-      ;;     (progn
-      ;;       (define-key xah-fly-key-map (kbd "C-2") 'xah-previous-user-buffer)
-      ;;       (define-key xah-fly-key-map (kbd "C-1") 'xah-next-user-buffer))
-      ;;   (progn
-      ;;     (define-key xah-fly-key-map (kbd "C-7") 'xah-previous-user-buffer)
-      ;;     (define-key xah-fly-key-map (kbd "C-8") 'xah-next-user-buffer)))
-
-      (define-key xah-fly-key-map (kbd "C-9") 'scroll-down-command)
-      (define-key xah-fly-key-map (kbd "C-0") 'scroll-up-command)
-
-      (define-key xah-fly-key-map (kbd "C-1") 'xah-next-user-buffer)
-      (define-key xah-fly-key-map (kbd "C-2") 'xah-previous-user-buffer)
-      (define-key xah-fly-key-map (kbd "C-7") 'xah-previous-user-buffer)
-      (define-key xah-fly-key-map (kbd "C-8") 'xah-next-user-buffer)
-
-      (define-key xah-fly-key-map (kbd "C-5") 'xah-previous-emacs-buffer)
-      (define-key xah-fly-key-map (kbd "C-6") 'xah-next-emacs-buffer)
-
-      (define-key xah-fly-key-map (kbd "C-3") 'previous-error)
-      (define-key xah-fly-key-map (kbd "C-4") 'next-error)
-
-      (define-key xah-fly-key-map (kbd "C-a") 'mark-whole-buffer)
-      (define-key xah-fly-key-map (kbd "C-n") 'xah-new-empty-buffer)
-      (define-key xah-fly-key-map (kbd "C-S-n") 'make-frame-command)
-      (define-key xah-fly-key-map (kbd "C-o") 'find-file)
-      (define-key xah-fly-key-map (kbd "C-s") 'save-buffer)
-      (define-key xah-fly-key-map (kbd "C-S-s") 'write-file)
-      (define-key xah-fly-key-map (kbd "C-S-t") 'xah-open-last-closed)
-      (define-key xah-fly-key-map (kbd "C-v") 'yank)
-      (define-key xah-fly-key-map (kbd "C-w") 'xah-close-current-buffer)
-      (define-key xah-fly-key-map (kbd "C-z") 'undo)
-
-      (define-key xah-fly-key-map (kbd "C-+") 'text-scale-increase)
-      (define-key xah-fly-key-map (kbd "C--") 'text-scale-decrease)
-
-      (define-key xah-fly-key-map (kbd "C-d") 'pop-global-mark)
-      (define-key xah-fly-key-map (kbd "C-t") 'xah-pop-local-mark-ring)
-
-      ;;
-      ))
+  
 
   (progn
     (when xah-fly-use-meta-key
@@ -629,14 +631,15 @@ Version 2019-02-12"
 
      ("'" . xah-cycle-hyphen-underscore-space)
      ("," . xah-pop-local-mark-ring)
-     ("-" . xah-backward-punct)
+     ("-" . outline-show-entry)
+     ("=" . color-outline-toggle-all)
      ("." . xah-forward-right-bracket)
      (";" . xah-end-of-line-or-block)
      ("/" . xah-goto-matching-bracket)
      ("\\" . nil)
-     ;; ("=" . xah-forward-equal-sign)
-     ("[" . hippie-expand )
-     ("]" . nil)
+     ("[" . hs-toggle-hiding)
+     ("]" . hs-hide-all)
+     ("}" . hs-show-all)
      ("`" . other-frame)
 
      ("<backtab>" . weiss-indent)
@@ -656,7 +659,7 @@ Version 2019-02-12"
      ("9" . xah-select-text-in-quote)
      ("0" . xah-next-window-or-frame)
 
-     ("a" . execute-extended-command)
+     ("a" . open-line-and-indent)
      ("b" . xah-toggle-letter-case)
      ("c" . xah-copy-line-or-region)
      ("d" . xah-delete-backward-char-or-bracket-text)
@@ -672,16 +675,16 @@ Version 2019-02-12"
      ("n" . swiper-isearch)
      ("o" . forward-word)
      ("p" . weiss-insert-line)
-     ("q" . xah-reformat-lines)
+     ("q" . weiss-replace-in-command-mode)
      ("r" . xah-kill-word)
-     ("s" . open-line)
+     ("s" . snails-normal-backends)
      ("t" . set-mark-command)
      ("u" . backward-word)
      ("v" . xah-paste-or-paste-previous)
      ("w" . xah-shrink-whitespaces)
      ("x" . xah-cut-line-or-region)
      ("y" . undo)
-     ("z" . xah-comment-dwim)
+     ("z" . weiss-xah-comment-dwim)
      )))
 
 (defun weiss-xfk-command-mode-init ()
@@ -700,11 +703,7 @@ Version 2017-01-21"
    ((eq major-mode 'cfw:details-mode) (weiss-calendar-command-mode-define-keys))
    (t nil)
    )
-  (define-key xah-fly-key-map (kbd (xah-fly--key-char "a"))
-    (cond ((fboundp 'smex) 'smex)
-          ((fboundp 'helm-M-x) 'helm-M-x)
-          ((fboundp 'counsel-M-x) 'counsel-M-x)
-          (t 'execute-extended-command)))
+  
 
   ;; (when xah-fly-swapped-1-8-and-2-7-p
   ;;     (xah-fly--define-keys
@@ -746,7 +745,7 @@ Version 2018-05-07"
      ("SPC" . nil)
      ;; ("SPC" . xah-fly-space-key)
      ("DEL" . nil)
-     
+
      ("<backtab>" . nil)
 
      ("'" . nil)
@@ -760,6 +759,7 @@ Version 2018-05-07"
      ("[" . nil)
      ("\\" . nil)
      ("]" . nil)
+     ("}" . nil)
      ("`" . nil)
      ("~" . nil)
 
@@ -870,15 +870,6 @@ Version 2017-07-07"
   (interactive)
   (weiss-xfk-command-mode-init))
 
-(defun change-keybinding (prev cur)
-  (interactive)
-  ;; (message "a")                         
-  (if (minibuffer-window-active-p (selected-window))
-      nil (xah-fly-command-mode-activate))
-  )
-
-(add-hook 'switch-buffer-functions 'change-keybinding) 
-
 (defun xah-fly-insert-mode-activate ()
   "Activate insertion mode.
 Version 2017-07-07"
@@ -904,6 +895,16 @@ Version 2017-07-07"
   (insert " ")
   (xah-fly-insert-mode-activate)
   (left-char))
+
+(defun xah-command-mode-p ()
+  "DOCSTRING"
+  (interactive)
+  (if xah-fly-insert-state-q
+      nil
+    t
+    )
+  )
+
 
 
 
@@ -943,6 +944,16 @@ URL `http://ergoemacs.org/misc/ergoemacs_vi_mode.html'"
   (xah-fly-insert-mode-activate)
   (xah-fly-keys 0))
 
-(provide 'xah-fly-keys)
+(defun change-keybinding ()
+  (interactive)
+  ;; (message "a")
+  (if (or (eq major-mode 'eaf-edit-mode) (eq major-mode 'snails-mode) (eq major-mode 'eaf-mode) (eq major-mode 'calc-mode) (minibuffer-window-active-p (selected-window)))
+      (xah-fly-insert-mode-activate) 
+    (xah-fly-command-mode-activate))
+  )
 
-;;; xah-fly-keys.el ends here
+;; (add-hook 'switch-buffer-functions 'change-keybinding)
+
+(provide 'weiss_xfk)
+
+;;; weiss_xfk.el ends here

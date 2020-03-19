@@ -31,4 +31,6 @@
 (use-package fsharp-mode)
 
 (use-package php-mode)
-;; (use-package xah-elisp-mode)
+
+(use-package xah-elisp-mode)
+

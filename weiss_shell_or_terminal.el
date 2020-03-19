@@ -6,6 +6,7 @@
              :repo "manateelazycat/aweshell"))
 
 (use-package vterm
+  :disabled
   :config
   (setq vterm-shell "zsh")
   (add-hook 'vterm-set-title-functions 'vterm--rename-buffer-as-title))

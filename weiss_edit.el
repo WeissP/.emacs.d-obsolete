@@ -1,5 +1,5 @@
 (use-package shiftless
-  :load-path "/home/weiss/elisp/shiftless.el/"
+  :load-path "/home/weiss/.emacs.d/local-package/shiftless.el"
   :straight nil
   :config
   (shiftless-programming)
@@ -25,6 +25,7 @@
                             ("enable" "disable")
                             ("increase" "decrease")
                             ("shrink" "enlarge")
+                            ("copy" "yank")
                             ("show" "hide")
                             ("even" "odd"))))
 
@@ -94,3 +95,5 @@
   (xah-fly-insert-mode-activate)
   (backward-char)
   )
+
+ (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)

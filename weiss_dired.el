@@ -10,6 +10,7 @@
      ("v" . (lambda()(interactive)(find-file "/home/weiss/Documents/Vorlesungen")))
      ("m" . (lambda()(interactive)(find-file "/run/media/weiss")))
      ("c" . (lambda()(interactive)(find-file "/home/weiss/.config")))
+     ("e" . (lambda()(interactive)(find-file "/home/weiss/.emacs.d")))
      )
    )  
   (defun weiss-dired-command-mode-define-keys ()
@@ -54,7 +55,7 @@
        ("9" . dired-hide-details-mode)
        ;; ("0" . xah-pop-local-mark-ring)
 
-       ;; ("a" . execute-extended-command)
+       ("a" . dired-sort-toggle-or-edit)
        ;; ("b" . xah-toggle-letter-case)
        ("c" . dired-do-copy)
        ("C" . dired-do-compress-to)
@@ -67,6 +68,7 @@
        ("j" . dired-next-line)
        ("k" . dired-previous-line)
        ("l" . dired-find-alternate-file)
+       ("L" . dired-do-symlink)
        ("m" . dired-mark)
        ;; ("n" . swiper-isearch)
        ("o" . xah-open-in-external-app)
@@ -74,7 +76,7 @@
        ("q" . quit-window)
        ("r" . dired-do-rename)
        ("R" . dired-rsync)
-       ("s" . dired-sort-toggle-or-edit)
+       ;; ("s" . dired-sort-toggle-or-edit)
        ("S" . hydra-dired-quick-sort/body)
        ("t" . dired-toggle-marks)
        ("u" . dired-unmark)
@@ -111,9 +113,9 @@
 
   (use-package dired-filter)
 
-  (use-package dired-avfs)
+  (use-package dired-avfs)              ;archive browsing
 
-  (use-package dired-atool)
+  (use-package dired-atool)             ;compress
 
   (use-package dired-open
     :disabled)
@@ -191,5 +193,5 @@
   )
 
 (with-eval-after-load "wdired"
-  (define-key wdired-mode-map (kbd "C-q") '(lambda()(interactive)(wdired-finish-edit)(xah-fly-command-mode-activate))))
+  (define-key wdired-mode-map (kbd "C-q") '(lambda()(interactive)(wdired-finish-edit)(add-hook 'dired-after-readin-hook 'all-the-icons-dired--display t t)(all-the-icons-dired--display)(dired-revert)(xah-fly-command-mode-activate))))
 

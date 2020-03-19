@@ -3,26 +3,26 @@
 ;; (load-theme 'doom-tomorrow-day t)
 
 (use-package doom-modeline
-  ;; :disabled                            
   ;; :diminish doom-modeline-mode
   :init
   ;; (setq doom-modeline-modal-icon nil)
   :hook (after-init . doom-modeline-mode)
   )
+(doom-modeline-mode)
 
 (use-package winner-mode
   :straight nil
   :hook (after-init . winner-mode)
-;; (C-c <Left>) winner-undo                
-;; (C-c <Right>) winner-redo
-)
+  ;; (C-c <Left>) winner-undo                
+  ;; (C-c <Right>) winner-redo
+  )
 
 (use-package hideshow
   :straight nil
   :diminish hs-minor-mode
   :bind (:map prog-mode-map
-         ("C-c TAB" . hs-toggle-hiding)
-         ("M-+" . hs-show-all))
+              ("C-c TAB" . hs-toggle-hiding)
+              ("M-+" . hs-show-all))
   :hook (prog-mode . hs-minor-mode)
   :custom
   (hs-special-modes-alist
@@ -63,8 +63,15 @@
 (setq line-number-display-limit-width 200)
 ;; (+global-word-wrap-mode t) ;truncate  lines
 
+
 (use-package emojify
   ;; :hook (after-init . global-emojify-mode)
+  )
+
+(use-package anzu
+  ;; :hook (after-init . )
+  :config
+  (global-anzu-mode +1)
   )
 
 ;; ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓highlight-indent-guides
@@ -103,6 +110,12 @@
                      :repo "cireu/elispfl")
   :hook (elisp-mode . elispfl-mode))
 
+(use-package color-outline
+  ;; :disabled                             
+  :load-path "/home/weiss/.emacs.d/local-package/"
+  :straight nil
+  )
+
 ;; Fonts
 (defun font-installed-p (font-name)
   "Check if font with FONT-NAME is available."
@@ -133,6 +146,9 @@
 (use-package all-the-icons
   :if (display-graphic-p)
   :config
+  (add-to-list 'all-the-icons-mode-icon-alist '(xah-elisp-mode all-the-icons-fileicon "elisp" :height 1.0 :v-adjust -0.2 :face all-the-icons-purple))
+  (add-to-list 'all-the-icons-mode-icon-alist '(eaf-mode all-the-icons-alltheicon "atom" :height 1.0 :v-adjust -0.2 :face all-the-icons-purple))
+  (add-to-list 'all-the-icons-mode-icon-alist '(debugger-mode all-the-icons-faicon "bug" :height 1.0 :v-adjust -0.2 :face all-the-icons-purple))
   (with-no-warnings
     ;; FIXME: Align the directory icons
     ;; @see https://github.com/domtronn/all-the-icons.el/pull/173

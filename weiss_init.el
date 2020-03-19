@@ -5,7 +5,7 @@
       (gc-cons-threshold most-positive-fixnum)
       ;; 清空避免加载远程文件的时候分析文件。
       (file-name-handler-alist nil))
-
+  (require 'cl-lib)
 ;;; straight.el
   (setq
    straight-recipes-gnu-elpa-use-mirror    t
@@ -52,26 +52,10 @@
 
 
   (defun xah-get-fullpath (@file-relative-path)
-    "Return the full path of *file-relative-path, relative to caller's file location.
-
-Example: If you have this line
- (xah-get-fullpath \"../xyz.el\")
-in the file at
- /home/mary/emacs/emacs_lib.el
-then the return value is
- /home/mary/xyz.el
-Regardless how or where emacs_lib.el is called.
-
-This function solves 2 problems.
-
-① If you have file A, that calls the `load' on a file at B, and B calls `load' on file C using a relative path, then Emacs will complain about unable to find C. Because, emacs does not switch current directory with `load'.
-
-To solve this problem, when your code only knows the relative path of another file C, you can use the variable `load-file-name' to get the current file's full path, then use that with the relative path to get a full path of the file you are interested.
-
-② To know the current file's full path, emacs has 2 ways: `load-file-name' and `buffer-file-name'. If the file is loaded by `load', then `load-file-name' works but `buffer-file-name' doesn't. If the file is called by `eval-buffer', then `load-file-name' is nil. You want to be able to get the current file's full path regardless the file is run by `load' or interactively by `eval-buffer'."
-
     (concat (file-name-directory (or load-file-name buffer-file-name)) @file-relative-path)
     )
+
+  (add-to-list 'load-path "/home/weiss/.emacs.d/local-package/")
 
   (setq-default c-basic-offset   4
                 tab-width        4
@@ -89,6 +73,7 @@ To solve this problem, when your code only knows the relative path of another fi
 
 
   ;; UI
+  (setq initial-frame-alist (quote ((fullscreen . maximized)))) 
   (unless (eq window-system 'ns)
     (menu-bar-mode -1))
   (when (fboundp 'tool-bar-mode)
@@ -120,7 +105,7 @@ To solve this problem, when your code only knows the relative path of another fi
           (recentf-cleanup)))
       (message ""))
     :config
-    (run-at-time nil (* 5 60) 'snug/recentf-save-list-silence)
+    ;; (run-at-time nil (* 5 60) 'snug/recentf-save-list-silence)
 
     (setq
      recentf-max-menu-items 150
@@ -144,7 +129,7 @@ To solve this problem, when your code only knows the relative path of another fi
   ;;Bookmarks
   (bookmark-delete "org-capture-last-stored")
   (bookmark-delete "org-refile-last-stored")
-  ;; (bookmark-delete "Kunste")
+  ;; (bookmark-delete "Emacs China")
 
   ;; Basic modes
   (ignore-errors (savehist-mode 1))
@@ -221,6 +206,11 @@ To solve this problem, when your code only knows the relative path of another fi
     (end-of-line)
     (eval-last-sexp()))
 
+  ;; abbrev
+  (setq-default abbrev-mode t)
+  (setq save-abbrevs 'silently)
+  
+
   ;; (require 'org)
 
   (load (xah-get-fullpath "weiss_ui"))
@@ -234,18 +224,30 @@ To solve this problem, when your code only knows the relative path of another fi
   (load (xah-get-fullpath "weiss_dired"))
   (load (xah-get-fullpath "weiss_org"))   
   (load (xah-get-fullpath "weiss_pdf"))   
-  (load (xah-get-fullpath "weiss_calendar"))
+  ;; (load (xah-get-fullpath "weiss_calendar"))
   (load (xah-get-fullpath "weiss_flycheck"))
   (load (xah-get-fullpath "weiss_translation"))
-
+  (load (xah-get-fullpath "weiss_eaf"))
+  (load (xah-get-fullpath "weiss_snails"))
+  (load (xah-get-fullpath "weiss_rime"))
+  (load (xah-get-fullpath "weiss_telega"))
+  
+  ;; (setq tramp-verbose '6)
   ;; (update-file-autoloads  "/home/weiss/.emacs.d/autoloads/+org.el" t "/home/weiss/.emacs.d/autoloads/+org-autoloads.el")
   ;; (require '+org-autoloads)
 
   ;; (weiss-xfk-addon-command)               
 
-  ;; (add-hook 'prog-mode-hook 'xah-fly-command-mode-activate)
+  (add-hook 'prog-mode-hook 'color-outline-mode)
   ;; (add-hook 'elisp-mode-hook 'xah-fly-command-mode-activate)
   ;; (add-hook 'org-mode-hook 'xah-fly-command-mode-activate)
 
+  (add-hook 'switch-buffer-functions 
+            (lambda (prev cur) 
+              (interactive)
+              (change-keybinding)
+              ;; (weiss-activate-rime)
+              ))
   )
+
 

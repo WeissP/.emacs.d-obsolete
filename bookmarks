@@ -1,12 +1,65 @@
-;;;; Emacs Bookmark Format Version 1 ;;;; -*- coding: utf-8-emacs -*- 
+;;;; Emacs Bookmark Format Version 1 ;;;; -*- coding: utf-8-emacs -*-
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("Blogeintrag1"
- (filename . "~/Documents/Vorlesungen/Informatik und Gesellschaft/Blogeintrag1.org")
- (front-context-string . "\n** 问题\n*** [[htt")
- (rear-context-string . "Robodoc\n** 诊断机器人")
- (position . 13955))
+(("weiss_telega.el"
+ (filename . "~/.emacs.d/weiss_telega.el")
+ (front-context-string)
+ (rear-context-string . "any-botcmd))))))")
+ (position . 456))
+(" YouTube"
+ (handler . eaf--bookmark-restore)
+ (eaf-app . "browser")
+ (filename . "https://www.youtube.com/"))
+(" rime-CustomizationGuide"
+ (handler . eaf--bookmark-restore)
+ (eaf-app . "browser")
+ (filename . "https://github.com/rime/home/wiki/CustomizationGuide"))
+("weiss_rime.el"
+ (filename . "~/.emacs.d/weiss_rime.el")
+ (front-context-string)
+ (rear-context-string . "-method \"rime\"))")
+ (position . 77))
+("weiss_translation.el"
+ (filename . "~/.emacs.d/weiss_translation.el")
+ (front-context-string . "\n  ;; Enable Cac")
+ (rear-context-string . "ionary\n  :config")
+ (position . 41))
+(" Github - Your Stars"
+ (handler . eaf--bookmark-restore)
+ (eaf-app . "browser")
+ (filename . "https://github.com/WeissP?tab=stars"))
+(" Telegram Web"
+ (handler . eaf--bookmark-restore)
+ (eaf-app . "browser")
+ (filename . "https://web.telegram.org/#/im"))
+(" WhatsApp"
+ (handler . eaf--bookmark-restore)
+ (eaf-app . "browser")
+ (filename . "https://web.whatsapp.com/"))
+(" 发现 - 新·品葱"
+ (handler . eaf--bookmark-restore)
+ (eaf-app . "browser")
+ (filename . "https://pincong.rocks/"))
+(" Emacs China"
+ (handler . eaf--bookmark-restore)
+ (eaf-app . "browser")
+ (filename . "https://emacs-china.org/"))
+("weiss_snails.el"
+ (filename . "~/.emacs.d/weiss_snails.el")
+ (front-context-string . "\n             )\n")
+ (rear-context-string . "o-byte-compile t")
+ (position . 189))
+("weiss_eaf.el"
+ (filename . "~/.emacs.d/weiss_eaf.el")
+ (front-context-string)
+ (rear-context-string . "n-framework\"\n)\n\n")
+ (position . 85))
+("weiss_xfk.el"
+ (filename . "~/.emacs.d/weiss_xfk.el")
+ (front-context-string . "  (setq xah-fly-")
+ (rear-context-string . ")))\n\n  (progn\n  ")
+ (position . 129719))
 ("manuel"
  (filename . "~/Documents/Org/org-Manuel-en.org")
  (front-context-string . "* 1 Introduction")
@@ -77,11 +130,6 @@
  (front-context-string . "                ")
  (rear-context-string . "   :host github\n")
  (position . 93))
-("xah-fly-keys.el"
- (filename . "~/.emacs.d/straight/repos/xah-fly-keys/xah-fly-keys.el")
- (front-context-string . "\n;; This file is")
- (rear-context-string . "cs_vi_mode.html\n")
- (position . 418))
 ("weiss_magit.el"
  (filename . "~/.emacs.d/weiss_magit.el")
  (front-context-string . ")\n\n;;;;;;;;;;;;;")
