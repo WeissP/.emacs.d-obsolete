@@ -97,7 +97,11 @@
      (dolist (file recentf-list)
        (when (and
               (> (length input) 2)
-              (snails-match-input-p input file))
+              (or 
+               (snails-match-input-p input file)
+               (and (string-match "\\/$" file) (snails-match-input-p input (concat "di " file)))
+               )
+              )
          (snails-add-candiate 'candidates (snails-wrap-file-icon file) file)))
      (snails-sort-candidates input candidates 1 1)
      candidates))

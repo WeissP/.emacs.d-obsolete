@@ -39,7 +39,7 @@
  (lambda (input)
    (let (candidates)
      (when (and (ignore-errors (require 'eaf))
-                (> (length input) 3))
+                (> (length input) 2))
        (let ((head (substring input 0 3))
              (tail (substring input 3))
              )

@@ -2,8 +2,21 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("weiss_telega.el"
- (filename . "~/.emacs.d/weiss_telega.el")
+((" ∑ Xah Code"
+ (handler . eaf--bookmark-restore)
+ (eaf-app . "browser")
+ (filename . "http://xahlee.info/"))
+("weiss_help_mode.el"
+ (filename . "~/.emacs.d/config/weiss_help_mode.el")
+ (front-context-string . "\n(defun weiss-he")
+ (rear-context-string . "ntent)\n    ))\n\n\n")
+ (position . 231))
+(" 徐大sao的个人空间 - 哔哩哔哩 ( ゜- ゜)つロ 乾杯~ Bilibili"
+ (handler . eaf--bookmark-restore)
+ (eaf-app . "browser")
+ (filename . "https://space.bilibili.com/390461123?spm_id_from=333.788.b_765f7570696e666f.2"))
+("weiss_telega.el"
+ (filename . "~/.emacs.d/config/weiss_telega.el")
  (front-context-string)
  (rear-context-string . "any-botcmd))))))")
  (position . 456))
@@ -16,12 +29,12 @@
  (eaf-app . "browser")
  (filename . "https://github.com/rime/home/wiki/CustomizationGuide"))
 ("weiss_rime.el"
- (filename . "~/.emacs.d/weiss_rime.el")
+ (filename . "~/.emacs.d/config/weiss_rime.el")
  (front-context-string)
  (rear-context-string . "-method \"rime\"))")
  (position . 77))
 ("weiss_translation.el"
- (filename . "~/.emacs.d/weiss_translation.el")
+ (filename . "~/.emacs.d/config/weiss_translation.el")
  (front-context-string . "\n  ;; Enable Cac")
  (rear-context-string . "ionary\n  :config")
  (position . 41))
@@ -46,127 +59,127 @@
  (eaf-app . "browser")
  (filename . "https://emacs-china.org/"))
 ("weiss_snails.el"
- (filename . "~/.emacs.d/weiss_snails.el")
+ (filename . "~/.emacs.d/config/weiss_snails.el")
  (front-context-string . "\n             )\n")
  (rear-context-string . "o-byte-compile t")
  (position . 189))
 ("weiss_eaf.el"
- (filename . "~/.emacs.d/weiss_eaf.el")
+ (filename . "~/.emacs.d/config/weiss_eaf.el")
  (front-context-string)
  (rear-context-string . "n-framework\"\n)\n\n")
  (position . 85))
 ("weiss_xfk.el"
- (filename . "~/.emacs.d/weiss_xfk.el")
+ (filename . "~/.emacs.d/config/weiss_xfk.el")
  (front-context-string . "  (setq xah-fly-")
  (rear-context-string . ")))\n\n  (progn\n  ")
  (position . 129719))
-("manuel"
+("manuel.org"
  (filename . "~/Documents/Org/org-Manuel-en.org")
  (front-context-string . "* 1 Introduction")
  (rear-context-string . ".”\n#+END_QUOTE\n\n")
  (position . 1064))
-("Entschluss"
+("Entschluss.org"
  (filename . "~/Documents/Org/Entschluss.org")
  (front-context-string)
  (rear-context-string . "能硬件点评与推荐丨数字尾巴]]\n")
  (position . 11206))
-("Gedächtnisstütze"
+("Gedächtnisstütze.org"
  (filename . "~/Documents/Org/Gedächtnisstütze.org")
  (front-context-string . "* Handynummer\n\n+")
  (rear-context-string)
  (position . 1))
 ("weiss_completion.el"
- (filename . "~/.emacs.d/weiss_completion.el")
+ (filename . "~/.emacs.d/config/weiss_completion.el")
  (front-context-string . "\n\n\n(provide 'wei")
  (rear-context-string . "ippet-snippets))")
  (position . 13102))
 ("weiss_calendar.el"
- (filename . "~/.emacs.d/weiss_calendar.el")
+ (filename . "~/.emacs.d/config/weiss_calendar.el")
  (front-context-string . "orward-equal-sig")
  (rear-context-string . " ;; (\"=\" . xah-f")
  (position . 1506))
-("Einsammlung"
+("Einsammlung.org"
  (filename . "~/Documents/Org/Einsammlung.org")
  (front-context-string . " erotisch\n** [[h")
  (rear-context-string . "JaC2Hbc3.png]]\n*")
  (position . 34640))
 ("weiss_shell_or_terminal.el"
- (filename . "~/.emacs.d/weiss_shell_or_terminal.el")
+ (filename . "~/.emacs.d/config/weiss_shell_or_terminal.el")
  (front-context-string . "--rename-buffer-")
  (rear-context-string . "))\n\n(defun vterm")
  (position . 295))
 ("weiss_lang.el"
- (filename . "~/.emacs.d/weiss_lang.el")
+ (filename . "~/.emacs.d/config/weiss_lang.el")
  (front-context-string . ";; Python Mode\n;")
  (rear-context-string)
  (position . 1))
 ("weiss_pdf.el"
- (filename . "~/.emacs.d/weiss_pdf.el")
+ (filename . "~/.emacs.d/config/weiss_pdf.el")
  (front-context-string . "minor-modes', `p")
  (rear-context-string . "df-tools-enable-")
  (position . 2296))
 ("weiss_org.el"
- (filename . "~/.emacs.d/weiss_org.el")
+ (filename . "~/.emacs.d/config/weiss_org.el")
  (front-context-string . "\n  ;; ;; Pomodor")
  (rear-context-string . "tline-level 2))\n")
  (position . 12180))
-("todo"
+("todo.org"
  (filename . "~/Documents/Org/todo.org")
  (front-context-string . "#+TAGS: jederzei")
  (rear-context-string . "ROPERTIES STATE\n")
  (position . 36))
 ("weiss_ivy.el"
- (filename . "~/.emacs.d/weiss_ivy.el")
+ (filename . "~/.emacs.d/config/weiss_ivy.el")
  (front-context-string . ";;; init-ivy.el ")
  (rear-context-string)
  (position . 1))
-("Dotfiles"
+("Dotfiles.org"
  (filename . "~/Documents/Org/Dotfiles.org")
  (front-context-string . "#+TITLE: Dotfile")
  (rear-context-string)
  (position . 1))
 ("weiss_edit.el"
- (filename . "~/.emacs.d/weiss_edit.el")
+ (filename . "~/.emacs.d/config/weiss_edit.el")
  (front-context-string . "                ")
  (rear-context-string . "   :host github\n")
  (position . 93))
 ("weiss_magit.el"
- (filename . "~/.emacs.d/weiss_magit.el")
+ (filename . "~/.emacs.d/config/weiss_magit.el")
  (front-context-string . ")\n\n;;;;;;;;;;;;;")
  (rear-context-string . " 'weiss_magit.el")
  (position . 6812))
-("Journey"
+("Journey.org"
  (filename . "~/Documents/Org/Journey.org")
  (front-context-string . "* Diary\n* Journe")
  (rear-context-string)
  (position . 1))
-("Kenntnisse"
+("Kenntnisse.org"
  (filename . "~/Documents/Org/Kenntnisse.org")
  (front-context-string . "eitung\n** CSS: C")
  (rear-context-string . "公用品最好的例子。\n\n* Anl")
  (position . 67886))
-("Vorlesungen"
+("Vorlesungen.org"
  (filename . "~/Documents/Org/Vorlesungen.org")
  (front-context-string . "* Modellierung v")
  (rear-context-string . "wendungsschicht\n")
  (position . 89245))
 ("weiss_ui.el"
- (filename . "~/.emacs.d/weiss_ui.el")
+ (filename . "~/.emacs.d/config/weiss_ui.el")
  (front-context-string)
  (rear-context-string . " 'doom-one-light")
  (position . 54))
 ("weiss_dired.el"
- (filename . "~/.emacs.d/weiss_dired.el")
+ (filename . "~/.emacs.d/config/weiss_dired.el")
  (front-context-string . "\n  \"to be run as")
  (rear-context-string . "ed-mode-setup ()")
  (position . 112))
 ("weiss_init.el"
- (filename . "~/.emacs.d/weiss_init.el")
+ (filename . "~/.emacs.d/config/weiss_init.el")
  (front-context-string . ";;; ~/Documents/")
  (rear-context-string)
  (position . 1))
 ("weiss_keybinding.el"
- (filename . "~/.emacs.d/weiss_keybinding.el")
+ (filename . "~/.emacs.d/config/weiss_keybinding.el")
  (front-context-string . ";;; ~/Documents/")
  (rear-context-string)
  (position . 1))

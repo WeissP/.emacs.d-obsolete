@@ -105,6 +105,10 @@
        " *temp file*"
        "*dashboard*"
        "*straight-process*"
+       " *telega-server*"
+       "*tramp/"
+       " *Org todo*"
+       " *popwin dummy*"
        ))
 
 (setq snails-backend-filter-buffer-blacklist-RegEx 
@@ -137,14 +141,11 @@
     )
   )
 
-(defun check-if-eaf-buffer (buf)
-  "Check if buf is in EAF mode"
+(defun filter--check-if-mode (buf mode)
+  "Check if buf is in some mode. mode is a string"
   (interactive)
-  (if (string-match "eaf" (format "%s" (with-current-buffer buf major-mode)))
-      t
-    nil
-    )
-  )
+  (string-match mode (format "%s" (with-current-buffer buf major-mode))))
+
 
 (defun weiss-snails-wrap-buffer-icon-with-eaf (buf)
   "Wrap display name with buffer icon and add ᛝEAFᛝ"
@@ -168,23 +169,24 @@
      ;; (let ((rest-buffer-list (cdr (buffer-list))))
      ;; (dolist (buf rest-buffer-list)
      (dolist (buf (buffer-list))
-       (let ((eafbufferp (check-if-eaf-buffer buf)))
-         (when (and
-                (snails-backend-filter-buffer-not-blacklist-buffer buf)
-                (snails-backend-filter-buffer-not-blacklist-buffer-RegEx buf)
-                (not
-                 (string-match current-buf-name (buffer-name buf))
-                 )
-                (or
-                 (string-equal input "")
-                 (snails-match-input-p input (buffer-name buf))
-                 (and eafbufferp (snails-match-input-p input (concat "eaf" (buffer-name buf))))
-                 ))
-           (if eafbufferp
-               (snails-add-candiate 'candidates (weiss-buffer-name-limit (weiss-snails-wrap-buffer-icon-with-eaf buf) 60)  (buffer-name buf))
-             (snails-add-candiate 'candidates (weiss-buffer-name-limit (snails-wrap-buffer-icon buf) 60) (buffer-name buf))
-             )
-           )))
+       (when (and
+              (snails-backend-filter-buffer-not-blacklist-buffer buf)
+              (snails-backend-filter-buffer-not-blacklist-buffer-RegEx buf)
+              (not  (or 
+                     (string= current-buf-name (buffer-name buf))
+                     (and (filter--check-if-mode buf "org") (snails-match-input-p input "org"))
+                     ))
+              (or
+               (string-equal input "")
+               (snails-match-input-p input (buffer-name buf))
+               (and (filter--check-if-mode buf "eaf") (snails-match-input-p input (concat "eaf " (buffer-name buf))))
+               (and (filter--check-if-mode buf "dired") (snails-match-input-p input (concat "di " (buffer-name buf))))
+               ))
+         (snails-add-candiate 'candidates (weiss-buffer-name-limit (snails-wrap-buffer-icon buf) 60) (buffer-name buf))
+         ;; (if eafbufferp
+         ;; (snails-add-candiate 'candidates (weiss-buffer-name-limit (weiss-snails-wrap-buffer-icon-with-eaf buf) 60)  (buffer-name buf))
+         ;; (snails-add-candiate 'candidates (weiss-buffer-name-limit (snails-wrap-buffer-icon buf) 60) (buffer-name buf)))
+         ))
      (snails-sort-candidates input candidates 1 1)
      candidates))
 

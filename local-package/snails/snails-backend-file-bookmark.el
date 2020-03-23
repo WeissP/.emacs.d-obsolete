@@ -4,6 +4,11 @@
 
 ;;; Code:
 
+(defun filter--check-if-mode (buf mode)
+  "Check if buf is in some mode. mode is a string"
+  (interactive)
+  (string-match mode (format "%s" (with-current-buffer buf major-mode))))
+
 (snails-create-sync-backend
  :name
  "FILE-BOOKMARK"
@@ -13,9 +18,11 @@
    (let (candidates)
      (dolist (bookmark (bookmark-all-names))
        (when (and 
-              (> (length input) 2)
-              (not (string-match " " bookmark))
-              (not (string-match "snails tips" bookmark))
+              (> (length input) 1)
+              (not (or 
+                    (string-match " " bookmark)
+                    (and (snails-match-input-p input "org" ) (string-match "\\.org$" bookmark) )
+                    ))
               (or
                (string-equal input "")
                (snails-match-input-p input bookmark))

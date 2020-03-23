@@ -1,4 +1,4 @@
-(load "~/.emacs.d/weiss_init.el")
+(load "~/.emacs.d/config/weiss_init.el")
 
 
 (put 'dired-find-alternate-file 'disabled nil)
