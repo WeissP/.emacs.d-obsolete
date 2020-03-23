@@ -7,7 +7,6 @@
 
 (defun preview--play-video (video-name-with-path)
   "Start video always at 300s and without sound"
-  (interactive)
   (eaf-open video-name-with-path)
   ;; (eaf-proxy-mute)
   ;; (eaf-proxy-set_preview_time)
@@ -15,12 +14,10 @@
 
 (defun preview--check-if-playable (video-name-with-path)
   "check if this file's extension is in eaf-video-extension-list"
-  (interactive)
   (string-match "\\(mp4\\|rmvb\\|ogg\\|avi\\|mkv\\)" (file-name-extension video-name-with-path)))
 
 (defun preview--play-video-background (current-dired-buf video-name-with-path)
   "Start video background always at 300s and without sound"
-  (interactive)
   (when (preview--check-if-playable video-name-with-path)
     (setq eaf--monitor-configuration-p nil)
     (preview--play-video video-name-with-path)
@@ -30,7 +27,6 @@
 
 (defun preview--kill-all-video-buffer (current-video-name-with-path)
   "Kill all video buffer. FIXME: Now can only kill all eaf buffer"
-  (interactive)
   (dolist (x (buffer-list) nil)
     (when (and (string-match "eaf" (format "%s" (with-current-buffer x major-mode)))
                (not (string-match (buffer-name x) current-video-name-with-path)))
@@ -41,7 +37,6 @@
 ② kill all the video buffer without current video
 ③ open the next video background
 "
-  (interactive)
   (if nextp
       (dired-next-line 1)
     (dired-previous-line 1)
@@ -112,7 +107,6 @@
 
 (defun check-cursor-color (prev sur)
   "if preview mode is on, change the cursor color"
-  (interactive)
   (if dired-video-preview-mode
       (set-cursor-color "orange")
     (set-cursor-color "#4078f2")
