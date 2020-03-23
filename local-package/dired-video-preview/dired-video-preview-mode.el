@@ -1,5 +1,4 @@
 ;; dired-video-preview-mode.el --- preview video with eaf.	-*- lexical-binding: t -*-
-;; (dired-file-name-at-point)
 (require 'eaf)
 
 (add-to-list 'eaf-js-video-player-keybinding '("p" . "set_preview_time"))
@@ -10,16 +9,19 @@
   "Start video always at 300s and without sound"
   (interactive)
   (eaf-open video-name-with-path)
-  ;; (sleep-for 0.8)
   ;; (eaf-proxy-mute)
-  (eaf-proxy-set_preview_time)
-  ;; (sleep-for 5)
+  ;; (eaf-proxy-set_preview_time)
   )
+
+(defun preview--check-if-playable (video-name-with-path)
+  "check if this file's extension is in eaf-video-extension-list"
+  (interactive)
+  (string-match "\\(mp4\\|rmvb\\|ogg\\|avi\\|mkv\\)" (file-name-extension video-name-with-path)))
 
 (defun preview--play-video-background (current-dired-buf video-name-with-path)
   "Start video background always at 300s and without sound"
   (interactive)
-  (when (string-match "\\.mp4" video-name-with-path)
+  (when (preview--check-if-playable video-name-with-path)
     (setq eaf--monitor-configuration-p nil)
     (preview--play-video video-name-with-path)
     (switch-to-buffer current-dired-buf)
@@ -47,28 +49,17 @@
   (let ((current-video-name-without-path (file-name-nondirectory (dired-file-name-at-point)))
         (current-video-name-with-path (dired-file-name-at-point))
         (current-dired-buf (current-buffer)))
+    
+    (when (preview--check-if-playable current-video-name-with-path)
+      (other-window 1)
+      (eaf-open current-video-name-with-path) ; eaf will auto check if this file is open
+      (eaf-proxy-set_preview_time)    
+      (other-window 1)
+      )
 
-    (other-window 1)
-    
-    ;; (if (get-buffer current-video-name-without-path)
-    ;;     ;; (switch-to-buffer-other-window current-video-name-without-path) ; due to some unknow resaon, some times will focus not go back.
-    ;;     ;; (progn
-    ;;     (switch-to-buffer current-video-name-without-path)
-    ;;   ;; )
-    ;;   (when (string-match "\\.mp4" current-video-name-without-path)
-    ;;     ;; (progn
-    ;;     ;; (other-window 1)
-    ;;     ;; (message "no current video!")
-    ;;     (preview--play-video current-video-name-with-path)
-    ;;     ;; (eaf-open current-video-name)
-    ;;     ))
-    (eaf-open current-video-name-with-path) ; eaf will auto check if this file is open
-    ;; (eaf-proxy-mute)
-    ;; (eaf-proxy-set_preview_time)
-    
     (preview--kill-all-video-buffer current-video-name-with-path)
-    (other-window 1)
 
+    
     (preview--play-video-background current-dired-buf next-video-name-with-path)
 
 
@@ -88,13 +79,27 @@
   (play-video-in-other-window (dired-file-name-at-point) t)
   )
 
-
-
 (defun toggle-play-video-in-other-window ()
   "toggle video in other window"
   (interactive)
   (other-window 1)
   (eaf-proxy-toggle_play)
+  (other-window 1)
+  )
+
+(defun forward-video-in-other-window ()
+  "forward video in other window"
+  (interactive)
+  (other-window 1)
+  (eaf-proxy-forward)
+  (other-window 1)
+  )
+
+(defun backward-video-in-other-window ()
+  "backward video in other window"
+  (interactive)
+  (other-window 1)
+  (eaf-proxy-backward)
   (other-window 1)
   )
 
@@ -144,8 +149,6 @@
 (provide 'dired-video-preview-mode)
 ;;; dired-video-preview-mode.el ends here
 
-(defun weiss-test ()
-  "DOCSTRING"
-  (interactive)
-  (call-process video-preview-next-file))
+
+
 
