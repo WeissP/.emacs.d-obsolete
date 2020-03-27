@@ -96,7 +96,7 @@
    (let (candidates)
      (dolist (file recentf-list)
        (when (and
-              (> (length input) 2)
+              (> (length input) 1)
               (or 
                (snails-match-input-p input file)
                (and (string-match "\\/$" file) (snails-match-input-p input (concat "di " file)))

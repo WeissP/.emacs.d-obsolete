@@ -111,12 +111,30 @@
        " *popwin dummy*"
        ))
 
+(setq snails-backend-filter-buffer-whitelist
+      (list
+       "*scratch*"
+       "*Messages*"
+       "backup_"
+       ;; "*eaf*"
+       "*Telega Root*"
+       ))
+
 (setq snails-backend-filter-buffer-blacklist-RegEx 
       (list
-       "\*....\-....\-....\-....\-....\-....\-...."
+       ;; "\*....\-....\-....\-....\-....\-....\-...."
+       "\*.*" 
        ;; ".*"
        )
       )
+
+(defun snails-backend-filter-buffer-whitelist-buffer (buf)
+  (let ((r nil))
+    (dolist (whitelist-buf snails-backend-filter-buffer-whitelist r)
+      (when (string-prefix-p whitelist-buf (buffer-name buf))
+        (setq r t)))
+    )
+  )
 
 (defun snails-backend-filter-buffer-not-blacklist-buffer (buf)
   (catch 'failed
@@ -169,19 +187,21 @@
      ;; (let ((rest-buffer-list (cdr (buffer-list))))
      ;; (dolist (buf rest-buffer-list)
      (dolist (buf (buffer-list))
-       (when (and
-              (snails-backend-filter-buffer-not-blacklist-buffer buf)
-              (snails-backend-filter-buffer-not-blacklist-buffer-RegEx buf)
-              (not  (or 
-                     (string= current-buf-name (buffer-name buf))
-                     (and (filter--check-if-mode buf "org") (snails-match-input-p input "org"))
-                     ))
-              (or
-               (string-equal input "")
-               (snails-match-input-p input (buffer-name buf))
-               (and (filter--check-if-mode buf "eaf") (snails-match-input-p input (concat "eaf " (buffer-name buf))))
-               (and (filter--check-if-mode buf "dired") (snails-match-input-p input (concat "di " (buffer-name buf))))
-               ))
+       (when (and (not  (or 
+                         (string= current-buf-name (buffer-name buf))
+                         (and (filter--check-if-mode buf "org") (snails-match-input-p input "org"))
+                         ))
+                  (or (and (snails-backend-filter-buffer-whitelist-buffer buf)
+                           (snails-match-input-p input (buffer-name buf)))
+                      (and
+                       ;; (snails-backend-filter-buffer-not-blacklist-buffer buf)
+                       (snails-backend-filter-buffer-not-blacklist-buffer-RegEx buf)
+                       (or
+                        (string-equal input "")
+                        (snails-match-input-p input (buffer-name buf))
+                        (and (filter--check-if-mode buf "eaf") (snails-match-input-p input (concat "eaf " (buffer-name buf))))
+                        (and (filter--check-if-mode buf "dired") (snails-match-input-p input (concat "di " (buffer-name buf))))
+                        ))))
          (snails-add-candiate 'candidates (weiss-buffer-name-limit (snails-wrap-buffer-icon buf) 60) (buffer-name buf))
          ;; (if eafbufferp
          ;; (snails-add-candiate 'candidates (weiss-buffer-name-limit (weiss-snails-wrap-buffer-icon-with-eaf buf) 60)  (buffer-name buf))

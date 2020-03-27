@@ -2,7 +2,17 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-((" ∑ Xah Code"
+(("weiss_web.el"
+ (filename . "~/.emacs.d/config/weiss_web.el")
+ (front-context-string)
+ (rear-context-string . "nk)\n    )\n  )\n\n\n")
+ (position . 1862))
+("weiss_abbrevs.el"
+ (filename . "~/.emacs.d/config/weiss_abbrevs.el")
+ (front-context-string . ")\\n x\\n)\" xah-el")
+ (rear-context-string . "\"let\" \"(let ((▮)")
+ (position . 17445))
+(" ∑ Xah Code"
  (handler . eaf--bookmark-restore)
  (eaf-app . "browser")
  (filename . "http://xahlee.info/"))

@@ -9,11 +9,20 @@
   :init
   ;; (setq doom-modeline-modal-icon nil)
   (setq doom-modeline-window-width-limit fill-column)
-  (setq doom-modeline-minor-modes t)
+  ;; (setq doom-modeline-minor-modes t)
   (diminish 'abbrev-mode)
   :hook (after-init . doom-modeline-mode)
   )
 ;; (doom-modeline-mode)
+
+(defhydra resize-window (global-map "M-w")
+    "resize window"
+    ("k" shrink-window "height+")
+    ("j" enlarge-window "height-")
+    ("h" shrink-window-horizontally "width-")
+    ("l" enlarge-window-horizontally "width+")
+    ("q" nil "quit")
+    )
 
 (use-package winner-mode ; save window layouts 
   :diminish

@@ -214,7 +214,20 @@
   (setq save-abbrevs 'silently)
   
 
-  ;; (require 'org)
+  (use-package hydra 
+    :diminish
+    )
+
+  (defun read-char-picky (prompt chars &optional inherit-input-method seconds)
+    "Read characters like in `read-char-exclusive', but if input is
+not one of CHARS, return nil.  CHARS may be a list of characters,
+single-character strings, or a string of characters."
+    (let ((chars (mapcar (lambda (x)
+                           (if (characterp x) x (string-to-char x)))
+                         (append chars nil)))
+          (char  (read-char-exclusive prompt inherit-input-method seconds)))
+      (when (memq char chars)
+        (char-to-string char))))
 
   (load (xah-get-fullpath "weiss_ui"))
   (load (xah-get-fullpath "weiss_edit"))
@@ -224,6 +237,7 @@
   (load (xah-get-fullpath "weiss_ivy"))
   (load (xah-get-fullpath "weiss_magit"))
   (load (xah-get-fullpath "weiss_shell_or_terminal"))
+  (load (xah-get-fullpath "weiss_web"))
   (load (xah-get-fullpath "weiss_eaf"))
   (load (xah-get-fullpath "weiss_dired"))
   (load (xah-get-fullpath "weiss_org"))   
@@ -234,7 +248,7 @@
   (load (xah-get-fullpath "weiss_snails"))
   (load (xah-get-fullpath "weiss_rime"))
   (load (xah-get-fullpath "weiss_telega"))
-  ;;  (load (xah-get-fullpath "weiss_web"))
+  (load (xah-get-fullpath "weiss_abbrevs"))
   
   ;; (setq tramp-verbose '6)
   ;; (update-file-autoloads  "/home/weiss/.emacs.d/autoloads/+org.el" t "/home/weiss/.emacs.d/autoloads/+org-autoloads.el")
@@ -252,5 +266,7 @@
               ;; (weiss-activate-rime)
               ))
   )
+
+
 
 

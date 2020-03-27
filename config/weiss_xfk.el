@@ -78,7 +78,7 @@ Version 2016-10-25"
   (let ((current-buffer-content (buffer-string))
         (current-buffer-name (buffer-name))
         )
-    (setq newBuf (generate-new-buffer (format "*%s_backup*" current-buffer-name)))
+    (setq newBuf (generate-new-buffer (format "backup_%s" current-buffer-name)))
     (set-buffer newBuf)
     (insert current-buffer-content)
     (when (eq 'major-mode 'help-mode) (quit-window))
@@ -397,18 +397,10 @@ Version 2016-10-25"
  ;; abbrev
  (define-prefix-command 'xah-fly-v-keymap)
  '(
-   ;; ("1" . abbrev-prefix-mark)
-   ("e" . edit-abbrevs)
-   ("s" . abbrev-edit-save-buffer)
-   ;; ("3" . expand-abbrev)
-   ;; ("4" . expand-region-abbrevs)
-   ;; ("5" . unexpand-abbrev)
-   ("g" . add-global-abbrev)
-   ("m" . add-mode-abbrev)
-   ;; ("8" . inverse-add-global-abbrev)
-   ;; ("9" . inverse-add-mode-abbrev)
-   ;; ("0" . expand-jump-to-next-slot)
-   ;; ("=" . expand-jump-to-previous-slot)
+   ("s" . start-kbd-macro)   
+   ("e" . end-kbd-macro)   
+   ("m" . kmacro-end-and-call-macro)   
+   ("c" . call-last-kbd-macro)   
    ))
 
 (weiss--define-keys
@@ -537,8 +529,8 @@ Version 2016-10-25"
      ("5" . delete-char)
      ("6" . xah-select-block)
      ("7" . xah-select-line)
-     ("8" . xah-extend-selection)
-     ("9" . xah-select-text-in-quote)
+     ("8" . er/expand-region)
+     ("9" . er/contract-region)
      ("0" . xah-next-window-or-frame)
 
      ("a" . open-line-and-indent)

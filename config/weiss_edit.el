@@ -24,12 +24,13 @@
           (pos2 (region-end)))
       (kill-new nreg)
       (setq nreg (replace-regexp-in-string "\\." "\\." nreg nil t))
-      (setq nreg (replace-regexp-in-string "\\^" "\\^" nreg nil t))
-      (setq nreg (replace-regexp-in-string "\\$" "\\$" nreg nil t))
-      (setq nreg (replace-regexp-in-string "\\*" "\\*" nreg nil t))
-      (setq nreg (replace-regexp-in-string "\\+" "\\+" nreg nil t))
-      (setq nreg (replace-regexp-in-string "\\?" "\\?" nreg nil t))
-      (setq nreg (replace-regexp-in-string "\|" "\\\\|" nreg nil t))
+      
+      ;; (setq nreg (replace-regexp-in-string "\\\\^" "\\\\^" nreg nil t))
+      ;; (setq nreg (replace-regexp-in-string "\\\$" "\\$" nreg nil t))
+      ;; (setq nreg (replace-regexp-in-string "\\\*" "\\*" nreg nil t))
+      ;; (setq nreg (replace-regexp-in-string "\\\+" "\\+" nreg nil t))
+      ;; (setq nreg (replace-regexp-in-string "\\\?" "\\?" nreg nil t))
+      ;; (setq nreg (replace-regexp-in-string "\|" "\\\\|" nreg nil t))
       
       (setq nreg (replace-regexp-in-string "(" "\\\\(" nreg nil t))
       (setq nreg (replace-regexp-in-string ")" "\\\\)" nreg nil t))
@@ -67,29 +68,20 @@
                             ("shrink" "enlarge")
                             ("copy" "yank")
                             ("show" "hide")
+                            ("start" "end")
+                            ("min" "max")
                             ("even" "odd"))))
 
-(use-package hydra 
-  :diminish
-  :config
-  (defhydra resize-window (global-map "M-w")
-    "resize window"
-    ("k" shrink-window "height+")
-    ("j" enlarge-window "height-")
-    ("h" shrink-window-horizontally "width-")
-    ("l" enlarge-window-horizontally "width+")
-    ("q" nil "quit")
-    )
+(defhydra hydra-error (global-map "M-g")
+  "goto-error"
+  ("h" first-error "first")
+  ("j" next-error "next")
+  ("k" previous-error "prev")
+  ("v" recenter-top-bottom "recenter")
+  ("q" nil "quit"))
 
-  (defhydra hydra-error (global-map "M-g")
-    "goto-error"
-    ("h" first-error "first")
-    ("j" next-error "next")
-    ("k" previous-error "prev")
-    ("v" recenter-top-bottom "recenter")
-    ("q" nil "quit"))
-  )
 
+(use-package expand-region)
 
 (defun weiss-indent()
   (interactive)
@@ -150,4 +142,4 @@
 
 
 
-      
+

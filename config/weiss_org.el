@@ -492,7 +492,7 @@ same directory as the org-buffer and insert a link to this file."
 ;;   (org-pomodoro-mode-line-break ((t (:inherit success))))
 ;;   :bind (:map org-agenda-mode-map
 ;;               ("P" . org-pomodoro))))
-(load "/home/weiss/.emacs.d/+org.el")
+(load "/home/weiss/.emacs.d/config/+org.el")
 ;; (bind-key "RET" #'+org/dwim-at-point org-mode-map)
 
 )
