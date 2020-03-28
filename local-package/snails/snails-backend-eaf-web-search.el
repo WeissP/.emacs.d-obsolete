@@ -50,7 +50,7 @@
          ))
      candidates))
 
- :candiate-do
+ :candidate-do
  (lambda (candidate)
    (eaf-open candidate "browser")
    ))

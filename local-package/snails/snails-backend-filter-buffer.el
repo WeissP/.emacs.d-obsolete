@@ -165,16 +165,6 @@
   (string-match mode (format "%s" (with-current-buffer buf major-mode))))
 
 
-(defun weiss-snails-wrap-buffer-icon-with-eaf (buf)
-  "Wrap display name with buffer icon and add ᛝEAFᛝ"
-  (interactive)
-  (format "%s %s %s" 
-          (with-current-buffer buf (all-the-icons-icon-for-buffer))
-          "ᛝEAFᛝ"
-          (string-trim-left (buffer-name buf))
-          )
-  )
-
 
 
 (snails-create-sync-backend
@@ -202,19 +192,22 @@
                         (and (filter--check-if-mode buf "eaf") (snails-match-input-p input (concat "eaf " (buffer-name buf))))
                         (and (filter--check-if-mode buf "dired") (snails-match-input-p input (concat "di " (buffer-name buf))))
                         ))))
-         (snails-add-candiate 'candidates (weiss-buffer-name-limit (snails-wrap-buffer-icon buf) 60) (buffer-name buf))
-         ;; (if eafbufferp
-         ;; (snails-add-candiate 'candidates (weiss-buffer-name-limit (weiss-snails-wrap-buffer-icon-with-eaf buf) 60)  (buffer-name buf))
-         ;; (snails-add-candiate 'candidates (weiss-buffer-name-limit (snails-wrap-buffer-icon buf) 60) (buffer-name buf)))
+         (snails-add-candiate 'candidates (buffer-name buf) (buffer-name buf))
          ))
      (snails-sort-candidates input candidates 1 1)
      candidates))
 
- :candiate-do
+ :candidate-icon
+ (lambda (candidate)
+   (snails-render-buffer-icon candidate))
+ 
+ :candidate-do
  (lambda (candidate)
    (switch-to-buffer candidate)))
 
 (provide 'snails-backend-filter-buffer)
+
+
 
 ;;; snails-backend-filter-buffer.el ends here
 

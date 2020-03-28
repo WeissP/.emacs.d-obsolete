@@ -1,7 +1,5 @@
 (use-package doom-themes) 
-:diminish
 (load-theme 'doom-one-light t)
-;; (load-theme 'doom-tomorrow-day t)
 
 (use-package doom-modeline 
   :diminish
@@ -16,13 +14,13 @@
 ;; (doom-modeline-mode)
 
 (defhydra resize-window (global-map "M-w")
-    "resize window"
-    ("k" shrink-window "height+")
-    ("j" enlarge-window "height-")
-    ("h" shrink-window-horizontally "width-")
-    ("l" enlarge-window-horizontally "width+")
-    ("q" nil "quit")
-    )
+  "resize window"
+  ("k" shrink-window "height+")
+  ("j" enlarge-window "height-")
+  ("h" shrink-window-horizontally "width-")
+  ("l" enlarge-window-horizontally "width+")
+  ("q" nil "quit")
+  )
 
 (use-package winner-mode ; save window layouts 
   :diminish

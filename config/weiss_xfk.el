@@ -387,6 +387,7 @@ Version 2016-10-25"
  '(
    ("k" . xref-find-definitions)
    ("b" . list-buffers)
+   ("m" . list-bookmarks)
    ("t" . weiss-test)
    ("l" . xref-pop-marker-stack)
    ("y" . winner-undo)                  ;windows setting

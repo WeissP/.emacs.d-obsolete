@@ -1,7 +1,9 @@
 (use-package snails
   :load-path "/home/weiss/.emacs.d/snails"
   :straight nil
+  ;; :defer nil
   :init
+  
   (require 'snails-backend-browser-bookmark)
   (require 'snails-backend-file-bookmark)
   ;; (require 'snails-backend-eaf-youtube-search)
@@ -9,6 +11,8 @@
   (require 'snails-backend-filter-buffer)
   (require 'snails-backend-limit-recentf)
   (require 'snails-backend-eaf-bangou-search)
+  ;; (define-key snails-mode-map [remap next-line] #'snails-select-next-item)
+  ;; (define-key snails-mode-map [remap previous-line] #'snails-select-prev-item)
   :config
   ;; (add-to-list 'snails-backend-buffer-blacklist " *snails tips*")
   ;; (add-to-list 'snails-backend-buffer-blacklist "*eaf*")
@@ -21,12 +25,35 @@
   ;;    ("C-d" . snails-select-next-backend)
   ;;    ))
 
-  ;; (snails '(snails-backend-filter-buffer))
+  (defun snails-init-face-with-theme ()
+    "disable change face with theme"
+    (let* ((bg-mode (frame-parameter nil 'background-mode))
+           (default-background-color (face-background 'default))
+           (default-foreground-color (face-foreground 'default))
+           input-buffer-color
+           content-buffer-color)
+      (cond ((eq bg-mode 'dark)
+             (setq input-buffer-color (snails-color-blend default-background-color "#000000" 0.9))
+             (setq content-buffer-color (snails-color-blend default-background-color "#000000" 0.8)))
+            ((eq bg-mode 'light)
+             (setq input-buffer-color (snails-color-blend default-background-color "#000000" 0.95))
+             (setq content-buffer-color (snails-color-blend default-background-color "#000000" 0.9))))
+      (set-face-attribute 'snails-input-buffer-face nil
+                          :foreground default-foreground-color
+                          :background input-buffer-color)
 
-  (set-face-attribute 'snails-select-line-face nil
-                      :slant 'italic
-                      :background "wheat"
-                      )
+      (set-face-attribute 'snails-content-buffer-face nil
+                          :foreground default-foreground-color
+                          :background content-buffer-color)
+
+      (set-face-attribute 'snails-select-line-face nil
+                          :slant 'italic
+                          :foreground "#383a42"
+                          :background "wheat" )
+      ))
+
+  (defun snails-render-web-icon ()
+    (all-the-icons-faicon "globe"))
 
   (defun snails-normal-backends ()
     (interactive)
@@ -34,11 +61,9 @@
     (snails '(
               snails-backend-filter-buffer
               snails-backend-file-bookmark
-              ;; snails-backend-recentf 
               snails-backend-limit-recentf
-              ))
-    )
-  
+              )))
+
   (defun snails-eaf-backends ()
     (interactive)
     (snails '(
@@ -46,19 +71,23 @@
               snails-backend-eaf-web-search
               snails-backend-browser-bookmark
               snails-backend-eaf-browser-history
-              snails-backend-eaf-browser-open 
+              snails-backend-eaf-browser-open
               snails-backend-eaf-browser-search
               snails-backend-eaf-github-search
-              ))
-    )
+              )))
+
+  ;; (defun weiss-test ()
+  ;;   "DOCSTRING"
+  ;;   (interactive)
+  ;;   (snails '(
+  ;;               snails-backend-current-buffer
+
+  ;;               )))
 
   (define-key snails-mode-map (kbd "C-j") #'snails-select-next-item)
-  (define-key snails-mode-map (kbd "C-k") #'snails-select-prev-item)  
+  (define-key snails-mode-map (kbd "C-k") #'snails-select-prev-item)
   (define-key snails-mode-map (kbd "C-s") #'snails-select-prev-backend)
-  (define-key snails-mode-map (kbd "C-d") #'snails-select-next-backend)  
-
-  
-  )
+  (define-key snails-mode-map (kbd "C-d") #'snails-select-next-backend))
 
 (defun weiss-snails-mode-setup ()
   "to be run as hook for `snails-mode'."

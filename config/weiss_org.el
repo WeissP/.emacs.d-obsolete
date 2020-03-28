@@ -447,12 +447,12 @@ same directory as the org-buffer and insert a link to this file."
 
 ;; ;; Table of contents
 ;; (use-package toc-org 
-:diminish
+;; :diminish
 ;;   :hook (org-mode . toc-org-mode))
 
 ;; ;; Export text/html MIME emails
 ;; (use-package org-mime 
-:diminish
+;; :diminish
 ;;   :bind (:map message-mode-map
 ;;               ("C-c M-o" . org-mime-htmlize)
 ;;               :map org-mode-map
@@ -460,7 +460,7 @@ same directory as the org-buffer and insert a link to this file."
 
 ;; ;; Presentation
 ;; (use-package org-tree-slide 
-:diminish
+;; :diminish
 ;;   :diminish
 ;;   :functions (org-display-inline-images
 ;;               org-remove-inline-images)
@@ -485,7 +485,7 @@ same directory as the org-buffer and insert a link to this file."
 
 ;; ;; Pomodoro
 ;; (use-package org-pomodoro 
-:diminish
+;; :diminish
 ;;   :custom-face
 ;;   (org-pomodoro-mode-line ((t (:inherit warning))))
 ;;   (org-pomodoro-mode-line-overtime ((t (:inherit error))))

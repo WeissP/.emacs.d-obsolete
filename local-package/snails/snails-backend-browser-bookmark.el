@@ -20,7 +20,7 @@
      (snails-sort-candidates input candidates 0 0)
      candidates))
 
- :candiate-do
+ :candidate-do
  (lambda (candidate)
    (bookmark-jump candidate)))
 

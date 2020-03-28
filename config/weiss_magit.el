@@ -5,6 +5,7 @@
 ;; Git
 (use-package magit
   :init
+  (setq magit-log-section-commit-count 15)
   (defun weiss-magit-commit-and-switch-to-that-buffer()
     (interactive)
     (magit-commit-create)

@@ -76,11 +76,7 @@ Can be used in `rime-disable-predicates' and `rime-inline-predicates'."
     (if (and (enter-rime--should-inline-ascii-p)
              (not (rime--ascii-mode-p))
              )
-        ;; (progn
-        ;; (message "inline")
         (rime-inline-ascii)
-      ;; )
-      ;; (message "normal")
       (rime--return)
       )
     )

@@ -47,7 +47,7 @@
 
      candidates))
 
- :candiate-do
+ :candidate-do
  (lambda (candidate)
    (let ((head (substring candidate 0 3))
          (tail (substring candidate 3)))

@@ -102,15 +102,21 @@
                (and (string-match "\\/$" file) (snails-match-input-p input (concat "di " file)))
                )
               )
-         (snails-add-candiate 'candidates (snails-wrap-file-icon file) file)))
+           (snails-add-candiate 'candidates file file)))
      (snails-sort-candidates input candidates 1 1)
      candidates))
 
+ :candidate-icon
+ (lambda (candidate)
+   (snails-render-file-icon candidate))
 
- :candiate-do
+ :candidate-do
  (lambda (candidate)
    (find-file candidate)))
 
 (provide 'snails-backend-limit-recentf)
 
+
+
 ;;; snails-backend-limit-recentf.el ends here
+

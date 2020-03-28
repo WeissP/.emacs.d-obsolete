@@ -96,7 +96,7 @@
          (snails-add-candiate 'candidates (format "Search in Youtube: %s" input) input)))
      candidates))
 
- :candiate-do
+ :candidate-do
  (lambda (candidate)
    (eaf-open (concat "https://www.youtube.com/results?search_query=" candidate) "browser")
    ))

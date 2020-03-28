@@ -27,11 +27,16 @@
                (string-equal input "")
                (snails-match-input-p input bookmark))
               )
-         (snails-add-candiate 'candidates (snails-wrap-file-icon bookmark) bookmark)))
+         (snails-add-candiate 'candidates bookmark bookmark)))
      (snails-sort-candidates input candidates 0 0)
      candidates))
 
- :candiate-do
+ :candidate-icon
+ (lambda (candidate)
+   (snails-render-file-icon candidate))
+
+
+ :candidate-do
  (lambda (candidate)
    (find-file (bookmark-get-filename candidate))))
 

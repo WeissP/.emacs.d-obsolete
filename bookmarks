@@ -21,10 +21,6 @@
  (front-context-string . "\n(defun weiss-he")
  (rear-context-string . "ntent)\n    ))\n\n\n")
  (position . 231))
-(" 徐大sao的个人空间 - 哔哩哔哩 ( ゜- ゜)つロ 乾杯~ Bilibili"
- (handler . eaf--bookmark-restore)
- (eaf-app . "browser")
- (filename . "https://space.bilibili.com/390461123?spm_id_from=333.788.b_765f7570696e666f.2"))
 ("weiss_telega.el"
  (filename . "~/.emacs.d/config/weiss_telega.el")
  (front-context-string)
@@ -34,10 +30,6 @@
  (handler . eaf--bookmark-restore)
  (eaf-app . "browser")
  (filename . "https://www.youtube.com/"))
-(" rime-CustomizationGuide"
- (handler . eaf--bookmark-restore)
- (eaf-app . "browser")
- (filename . "https://github.com/rime/home/wiki/CustomizationGuide"))
 ("weiss_rime.el"
  (filename . "~/.emacs.d/config/weiss_rime.el")
  (front-context-string)
@@ -52,10 +44,6 @@
  (handler . eaf--bookmark-restore)
  (eaf-app . "browser")
  (filename . "https://github.com/WeissP?tab=stars"))
-(" Telegram Web"
- (handler . eaf--bookmark-restore)
- (eaf-app . "browser")
- (filename . "https://web.telegram.org/#/im"))
 (" WhatsApp"
  (handler . eaf--bookmark-restore)
  (eaf-app . "browser")

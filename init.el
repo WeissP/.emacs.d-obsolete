@@ -23,4 +23,5 @@
  '(ivy-minibuffer-match-face-1 ((t (:inherit font-lock-doc-face :foreground nil))))
  '(lsp-ui-doc-background ((t (:background "#e7e7e7"))))
  '(lsp-ui-sideline-code-action ((t (:inherit warning))))
- '(org-ellipsis ((t (:foreground nil)))))
+ '(org-ellipsis ((t (:foreground nil))))
+ '(snails-select-line-face ((t (:background "#e5b781" :foreground "#fafafa" :slant italic)))))
