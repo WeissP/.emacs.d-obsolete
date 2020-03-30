@@ -63,3 +63,4 @@
       (let ((bangou-with-zero (nth 2 (nth 4 (nth 13 (assq 'tbody (assq 'table (assq 'td (assq 'tr (assq 'tbody (assq 'table (assq 'div (nth 4 (assq 'tr (assq 'tbody (assq 'table (assq 'body (libxml-parse-html-region (point-min) (point-max)))))))))))))))))))
         (eaf-open (concat "https://btsow.club/search/" (replace-regexp-in-string "\\([a-zA-Z]+\\)00\\([0-9]+\\)" "\\1\\2" bangou-with-zero)) "browser")))))
 
+(provide 'weiss_web)

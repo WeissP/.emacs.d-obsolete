@@ -3,7 +3,8 @@
 ;;   pip install pyflakes
 ;;   pip install autopep8
 (use-package python
-  :ensure nil
+  :defer t
+  :straight nil
   :hook (inferior-python-mode . (lambda ()
                                   (process-query-on-exit-flag
                                    (get-process "Python"))))
@@ -25,12 +26,18 @@
   ;; Format using YAPF
   ;; Install: pip install yapf
   (use-package yapfify
+    :disabled
     :diminish yapf-mode
     :hook (python-mode . yapf-mode)))
 
-(use-package fsharp-mode)
+(use-package fsharp-mode
+  :disabled
+  )
 
-(use-package php-mode)
+(use-package php-mode
+  :defer t
+  )
 
 (use-package xah-elisp-mode)
 
+(provide 'weiss_lang)

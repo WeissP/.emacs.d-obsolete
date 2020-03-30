@@ -622,7 +622,7 @@ This is for use in `ivy-re-builders-alist'."
             (ivy-rich-candidate))
            :delimiter "\t"))))
 
-(provide 'Weiss_ivy)
+(provide 'weiss_ivy)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; weiss_ivy.el ends here

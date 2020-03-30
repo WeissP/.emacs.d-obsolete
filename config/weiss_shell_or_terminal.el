@@ -13,3 +13,5 @@
 
 (defun vterm--rename-buffer-as-title (title)
   (rename-buffer (format "vterm @ %s" title) t))
+
+(provide 'weiss_shell_or_terminal)

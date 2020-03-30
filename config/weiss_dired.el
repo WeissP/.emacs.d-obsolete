@@ -542,8 +542,9 @@ _g_: ?q? GruppenSex   _h_: ?q? prostitute
      peep-dired-max-size (* 10 1024 1024 1024)))
 
   (use-package  dired-video-preview-mode
+    ;; :defer t
     ;; :disabled
-    :diminish "1"
+    ;; :diminish "1"
     :load-path "/home/weiss/.emacs.d/local-package/dired-video-preview/"
     :straight nil
     :config
@@ -637,3 +638,4 @@ _g_: ?q? GruppenSex   _h_: ?q? prostitute
 
 
 
+(provide 'weiss_dired)

@@ -35,3 +35,4 @@
    ((eq major-mode 'org-mode) (call-interactively 'doom-org-dwim-at-point))
    (t nil)))
 
+(provide 'weiss_keybinding)

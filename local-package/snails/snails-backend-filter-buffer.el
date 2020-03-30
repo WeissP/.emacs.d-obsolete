@@ -178,7 +178,7 @@
      ;; (dolist (buf rest-buffer-list)
      (dolist (buf (buffer-list))
        (when (and (not  (or 
-                         (string= current-buf-name (buffer-name buf))
+                         (string= (buffer-name snails-start-buffer) (buffer-name buf))
                          (and (filter--check-if-mode buf "org") (snails-match-input-p input "org"))
                          ))
                   (or (and (snails-backend-filter-buffer-whitelist-buffer buf)

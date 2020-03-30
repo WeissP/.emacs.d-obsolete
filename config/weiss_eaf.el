@@ -200,3 +200,4 @@
 
   (define-key eaf-edit-mode-map (kbd "RET") 'eaf-edit-buffer-confirm))
 
+(provide 'weiss_eaf)

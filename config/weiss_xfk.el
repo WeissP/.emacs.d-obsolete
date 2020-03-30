@@ -261,6 +261,7 @@ Version 2016-10-25"
    ("n" . global-display-line-numbers-mode)
    ("p" . weiss-org-latex-preview-all)
    ("r" . weiss-dired-toggle-read-only)
+   ("s" . sudo-edit)
    ("v" . vterm-other-window)
    ("w" . toggle-word-wrap)
    ))

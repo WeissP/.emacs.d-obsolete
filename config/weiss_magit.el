@@ -4,6 +4,7 @@
 
 ;; Git
 (use-package magit
+  :defer t
   :init
   (setq magit-log-section-commit-count 15)
   (defun weiss-magit-commit-and-switch-to-that-buffer()
@@ -110,6 +111,7 @@
 
   ;; Walk through git revisions of a file
   (use-package git-timemachine
+    :defer t
     :custom-face
     (git-timemachine-minibuffer-author-face ((t (:inherit success))))
     (git-timemachine-minibuffer-detail-face ((t (:inherit warning))))
@@ -118,6 +120,7 @@
 
   ;; Pop up last commit information of current line
   (use-package git-messenger
+    :defer t
     :bind (:map vc-prefix-map
                 ("p" . git-messenger:popup-message)
                 :map git-messenger-map
@@ -149,15 +152,22 @@
 
 ;; Open github/gitlab/bitbucket page
 (use-package browse-at-remote
+  :defer t
   :bind (:map vc-prefix-map
               ("B" . browse-at-remote)))
 
 ;; Git related modes
-(use-package gitattributes-mode)
-(use-package gitconfig-mode)
-(use-package gitignore-mode)
+(use-package gitattributes-mode
+  :defer t
+  )
+(use-package gitconfig-mode
+  :defer t
+  )
+(use-package gitignore-mode
+  :defer t
+  )
 
-(provide 'weiss_magit.el)
+(provide 'weiss_magit)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; init-vcs.el ends here
+;;; weiss_magit.el ends here

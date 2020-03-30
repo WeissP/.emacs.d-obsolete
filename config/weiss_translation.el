@@ -16,3 +16,4 @@
         )
   )
 
+(provide 'weiss_translation)

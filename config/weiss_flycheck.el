@@ -25,3 +25,4 @@
     (use-package flycheck-popup-tip
       :hook (flycheck-mode . flycheck-popup-tip-mode)))
   )
+(provide 'weiss_flycheck)

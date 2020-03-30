@@ -455,3 +455,5 @@ unfold to point on startup."
   (when (bound-and-true-p evil-local-mode)
     (add-hook 'evil-insert-state-exit-hook #'+org-update-cookies-h nil t))
   (add-hook 'before-save-hook #'+org-update-cookies-h nil t))
+
+(provide '+org)

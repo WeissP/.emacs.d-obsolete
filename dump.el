@@ -48,6 +48,7 @@
 
 (add-to-list 'load-path "/home/weiss/.emacs.d/local-package/")
 (add-to-list 'load-path "/home/weiss/.emacs.d/local-package/snails/")
+(add-to-list 'load-path "/home/weiss/.emacs.d/config/")
 
 (setq-default c-basic-offset   4
               tab-width        4
@@ -68,24 +69,96 @@
 
 (dolist (package  '(
                     ;; use-package
-                    company
-                    ivy
-                    counsel 
-                    org 
-                    which-key
-                    swiper 
-                    ivy-prescient 
-                    doom-themes 
-                    ;; doom-one-light-theme
-                    doom-modeline
-                    popwin
-                    winner
-                    elec-pair 
-                    expand-region 
-                    flyspell 
                     hydra
+                    ;; ui
+                    doom-themes 
+                    doom-modeline
+                    anzu
+                    all-the-icons
+                    highlight-indent-guides
+                    emojify
+                    dashboard
+                    popwin
+                    which-key
+                    winner
+                    ;; edit
+                    subword
+                    rotate-text
+                    expand-region 
+                    ;; completion
+                    company
+                    company-prescient
+                    company-box
+                    company-quickhelp
+                    lsp-mode
+                    ;; lsp-clients
+                    lsp-ui
+                    company-lsp
+                    lsp-origami
+                    lsp-python-ms
+                    ccls
+                    lsp-julia
+                    lsp-java
+                    yasnippet
+                    ;; lang
+                    python
+                    live-py-mode
+                    yapfify
+                    php-mode
+                    xah-elisp-mode
+                    ;; ivy
+                    rg
+                    ivy
+                    counsel                     
+                    amx
+                    prescient
+                    ivy-prescient
+                    ivy-yasnippet
+                    ivy-xref
+                    flyspell-correct-ivy
+                    counsel-world-clock
+                    counsel-tramp
+                    ivy-rich
+                    ;; org
+                    org
+                    org-fancy-priorities
+                    org-bullets
+                    cdlatex
+                    flycheck
+                    telega
                     )) 
-  (straight-use-package package))
+  ;; (straight-use-package package)
+  (use-package package)
+  )
 
-;; (load-theme 'doom-one-light-theme t t)
+;; (dolist (package  '(
+;;                     ;; lsp-clients
+;;                     weiss_org
+;;                     weiss_lang
+;;                     weiss_completion
+;;                     weiss_magit
+;;                     weiss_ui
+;;                     weiss_snails
+;;                     weiss_xfk
+;;                     weiss_rime
+;;                     weiss_eaf
+;;                     weiss_web
+;;                     weiss_abbrevs
+;;                     weiss_telega
+;;                     weiss_edit
+;;                     weiss_dired
+;;                     weiss_flycheck
+;;                     weiss_ivy
+;;                     weiss_keybinding
+;;                     weiss_pdf
+;;                     weiss_shell_or_terminal
+;;                     weiss_translation
+;;                     xfk-functions
+;;                     +org
+;;                     weiss_company
+;;                     )) 
+;;   (require package)
+;;   )
+
+;; (load-theme 'doom-one-light t t)
 (dump-emacs-portable "~/.emacs.d/emacs.pdmp")

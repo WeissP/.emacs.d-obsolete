@@ -96,3 +96,4 @@ Can be used in `rime-disable-predicates' and `rime-inline-predicates'."
 
 ;; (define-key global-map (kbd "<f4>") 'rime-send-keybinding)
 
+(provide 'weiss_rime)

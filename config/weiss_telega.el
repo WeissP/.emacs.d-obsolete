@@ -1,4 +1,5 @@
 (use-package telega
+  :defer t
   :hook
   ('telega-chat-mode . (lambda ()
                          (set (make-local-variable 'company-backends)
@@ -96,3 +97,4 @@
   ;; ("j" . telega-button-forward)
   ;; )
   )
+(provide 'weiss_telega)

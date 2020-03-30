@@ -123,8 +123,11 @@
 ;; (weiss-convert-to-emacs-regex "(")
 
 (defun weiss-insert-date()
+  "When the time now is 0-4 AM, insert yesterday's date"
   (interactive)
-  (insert (format-time-string "%d.%m.%Y")))
+  (if (< (string-to-number (format-time-string "%H")) 4)
+      (insert (format "%s%s" (- (string-to-number (format-time-string "%d")) 1) (format-time-string ".%m.%Y")))
+    (insert (format-time-string "%d.%m.%Y"))))
 
 (defun weiss-insert-dollar()
   (interactive)
@@ -134,12 +137,9 @@
   (backward-char)
   )
 
+(use-package sudo-edit)
+
+;; save sh file auto with executable permission
 (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 
-
-
-
-
-
-
-
+(provide 'weiss_edit)

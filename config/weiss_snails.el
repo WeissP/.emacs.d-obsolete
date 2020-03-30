@@ -57,7 +57,7 @@
 
   (defun snails-normal-backends ()
     (interactive)
-    (setq current-buf-name (buffer-name))
+    ;; (setq current-buf-name (buffer-name))
     (snails '(
               snails-backend-filter-buffer
               snails-backend-file-bookmark
@@ -76,14 +76,6 @@
               snails-backend-eaf-github-search
               )))
 
-  ;; (defun weiss-test ()
-  ;;   "DOCSTRING"
-  ;;   (interactive)
-  ;;   (snails '(
-  ;;               snails-backend-current-buffer
-
-  ;;               )))
-
   (define-key snails-mode-map (kbd "C-j") #'snails-select-next-item)
   (define-key snails-mode-map (kbd "C-k") #'snails-select-prev-item)
   (define-key snails-mode-map (kbd "C-s") #'snails-select-prev-backend)
@@ -99,6 +91,7 @@
 ;; (snails '(snails-backend-filter-buffer))
 ;; (string-match ".*" "*65ba-sdf1-sdf8-12gg-dsf8-xcv8-asds")
 
+(provide 'weiss_snails)
 
 
-
+;; (snails '(snails-backend-current-buffer))

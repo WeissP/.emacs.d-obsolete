@@ -1,5 +1,8 @@
 (use-package doom-themes) 
-(load-theme 'doom-one-light t)
+;; (if weiss-dumped-load-path 
+    ;; (enable-theme 'doom-one-light)
+  (load-theme 'doom-one-light t)
+  ;; )
 
 (use-package doom-modeline 
   :diminish
@@ -31,6 +34,7 @@
   )
 
 (use-package popwin 
+  ;; :disabled
   :diminish
   :config
   (popwin-mode 1)
@@ -217,4 +221,4 @@
 
 
 
-
+(provide 'weiss_ui)

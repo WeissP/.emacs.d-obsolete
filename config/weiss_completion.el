@@ -244,7 +244,7 @@
                     projectile-project-root-files-top-down-recurring))))
 
   (use-package lsp-fsharp
-    ;; :disabled                           
+    :disabled                           
     :straight (lsp-fsharp
                :type git
                :host github
@@ -278,8 +278,8 @@
   :config (use-package yasnippet-snippets))
 
 
-(provide 'weiss_company)
+(provide 'weiss_completion)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; weiss_company.el ends here
+;;; weiss_completion.el ends here
 
