@@ -4,7 +4,6 @@
 
 ;; Git
 (use-package magit
-  :defer t
   :init
   (setq magit-log-section-commit-count 15)
   (defun weiss-magit-commit-and-switch-to-that-buffer()
@@ -158,13 +157,10 @@
 
 ;; Git related modes
 (use-package gitattributes-mode
-  :defer t
   )
 (use-package gitconfig-mode
-  :defer t
   )
 (use-package gitignore-mode
-  :defer t
   )
 
 (provide 'weiss_magit)

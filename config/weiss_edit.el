@@ -1,7 +1,7 @@
 (use-package shiftless 
   :diminish
   :load-path "/home/weiss/.emacs.d/local-package/shiftless.el"
-  :straight nil
+  :ensure nil
   :config
   (shiftless-programming)
   (setq shiftless-delay 0.6)
@@ -48,11 +48,16 @@
   )
 
 
-(use-package rotate-text 
+(use-package rotate-text
+  :quelpa (rotate-text
+           :fetcher github
+           :repo nschum/rotate-text.el
+           )
   :diminish
   :config
   (setq rotate-text-words '(("true" "false")
                             ("nil" "t")
+                            ("car" "cdr")
                             ("width" "height")
                             ("left" "right" "top" "bottom")
                             ("Background" "Foreground")
@@ -62,6 +67,7 @@
                             ("up" "down")
                             ("Up" "Down")
                             ("forward" "backward")
+                            ("downward" "upward")
                             ("expand" "contract")
                             ("enable" "disable")
                             ("increase" "decrease")
@@ -70,6 +76,7 @@
                             ("show" "hide")
                             ("start" "end")
                             ("min" "max")
+                            ("when" "unless")
                             ("even" "odd"))))
 
 (defhydra hydra-error (global-map "M-g")
@@ -88,15 +95,6 @@
   (if (use-region-p)
       (indent-region (region-beginning) (region-end))
     (indent-region (point-min) (point-max))))
-
-(defun weiss-insert-line()
-  (interactive)
-  (end-of-line)
-  (newline)
-  (indent-for-tab-command)
-  ;; (open-line 1)
-  (xah-fly-insert-mode-activate)
-  )
 
 (defun weiss-paste-with-linebreak()
   (interactive)
@@ -126,8 +124,11 @@
   "When the time now is 0-4 AM, insert yesterday's date"
   (interactive)
   (if (< (string-to-number (format-time-string "%H")) 4)
-      (insert (format "%s%s" (- (string-to-number (format-time-string "%d")) 1) (format-time-string ".%m.%Y")))
-    (insert (format-time-string "%d.%m.%Y"))))
+      (let ((date (format "%s%s" (- (string-to-number (format-time-string "%d")) 1) (format-time-string ".%m.%Y"))))
+        (if (< (length date) 10)
+            (insert (concat "0" date))
+          (insert date)))
+    (insert (format-time-string "%0d.%m.%Y"))))
 
 (defun weiss-insert-dollar()
   (interactive)
@@ -137,7 +138,7 @@
   (backward-char)
   )
 
-(use-package sudo-edit)
+;; (use-package sudo-edit)
 
 ;; save sh file auto with executable permission
 (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)

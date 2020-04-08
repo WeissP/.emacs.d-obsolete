@@ -22,10 +22,10 @@
 
 
 ;;; Code:
-(load (xah-get-fullpath "xfk-functions"))
+(require 'xfk-functions)
+(require 'm4d-keypad)
 
 
-;; weiss functions
 (defun weiss--define-keys (@keymap-name @key-cmd-alist)
   "Map `define-key' over a alist @key-cmd-alist.
 Example usage:
@@ -42,35 +42,486 @@ Version 2019-02-12"
    (lambda ($pair)
      (define-key @keymap-name (kbd (car $pair)) (cdr $pair))) @key-cmd-alist))
 
+(defvar move-as-word-p t)
+
+(setq weiss-delimiters "\n() \-")
+(setq weiss-stop-delimiters "\\.,\"")
+
+;; (setq weiss-delimiters "\n() \-")
+;; (setq weiss-stop-delimiters "\.,\"\-")
+
+(defun weiss-toggle-move-as-word ()
+  "if the value is t, navi-keys will move between word"
+  (interactive)
+  (if move-as-word-p
+      (setq move-as-word-p nil)
+    (setq move-as-word-p t)
+    ))
+
+(defun weiss-cancel-select-and-input ()
+  "cancel select and input"
+  (interactive)
+  ;; (weiss-keyboard-quit)
+  (deactivate-mark)
+  (xah-fly-insert-mode-activate)
+  )
+
+(defun weiss-select-line-downward ()
+  "Select current line. If current line is in region && cursor at region-end, extend selection downward by line."
+  (interactive)
+  (if (and (region-active-p)
+           (>= (line-beginning-position) (region-beginning))
+           (eq (point) (line-end-position)))
+      (progn
+        (forward-line 1)
+        (end-of-line))
+    (progn
+      (end-of-line)
+      (set-mark (line-beginning-position)))))
+
+;;;; new line
+(defun weiss-insert-line()
+  (interactive)
+  (insert "
+")
+  (xah-fly-insert-mode-activate)
+  )
+
 (defun open-line-and-indent ()
   "open line and indent"
   (interactive)
+  (beginning-of-line)
   (open-line 1)
   (weiss-indent)
   )
 
-(defun weiss-xah-comment-dwim ()
-  "Weiss: if cursor is at end of line, auto activate insert mode
- Like `comment-dwim', but toggle comment if cursor is not at end of line.
-
-URL `http://ergoemacs.org/emacs/emacs_toggle_comment_by_line.html'
-Version 2016-10-25"
+;;;; select
+(defun weiss-select-line-upward ()
+  "Select current line. If the whole current line is in region && cursor at region-beginning, extend selection upward by line."
   (interactive)
-  (if (region-active-p)
-      (comment-dwim nil)
-    (let (($lbp (line-beginning-position))
-          ($lep (line-end-position)))
-      (if (eq $lbp $lep)
-          (progn
-            (comment-dwim nil))
-        (if (eq (point) $lep)
-            (progn
-              (comment-dwim nil)
-              (xah-fly-insert-mode-activate)
-              )
-          (progn
-            (comment-or-uncomment-region $lbp $lep)
-            (forward-line )))))))
+  (if (and (region-active-p)
+           (<= (line-end-position) (region-end))
+           (eq (point) (line-beginning-position)))
+      (progn
+        ;; (message 1)
+        (forward-line -1)
+        (beginning-of-line))
+    (progn
+      ;; (message 2)
+      (beginning-of-line)
+      (set-mark (line-end-position)))))
+
+(defun weiss-select-to-beginning-or-end ()
+  "First press to select to the beginning of line and second to the end of line"
+  (interactive)
+  (if (and (eq (point) (line-beginning-position))
+           (use-region-p))
+      (progn
+        (exchange-point-and-mark)
+        (end-of-line)
+        )
+    (progn
+      (deactivate-mark)
+      (push-mark (line-beginning-position))
+      (setq mark-active t)
+      (exchange-point-and-mark)      )
+    ))
+
+(defun weiss-select-single-sexp ()
+  "select the biggest sexp and copy"
+  (interactive)
+  ;; It seems like that bounds-of-thing-at-point habe some problems with quote
+  ;; (while (looking-at "[ \"]") (forward-char))
+  (deactivate-mark)
+  (skip-syntax-forward "\" <>
+")
+  (let ((bounds-temp)
+        (bounds))
+    (while (ignore-errors (setq bounds-temp (bounds-of-thing-at-point 'list)))
+      (setq bounds bounds-temp)
+      (goto-char (cdr bounds))
+      (when (looking-at "[ \"]") (forward-char))
+      )
+    (push-mark (car bounds) t t)
+    (setq mark-active t)
+    (kill-new (buffer-substring-no-properties (region-beginning) (region-end)))
+    ))
+
+(defun weiss-select-sexp ()
+  "select single sexp first and select the next wenn you call this function again"
+  (interactive)
+  (if (and (use-region-p)
+           (not (ignore-errors (bounds-of-thing-at-point 'list))))
+      (progn
+        (skip-syntax-forward " <>
+        ")
+        ;; skip the comment
+        (while (string-match "^;+.*" (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+          (next-line))
+        (while (ignore-errors (setq bounds (bounds-of-thing-at-point 'list)))
+          (goto-char (cdr bounds))
+          ))
+    (weiss-select-single-sexp)
+    )
+  )
+
+;;;; navi
+(defun weiss-next-line-select ()
+  "Next line with select"
+  (interactive)
+  (unless (use-region-p)
+    (push-mark (point) nil t))
+  (next-line))
+
+(defun weiss-previous-line-select ()
+  "Previous line with select"
+  (interactive)
+  (unless (use-region-p)
+    (push-mark (point) nil t))
+  (previous-line))
+
+(defun weiss-forward-char-select ()
+  "Forward char with select"
+  (interactive)
+  (unless (use-region-p)
+    (push-mark (point) nil t))
+  (forward-char))
+
+(defun weiss-backward-char-select ()
+  "Backward char with select"
+  (interactive)
+  (unless (use-region-p)
+    (push-mark (point) nil t))
+  (backward-char))
+
+(defun weiss-forward-word-select ()
+  "forward word with select"
+  (interactive)
+  (unless (use-region-p)
+    (push-mark (point) nil t))
+  (forward-word))
+
+(defun weiss-backward-word-select ()
+  "backward word with select"
+  (interactive)
+  (unless (use-region-p)
+    (push-mark (point) nil t))
+  (backward-word))
+
+(defun weiss-next-word-select ()
+  "forward word with select"
+  (interactive)
+  (if (use-region-p)
+      (if (eq (point) (region-beginning))
+          (backward-word)
+        (forward-word))
+    (xah-insert-space-after)))
+
+(defun weiss-select-current-word ()
+  "select current word, if current char is not word, backward char until it's a word"
+  (interactive)
+  (deactivate-mark)
+  ;; (if (and (not (looking-back "\\w\\|\n")) (looking-at "\n"))
+  (if (or (looking-back "\\w\\|\n") (looking-at "\\w"))
+      (progn
+        (skip-syntax-backward "\\w")
+        (push-mark)
+        (skip-syntax-forward "\\w")
+        ;; (forward-word)
+        (setq mark-active t))
+    (progn
+      (backward-char 1)
+      (weiss-select-current-word))))
+
+(defun weiss-next-line-and-select-current-word ()
+  "weiss next line and select current word"
+  (interactive)
+  (deactivate-mark)
+  (next-line)
+  (weiss-select-current-word)
+  )
+
+(defun weiss-previous-line-and-select-current-word ()
+  "weiss previous line and select current word"
+  (interactive)
+  (deactivate-mark)
+  (previous-line)
+  (weiss-select-current-word)
+  )
+
+(defun weiss--forward-check (stop-delimiters delimiters others)
+  "The first t/n means whether forward-char, the second t/n means whether exit loop"
+  (interactive)
+  ;; (message "%s" (cdr delimiters))
+  (let ((forward-p t)
+        (check-char)
+        (check-point (point)))
+    (while forward-p
+      (setq check-char (buffer-substring-no-properties check-point (1+ check-point)))
+      (cond
+       ((string-match (format "[%s]" weiss-stop-delimiters) check-char)
+        (when (nth 0 stop-delimiters) (forward-char))
+        (when (nth 1 stop-delimiters) (setq forward-p nil)))
+       ((string-match (format "[%s]" weiss-delimiters) check-char)
+        (when (nth 0 delimiters) (forward-char))
+        (when (nth 1 delimiters)(message "%s" (cdr delimiters)) (setq forward-p nil)))
+       (t
+        (when (nth 0 others) (forward-char))
+        (when (nth 1 others) (setq forward-p nil))))
+      (setq check-point (point))
+      )
+    ))
+
+(defun weiss-forward-and-select-word ()
+  "Forward and select word, if in quote, then select all"
+  (interactive)
+  (when (looking-at (format "[%s]" weiss-stop-delimiters)) (forward-char))
+  (skip-chars-forward weiss-delimiters)
+  (if (and (use-region-p)
+           (or (string-match "^\".+\"$" (buffer-substring-no-properties (region-beginning) (1+ (region-end)))) ; to avoid "|" ""
+               (not (string-match "\"" (buffer-substring-no-properties (- (region-beginning) 1) (region-beginning))))) ; to avoid "mark...|"
+           (string-match "\"" (buffer-substring-no-properties  (point) (+ 1 (point))))) 
+      (progn
+        (forward-char 1)
+        (call-interactively 'set-mark-command)
+        (skip-chars-forward "^\""))
+    (progn
+      (deactivate-mark)
+      (when (looking-at (format "[%s]" weiss-stop-delimiters)) (forward-char))
+      (call-interactively 'set-mark-command)
+      (skip-chars-forward (format "^%s" weiss-delimiters))))
+
+  ;; (when (looking-at (format "[%s]" weiss-stop-delimiters)) (backward-char))
+  ;; (re-search-forward (format "[a-zA-Z0-9%s]" weiss-stop-delimiters))
+  ;; (re-search-forward (format "[%s]" weiss-stop-delimiters))
+  ;; (when (looking-at "\\w")(backward-char))
+  ;; (call-interactively 'set-mark-command)
+  ;; (re-search-forward (format "[%s%s]" weiss-stop-delimiters weiss-delimiters))
+  ;; (backward-char)
+  )
+
+(defun weiss-forward-word-and-select-current-word ()
+  "weiss forward word and select current word"
+  (interactive)
+  (forward-word)
+  (weiss-select-current-word)
+  )
+
+(defun weiss-backward-word-and-select-current-word ()
+  "weiss backward word and select current word"
+  (interactive)
+  (when (looking-back "\\w") (skip-syntax-backward "\\w"))
+  (backward-word)
+  (weiss-select-current-word))
+
+(defun weiss-right-key ()
+  "smart decide whether move by word or by char"
+  (interactive)
+  (let ((string-at-point (buffer-substring-no-properties (point) (+ 3 (point)))))
+    (if (or current-prefix-arg
+            (string-match (format "[^%s]\\{2\\}."  weiss-delimiters weiss-stop-delimiters) string-at-point)
+            (string-match (format "[^%s%s][%s][%s]" weiss-delimiters weiss-stop-delimiters weiss-delimiters weiss-stop-delimiters) string-at-point)
+            )
+        (forward-char)
+      (weiss-forward-and-select-word))))
+
+
+
+(defun weiss-left-key ()
+  "smart decide whether move by word or by char"
+  (interactive)
+  (if current-prefix-arg
+      (backward-char)
+    (progn
+      (cond
+       ;; ((looking-at "  ") (forward-char) (weiss-right-key))
+       ;; ((or (looking-at "[^a-zA-Z0-9\n][^a-zA-Z0-9\n]") (not move-as-word-p))
+       ;;  (push-mark (point) nil t)
+       ;;  (forward-char))
+       ((and (looking-back "[^a-zA-Z0-9\n]") (looking-at "[^a-zA-Z0-9\n]")) (backward-char))
+       ((and (looking-back "[a-zA-Z]") (looking-at "[a-zA-Z]")) (backward-char))
+       (t (weiss-backward-word-and-select-current-word))))))
+
+(defun weiss-down-key ()
+  "DOCSTRING"
+  (interactive)
+  (cond
+   ((and (use-region-p)
+         (string-match "\n" (buffer-substring-no-properties (region-beginning) (region-end))))
+    (next-line)
+    (end-of-line))
+   ((and (use-region-p)
+         (eq (region-beginning) (line-beginning-position))
+         (eq (point) (line-end-position)))
+    (next-line)
+    (end-of-line))
+   ((and (use-region-p)
+         (eq (region-end) (line-end-position))
+         (eq (point) (line-beginning-position)))
+    (exchange-point-and-mark)
+    (next-line)
+    (end-of-line))
+   (t (weiss-next-line-and-select-current-word))
+   ))
+
+(defun weiss-up-key ()
+  "DOCSTRING"
+  (interactive)
+  (cond
+   ((and (use-region-p)
+         (string-match "\n" (buffer-substring-no-properties (region-beginning) (region-end))))
+    (previous-line)
+    (beginning-of-line))
+   ((and (use-region-p)
+         (eq (region-end) (line-end-position))
+         (eq (point) (line-beginning-position)))
+    (previous-line)
+    (beginning-of-line))
+   ((and (use-region-p)
+         (eq (region-beginning) (line-beginning-position))
+         (eq (point) (line-end-position)))
+    (exchange-point-and-mark)
+    (previous-line)
+    (beginning-of-line))
+   (t (weiss-previous-line-and-select-current-word))
+   ))
+
+;;;; misc
+(defun weiss-disable-abbrev-and-insert-mode-activate ()
+  "the first char is with c-q inserted, to avoid to activate abbrev"
+  (interactive)
+  (xah-fly-insert-mode-activate)
+  (call-interactively 'quoted-insert)
+  )
+
+(defun weiss-ret ()
+  "DOCSTRING"
+  (interactive)
+  (deactivate-mark)
+  (call-interactively 'newline))
+
+;;;; delete
+(defun weiss-cut-line-or-delete-region ()
+  "Cut line or delete region"
+  (interactive)
+  (unless move-as-word-p (setq move-as-word-p t))
+  (if current-prefix-arg
+      (delete-char -1)
+    (xah-cut-line-or-region)))
+
+(defun weiss-delete-backward-with-region ()
+  "Like xah delete backward char or bracket text, but ignore region"
+  (interactive)
+  (unless move-as-word-p (setq move-as-word-p t))
+  (deactivate-mark)
+  (xah-delete-backward-char-or-bracket-text)
+  )
+
+(defun weiss-delete-forward-with-region ()
+  "Like xah delete forward char or bracket text, but ignore region"
+  (interactive)
+  (unless move-as-word-p (setq move-as-word-p t))
+  (deactivate-mark)
+  (xah-delete-forward-char-or-bracket-text)
+  )
+
+;;;; edit
+(defun weiss-move-next-bracket-contents ()
+  "Move next () to the left to the )"
+  (interactive)
+  (let ((insert-point)
+        (bracket-beginning-point)
+        (bracket-end-point))
+    (search-forward ")")
+    (setq insert-point (point))
+    (search-forward "(")
+    (backward-char)
+    (setq bracket-beginning-point (point))
+    (forward-sexp)
+    (setq bracket-end-point (point))
+    (goto-char (- insert-point 1))
+    (insert (delete-and-extract-region bracket-beginning-point bracket-end-point))))
+
+(defun weiss-delete-parent-sexp ()
+  "Keep the current sexp and delete it's parent sexp"
+  (interactive)
+  (let* ((bounds-insert-string (bounds-of-thing-at-point 'list))
+         (insert-string (delete-and-extract-region (car bounds-insert-string) (cdr bounds-insert-string)))
+         (bounds-delete-string (bounds-of-thing-at-point 'list)))
+    (delete-region (car bounds-delete-string) (cdr bounds-delete-string))
+    (insert insert-string)
+    ))
+
+(defun weiss-delete-parent-sexp ()
+  "Keep the current sexp and delete it's parent sexp"
+  (interactive)
+  (let ((start-pos)
+        (end-pos)
+        (insert-string)
+        )
+    (if (use-region-p)
+        (setq start-pos (region-beginning)
+              end-pos (region-end))
+      (setq start-pos (car (bounds-of-thing-at-point 'list))
+            end-pos (cdr (bounds-of-thing-at-point 'list))))
+    (setq insert-string (delete-and-extract-region start-pos end-pos))
+    (delete-region (car (bounds-of-thing-at-point 'list)) (cdr (bounds-of-thing-at-point 'list)))
+    (insert insert-string)))
+
+(defun weiss-add-parent-sexp ()
+  "Wrap () to the selected region or the current sexp"
+  (interactive)
+  (let ((cursor-position)
+        (start-pos)
+        (end-pos))
+    (if (use-region-p)
+        (setq cursor-position (region-beginning)
+              start-pos (region-beginning)
+              end-pos (region-end))
+      (let ((bounds (bounds-of-thing-at-point 'list)))
+        (setq cursor-position (car bounds)
+              start-pos (car bounds)
+              end-pos (cdr bounds))))
+    (insert (format "( %s)" (delete-and-extract-region start-pos end-pos)))
+    (goto-char (1+ cursor-position))
+    (xah-fly-insert-mode-activate)))
+
+(defun weiss-paste ()
+  "Like xah paste or paste previous, but when region only contain one char, deactivate it"
+  (interactive)
+  (when (and (use-region-p) (< (- (region-end) (region-beginning)) 2)
+             (deactivate-mark))
+    (deactivate-mark))
+  (xah-paste-or-paste-previous))
+
+;; keypad
+(defun c-x-or-exchange-point ()
+  "DOCSTRING"
+  (interactive)
+  (if (use-region-p)
+      (exchange-point-and-mark)
+    (progn
+      (m4d-keypad-mode 1)
+      (call-interactively #'m4d-keypad-self-insert))))
+
+(defun c-c-or-copy ()
+  "DOCSTRING"
+  (interactive)
+  (if (use-region-p)
+      (xah-copy-line-or-region)
+    (progn
+      (m4d-keypad-mode 1)
+      (call-interactively #'m4d-keypad-self-insert))))
+
+(defun weiss-comment-dwim ()
+  "Multi lines -> comment region
+cursor at end of line -> add comment at end of line and activate insert mode
+t -> comment current line"
+  (interactive)
+  (unless (and (use-region-p)
+               (string-match "\n" (buffer-substring-no-properties (region-beginning) (region-end))))
+    (deactivate-mark))
+  (xah-comment-dwim))
 
 (defun weiss-save-current-content ()
   "save current content in temp buffer"
@@ -96,7 +547,6 @@ Version 2016-10-25"
       (delete-region (region-beginning) (region-end))
     (delete-char 1)
     )
-  ;; (hydra-insert-in-command-mode/body)
   (insert (read-string "replace with: "))
   (backward-char)
   )
@@ -104,11 +554,12 @@ Version 2016-10-25"
 (defun weiss-dired-toggle-read-only ()
   "DOCSTRING"
   (interactive)
-  (remove-hook 'dired-after-readin-hook 'all-the-icons-dired--display t)
+  ;; (remove-hook 'dired-after-readin-hook 'all-the-icons-dired--display t)
   (revert-buffer)
   (dired-toggle-read-only)
   (xah-fly-command-mode-activate)
   )
+
 ;; keymaps
 
 ;; (defvar xah-fly-swapped-1-8-and-2-7-p nil "If non-nil, it means keys 1 and 8 are swapped, and 2 and 7 are swapped. See: http://xahlee.info/kbd/best_number_key_layout.html")
@@ -251,6 +702,10 @@ Version 2016-10-25"
    ("." . toggle-frame-fullscreen)
    ("0" . shell-command-on-region)
    ("7" . calc)
+   ("8" . (lambda ()(interactive) (if org-hide-emphasis-markers
+                                      (setq org-hide-emphasis-markers nil)
+                                    (setq org-hide-emphasis-markers t)
+                                    )))
    ("C" . toggle-case-fold-search)
    ("b" . toggle-debug-on-error)
    ("c" . dired-collapse-mode)
@@ -265,8 +720,6 @@ Version 2016-10-25"
    ("v" . vterm-other-window)
    ("w" . toggle-word-wrap)
    ))
-
-
 
 (weiss--define-keys
  ;; kinda replacement related
@@ -345,15 +798,14 @@ Version 2016-10-25"
  '(
    ("a" . weiss-org-screenshot)
    ("b" . org-babel-tangle)
-   ("e" . snails-eaf-backends)
+   ("e" . (lambda()(interactive)(unless (featurep 'weiss_eaf) (require 'weiss_eaf)(load "/home/weiss/.emacs.d/config/weiss_snails.el"))(snails-eaf-backends)))
    ("c" . org-capture)
    ("f" . eaf-open-browser)
    ("o" . org-noter)
    ("s" . org-noter-sync-current-note)
    ("l" . org-insert-link)
-   ("v" . dired-video-preview-mode)
-   )
- )
+   ("v" . (lambda ()(interactive)(require 'weiss-dired-video-preview-mode)(dired-video-preview-mode)))
+   ))
 
 (weiss--define-keys
  (define-prefix-command 'xah-fly-comma-keymap)
@@ -399,10 +851,10 @@ Version 2016-10-25"
  ;; abbrev
  (define-prefix-command 'xah-fly-v-keymap)
  '(
-   ("s" . start-kbd-macro)   
-   ("e" . end-kbd-macro)   
-   ("m" . kmacro-end-and-call-macro)   
-   ("c" . call-last-kbd-macro)   
+   ("s" . start-kbd-macro)
+   ("e" . end-kbd-macro)
+   ("m" . kmacro-end-and-call-macro)
+   ("c" . call-last-kbd-macro)
    ))
 
 (weiss--define-keys
@@ -459,6 +911,7 @@ Version 2016-10-25"
 
   (progn
     (define-key xah-fly-key-map (kbd "<home>") 'xah-fly-command-mode-activate)
+    (define-key xah-fly-key-map (kbd "<end>") 'xah-fly-command-mode-activate)
     (define-key xah-fly-key-map (kbd "<menu>") 'xah-fly-command-mode-activate)
     (define-key xah-fly-key-map (kbd "<f12>") 'xah-fly-command-mode-activate)
     (define-key xah-fly-key-map (kbd "<f8>") 'xah-fly-command-mode-activate-no-hook)
@@ -483,7 +936,6 @@ Version 2016-10-25"
     ;;
     )
   ;;
-  
 
   (progn
     (when xah-fly-use-meta-key
@@ -503,14 +955,14 @@ Version 2016-10-25"
 
      ("SPC" . xah-fly-leader-key-map)
      ("DEL" . xah-fly-leader-key-map)
-     ;;   ("RET" . newline)
+     ("RET" . weiss-ret)
 
      ("'" . xah-cycle-hyphen-underscore-space)
-     ("," . xah-pop-local-mark-ring)
+     ("," . xah-backward-left-bracket)
      ("-" . outline-show-entry)
      ("=" . color-outline-toggle-all)
      ("." . xah-forward-right-bracket)
-     (";" . xah-end-of-line-or-block)
+     (";" . rotate-text)
      ("/" . xah-goto-matching-bracket)
      ("\\" . nil)
      ("[" . hs-toggle-hiding)
@@ -528,41 +980,40 @@ Version 2016-10-25"
      ("2" . scroll-up)
      ("3" . delete-other-windows)
      ("4" . split-window-below)
-     ("5" . delete-char)
+     ("5" . weiss-test)
      ("6" . xah-select-block)
-     ("7" . xah-select-line)
-     ("8" . er/expand-region)
-     ("9" . er/contract-region)
+     ("7" . weiss-select-sexp)
+     ("8" . weiss-delete-parent-sexp)
+     ("9" . weiss-add-parent-sexp)
      ("0" . xah-next-window-or-frame)
 
      ("a" . open-line-and-indent)
      ("b" . xah-toggle-letter-case)
-     ("c" . xah-copy-line-or-region)
-     ("d" . xah-delete-backward-char-or-bracket-text)
-     ("e" . xah-backward-kill-word)
-     ("f" . xah-fly-insert-mode-activate)
-     ("g" . xah-delete-current-text-block)
-     ("h" . backward-char)
-     ("i" . xah-beginning-of-line-or-block)
-     ("j" . next-line)
-     ("k" . previous-line)
-     ("l" . forward-char)
-     ("m" . xah-backward-left-bracket)
+     ("c" . c-c-or-copy)
+     ("d" . weiss-cut-line-or-delete-region)
+     ("e" . weiss-delete-backward-with-region)
+     ("f" . weiss-disable-abbrev-and-insert-mode-activate)
+     ("g" . universal-argument)
+     ("h" . weiss-select-line-downward )
+     ("i" . weiss-up-key)
+     ("j" . weiss-left-key)
+     ("k" . weiss-down-key)
+     ("l" . weiss-right-key)
+     ("m" . er/expand-region)
      ("n" . swiper-isearch)
-     ("o" . forward-word)
+     ("o" . weiss-next-word-select)
      ("p" . weiss-insert-line)
      ("q" . weiss-replace-in-command-mode)
-     ("r" . xah-kill-word)
+     ("r" . weiss-delete-forward-with-region)
      ("s" . snails-normal-backends)
-     ("t" . set-mark-command)
-     ("u" . backward-word)
-     ("v" . xah-paste-or-paste-previous)
+     ("t" . weiss-move-next-bracket-contents)
+     ("u" . weiss-select-sexp)
+     ("v" . weiss-paste)
      ("w" . xah-shrink-whitespaces)
-     ("x" . xah-cut-line-or-region)
+     ("x" . c-x-or-exchange-point)
      ("y" . undo)
-     ("z" . weiss-xah-comment-dwim)
+     ("z" . weiss-comment-dwim)
      )))
-
 
 (defun weiss-xfk-command-mode-init ()
   "Set command mode keys.
@@ -575,12 +1026,12 @@ Version 2017-01-21"
    ((eq major-mode 'org-mode) (weiss-org-command-mode-define-keys))
    ((eq major-mode 'org-agenda-mode) (weiss-org-agenda-command-mode-define-keys))
    ((eq major-mode 'telega-chat-mode) (weiss-telega-command-mode-define-keys))
-   ((eq major-mode 'dired-mode) 
+   ((eq major-mode 'dired-mode)
     (progn
       (weiss-dired-command-mode-define-keys)
-      (when dired-video-preview-mode
+      (when (and (featurep 'dired-video-preview-mode) dired-video-preview-mode)
         (weiss-dired-video-preview-command-mode-define-keys)
-        )  
+        )
       )
     )
    ((eq major-mode 'wdired-mode) nil)
@@ -588,7 +1039,6 @@ Version 2017-01-21"
    ;; ((eq major-mode 'cfw:details-mode) (weiss-calendar-command-mode-define-keys))
    (t nil)
    )
-  
 
   ;; (when xah-fly-swapped-1-8-and-2-7-p
   ;;     (xah-fly--define-keys
@@ -628,6 +1078,7 @@ Version 2018-05-07"
    xah-fly-key-map
    '(
      ("SPC" . nil)
+     ("RET" . nil)
      ;; ("SPC" . xah-fly-space-key)
      ("DEL" . nil)
 
@@ -719,6 +1170,8 @@ Version 2018-05-07"
      ;;
      ))
 
+  (unless move-as-word-p (setq move-as-word-p t))
+
   (progn
     (setq xah-fly-insert-state-q t )
     (modify-all-frames-parameters (list (cons 'cursor-type 'bar))))
@@ -790,7 +1243,6 @@ Version 2017-07-07"
     )
   )
 
-
 
 
 ;; ;; when in shell mode, switch to insertion mode.
@@ -829,12 +1281,11 @@ URL `http://ergoemacs.org/misc/ergoemacs_vi_mode.html'"
   (xah-fly-insert-mode-activate)
   (xah-fly-keys 0))
 
-
 (defun change-keybinding ()
   (interactive)
   ;; (message "a")
   (if (or (eq major-mode 'eaf-edit-mode)
-          (eq major-mode 'snails-mode) 
+          (eq major-mode 'snails-mode)
           (eq major-mode 'eaf-mode)
           (eq major-mode 'calc-mode)
           (minibuffer-window-active-p (selected-window)))

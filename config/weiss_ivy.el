@@ -255,10 +255,6 @@ This is for use in `ivy-re-builders-alist'."
     :bind (:map counsel-mode-map
            ("C-c c k" . counsel-world-clock)))
 
-  ;; Tramp ivy interface
-  (use-package counsel-tramp
-    :bind (:map counsel-mode-map
-           ("C-c c T" . counsel-tramp)))
 
   )
 

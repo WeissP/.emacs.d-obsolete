@@ -2,7 +2,11 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-((" Emacs application framework (EAF) - GitHub"
+((" Github - Your Stars"
+ (handler . eaf--bookmark-restore)
+ (eaf-app . "browser")
+ (filename . "https://github.com/WeissP?tab=stars"))
+(" Emacs application framework (EAF) - GitHub"
  (handler . eaf--bookmark-restore)
  (eaf-app . "browser")
  (filename . "https://github.com/manateelazycat/emacs-application-framework"))
@@ -48,10 +52,6 @@
  (front-context-string . "\n  ;; Enable Cac")
  (rear-context-string . "ionary\n  :config")
  (position . 41))
-(" Github - Your Stars"
- (handler . eaf--bookmark-restore)
- (eaf-app . "browser")
- (filename . "https://github.com/WeissP?tab=stars"))
 (" WhatsApp"
  (handler . eaf--bookmark-restore)
  (eaf-app . "browser")
@@ -169,8 +169,13 @@
  (front-context-string . "* Modellierung v")
  (rear-context-string . "wendungsschicht\n")
  (position . 89245))
-("weiss_ui.el"
- (filename . "~/.emacs.d/config/weiss_ui.el")
+("weiss_ui_before_dump.el"
+ (filename . "~/.emacs.d/config/weiss_ui_before_dump.el")
+ (front-context-string)
+ (rear-context-string . " 'doom-one-light")
+ (position . 54))
+("weiss_ui_after_dump.el"
+ (filename . "~/.emacs.d/config/weiss_ui_after_dump.el")
  (front-context-string)
  (rear-context-string . " 'doom-one-light")
  (position . 54))

@@ -16,7 +16,7 @@
 (use-package org 
   :diminish
   ;; :straight org-plus-contrib
-  :straight nil
+  :ensure nil
   :custom-face (org-ellipsis ((t (:foreground nil))))
   ;;;; bind
   :bind
@@ -418,9 +418,8 @@ same directory as the org-buffer and insert a link to this file."
     :init (cl-pushnew '(fsharp . t) load-language-list))
 
   (use-package ob-javascript
-    :straight (org-functions
-               :type git
-               :host github
+    :quelpa (ob-javascript
+               :fetcher github
                :repo "zweifisch/ob-javascript"
                )
     :init (cl-pushnew '(javascript . t) load-language-list))
@@ -493,7 +492,7 @@ same directory as the org-buffer and insert a link to this file."
   ;;   (org-pomodoro-mode-line-break ((t (:inherit success))))
   ;;   :bind (:map org-agenda-mode-map
   ;;               ("P" . org-pomodoro))))
-  (load "/home/weiss/.emacs.d/config/+org.el")
+  (require '+org)
   ;; (bind-key "RET" #'+org/dwim-at-point org-mode-map)
 
   )
@@ -597,7 +596,7 @@ same directory as the org-buffer and insert a link to this file."
 (use-package org-tempo ; for <s expand in org-babel 
   :diminish
   :after org
-  :straight nil
+  :ensure nil
   :config
   (add-to-list 'org-structure-template-alist '("le" . "src elisp"))
   (add-to-list 'org-structure-template-alist '("lp" . "src python"))

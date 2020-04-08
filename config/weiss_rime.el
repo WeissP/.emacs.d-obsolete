@@ -1,6 +1,6 @@
 (use-package rime
   :load-path "/home/weiss/.emacs.d/emacs-rime/"
-  :straight nil
+  :ensure nil
   :custom
   (default-input-method "rime")
   :config

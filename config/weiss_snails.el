@@ -1,6 +1,6 @@
 (use-package snails
   :load-path "/home/weiss/.emacs.d/snails"
-  :straight nil
+  :ensure nil
   ;; :defer nil
   :init
   
@@ -11,6 +11,11 @@
   (require 'snails-backend-filter-buffer)
   (require 'snails-backend-limit-recentf)
   (require 'snails-backend-eaf-bangou-search)
+  (require 'snails-backend-eaf-browser-history)
+  (require 'snails-backend-eaf-browser-open)
+  (require 'snails-backend-eaf-browser-search)
+  (require 'snails-backend-eaf-github-search)
+
   ;; (define-key snails-mode-map [remap next-line] #'snails-select-next-item)
   ;; (define-key snails-mode-map [remap previous-line] #'snails-select-prev-item)
   :config
@@ -66,6 +71,7 @@
 
   (defun snails-eaf-backends ()
     (interactive)
+    ;; (require 'weiss_eaf)
     (snails '(
               snails-backend-eaf-bangou-search
               snails-backend-eaf-web-search
@@ -74,8 +80,9 @@
               snails-backend-eaf-browser-open
               snails-backend-eaf-browser-search
               snails-backend-eaf-github-search
-              )))
-
+              ))
+    )
+;; (snails '(snails-backend-eaf-browser-history))
   (define-key snails-mode-map (kbd "C-j") #'snails-select-next-item)
   (define-key snails-mode-map (kbd "C-k") #'snails-select-prev-item)
   (define-key snails-mode-map (kbd "C-s") #'snails-select-prev-backend)

@@ -89,18 +89,18 @@
 
 ;; the following standard keys with Control are supported:
 
- ;; 【Ctrl+tab】 'xah-next-user-buffer
- ;; 【Ctrl+shift+tab】 'xah-previous-user-buffer
- ;; 【Ctrl+v】 paste
- ;; 【Ctrl+w】 close
- ;; 【Ctrl+z】 undo
- ;; 【Ctrl+n】 new
- ;; 【Ctrl+o】 open
- ;; 【Ctrl+s】 save
- ;; 【Ctrl+shift+s】 save as
- ;; 【Ctrl+shift+t】 open last closed
- ;; 【Ctrl++】 'text-scale-increase
- ;; 【Ctrl+-】 'text-scale-decrease
+;; 【Ctrl+tab】 'xah-next-user-buffer
+;; 【Ctrl+shift+tab】 'xah-previous-user-buffer
+;; 【Ctrl+v】 paste
+;; 【Ctrl+w】 close
+;; 【Ctrl+z】 undo
+;; 【Ctrl+n】 new
+;; 【Ctrl+o】 open
+;; 【Ctrl+s】 save
+;; 【Ctrl+shift+s】 save as
+;; 【Ctrl+shift+t】 open last closed
+;; 【Ctrl++】 'text-scale-increase
+;; 【Ctrl+-】 'text-scale-decrease
 
 ;; To disable both Control and Meta shortcut keys, add the following lines to you init.el before (require 'xah-fly-keys):
 ;; (setq xah-fly-use-control-key nil)
@@ -191,7 +191,7 @@ Version 2018-06-04"
 (defvar xah-left-brackets '("(" "{" "[" "<" "〔" "【" "〖" "〈" "《" "「" "『" "“" "‘" "‹" "«" )
   "List of left bracket chars.")
 (progn
-;; make xah-left-brackets based on xah-brackets
+  ;; make xah-left-brackets based on xah-brackets
   (setq xah-left-brackets '())
   (dotimes ($x (- (length xah-brackets) 1))
     (when (= (% $x 2) 0)
@@ -231,20 +231,30 @@ Version 2017-06-26"
   (re-search-backward xah-punctuation-regex nil t n))
 
 (defun xah-backward-left-bracket ()
-  "Move cursor to the previous occurrence of left bracket.
+  "Weiss: move cursor to the right of left bracket, because i habe two delete keys
+Move cursor to the previous occurrence of left bracket.
 The list of brackets to jump to is defined by `xah-left-brackets'.
 URL `http://ergoemacs.org/emacs/emacs_navigating_keys_for_brackets.html'
 Version 2015-10-01"
   (interactive)
-  (re-search-backward (regexp-opt xah-left-brackets) nil t))
+  (unless (use-region-p) (call-interactively 'set-mark-command))
+  (backward-char )
+  (re-search-backward (regexp-opt xah-left-brackets) nil t)
+  (forward-char )
+  )
 
 (defun xah-forward-right-bracket ()
-  "Move cursor to the next occurrence of right bracket.
+  "Weiss: move cursor to the left of right bracket, because i habe two delete keys
+Move cursor to the next occurrence of right bracket.
 The list of brackets to jump to is defined by `xah-right-brackets'.
 URL `http://ergoemacs.org/emacs/emacs_navigating_keys_for_brackets.html'
 Version 2015-10-01"
   (interactive)
-  (re-search-forward (regexp-opt xah-right-brackets) nil t))
+  (unless (use-region-p) (call-interactively 'set-mark-command))
+  (forward-char)
+  (re-search-forward (regexp-opt xah-right-brackets) nil t)
+  (backward-char)
+  )
 
 (defun xah-goto-matching-bracket ()
   "Move cursor to the matching bracket.
@@ -559,7 +569,7 @@ URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
 Version 2017-07-02"
   (interactive)
   (if (and delete-selection-mode (region-active-p))
-      (delete-region (region-beginning) (region-end))
+      (kill-region (region-beginning) (region-end))
     (cond
      ((looking-back "\\s)" 1)
       (if current-prefix-arg
@@ -595,6 +605,21 @@ Version 2017-09-21"
   (interactive)
   (progn
     (forward-sexp -1)
+    (mark-sexp)
+    (kill-region (region-beginning) (region-end))))
+
+(defun xah-delete-forward-bracket-text ()
+  "weiss: backward to forward.
+Delete the matching brackets/quotes to the left of cursor, including the inner text.
+
+This command assumes the left of cursor is a right bracket, and there's a matching one before it.
+
+What char is considered bracket or quote is determined by current syntax table.
+
+URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
+Version 2017-09-21"
+  (interactive)
+  (progn
     (mark-sexp)
     (kill-region (region-beginning) (region-end))))
 
@@ -643,6 +668,42 @@ Version 2017-07-02"
       (push-mark (point) t)
       (goto-char $pt)
       (delete-char 1))))
+
+(defun xah-delete-forward-char-or-bracket-text ()
+  "weiss: change backward to forward. 
+Delete backward 1 character, but if it's a \"quote\" or bracket ()[]{}【】「」 etc, delete bracket and the inner text, push the deleted text to `kill-ring'.
+
+What char is considered bracket or quote is determined by current syntax table.
+
+If `universal-argument' is called first, do not delete inner text.
+
+URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
+Version 2017-07-02"
+  (interactive)
+  (if (and delete-selection-mode (region-active-p))
+      (kill-region (region-beginning) (region-end))
+    (cond
+     ((looking-at "\\s(")
+      (if current-prefix-arg
+          (xah-delete-forward-bracket-pair)
+        (xah-delete-forward-bracket-text)))
+     ((looking-at "\\s)")
+      (progn
+        (forward-char)
+        (backward-sexp)
+        (if current-prefix-arg
+            (xah-delete-forward-bracket-pair)
+          (xah-delete-forward-bracket-text))))
+     ((looking-at "\\s\"")
+      (if (nth 3 (syntax-ppss))
+          (progn
+            (forward-char )
+            (xah-delete-backward-bracket-pairs (not current-prefix-arg)))
+        (if current-prefix-arg
+            (xah-delete-forward-bracket-pair)
+          (xah-delete-forward-bracket-text))))
+     (t
+      (delete-char 1)))))
 
 (defun xah-change-bracket-pairs ( @from-chars @to-chars)
   "Change bracket pairs from one type to another.
@@ -950,11 +1011,11 @@ URL `http://ergoemacs.org/emacs/emacs_shrink_whitespace.html'
 Version 2018-04-02"
   (interactive)
   (let ($p3 $p4)
-          (skip-chars-backward "\n")
-          (setq $p3 (point))
-          (skip-chars-forward "\n")
-          (setq $p4 (point))
-          (delete-region $p3 $p4)))
+    (skip-chars-backward "\n")
+    (setq $p3 (point))
+    (skip-chars-forward "\n")
+    (setq $p4 (point))
+    (delete-region $p3 $p4)))
 
 (defun xah-fly-delete-spaces ()
   "Delete space, tab, IDEOGRAPHIC SPACE (U+3000) around cursor.
@@ -1074,7 +1135,7 @@ Version 2017-01-08"
          $p1 $p2
          )
     (if (use-region-p)
-         (setq $p1 (region-beginning) $p2 (region-end))
+        (setq $p1 (region-beginning) $p2 (region-end))
       (save-excursion
         (if (re-search-backward $blanks-regex nil "move")
             (progn (re-search-forward $blanks-regex)
@@ -1136,7 +1197,7 @@ Version 2019-06-09"
          $p1 $p2
          )
     (if (use-region-p)
-         (setq $p1 (region-beginning) $p2 (region-end))
+        (setq $p1 (region-beginning) $p2 (region-end))
       (save-excursion
         (if (re-search-backward $blanks-regex nil "move")
             (progn (re-search-forward $blanks-regex)
@@ -1187,10 +1248,10 @@ Version 2018-12-16"
   (interactive)
   (let (
         $p1 $p2
-        ($blanks-regex "\n[ \t]*\n")
-        ($minlen (if @min-length
-                     @min-length
-                   (if current-prefix-arg (prefix-numeric-value current-prefix-arg) fill-column))))
+            ($blanks-regex "\n[ \t]*\n")
+            ($minlen (if @min-length
+                         @min-length
+                       (if current-prefix-arg (prefix-numeric-value current-prefix-arg) fill-column))))
     (if (and  @begin @end)
         (setq $p1 @begin $p2 @end)
       (if (region-active-p)
@@ -1239,7 +1300,7 @@ Version 2017-08-19"
           (replace-match "\n" ))))))
 
 (defun xah-comment-dwim ()
-  "Like `comment-dwim', but toggle comment if cursor is not at end of line.
+  "Like `comment-dwim', but toggle comment if cursor is not at end of line. Weiss: and activate insert mode
 
 URL `http://ergoemacs.org/emacs/emacs_toggle_comment_by_line.html'
 Version 2016-10-25"
@@ -1253,7 +1314,8 @@ Version 2016-10-25"
             (comment-dwim nil))
         (if (eq (point) $lep)
             (progn
-              (comment-dwim nil))
+              (comment-dwim nil)
+              (xah-fly-insert-mode-activate)) 
           (progn
             (comment-or-uncomment-region $lbp $lep)
             (forward-line )))))))
@@ -1351,11 +1413,11 @@ Version 2017-01-11"
        (list (region-beginning) (region-end))
      (list (line-beginning-position) (line-end-position))))
   (save-excursion
-      (save-restriction
-        (narrow-to-region @begin @end)
-        (goto-char (point-min))
-        (while (search-forward "\"" nil t)
-          (replace-match "\\\"" "FIXEDCASE" "LITERAL")))))
+    (save-restriction
+      (narrow-to-region @begin @end)
+      (goto-char (point-min))
+      (while (search-forward "\"" nil t)
+        (replace-match "\\\"" "FIXEDCASE" "LITERAL")))))
 
 (defun xah-unescape-quotes (@begin @end)
   "Replace  「\\\"」 by 「\"」 in current line or text selection.
@@ -1572,7 +1634,7 @@ Version 2017-01-23"
   (interactive)
   (let ($p1 $p2)
     (if (region-active-p)
-         (setq $p1 (region-beginning) $p2 (region-end))
+        (setq $p1 (region-beginning) $p2 (region-end))
       (setq $p1 (line-beginning-position) $p2 (line-end-position)))
     (copy-to-register ?1 $p1 $p2)
     (message "Copied to register 1: 「%s」." (buffer-substring-no-properties $p1 $p2))))
@@ -1587,7 +1649,7 @@ Version 2015-12-08"
   (interactive)
   (let ($p1 $p2)
     (if (region-active-p)
-         (setq $p1 (region-beginning) $p2 (region-end))
+        (setq $p1 (region-beginning) $p2 (region-end))
       (setq $p1 (line-beginning-position) $p2 (line-end-position)))
     (append-to-register ?1 $p1 $p2)
     (with-temp-buffer (insert "\n")
@@ -3167,7 +3229,7 @@ If the value is nil, it's automatically set to \"dvorak\"."
 Value is automatically set from value of `xah-fly-key--current-layout'. Do not manually set this variable. Version 2019-02-12."
   )
 (setq xah-fly--current-layout-kmap
-(eval (intern (concat "xah--dvorak-to-" xah-fly-key--current-layout "-kmap"))))
+      (eval (intern (concat "xah--dvorak-to-" xah-fly-key--current-layout "-kmap"))))
 
 (defun xah-fly--key-char (@charstr)
   "Return the corresponding char @charstr according to xah-fly--current-layout-kmap.

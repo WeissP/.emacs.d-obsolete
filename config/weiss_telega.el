@@ -66,7 +66,7 @@
        ;; ("c" . xah-copy-line-or-region)
        ;; ("d" . xah-delete-backward-char-or-bracket-text)
        ;; ("e" . xah-backward-kill-word)
-       ;; ("f" . xah-fly-insert-mode-activate)
+       ("f" . xah-fly-insert-mode-activate)
        ("g" . telega-chat-with)
        ;; ("h" . backward-char)
        ;; ("i" . xah-beginning-of-line-or-block)

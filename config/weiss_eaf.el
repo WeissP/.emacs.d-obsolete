@@ -1,10 +1,12 @@
 (use-package eaf
-  :straight nil
+  :ensure nil
   :load-path "/home/weiss/.emacs.d/emacs-application-framework"
   :bind
   (
    :map eaf-mode-map
-        ("M-c" . eaf-get-path-or-url))
+        ("M-c" . eaf-get-path-or-url)
+        ("M-w" . hydra-resize-window/body)
+        )
   :config
   (setq eaf-browser-keybinding
         '(
@@ -64,7 +66,7 @@
           ("M-t" . "new_blank_page")
           ("M-u" . "clear_focus")
           ("M-v" . "scroll_down_page")
-          ("M-w" . "copy_text")
+          ;; ("M-w" . "copy_text")
           ("S" . "save_as_pdf")
           ;; ("SPC" . "xah-fly-leader-key-map")
           ("T" . "recover_prev_close_page")

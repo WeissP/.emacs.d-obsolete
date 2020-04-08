@@ -1,8 +1,7 @@
 (use-package aweshell
   ;; :disabled                             
-  :straight (aweshell
-             :type git
-             :host github
+  :quelpa (aweshell
+             :fetcher github
              :repo "manateelazycat/aweshell"))
 
 (use-package vterm

@@ -140,7 +140,7 @@
 (use-package lsp-mode
   :diminish
   :hook (prog-mode . (lambda ()
-                       (unless (derived-mode-p 'emacs-lisp-mode 'lisp-mode)
+                       (unless (derived-mode-p 'emacs-lisp-mode 'lisp-mode 'xah-elisp-mode)
                          (lsp-deferred))))
   :bind (:map lsp-mode-map
               ("C-c C-d" . lsp-describe-thing-at-point))
@@ -155,7 +155,7 @@
 
   ;; Configure LSP clients
   (use-package lsp-clients
-    :straight nil
+    :ensure nil
     :functions (lsp-format-buffer lsp-organize-imports)
     :hook (go-mode . (lambda ()
                        "Format and add/delete imports."
@@ -166,8 +166,8 @@
     (unless (executable-find "rls")
       (setq lsp-rust-rls-server-command '("rustup" "run" "stable" "rls"))))
 
-  (when (and lsp-auto-configure lsp-auto-require-clients)
-    (require 'lsp-clients))
+  ;; (when (and lsp-auto-configure lsp-auto-require-clients)
+    (require 'lsp-clients)
   
   (use-package lsp-ui
     :custom-face
@@ -243,16 +243,15 @@
                       ".ccls")
                     projectile-project-root-files-top-down-recurring))))
 
-  (use-package lsp-fsharp
-    :disabled                           
-    :straight (lsp-fsharp
-               :type git
-               :host github
-               :repo "emacs-lsp/lsp-mode")
-    :hook (fsharp-mode . (lambda () (require 'lsp-fsharp)))
-    :init
-    (setq lsp-fsharp-server-install-dir "~/.emacs.d/lsp-fsharp")
-    )
+  ;; (use-package lsp-fsharp
+  ;;   :disabled                           
+  ;;   :quelpa (lsp-fsharp
+  ;;              :fetcher github
+  ;;              :repo "emacs-lsp/lsp-mode")
+  ;;   :hook (fsharp-mode . (lambda () (require 'lsp-fsharp)))
+  ;;   :init
+  ;;   (setq lsp-fsharp-server-install-dir "~/.emacs.d/lsp-fsharp")
+  ;;   )
 
   ;; Julia support
   (use-package lsp-julia

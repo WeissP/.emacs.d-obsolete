@@ -4,7 +4,7 @@
 ;;   pip install autopep8
 (use-package python
   :defer t
-  :straight nil
+  :ensure nil
   :hook (inferior-python-mode . (lambda ()
                                   (process-query-on-exit-flag
                                    (get-process "Python"))))
@@ -30,12 +30,8 @@
     :diminish yapf-mode
     :hook (python-mode . yapf-mode)))
 
-(use-package fsharp-mode
-  :disabled
-  )
-
 (use-package php-mode
-  :defer t
+  ;; :defer t
   )
 
 (use-package xah-elisp-mode)
