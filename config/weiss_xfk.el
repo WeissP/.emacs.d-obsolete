@@ -166,48 +166,6 @@ Version 2019-02-12"
   )
 
 ;;;; navi
-(defun weiss-next-line-select ()
-  "Next line with select"
-  (interactive)
-  (unless (use-region-p)
-    (push-mark (point) nil t))
-  (next-line))
-
-(defun weiss-previous-line-select ()
-  "Previous line with select"
-  (interactive)
-  (unless (use-region-p)
-    (push-mark (point) nil t))
-  (previous-line))
-
-(defun weiss-forward-char-select ()
-  "Forward char with select"
-  (interactive)
-  (unless (use-region-p)
-    (push-mark (point) nil t))
-  (forward-char))
-
-(defun weiss-backward-char-select ()
-  "Backward char with select"
-  (interactive)
-  (unless (use-region-p)
-    (push-mark (point) nil t))
-  (backward-char))
-
-(defun weiss-forward-word-select ()
-  "forward word with select"
-  (interactive)
-  (unless (use-region-p)
-    (push-mark (point) nil t))
-  (forward-word))
-
-(defun weiss-backward-word-select ()
-  "backward word with select"
-  (interactive)
-  (unless (use-region-p)
-    (push-mark (point) nil t))
-  (backward-word))
-
 (defun weiss-next-word-select ()
   "forward word with select"
   (interactive)
@@ -216,6 +174,13 @@ Version 2019-02-12"
           (backward-word)
         (forward-word))
     (xah-insert-space-after)))
+
+(defun weiss-backward-word-and-select-current-word ()
+  "weiss backward word and select current word"
+  (interactive)
+  (when (looking-back "\\w") (skip-syntax-backward "\\w"))
+  (backward-word)
+  (weiss-select-current-word))
 
 (defun weiss-select-current-word ()
   "select current word, if current char is not word, backward char until it's a word"
@@ -249,29 +214,6 @@ Version 2019-02-12"
   (weiss-select-current-word)
   )
 
-(defun weiss--forward-check (stop-delimiters delimiters others)
-  "The first t/n means whether forward-char, the second t/n means whether exit loop"
-  (interactive)
-  ;; (message "%s" (cdr delimiters))
-  (let ((forward-p t)
-        (check-char)
-        (check-point (point)))
-    (while forward-p
-      (setq check-char (buffer-substring-no-properties check-point (1+ check-point)))
-      (cond
-       ((string-match (format "[%s]" weiss-stop-delimiters) check-char)
-        (when (nth 0 stop-delimiters) (forward-char))
-        (when (nth 1 stop-delimiters) (setq forward-p nil)))
-       ((string-match (format "[%s]" weiss-delimiters) check-char)
-        (when (nth 0 delimiters) (forward-char))
-        (when (nth 1 delimiters)(message "%s" (cdr delimiters)) (setq forward-p nil)))
-       (t
-        (when (nth 0 others) (forward-char))
-        (when (nth 1 others) (setq forward-p nil))))
-      (setq check-point (point))
-      )
-    ))
-
 (defun weiss-forward-and-select-word ()
   "Forward and select word, if in quote, then select all"
   (interactive)
@@ -280,7 +222,7 @@ Version 2019-02-12"
   (if (and (use-region-p)
            (or (string-match "^\".+\"$" (buffer-substring-no-properties (region-beginning) (1+ (region-end)))) ; to avoid "|" ""
                (not (string-match "\"" (buffer-substring-no-properties (- (region-beginning) 1) (region-beginning))))) ; to avoid "mark...|"
-           (string-match "\"" (buffer-substring-no-properties  (point) (+ 1 (point))))) 
+           (string-match "\"" (buffer-substring-no-properties  (point) (+ 1 (point)))))
       (progn
         (forward-char 1)
         (call-interactively 'set-mark-command)
@@ -289,58 +231,40 @@ Version 2019-02-12"
       (deactivate-mark)
       (when (looking-at (format "[%s]" weiss-stop-delimiters)) (forward-char))
       (call-interactively 'set-mark-command)
-      (skip-chars-forward (format "^%s" weiss-delimiters))))
+      (skip-chars-forward (format "^%s" weiss-delimiters)))))
 
-  ;; (when (looking-at (format "[%s]" weiss-stop-delimiters)) (backward-char))
-  ;; (re-search-forward (format "[a-zA-Z0-9%s]" weiss-stop-delimiters))
-  ;; (re-search-forward (format "[%s]" weiss-stop-delimiters))
-  ;; (when (looking-at "\\w")(backward-char))
-  ;; (call-interactively 'set-mark-command)
-  ;; (re-search-forward (format "[%s%s]" weiss-stop-delimiters weiss-delimiters))
-  ;; (backward-char)
-  )
-
-(defun weiss-forward-word-and-select-current-word ()
-  "weiss forward word and select current word"
+(defun weiss-backward-and-select-word ()
+  "Backward and select word"
   (interactive)
-  (forward-word)
-  (weiss-select-current-word)
-  )
-
-(defun weiss-backward-word-and-select-current-word ()
-  "weiss backward word and select current word"
-  (interactive)
-  (when (looking-back "\\w") (skip-syntax-backward "\\w"))
-  (backward-word)
-  (weiss-select-current-word))
+  (deactivate-mark)
+  (backward-char)
+  (skip-chars-backward (format "^%s%s" weiss-stop-delimiters weiss-delimiters))
+  (skip-chars-backward (format "%s%s" weiss-stop-delimiters weiss-delimiters))
+  (call-interactively 'set-mark-command)
+  (skip-chars-backward (format "^%s%s" weiss-stop-delimiters weiss-delimiters))
+  (exchange-point-and-mark))
 
 (defun weiss-right-key ()
   "smart decide whether move by word or by char"
   (interactive)
   (let ((string-at-point (buffer-substring-no-properties (point) (+ 3 (point)))))
     (if (or current-prefix-arg
-            (string-match (format "[^%s]\\{2\\}."  weiss-delimiters weiss-stop-delimiters) string-at-point)
-            (string-match (format "[^%s%s][%s][%s]" weiss-delimiters weiss-stop-delimiters weiss-delimiters weiss-stop-delimiters) string-at-point)
+            (string-match (format "[^%s]\\{2\\}."  weiss-delimiters ) string-at-point)
+            ;; (string-match (format "[^%s%s][%s][%s]" weiss-delimiters weiss-stop-delimiters weiss-delimiters weiss-stop-delimiters) string-at-point)
             )
         (forward-char)
       (weiss-forward-and-select-word))))
 
-
-
 (defun weiss-left-key ()
   "smart decide whether move by word or by char"
   (interactive)
-  (if current-prefix-arg
-      (backward-char)
-    (progn
-      (cond
-       ;; ((looking-at "  ") (forward-char) (weiss-right-key))
-       ;; ((or (looking-at "[^a-zA-Z0-9\n][^a-zA-Z0-9\n]") (not move-as-word-p))
-       ;;  (push-mark (point) nil t)
-       ;;  (forward-char))
-       ((and (looking-back "[^a-zA-Z0-9\n]") (looking-at "[^a-zA-Z0-9\n]")) (backward-char))
-       ((and (looking-back "[a-zA-Z]") (looking-at "[a-zA-Z]")) (backward-char))
-       (t (weiss-backward-word-and-select-current-word))))))
+  (let ((string-at-point (buffer-substring-no-properties (- (point) 2) (1+ (point)) )))
+    (if (or current-prefix-arg
+            (string-match (format ".[^%s]\\{2\\}"  weiss-delimiters ) string-at-point)
+            ;; (string-match (format "[%s][%s][^%s%s]" weiss-stop-delimiters weiss-delimiters  weiss-delimiters weiss-stop-delimiters) string-at-point)
+            )
+        (backward-char)
+      (weiss-backward-and-select-word))))
 
 (defun weiss-down-key ()
   "DOCSTRING"
@@ -388,11 +312,11 @@ Version 2019-02-12"
 
 ;;;; misc
 (defun weiss-disable-abbrev-and-insert-mode-activate ()
-  "the first char is with c-q inserted, to avoid to activate abbrev"
+  "If current point can expand an abbrev, insert a space to avoid it"
   (interactive)
+  (deactivate-mark)
   (xah-fly-insert-mode-activate)
-  (call-interactively 'quoted-insert)
-  )
+  (when (abbrev-symbol (thing-at-point 'sexp)) (insert " ")))
 
 (defun weiss-ret ()
   "DOCSTRING"
@@ -965,9 +889,9 @@ t -> comment current line"
      (";" . rotate-text)
      ("/" . xah-goto-matching-bracket)
      ("\\" . nil)
-     ("[" . hs-toggle-hiding)
-     ("]" . hs-hide-all)
-     ("}" . hs-show-all)
+     ;; ("[" . hs-toggle-hiding)
+     ;; ("]" . hs-hide-all)
+     ;; ("}" . hs-show-all)
      ("`" . other-frame)
 
      ("<backtab>" . weiss-indent)
@@ -1086,7 +1010,8 @@ Version 2018-05-07"
 
      ("'" . nil)
      ("," . nil)
-     ("-" . nil)
+     ("-" . (lambda () (interactive)(insert "-"))) 
+     ;; ("-" . nil)
      ("." . nil)
      ("/" . nil)
      (";" . nil)

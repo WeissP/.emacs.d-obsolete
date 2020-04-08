@@ -159,7 +159,7 @@
       ("botap" "bounds-of-thing-at-point" xah-elisp--ahf)
       ("bsnp" "(buffer-substring-no-properties START▮ END)" xah-elisp--ahf)
       ("daer" "delete-and-extract-region" xah-elisp--ahf)
-      ("epam" "exchange-point-and-mark" xah-elisp--ahf)
+      ("epam" "(exchange-point-and-mark)" xah-elisp--ahf)
       ("fnse" "file-name-sans-extension" xah-elisp--ahf)
       ("rris" "replace-regexp-in-string" xah-elisp--ahf)
       ("yonp" "yes-or-no-p" xah-elisp--ahf)
