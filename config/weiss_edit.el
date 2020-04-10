@@ -77,7 +77,10 @@
                             ("start" "end")
                             ("min" "max")
                             ("when" "unless")
-                            ("even" "odd"))))
+                            ("even" "odd")
+                            ;; Germany Language
+                            ("der" "das" "die")
+                            )))
 
 (defhydra hydra-error (global-map "M-g")
   "goto-error"

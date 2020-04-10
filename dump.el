@@ -247,6 +247,7 @@ single-character strings, or a string of characters."
                     popwin
                     which-key
                     ;; weiss_snails 
+                    ;; meow-keypad
                     weiss_xfk
                     weiss_rime
                     weiss_web

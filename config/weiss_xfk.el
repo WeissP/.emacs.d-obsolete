@@ -23,7 +23,7 @@
 
 ;;; Code:
 (require 'xfk-functions)
-(require 'm4d-keypad)
+(require 'meow-keypad)
 
 
 (defun weiss--define-keys (@keymap-name @key-cmd-alist)
@@ -247,7 +247,10 @@ Version 2019-02-12"
 (defun weiss-right-key ()
   "smart decide whether move by word or by char"
   (interactive)
-  (let ((string-at-point (buffer-substring-no-properties (point) (+ 3 (point)))))
+  ;; (when (and (use-region-p) (eq (point) (region-beginning)) (not (string-match "\n" (buffer-substring-no-properties (region-beginning) (region-end))))) (exchange-point-and-mark))
+  (let ((string-at-point (or
+                          (ignore-errors (buffer-substring-no-properties (point) (+ 3 (point))))
+                          "")))
     (if (or current-prefix-arg
             (string-match (format "[^%s]\\{2\\}."  weiss-delimiters ) string-at-point)
             ;; (string-match (format "[^%s%s][%s][%s]" weiss-delimiters weiss-stop-delimiters weiss-delimiters weiss-stop-delimiters) string-at-point)
@@ -258,12 +261,13 @@ Version 2019-02-12"
 (defun weiss-left-key ()
   "smart decide whether move by word or by char"
   (interactive)
-  (let ((string-at-point (buffer-substring-no-properties (- (point) 2) (1+ (point)) )))
+  ;; (when (and (use-region-p) (eq (point) (region-end)) (not (string-match "\n" (buffer-substring-no-properties (region-beginning) (region-end))))) (exchange-point-and-mark)) 
+  (let ((string-at-point (or (ignore-errors (buffer-substring-no-properties (- (point) 2) (1+ (point)) )) "")))
     (if (or current-prefix-arg
             (string-match (format ".[^%s]\\{2\\}"  weiss-delimiters ) string-at-point)
             ;; (string-match (format "[%s][%s][^%s%s]" weiss-stop-delimiters weiss-delimiters  weiss-delimiters weiss-stop-delimiters) string-at-point)
             )
-        (backward-char)
+        (left-char)
       (weiss-backward-and-select-word))))
 
 (defun weiss-down-key ()
@@ -418,24 +422,27 @@ Version 2019-02-12"
     (deactivate-mark))
   (xah-paste-or-paste-previous))
 
-;; keypad
+;;;; keypad
+(defun meow-keypad-start ()
+  (interactive)
+  (xah-fly-insert-mode-activate)
+  (meow-keypad-mode 1)
+  (call-interactively #'meow-keypad-self-insert)
+  )
+
 (defun c-x-or-exchange-point ()
   "DOCSTRING"
   (interactive)
   (if (use-region-p)
       (exchange-point-and-mark)
-    (progn
-      (m4d-keypad-mode 1)
-      (call-interactively #'m4d-keypad-self-insert))))
+    (meow-keypad-start)))
 
 (defun c-c-or-copy ()
   "DOCSTRING"
   (interactive)
   (if (use-region-p)
       (xah-copy-line-or-region)
-    (progn
-      (m4d-keypad-mode 1)
-      (call-interactively #'m4d-keypad-self-insert))))
+    (meow-keypad-start)))
 
 (defun weiss-comment-dwim ()
   "Multi lines -> comment region
@@ -864,7 +871,6 @@ t -> comment current line"
   (progn
     (when xah-fly-use-meta-key
       (define-key xah-fly-key-map (kbd "M-SPC") 'xah-fly-command-mode-activate-no-hook))))
-
 
 
 (defvar xah-fly-insert-state-q t "Boolean value. true means insertion mode is on.")
@@ -879,7 +885,8 @@ t -> comment current line"
 
      ("SPC" . xah-fly-leader-key-map)
      ("DEL" . xah-fly-leader-key-map)
-     ("RET" . weiss-ret)
+     ;; ("RET" . weiss-ret)
+     ("<escape>" . mode-line-other-buffer)
 
      ("'" . xah-cycle-hyphen-underscore-space)
      ("," . xah-backward-left-bracket)
@@ -906,9 +913,9 @@ t -> comment current line"
      ("4" . split-window-below)
      ("5" . weiss-test)
      ("6" . xah-select-block)
-     ("7" . weiss-select-sexp)
-     ("8" . weiss-delete-parent-sexp)
-     ("9" . weiss-add-parent-sexp)
+     ("7" . weiss-delete-parent-sexp)
+     ("8" . weiss-add-parent-sexp)
+     ("9" . xah-insert-paren)
      ("0" . xah-next-window-or-frame)
 
      ("a" . open-line-and-indent)

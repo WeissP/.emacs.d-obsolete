@@ -103,6 +103,17 @@
 
   (define-prefix-command 'weiss-org-xfk-g-keymap)
 
+  (defun weiss-org-cut-line-or-delete-region ()
+    "DOCSTRING"
+    (interactive)
+    (if (use-region-p)
+        (kill-region (region-beginning) (region-end) t)
+      (progn
+        (beginning-of-line)
+        (org-kill-line)
+        (kill-region (line-beginning-position) (line-beginning-position 2)))
+      ))
+
   (defun weiss-org-command-mode-define-keys ()
     (define-key xah-fly-key-map (kbd "g") weiss-org-xfk-g-keymap)
     (weiss--define-keys
@@ -148,7 +159,7 @@
        ;; ("b" . xah-toggle-letter-case)
        ;; ("c" . xah-copy-line-or-region)
        ("C" . org-copy-subtree)
-       ;; ("d" . xah-delete-backward-char-or-bracket-text)
+       ("d" . weiss-org-cut-line-or-delete-region)
        ;; ("e" . xah-backward-kill-word)
        ;; ("f" . xah-fly-insert-mode-activate)
        ;; ("g" . weiss-xfk-g-keymap)
@@ -169,7 +180,7 @@
        ;; ("u" . backward-word)
        ;; ("v" . xah-paste-or-paste-previous)
        ;; ("w" . xah-shrink-whitespaces)
-       ("x" . org-kill-line)
+       ;; ("x" . org-kill-line)
        ("X" . org-refile)
        ;; ("y" . undo)
        ;; ("z" . xah-comment-dwim)
@@ -419,9 +430,9 @@ same directory as the org-buffer and insert a link to this file."
 
   (use-package ob-javascript
     :quelpa (ob-javascript
-               :fetcher github
-               :repo "zweifisch/ob-javascript"
-               )
+             :fetcher github
+             :repo "zweifisch/ob-javascript"
+             )
     :init (cl-pushnew '(javascript . t) load-language-list))
 
   (use-package ob-go

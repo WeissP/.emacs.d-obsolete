@@ -685,14 +685,14 @@ Version 2017-07-02"
     (cond
      ((looking-at "\\s(")
       (if current-prefix-arg
-          (xah-delete-forward-bracket-pair)
+          (xah-delete-forward-bracket-pairs)
         (xah-delete-forward-bracket-text)))
      ((looking-at "\\s)")
       (progn
         (forward-char)
         (backward-sexp)
         (if current-prefix-arg
-            (xah-delete-forward-bracket-pair)
+            (xah-delete-forward-bracket-pairs)
           (xah-delete-forward-bracket-text))))
      ((looking-at "\\s\"")
       (if (nth 3 (syntax-ppss))
@@ -700,7 +700,7 @@ Version 2017-07-02"
             (forward-char )
             (xah-delete-backward-bracket-pairs (not current-prefix-arg)))
         (if current-prefix-arg
-            (xah-delete-forward-bracket-pair)
+            (xah-delete-forward-bracket-pairs)
           (xah-delete-forward-bracket-text))))
      (t
       (delete-char 1)))))

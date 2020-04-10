@@ -29,7 +29,7 @@
   (setq use-package-always-ensure t)
   (require 'use-package)
   (require 'quelpa-use-package)
-  (quelpa-use-package-activate-advice)  
+  (quelpa-use-package-activate-advice)
 
 ;;; use-package.el
 
@@ -43,10 +43,8 @@
   ;;   (setq auto-package-update-hide-results t)
   ;;   (auto-package-update-maybe))
 
-
   (defun xah-get-fullpath (@file-relative-path)
-    (concat (file-name-directory (or load-file-name buffer-file-name)) @file-relative-path)
-    )
+    (concat (file-name-directory (or load-file-name buffer-file-name)) @file-relative-path))
 
   (add-to-list 'load-path "/home/weiss/.emacs.d/local-package/")
   (add-to-list 'load-path "/home/weiss/.emacs.d/local-package/snails/")
@@ -64,12 +62,10 @@
    display-line-numbers 't
    )
 
-
   (fset 'yes-or-no-p 'y-or-n-p)
 
-
   ;; UI
-  (setq initial-frame-alist (quote ((fullscreen . maximized)))) 
+  (setq initial-frame-alist (quote ((fullscreen . maximized))))
   (unless (eq window-system 'ns)
     (menu-bar-mode -1))
   (when (fboundp 'tool-bar-mode)
@@ -81,8 +77,6 @@
 
   (use-package esup
     :commands (esup))
-
-
 
   ;;Bookmarks
   (bookmark-delete "org-capture-last-stored")
@@ -96,8 +90,6 @@
   ;; (show-paren-mode 1)
   (delete-selection-mode 1)
   (global-auto-revert-mode 1)
-
-
 
   (setq electric-pair-inhibit-predicate 'electric-pair-conservative-inhibit)
   (electric-pair-mode 1)
@@ -129,7 +121,7 @@
 
   (save-place-mode 1)
 
-  (unless weiss-dumped-load-path 
+  (unless weiss-dumped-load-path
     ;; Start server
     (use-package server
       :ensure nil
@@ -139,21 +131,19 @@
     :diminish
     :config
     (add-to-list 'super-save-triggers 'find-file)
-    (super-save-mode +1)
-    )
+    (super-save-mode +1))
 
   (use-package keyfreq
     :config
     (keyfreq-mode 1)
-    (keyfreq-autosave-mode 1)
-    )
+    (keyfreq-autosave-mode 1))
 
   (use-package switch-buffer-functions
     ;; :disabled
     :quelpa (switch-buffer-functions :fetcher github
                                      :repo "10sr/switch-buffer-functions-el"))
 
-  ;; (load "/home/weiss/weiss/switch-buffer-functions-el/switch-buffer-functions.elc") 
+  ;; (load "/home/weiss/weiss/switch-buffer-functions-el/switch-buffer-functions.elc")
 
   (defun weiss-eval-last-sexp()
     (interactive)
@@ -164,8 +154,7 @@
   (setq-default abbrev-mode t)
   (setq save-abbrevs 'silently)
 
-
-  (use-package hydra 
+  (use-package hydra
     :diminish)
 
   (defun weiss-dump ()
@@ -191,6 +180,16 @@ single-character strings, or a string of characters."
       (when (memq char chars)
         (char-to-string char))))
 
+  (defun weiss-read-char-picky-from-list (picky-list)
+    "Get the inputed number and return the nth element of list"
+    (interactive)
+    (let ((ra "")
+          (rb ""))
+      (nth (- (string-to-number (read-char-picky
+                                 (dotimes (i (length picky-list) ra) (setq ra (format "%s %s:%s" ra (1+ i) (nth i picky-list))))
+                                 (dotimes (i (length picky-list) rb) (setq rb (format "%s%s" rb (1+ i)))))) 1) picky-list)))
+
+
   (require 'weiss_ui_before_dump)
   (require 'weiss_edit)
   (require 'weiss_keybinding)
@@ -209,9 +208,7 @@ single-character strings, or a string of characters."
   (require 'weiss_snails)
   (require 'weiss_rime)
   (require 'weiss_telega)
-  (require 'weiss_abbrevs)
-  
-  )
+  (require 'weiss_abbrevs))
 
 ;; (require 'weiss_eaf)
 ;; (require 'weiss-dired-video-preview-mode)

@@ -25,6 +25,7 @@
 
        ;; ("SPC" . xah-fly-leader-key-map)
        ;; ("DEL" . xah-fly-leader-key-map)
+       ("RET" . dired-find-file)
 
        ;; ("'" . xah-cycle-hyphen-underscore-space)
        ;; ("," . xah-next-window-or-frame)
