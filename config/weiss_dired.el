@@ -66,10 +66,10 @@
        ;; ("f" . xah-fly-insert-mode-activate)
        ;; ("F" . hydra-dired-filter-actress/body)
        ;; ("g" . revert-buffer)
-       ("j" . (lambda()(interactive)(find-alternate-file "..")))
+       ("j" . dired-next-line)
        ("h" . dired-omit-mode)
-       ("k" . dired-next-line)
-       ("i" . dired-previous-line)
+       ("k" . dired-previous-line)
+       ("i" . (lambda()(interactive)(find-alternate-file "..")))
        ("l" . dired-find-alternate-file)
        ;; ("l" . eaf-open-this-from-dired)
        ("L" . dired-do-symlink)
@@ -120,6 +120,7 @@
 
   (use-package dired-quick-sort)
 
+  (require 'weiss_dired_filter)
   ;; (use-package dired-rsync)
 
   ;; Colourful dired
@@ -127,11 +128,23 @@
     ;; :disabled
     :init (diredfl-global-mode 1))
 
+  (defun weiss-show-icons-in-dired ()
+    "Don't show icons in some Dir due to low performance"
+    (interactive)
+    (let ((dired-icons-blacklist '("porn" "/lib/" "/lib64/"))
+          r)
+      (unless (dolist (x dired-icons-blacklist r)
+                (when (string-match x dired-directory) (setq r t)))
+        (all-the-icons-dired-mode))
+      )
+    )
+
   ;; Shows icons
   (use-package all-the-icons-dired
     ;; :disabled
     :diminish
-    ;; :hook (dired-mode . all-the-icons-dired-mode)
+    :hook (dired-mode . weiss-show-icons-in-dired) 
+    ;; :hook (dired-mode . (lambda () (interactive) (message "path: %s" (string-match "x" dired-directory))))
     )
 
   (use-package peep-dired ;preview files
@@ -151,7 +164,7 @@
     (dired-hide-details-mode 1)
     (dired-collapse-mode)
     (dired-utils-format-information-line-mode)
-    (all-the-icons-dired-mode)
+    ;; (all-the-icons-dired-mode)
     (dired-omit-mode)
     (setq dired-auto-revert-buffer 't)
     ;; (xah-fly-insert-mode-activate)

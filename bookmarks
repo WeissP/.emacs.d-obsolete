@@ -2,7 +2,17 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-((" Github - Your Stars"
+(("buffer.py"
+ (filename . "~/.emacs.d/emacs-application-framework/app/js-video-player/buffer.py")
+ (front-context-string . "a(self, session_")
+ (rear-context-string . "tore_session_dat")
+ (position . 1920))
+("dump.el"
+ (filename . "~/.emacs.d/dump.el")
+ (front-context-string . ";;              ")
+ (rear-context-string . "           esup\n")
+ (position . 7135))
+(" Github - Your Stars"
  (handler . eaf--bookmark-restore)
  (eaf-app . "browser")
  (filename . "https://github.com/WeissP?tab=stars"))
@@ -119,8 +129,8 @@
  (front-context-string . ";; Python Mode\n;")
  (rear-context-string)
  (position . 1))
-("weiss_pdf.el"
- (filename . "~/.emacs.d/config/weiss_pdf.el")
+("weiss_pdf_tools.el"
+ (filename . "~/.emacs.d/config/weiss_pdf_tools.el")
  (front-context-string . "minor-modes', `p")
  (rear-context-string . "df-tools-enable-")
  (position . 2296))

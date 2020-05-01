@@ -1,5 +1,6 @@
 (require 'package)
 (package-initialize)
+(setq use-package-ensure-function 'quelpa)
 (setq quelpa-checkout-melpa-p nil)
 (setq quelpa-update-melpa-p nil)
 (setq use-package-always-demand t)
@@ -14,13 +15,15 @@
 (add-to-list 'load-path "/home/weiss/.emacs.d/local-package/keypad/")
 (add-to-list 'load-path "/home/weiss/.emacs.d/config/")
 (add-to-list 'load-path "/home/weiss/.emacs.d/emacs-application-framework/")
+(add-to-list 'load-path "/home/weiss/.emacs.d/local-package/dired-video-preview/")
+(add-to-list 'load-path "/usr/local/texlive/2020/bin/x86_64-linux")
 
 ;; (require 'eaf)
 
 (setq weiss-dumped-load-path load-path
       weiss-dumped-p t)
 
-;;; We have to unload tramp in pdump, otherwise tramp will not work.
+;;;;; We have to unload tramp in pdump, otherwise tramp will not work.
 (tramp-unload-tramp)
 
 ;;; Disable GC
@@ -59,12 +62,6 @@
 
 (use-package esup
   :commands (esup))
-
-
-;;;; Bookmarks
-(bookmark-delete "org-capture-last-stored")
-(bookmark-delete "org-refile-last-stored")
-;; (bookmark-delete "Emacs China")
 
 ;;;; Basic modes
 (ignore-errors (savehist-mode 1))
@@ -164,6 +161,14 @@ single-character strings, or a string of characters."
     (when (memq char chars)
       (char-to-string char))))
 
+(defun weiss-read-char-picky-from-list (picky-list)
+  "Get the inputed number and return the nth element of list"
+  (interactive)
+  (let ((ra "")
+        (rb ""))
+    (nth (- (string-to-number (read-char-picky
+                               (dotimes (i (length picky-list) ra) (setq ra (format "%s %s:%s" ra (1+ i) (nth i picky-list))))
+                               (dotimes (i (length picky-list) rb) (setq rb (format "%s%s" rb (1+ i)))))) 1) picky-list)))
 
 ;; (dolist (package  '(
 ;;                     use-package
@@ -226,6 +231,7 @@ single-character strings, or a string of characters."
 ;;   (require package)
 ;;   )
 (load-theme 'doom-one-light t t)
+
 (dolist (package  '(
                     diminish
                     bind-key
@@ -239,15 +245,6 @@ single-character strings, or a string of characters."
                     weiss_magit
                     doom-themes
                     weiss_ui_before_dump
-                    anzu
-                    all-the-icons
-                    emojify
-                    rainbow-mode
-                    dashboard
-                    popwin
-                    which-key
-                    ;; weiss_snails 
-                    ;; meow-keypad
                     weiss_xfk
                     weiss_rime
                     weiss_web
@@ -255,15 +252,14 @@ single-character strings, or a string of characters."
                     weiss_telega
                     weiss_edit
                     weiss_dired
-                    ;; weiss_flycheck
                     weiss_ivy 
                     weiss_keybinding
-                    ;; weiss_pdf
-                    weiss_shell_or_terminal
-                    ;; weiss_translation
-                    xfk-functions
+                    weiss_pdf_tools
+                    weiss_translation
+                    xfk-functions 
                     weiss_org
                     +org
+                    weiss_flycheck
                     )) 
   (require package)
   )

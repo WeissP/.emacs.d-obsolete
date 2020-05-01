@@ -1,16 +1,18 @@
+(require 'request)
+
 (defun weiss-offcloud-download (url)
   (message "%s" (request
-                  "https://offcloud.com/api/cloud?key=mUSoUdEN8cJzca6ur9G7awsUGPdh6CIV"
-                  :type "POST"
-                  :data `(("url" . ,url))
-                  :parser 'json-read
-                  ;; :success (cl-function
-                  ;; (lambda (&key data &allow-other-keys)
-                  ;; (message "I sent: %S" (request-response-status-code response) )))
-                  ;; :error
-                  ;; (cl-function (lambda (&rest args &key error-thrown &allow-other-keys)
-                  ;; (message "Got error: %S" error-thrown)))
-                  )))
+                 "https://offcloud.com/api/cloud?key=mUSoUdEN8cJzca6ur9G7awsUGPdh6CIV"
+                 :type "POST"
+                 :data `(("url" . ,url))
+                 :parser 'json-read
+                 ;; :success (cl-function
+                 ;; (lambda (&key data &allow-other-keys)
+                 ;; (message "I sent: %S" (request-response-status-code response) )))
+                 ;; :error
+                 ;; (cl-function (lambda (&rest args &key error-thrown &allow-other-keys)
+                 ;; (message "Got error: %S" error-thrown)))
+                 )))
 
 (defun weiss-test ()
   "DOCSTRING"

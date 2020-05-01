@@ -244,7 +244,7 @@ Version 2015-10-01"
   )
 
 (defun xah-forward-right-bracket ()
-  "Weiss: move cursor to the left of right bracket, because i habe two delete keys
+  "Weiss: move cursor to the left of right bracket, because i have two delete keys
 Move cursor to the next occurrence of right bracket.
 The list of brackets to jump to is defined by `xah-right-brackets'.
 URL `http://ergoemacs.org/emacs/emacs_navigating_keys_for_brackets.html'
@@ -252,7 +252,9 @@ Version 2015-10-01"
   (interactive)
   (unless (use-region-p) (call-interactively 'set-mark-command))
   (forward-char)
-  (re-search-forward (regexp-opt xah-right-brackets) nil t)
+  (let ((forward-search-symbols (append (list "\n" ";") xah-right-brackets)))
+    (re-search-forward (regexp-opt forward-search-symbols) nil t) 
+    )
   (backward-char)
   )
 
@@ -1867,6 +1869,17 @@ Version 2017-01-17"
 (defun xah-insert-white-lenticular-bracket〖〗 () (interactive) (xah-insert-bracket-pair "〖" "〗") )
 (defun xah-insert-black-lenticular-bracket【】 () (interactive) (xah-insert-bracket-pair "【" "】") )
 (defun xah-insert-tortoise-shell-bracket〔〕 () (interactive) (xah-insert-bracket-pair "〔" "〕" ) )
+(defun xah-insert-star () (interactive) (xah-insert-bracket-pair "*" "*"))
+(defun xah-insert-slash () (interactive) (xah-insert-bracket-pair "/" "/"))
+(defun xah-insert-backslash () (interactive) (xah-insert-bracket-pair "\\" "\\"))
+(defun xah-insert-dollar () (interactive) (xah-insert-bracket-pair "$" "$"))
+(defun xah-insert-underline () (interactive) (xah-insert-bracket-pair "_" "_"))
+(defun xah-insert-abs () (interactive) (xah-insert-bracket-pair "|" "|"))
+(defun xah-insert-angle-bracket () (interactive) (xah-insert-bracket-pair "<" ">"))
+(defun xah-insert-escape-square-bracket () (interactive) (xah-insert-bracket-pair "\\[" "\\]"))
+(defun xah-insert-escape-brace () (interactive) (xah-insert-bracket-pair "\\{" "\\}"))
+(defun xah-insert-escape-paren () (interactive) (xah-insert-bracket-pair "\\(" "\\)"))
+(defun xah-insert-escape-star () (interactive) (xah-insert-bracket-pair "\\* " " *\\"))
 
 (defun xah-insert-hyphen ()
   "Insert a HYPHEN-MINUS character."

@@ -30,10 +30,41 @@
     :diminish yapf-mode
     :hook (python-mode . yapf-mode)))
 
-(use-package php-mode
-  ;; :defer t
-  )
+(use-package php-mode)
 
 (use-package xah-elisp-mode)
+
+(use-package ess)
+
+(use-package quickrun)
+
+;;;; Java
+(use-package emacs-google-java-format
+  :quelpa (emacs-google-java-format
+           :fetcher github
+           :repo sideshowcoder/emacs-google-java-format)
+  :hook (java-mode . emacs-google-java-format-indention-settings))
+
+(use-package meghanada
+  :disabled
+  :init
+  (add-hook 'java-mode-hook
+            (lambda ()
+              (meghanada-mode t)
+              (rainbow-delimiters-mode t)
+              (highlight-symbol-mode t)
+              (add-hook 'before-save-hook 'meghanada-code-beautify-before-save)))
+
+  :config
+  (use-package realgud
+    :ensure t)
+  (use-package autodisass-java-bytecode)
+  (setq indent-tabs-mode nil)
+  (setq tab-width 2)
+  (setq c-basic-offset 2)
+  (setq meghanada-server-remote-debug t)
+  (setq meghanada-javac-xlint "-Xlint:all,-processing")
+  :commands
+  (meghanada-mode))
 
 (provide 'weiss_lang)

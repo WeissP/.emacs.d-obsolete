@@ -5,6 +5,28 @@
 (add-to-list 'eaf-js-video-player-keybinding '("m" . "mute"))
 (add-to-list 'eaf-js-video-player-keybinding '("C-s" . "toggle_play")) ; space is maped to leader key.
 
+(setq eaf-js-video-player-keybinding
+      '(
+        ("M-g" . "exit_fullscreen")
+        ("<f12>" . "open_dev_tool_page")
+        ("h" . "backward")
+        ("l" . "video_forward")
+        ("r" . "restart")
+        ("j" . "decrease_volume")
+        ("k" . "increase_volume")
+        ("x" . "close_buffer")
+        ("c--" . "zoom_out")
+        ("C-=" . "zoom_in")
+        ("C-0" . "zoom_reset")
+        ("p" . "set_preview_time")
+        ("m" . "mute")
+        ("C-s" . "toggle_play")
+        )
+      )
+
+(eaf-bind-key xah-next-window-or-frame "0" eaf-js-video-player-keybinding)
+(eaf-bind-key xah-fly-leader-key-map "SPC" eaf-js-video-player-keybinding)
+
 (defun preview--play-video (video-name-with-path)
   "Start video always at 300s and without sound"
   (eaf-open video-name-with-path)
@@ -86,7 +108,7 @@
   "forward video in other window"
   (interactive)
   (other-window 1)
-  (eaf-proxy-forward)
+  (eaf-proxy-video_forward)
   (other-window 1)
   )
 
@@ -94,7 +116,7 @@
   "backward video in other window"
   (interactive)
   (other-window 1)
-  (eaf-proxy-backward)
+  (eaf-proxy-video_backward)
   (other-window 1)
   )
 
@@ -129,6 +151,80 @@
   (set-cursor-color "#4078f2")
   (remove-hook 'switch-buffer-functions 'check-cursor-color nil)
   )
+
+(defun weiss-dired-video-preview-command-mode-define-keys ()
+  (weiss--define-keys
+   xah-fly-key-map
+   '(
+     ;; ("~" . nil)
+     ;; (":" . nil)
+
+     ;; ("SPC" . xah-fly-leader-key-map)
+     ;; ("DEL" . xah-fly-leader-key-map)
+
+     ;; ("'" . xah-cycle-hyphen-underscore-space)
+     ;; ("," . xah-next-window-or-frame)
+     ;; ("-" . xah-backward-punct)
+     ;; ("." . xah-forward-right-bracket)
+     ;; (";" . xah-end-of-line-or-block)
+     ;; ("/" . xah-goto-matching-bracket)
+     ;; ("\\" . nil)
+     ;; ("=" . xah-forward-equal-sign)
+     ;; ("[" . hippie-expand )
+     ;; ("]" . nil)
+     ;; ("`" . other-frame)
+
+     ;; ("<backtab>" . weiss-indent)
+     ;; ("V" . weiss-paste-with-linebreak)
+     ;; ("!" . rotate-text)
+     ;; ("#" . xah-backward-quote)
+     ;; ("$" . xah-forward-punct)
+
+     ;; ("1" . scroll-down)
+     ;; ("2" . scroll-up)
+     ;; ("3" . delete-other-windows)
+     ;; ("4" . split-window-below)
+     ;; ("5" . revert-buffer)
+     ;; ("6" . xah-select-block)
+     ;; ("7" . xah-select-line)
+     ;; ("8" . xah-extend-selection)
+     ;; ("9" . dired-hide-details-mode)
+     ;; ("0" . xah-pop-local-mark-ring)
+
+     ("a" . backward-video-in-other-window)
+     ;; ("b" . xah-toggle-letter-case)
+     ("x" . hydra-dired-quick-sort/body)
+     ;; ("C" . dired-do-compress-to)
+     ("d" . video-preview-next-file)
+     ("e" . video-preview-previous-file)
+     ("f" . preview-open-file)
+     ("g" . forward-video-in-other-window)
+     ;; ("h" . (lambda()(interactive)(find-alternate-file "..")))
+     ;; ("i" . dired-omit-mode)
+     ;; ("j" . dired-next-line)
+     ;; ("k" . dired-previous-line)
+     ;; ("l" . dired-find-alternate-file)
+     ;; ("l" . eaf-open-this-from-dired)
+     ;; ("L" . dired-do-symlink)
+     ;; ("m" . dired-mark)
+     ;; ("n" . swiper-isearch)
+     ;; ("O" . xah-open-in-external-app)
+     ;; ("o" . eaf-open-this-from-dired)
+     ;; ("p" . peep-dired)
+     ("q" . dired-video-preview-mode)
+     ("r" . dired-next-line)
+     ;; ("R" . dired-rsync)
+     ("s" . (lambda()(interactive)(find-alternate-file "..")))
+     ;; ("S" . hydra-dired-quick-sort/body)
+     ("t" . dired-toggle-marks)
+     ("u" . dired-unmark)
+     ("U" . dired-unmark-all-marks)
+     ("v" . hydra-dired-filter-actress/body)
+     ("w" . dired-previous-line)
+     ("c" . hydra-dired-filter-tag/body)
+     ;; ("y" . dired-copy-filename-as-kill)
+     ;; ("z" . dired-atool-do-unpack)
+     )))
 
 ;;;###autoload
 (define-minor-mode dired-video-preview-mode

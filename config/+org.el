@@ -132,8 +132,8 @@ current file). Only scans first 2048 bytes of the document."
   (setq org-hide-emphasis-markers +org-pretty-mode)
   (org-toggle-pretty-entities)
   (with-silent-modifications
-   ;; In case the above un-align tables
-   (org-table-map-tables 'org-table-align t)))
+    ;; In case the above un-align tables
+    (org-table-map-tables 'org-table-align t)))
 
 
 ;;
@@ -228,49 +228,51 @@ If on a:
          (if (or (equal (org-element-property :type lineage) "img")
                  (and path (image-type-from-file-name path)))
              (+org--refresh-inline-images-in-subtree)
-           (org-open-at-point))))
+           (let ((org-file-apps '(("\\.pdf\\'" . "emacsclient %s"))))
+             (org-open-at-point)
+             )))
 
-      ((guard (org-element-property :checkbox (org-element-lineage context '(item) t)))
-       (let ((match (and (org-at-item-checkbox-p) (match-string 1))))
-         (org-toggle-checkbox (if (equal match "[ ]") '(16)))))
+       ((guard (org-element-property :checkbox (org-element-lineage context '(item) t)))
+        (let ((match (and (org-at-item-checkbox-p) (match-string 1))))
+          (org-toggle-checkbox (if (equal match "[ ]") '(16)))))
 
-      (_ (+org--refresh-inline-images-in-subtree)))))
+       (_ (+org--refresh-inline-images-in-subtree))))))
 
 
-;; I use this instead of `org-insert-item' or `org-insert-heading' which are too
-;; opinionated and perform this simple task incorrectly (e.g. whitespace in the
-;; wrong places).
+  ;; I use this instead of `org-insert-item' or `org-insert-heading' which are too
+  ;; opinionated and perform this simple task incorrectly (e.g. whitespace in the
+  ;; wrong places).
 ;;;###autoload
-(defun +org/insert-item-below (count)
-  "Inserts a new heading, table cell or item below the current one."
-  (interactive "p")
-  (dotimes (_ count) (+org--insert-item 'below)))
-
-;;;###autoload
-(defun +org/insert-item-above (count)
-  "Inserts a new heading, table cell or item above the current one."
-  (interactive "p")
-  (dotimes (_ count) (+org--insert-item 'above)))
-
+  (defun +org/insert-item-below (count)
+    "Inserts a new heading, table cell or item below the current one."
+    (interactive "p")
+    (dotimes (_ count) (+org--insert-item 'below)))
 
 ;;;###autoload
-(defun +org/dedent ()
-  "TODO"
-  (interactive)
-  (cond ((org-at-item-p)
-         (org-list-indent-item-generic
-          -1 nil
-          (save-excursion
-            (when (org-region-active-p)
-              (goto-char (region-beginning)))
-            (org-list-struct))))
-        ((org-at-heading-p)
-         (ignore-errors (org-promote)))
-        ((call-interactively #'self-insert-command))))
+  (defun +org/insert-item-above (count)
+    "Inserts a new heading, table cell or item above the current one."
+    (interactive "p")
+    (dotimes (_ count) (+org--insert-item 'above)))
+
 
 ;;;###autoload
-(defun +org/toggle-clock (arg)
-  "Toggles clock on the last clocked item.
+  (defun +org/dedent ()
+    "TODO"
+    (interactive)
+    (cond ((org-at-item-p)
+           (org-list-indent-item-generic
+            -1 nil
+            (save-excursion
+              (when (org-region-active-p)
+                (goto-char (region-beginning)))
+              (org-list-struct))))
+          ((org-at-heading-p)
+           (ignore-errors (org-promote)))
+          ((call-interactively #'self-insert-command))))
+
+;;;###autoload
+  (defun +org/toggle-clock (arg)
+    "Toggles clock on the last clocked item.
 
 Clock out if an active clock is running. Clock in otherwise.
 
@@ -279,181 +281,181 @@ task you clocked into.
 
 See `org-clock-out', `org-clock-in' and `org-clock-in-last' for details on how
 the prefix ARG changes this command's behavior."
-  (interactive "P")
-  (if (org-clocking-p)
-      (if arg
-          (org-clock-cancel)
-        (org-clock-out))
-    (org-clock-in-last arg)))
+    (interactive "P")
+    (if (org-clocking-p)
+        (if arg
+            (org-clock-cancel)
+          (org-clock-out))
+      (org-clock-in-last arg)))
 
 
 ;;; Folds
 ;;;###autoload
-(defalias #'+org/toggle-fold #'+org-cycle-only-current-subtree-h)
+  (defalias #'+org/toggle-fold #'+org-cycle-only-current-subtree-h)
 
 ;;;###autoload
-(defun +org/open-fold ()
-  "Open the current fold (not but its children)."
-  (interactive)
-  (+org/toggle-fold t))
+  (defun +org/open-fold ()
+    "Open the current fold (not but its children)."
+    (interactive)
+    (+org/toggle-fold t))
 
 ;;;###autoload
-(defalias #'+org/close-fold #'outline-hide-subtree)
+  (defalias #'+org/close-fold #'outline-hide-subtree)
 
-(defun +org--get-foldlevel ()
-  (let ((max 1))
-    (save-restriction
-      (narrow-to-region (window-start) (window-end))
-      (save-excursion
-        (goto-char (point-min))
-        (while (not (eobp))
-          (org-next-visible-heading 1)
-          (when (outline-invisible-p (line-end-position))
-            (let ((level (org-outline-level)))
-              (when (> level max)
-                (setq max level))))))
-      max)))
+  (defun +org--get-foldlevel ()
+    (let ((max 1))
+      (save-restriction
+        (narrow-to-region (window-start) (window-end))
+        (save-excursion
+          (goto-char (point-min))
+          (while (not (eobp))
+            (org-next-visible-heading 1)
+            (when (outline-invisible-p (line-end-position))
+              (let ((level (org-outline-level)))
+                (when (> level max)
+                  (setq max level))))))
+        max)))
 
 ;;;###autoload
-(defun +org/show-next-fold-level ()
-  "Decrease the fold-level of the visible area of the buffer. This unfolds
+  (defun +org/show-next-fold-level ()
+    "Decrease the fold-level of the visible area of the buffer. This unfolds
 another level of headings on each invocation."
-  (interactive)
-  (let* ((current-level (+org--get-foldlevel))
-         (new-level (1+ current-level)))
-    (outline-hide-sublevels new-level)
-    (message "Folded to level %s" new-level)))
+    (interactive)
+    (let* ((current-level (+org--get-foldlevel))
+           (new-level (1+ current-level)))
+      (outline-hide-sublevels new-level)
+      (message "Folded to level %s" new-level)))
 
 ;;;###autoload
-(defun +org/hide-next-fold-level ()
-  "Increase the global fold-level of the visible area of the buffer. This folds
+  (defun +org/hide-next-fold-level ()
+    "Increase the global fold-level of the visible area of the buffer. This folds
 another level of headings on each invocation."
-  (interactive)
-  (let* ((current-level (+org--get-foldlevel))
-         (new-level (max 1 (1- current-level))))
-    (outline-hide-sublevels new-level)
-    (message "Folded to level %s" new-level)))
+    (interactive)
+    (let* ((current-level (+org--get-foldlevel))
+           (new-level (max 1 (1- current-level))))
+      (outline-hide-sublevels new-level)
+      (message "Folded to level %s" new-level)))
 
 
-;;
+  ;;
 ;;; Hooks
 
 ;;;###autoload
-(defun +org-indent-maybe-h ()
-  "Indent the current item (header or item), if possible.
+  (defun +org-indent-maybe-h ()
+    "Indent the current item (header or item), if possible.
 Made for `org-tab-first-hook' in evil-mode."
-  (interactive)
-  (cond ((not (and (bound-and-true-p evil-local-mode)
-                   (evil-insert-state-p)))
-         nil)
-        ((org-at-item-p)
-         (if (eq this-command 'org-shifttab)
-             (org-outdent-item-tree)
-           (org-indent-item-tree))
-         t)
-        ((org-at-heading-p)
-         (ignore-errors
+    (interactive)
+    (cond ((not (and (bound-and-true-p evil-local-mode)
+                     (evil-insert-state-p)))
+           nil)
+          ((org-at-item-p)
            (if (eq this-command 'org-shifttab)
-               (org-promote)
-             (org-demote)))
-         t)
-        ((org-in-src-block-p t)
-         (org-babel-do-in-edit-buffer
-          (call-interactively #'indent-for-tab-command))
-         t)
-        ((and (save-excursion
-                (skip-chars-backward " \t")
-                (bolp))
-              (org-in-subtree-not-table-p))
-         (call-interactively #'tab-to-tab-stop)
-         t)))
+               (org-outdent-item-tree)
+             (org-indent-item-tree))
+           t)
+          ((org-at-heading-p)
+           (ignore-errors
+             (if (eq this-command 'org-shifttab)
+                 (org-promote)
+               (org-demote)))
+           t)
+          ((org-in-src-block-p t)
+           (org-babel-do-in-edit-buffer
+            (call-interactively #'indent-for-tab-command))
+           t)
+          ((and (save-excursion
+                  (skip-chars-backward " \t")
+                  (bolp))
+                (org-in-subtree-not-table-p))
+           (call-interactively #'tab-to-tab-stop)
+           t)))
 
 ;;;###autoload
-(defun +org-update-cookies-h ()
-  "Update counts in headlines (aka \"cookies\")."
-  (when (and buffer-file-name (file-exists-p buffer-file-name))
-    (let (org-hierarchical-todo-statistics)
-      (org-update-parent-todo-statistics))))
+  (defun +org-update-cookies-h ()
+    "Update counts in headlines (aka \"cookies\")."
+    (when (and buffer-file-name (file-exists-p buffer-file-name))
+      (let (org-hierarchical-todo-statistics)
+        (org-update-parent-todo-statistics))))
 
 ;;;###autoload
-(defun +org-yas-expand-maybe-h ()
-  "Tries to expand a yasnippet snippet, if one is available. Made for
+  (defun +org-yas-expand-maybe-h ()
+    "Tries to expand a yasnippet snippet, if one is available. Made for
 `org-tab-first-hook'."
-  (when (bound-and-true-p yas-minor-mode)
-    (let ((major-mode (if (org-in-src-block-p t)
-                          (org-src-get-lang-mode (org-eldoc-get-src-lang))
-                        major-mode))
-          (org-src-tab-acts-natively nil) ; causes breakages
-          ;; Smart indentation doesn't work with yasnippet, and painfully slow
-          ;; in the few cases where it does.
-          (yas-indent-line 'fixed))
-      ;; HACK Yasnippet field overlays break org-bullet-mode. Don't ask me why.
-      (add-hook! 'yas-after-exit-snippet-hook :local
-        (when (bound-and-true-p org-bullets-mode)
-          (org-bullets-mode -1)
-          (org-bullets-mode +1)))
-      (cond ((and (or (not (bound-and-true-p evil-local-mode))
-                      (evil-insert-state-p))
-                  (yas--templates-for-key-at-point))
-             (yas-expand)
-             t)
-            ((use-region-p)
-             (yas-insert-snippet)
-             t)))))
+    (when (bound-and-true-p yas-minor-mode)
+      (let ((major-mode (if (org-in-src-block-p t)
+                            (org-src-get-lang-mode (org-eldoc-get-src-lang))
+                          major-mode))
+            (org-src-tab-acts-natively nil) ; causes breakages
+            ;; Smart indentation doesn't work with yasnippet, and painfully slow
+            ;; in the few cases where it does.
+            (yas-indent-line 'fixed))
+        ;; HACK Yasnippet field overlays break org-bullet-mode. Don't ask me why.
+        (add-hook! 'yas-after-exit-snippet-hook :local
+                   (when (bound-and-true-p org-bullets-mode)
+                     (org-bullets-mode -1)
+                     (org-bullets-mode +1)))
+        (cond ((and (or (not (bound-and-true-p evil-local-mode))
+                        (evil-insert-state-p))
+                    (yas--templates-for-key-at-point))
+               (yas-expand)
+               t)
+              ((use-region-p)
+               (yas-insert-snippet)
+               t)))))
 
 ;;;###autoload
-(defun +org-cycle-only-current-subtree-h (&optional arg)
-  "Toggle the local fold at the point (as opposed to cycling through all levels
+  (defun +org-cycle-only-current-subtree-h (&optional arg)
+    "Toggle the local fold at the point (as opposed to cycling through all levels
 with `org-cycle')."
-  (interactive "P")
-  (unless (eq this-command 'org-shifttab)
-    (save-excursion
-      (org-beginning-of-line)
-      (let (invisible-p)
-        (when (and (org-at-heading-p)
-                   (or org-cycle-open-archived-trees
-                       (not (member org-archive-tag (org-get-tags))))
-                   (or (not arg)
-                       (setq invisible-p (outline-invisible-p (line-end-position)))))
-          (unless invisible-p
-            (setq org-cycle-subtree-status 'subtree))
-          (org-cycle-internal-local)
-          t)))))
+    (interactive "P")
+    (unless (eq this-command 'org-shifttab)
+      (save-excursion
+        (org-beginning-of-line)
+        (let (invisible-p)
+          (when (and (org-at-heading-p)
+                     (or org-cycle-open-archived-trees
+                         (not (member org-archive-tag (org-get-tags))))
+                     (or (not arg)
+                         (setq invisible-p (outline-invisible-p (line-end-position)))))
+            (unless invisible-p
+              (setq org-cycle-subtree-status 'subtree))
+            (org-cycle-internal-local)
+            t)))))
 
 ;;;###autoload
-(defun +org-clear-babel-results-h ()
-  "Remove the results block for the org babel block at point."
-  (when (and (org-in-src-block-p t)
-             (org-babel-where-is-src-block-result))
-    (org-babel-remove-result)
-    t))
+  (defun +org-clear-babel-results-h ()
+    "Remove the results block for the org babel block at point."
+    (when (and (org-in-src-block-p t)
+               (org-babel-where-is-src-block-result))
+      (org-babel-remove-result)
+      t))
 
 ;;;###autoload
-(defun +org-unfold-to-2nd-level-or-point-h ()
-  "My version of the 'overview' #+STARTUP option: expand first-level headings.
+  (defun +org-unfold-to-2nd-level-or-point-h ()
+    "My version of the 'overview' #+STARTUP option: expand first-level headings.
 Expands the first level, but no further. If point was left somewhere deeper,
 unfold to point on startup."
-  (unless org-agenda-inhibit-startup
-    (when (eq org-startup-folded t)
-      (outline-hide-sublevels +org-initial-fold-level))
-    (when (outline-invisible-p)
-      (ignore-errors
-        (save-excursion
-          (outline-previous-visible-heading 1)
-          (org-show-subtree))))))
+    (unless org-agenda-inhibit-startup
+      (when (eq org-startup-folded t)
+        (outline-hide-sublevels +org-initial-fold-level))
+      (when (outline-invisible-p)
+        (ignore-errors
+          (save-excursion
+            (outline-previous-visible-heading 1)
+            (org-show-subtree))))))
 
 ;;;###autoload
-(defun +org-remove-occur-highlights-h ()
-  "Remove org occur highlights on ESC in normal mode."
-  (when org-occur-highlights
-    (org-remove-occur-highlights)
-    t))
+  (defun +org-remove-occur-highlights-h ()
+    "Remove org occur highlights on ESC in normal mode."
+    (when org-occur-highlights
+      (org-remove-occur-highlights)
+      t))
 
 ;;;###autoload
-(defun +org-enable-auto-update-cookies-h ()
-  "Update statistics cookies when saving or exiting insert mode (`evil-mode')."
-  (when (bound-and-true-p evil-local-mode)
-    (add-hook 'evil-insert-state-exit-hook #'+org-update-cookies-h nil t))
-  (add-hook 'before-save-hook #'+org-update-cookies-h nil t))
+  (defun +org-enable-auto-update-cookies-h ()
+    "Update statistics cookies when saving or exiting insert mode (`evil-mode')."
+    (when (bound-and-true-p evil-local-mode)
+      (add-hook 'evil-insert-state-exit-hook #'+org-update-cookies-h nil t))
+    (add-hook 'before-save-hook #'+org-update-cookies-h nil t))
 
-(provide '+org)
+  (provide '+org)

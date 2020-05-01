@@ -38,21 +38,31 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(company-abort-manual-when-too-short t)
+ '(company-begin-commands
+   '(xah-fly-insert-mode-activate self-insert-command weiss-disable-abbrev-and-activate-insert-mode kill-line weiss-delete-forward-with-region weiss-delete-backward-with-region weiss-cut-line-or-delete-region))
+ '(company-dabbrev-downcase nil)
+ '(company-frontends
+   '(company-tng-frontend company-pseudo-tooltip-frontend company-echo-metadata-frontend))
+ '(company-global-modes '(not dired-mode dired-sidebar-mode))
+ '(company-idle-delay 0.3)
+ '(company-minimum-prefix-length 3)
+ '(company-require-match nil)
  '(default-input-method "rime")
- '(hs-special-modes-aliS
-   '((c-mode "{" "}" "/[*/]" nil nil)
-     (c++-mode "{" "}" "/[*/]" nil nil)
-     (rust-mode "{" "}" "/[*/]" nil nil)) t)
- '(hs-special-modes-alist
-   '((c-mode "{" "}" "/[*/]" nil nil)
-     (c++-mode "{" "}" "/[*/]" nil nil)
-     (rust-mode "{" "}" "/[*/]" nil nil)) t)
- '(package-selected-packagE'(rainbow-delimiters paredit yasnippet-snippets xah-elisp-mode which-key telega switch-buffer-functions super-save sudo-edit rotate-text rime rg rainbow-mode quelpa-use-package popwin php-mode peep-dired org-rich-yank org-fancy-priorities org-bullets ob-rust ob-javascript ob-ipython ob-go ob-fsharp lsp-ui lsp-python-ms lsp-origami lsp-julia lsp-java live-py-mode keyfreq ivy-yasnippet ivy-xref ivy-rich ivy-prescient ivy-dired-history gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger forge flyspell-correct-ivy flycheck-posframe expand-region esup emojify doom-themes doom-modeline diredfl dired-rsync dired-quick-sort dired-filter dired-collapse dired-avfs diminish dashboard counsel-world-clock counsel-tramp company-quickhelp company-prescient company-lsp company-box chinese-yasdcv cdlatex ccls browse-at-remote aweshell auto-package-update anzu amx all-the-icons-dired)))
+ '(hs-special-modes_'((c-mode "{" "}" "/[*/]" nil nil)
+                      (c++-mode "{" "}" "/[*/]" nil nil)
+                      (rust-mode "{" "}" "/[*/]" nil nil)) t)
+ '(hs-special-modes-alist'((c-mode "{" "}" "/[*/]" nil nil)
+                           (c++-mode "{" "}" "/[*/]" nil nil)
+                           (rust-mode "{" "}" "/[*/]" nil nil)) t)
+ '(package-selected-packagE'(rainbow-delimiters paredit yasnippet-snippets xah-elisp-mode which-key telega switch-buffer-functions super-save sudo-edit rotate-text rime rg rainbow-mode quelpa-use-package popwin php-mode peep-dired org-rich-yank org-fancy-priorities org-bullets ob-rust ob-javascript ob-ipython ob-go ob-fsharp lsp-ui lsp-python-ms lsp-origami lsp-julia lsp-java live-py-mode keyfreq ivy-yasnippet ivy-xref ivy-rich ivy-prescient ivy-dired-history gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger forge flyspell-correct-ivy flycheck-posframe expand-region esup emojify doom-themes doom-modeline diredfl dired-rsync dired-quick-sort dired-filter dired-collapse dired-avfs diminish dashboard counsel-world-clock counsel-tramp company-quickhelp company-prescient company-lsp company-box chinese-yasdcv cdlatex ccls browse-at-remote aweshell auto-package-update anzu amx all-the-icons-dired))
+ '(package-selected-packages'(emacs-google-java-format flycheck-infer highlight-symbol meghanada quickrun ess auc-tikz nox magic-latex-buffer company-auctex org-edit-latex org-edit-latex-mode auctex webkit-katex-render tablist org-noter pdf-tools yasnippet-snippets xah-elisp-mode which-key telega switch-buffer-functions super-save sudo-edit rotate-text rime rg rainbow-mode rainbow-delimiters quelpa-use-package popwin php-mode peep-dired org-rich-yank org-fancy-priorities org-bullets ob-rust ob-javascript ob-ipython ob-go ob-fsharp lsp-ui lsp-python-ms lsp-origami lsp-julia lsp-java live-py-mode keyfreq ivy-yasnippet ivy-xref ivy-rich ivy-prescient ivy-dired-history gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger forge flyspell-correct-ivy flycheck-posframe expand-region esup emojify doom-themes doom-modeline diredfl dired-rsync dired-quick-sort dired-filter dired-collapse dired-avfs diminish dashboard counsel-world-clock counsel-tramp company-quickhelp company-prescient company-lsp company-box chinese-yasdcv cdlatex ccls browse-at-remote aweshell auto-package-update anzu amx all-the-icons-dired)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(flycheck-posframe-border-face ((t (:inherit default))))
  '(git-timemachine-minibuffer-author-face ((t (:inherit success))))
  '(git-timemachine-minibuffer-detail-face ((t (:inherit warning))))
  '(ivy-minibuffer-match-face-1 ((t (:inherit font-lock-doc-face :foreground nil))))

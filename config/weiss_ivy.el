@@ -214,6 +214,7 @@ This is for use in `ivy-re-builders-alist'."
             (counsel-pt . ivy-prescient-non-fuzzy)
             (counsel-grep . ivy-prescient-non-fuzzy)
             (counsel-imenu . ivy-prescient-non-fuzzy)
+            ;; (counsel-M-x . ivy-prescient-non-fuzzy)
             (counsel-yank-pop . ivy-prescient-non-fuzzy)
             (swiper . ivy-prescient-non-fuzzy)
             (swiper-isearch . ivy-prescient-non-fuzzy)
@@ -226,8 +227,8 @@ This is for use in `ivy-re-builders-alist'."
             (t . ivy-prescient-re-builder))
           ivy-prescient-sort-commands
           '(:not swiper swiper-isearch ivy-switch-buffer
-            counsel-grep counsel-git-grep counsel-ag counsel-imenu
-            counsel-yank-pop counsel-recentf counsel-buffer-or-recentf))
+                 counsel-grep counsel-git-grep counsel-ag counsel-imenu
+                 counsel-yank-pop counsel-recentf counsel-buffer-or-recentf))
 
     (ivy-prescient-mode 1))
 
@@ -248,12 +249,12 @@ This is for use in `ivy-re-builders-alist'."
   (use-package flyspell-correct-ivy
     :after flyspell
     :bind (:map flyspell-mode-map
-           ([remap flyspell-correct-word-before-point] . flyspell-correct-previous-word-generic)))
+                ([remap flyspell-correct-word-before-point] . flyspell-correct-previous-word-generic)))
 
   ;; Display world clock using Ivy
   (use-package counsel-world-clock
     :bind (:map counsel-mode-map
-           ("C-c c k" . counsel-world-clock)))
+                ("C-c c k" . counsel-world-clock)))
 
 
   )

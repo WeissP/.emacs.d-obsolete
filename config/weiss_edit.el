@@ -58,6 +58,7 @@
   (setq rotate-text-words '(("true" "false")
                             ("nil" "t")
                             ("car" "cdr")
+                            ("add" "remove")
                             ("width" "height")
                             ("left" "right" "top" "bottom")
                             ("Background" "Foreground")
@@ -78,6 +79,8 @@
                             ("min" "max")
                             ("when" "unless")
                             ("even" "odd")
+                            ("columns" "rows")
+                            ("after" "before")
                             ;; Germany Language
                             ("der" "das" "die")
                             )))
@@ -95,9 +98,16 @@
 
 (defun weiss-indent()
   (interactive)
-  (if (use-region-p)
-      (indent-region (region-beginning) (region-end))
-    (indent-region (point-min) (point-max))))
+  (if (and (use-region-p) (> (- (region-end) (region-beginning)) 10))
+      (progn
+        (indent-region (region-beginning) (region-end))
+        (ignore-errors (nox-format))
+        )
+    (save-buffer) ; otherwise can nox-format not work
+    (deactivate-mark)
+    (ignore-errors (nox-format))
+    (indent-region (point-min) (point-max))
+    ))
 
 (defun weiss-paste-with-linebreak()
   (interactive)

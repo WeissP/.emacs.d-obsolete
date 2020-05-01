@@ -50,7 +50,8 @@
   (add-to-list 'load-path "/home/weiss/.emacs.d/local-package/snails/")
   (add-to-list 'load-path "/home/weiss/.emacs.d/local-package/keypad/")
   (add-to-list 'load-path "/home/weiss/.emacs.d/config/")
-
+  (add-to-list 'load-path "/home/weiss/.emacs.d/local-package/dired-video-preview/")
+  (add-to-list 'load-path "/usr/local/texlive/2020/bin/x86_64-linux")
   (setq-default c-basic-offset   4
                 tab-width        4
                 indent-tabs-mode nil)
@@ -202,8 +203,8 @@ single-character strings, or a string of characters."
   ;; (require 'weiss_eaf)
   (require 'weiss_dired)
   (require 'weiss_org)
-  ;; (require 'weiss_pdf)
-  ;; (require 'weiss_flycheck)
+  (require 'weiss_pdf_tools)
+  (require 'weiss_flycheck)
   (require 'weiss_translation)
   (require 'weiss_snails)
   (require 'weiss_rime)
@@ -258,8 +259,11 @@ single-character strings, or a string of characters."
                      ))
   )
 
+;;;; Bookmarks
+;; (bookmark-delete "org-capture-last-stored")
+;; (bookmark-delete "Emacs China")
 
-;; tramp
+;;;; tramp
 (use-package tmtxt-async-tasks
   ;; :disabled
   :load-path "/home/weiss/.emacs.d/local-package/tmtxt-async-tasks/"
@@ -292,8 +296,9 @@ single-character strings, or a string of characters."
             ;; (weiss-activate-rime)
             ))
 
-
-(bookmark-load "/home/weiss/.emacs.d/bookmarks" t t t)
+(require 'latex)
+(require 'weiss_latex)
+;; (bookmark-load "/home/weiss/.emacs.d/bookmarks" t t t)
 (use-package sudo-edit) 
 (message "Emacs is ready, startup cost: %.3f seconds." (time-to-seconds (time-since user/launch-time)))
 (setq user/launch-time nil)

@@ -24,5 +24,14 @@
     
     (use-package flycheck-popup-tip
       :hook (flycheck-mode . flycheck-popup-tip-mode)))
+
+  ;; (use-package flycheck-java)
+  (use-package flycheck-infer
+    :disabled
+    :quelpa (flycheck-infer
+             :fetcher github
+             :repo calve/flycheck-infer)
+    )
   )
+
 (provide 'weiss_flycheck)

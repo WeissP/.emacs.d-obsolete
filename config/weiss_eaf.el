@@ -39,6 +39,7 @@
           ("C-v" . "yank_text")
           ("C-w" . "kill_text")
           ("C-y" . "yank_text")
+          ("C" . "insert_or_copy_code") 
           ("D" . "open_link_background_buffer")
           ;; ("F" . "weiss-open-link-background-without-enter")
           ("G" . "scroll_to_bottom")
@@ -92,15 +93,15 @@
           ("u" . "scroll_down_page")
           ("v" . "view_source")
           ("w" . "history_backward")
-          ("x" . "request_close_buffer")
+          ("x" . "close_buffer")
           ("y" . "download_youtube_video")
           )
         )
 
   (eaf-setq eaf-marker-letters "QWERASDFGZXCVB")
 
-  (setq browse-url-browser-function 'eaf-open-browser)
-  (defalias 'browse-web #'eaf-open-browser)
+  ;; (setq browse-url-browser-function 'eaf-open-browser)
+  ;; (defalias 'browse-web #'eaf-open-browser)
 
   (defun weiss-eaf-insert-multi-lines ()
     (interactive)
@@ -196,9 +197,6 @@
   ;; (eaf-bind-key request_close_buffer "x" eaf-browser-keybinding)
   (eaf-bind-key weiss-eaf-bookmark-set "m" eaf-browser-keybinding)
   (eaf-bind-key snails-eaf-backends "r" eaf-browser-keybinding)
-
-  (eaf-bind-key xah-next-window-or-frame "0" eaf-js-video-player-keybinding)
-  (eaf-bind-key xah-fly-leader-key-map "SPC" eaf-js-video-player-keybinding)
 
   (define-key eaf-edit-mode-map (kbd "RET") 'eaf-edit-buffer-confirm))
 
