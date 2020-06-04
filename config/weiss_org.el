@@ -30,9 +30,9 @@
         ("M-p" . org-metaright)
         ;; ("RET" . weiss-org-RET-key)
         ("<shifttab>" . org-shifttab)
-        ("C-c C-;" . org-edit-special)
-        :map org-src-mode
-        ("C-c C-;" . org-edit-src-exit)
+        ;; ("C-c C-;" . org-edit-special)
+        ;; :map org-src-mode
+        ;; ("C-c C-;" . org-edit-src-exit)
         ;; :map org-noter-notes-mode-map
         ;; ("M-." . org-shiftmetaright)   
         )
@@ -141,7 +141,7 @@
        ;; ("2" . scroll-up)
        ;; ("3" . delete-other-windows)
        ;; ("4" . split-window-below)
-       ("5" . weiss-org-dwim)
+       ("5" . +org/dwim-at-point)
        ("6" . org-insert-heading-respect-content)
        ;; ("7" . xah-select-line)
        ;; ("8" . xah-extend-selection)
@@ -158,8 +158,9 @@
        ;; ("g" . weiss-xfk-g-keymap)
        ;; ("h" . backward-char)
        ;; ("i" . previous-line)
-       ("j" . next-line)
-       ("k" . previous-line)
+       ("j" . (lambda () (interactive) (deactivate-mark)(next-line)))
+       ("k" . (lambda () (interactive) (deactivate-mark)(previous-line)))
+       ;; ("k" . previous-line)
        ;; ("l" . xah-fly-insert-mode-activate-space-before)
        ;; ("l" . forward-char)
        ;; ("m" . xah-backward-left-bracket)
@@ -193,13 +194,87 @@
      ("s" . org-noter-sync-current-note)
      ("a" . weiss-org-screenshot)
      ("o" . org-noter)
+
+     ;; ("e" . weiss-add-enumerate-to-all-headlines)
      ))
 
-  (defun weiss-org-dwim ()
+
+  (defun weiss-delete-backward-bracket-and-mark-bracket-text-org-mode ()
+    "DOCSTRING"
     (interactive)
-    (if current-prefix-arg
-        (org-insert-heading-respect-content)
-      (+org/dwim-at-point)))
+    (cond
+     ((member (char-to-string (char-after)) '("<" ">"))  (delete-char -1))
+     ((member (char-to-string (char-before)) weiss-org-special-markers)
+      (let ((before-point (point))
+            (mark-point )
+            (special-marker (char-to-string (char-before))))      
+        (delete-char -1)
+        (when (string-match (regexp-opt (list special-marker)) (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+          (if (member (char-to-string (char-before (- (point) 0))) (list " " "\n"))
+              (progn (search-forward special-marker)
+                     (delete-char -1)
+                     (setq mark-point (- before-point 1))
+                     )
+            (search-backward special-marker)          
+            (delete-char 1)
+            (setq mark-point (- before-point 2))
+            )
+          (push-mark mark-point)
+          (setq mark-active t)
+          (setq deactivate-mark nil)
+          (exchange-point-and-mark)
+          ))
+      )
+     (t
+      (xah-delete-backward-char-or-bracket-text)
+      ;; (message "%s" "123")
+      )
+     )
+    )
+
+  (defun weiss-delete-forward-bracket-and-mark-bracket-text-org-mode ()
+    "DOCSTRING"
+    (interactive)
+    (cond
+     ((member (char-to-string (char-after)) '("<" ">"))  (delete-char 1))
+     ((member (char-to-string (char-after)) weiss-org-special-markers)
+      (let ((before-point (point))
+            (mark-point )
+            (special-marker (char-to-string (char-after))))      
+        (delete-char 1)
+        (when (string-match (regexp-opt (list special-marker)) (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+          (if (member (char-to-string (char-before (- (point) 0))) (list " " "\n"))
+              (progn (search-forward special-marker)
+                     (delete-char -1)
+                     (setq mark-point (- before-point 1))
+                     )
+            (search-backward special-marker)          
+            (delete-char 1)
+            (setq mark-point (- before-point 1))
+            )
+          (push-mark mark-point)
+          (setq mark-active t)
+          (setq deactivate-mark nil)
+          (exchange-point-and-mark)
+          ))
+      )
+     (t (xah-delete-forward-char-or-bracket-text))
+     )
+    )
+
+  (defun weiss-delete-backward-bracket-and-text-org-mode ()
+    "DOCSTRING"
+    (interactive)
+    (weiss-delete-backward-bracket-and-mark-bracket-text-org-mode)
+    (when (use-region-p) (kill-region (region-beginning) (region-end)))
+    )
+
+  (defun weiss-delete-forward-bracket-and-text-org-mode ()
+    "DOCSTRING"
+    (interactive)
+    (weiss-delete-forward-bracket-and-mark-bracket-text-org-mode)
+    (when (use-region-p) (kill-region (region-beginning) (region-end)))
+    )
 
   (defun weiss-switch-and-Bookmarks-search()
     (interactive)
@@ -232,14 +307,14 @@
 
 ;;;;; Export
    
-   org-export-preserve-breaks t
+   org-export-preserve-breaks nil
    org-export-with-creator nil
    org-export-with-author t
    org-export-with-section-numbers nil
    org-export-with-toc nil
    org-export-with-latex "imagemagick"
    org-export-with-date nil
-   
+
 
    org-refile-targets (quote (("Kenntnisse.org" :level . 1)
                               ("todo.org" :maxlevel . 2)
@@ -268,12 +343,17 @@
    org-agenda-compact-blocks t
    org-image-actual-width '(600)
    org-capture-templates   '(("o" "org-noter" entry (file "~/Documents/Org/Vorlesungen.org")
-                              "* %f \n :PROPERTIES: \n :NOTER_DOCUMENT: %F \n :END: \n [[%F][Filepath]]"))
+                              "* %f \n :PROPERTIES: \n :NOTER_DOCUMENT: %F \n :END: \n [[%F][Filepath]]")
+                             ("a" "Abgabe" entry (file "~/Documents/Org/Vorlesungen.org")
+                              "* [[%F][%f]]  \n ")
+                             )
    org-ellipsis (if (char-displayable-p ?) "  " nil)
    org-pretty-entities nil
    org-hide-emphasis-markers nil) ; hide ** //
 
   :config
+  (advice-add 'org-edit-special :before #'save-buffer)
+
   (defun weiss-org-archive()
     (interactive)
     (setq current-prefix-arg '(4))
@@ -293,7 +373,6 @@
       )
     )
   
-
   (defun weiss-org-screenshot ()
     "Take a screenshot into a time stamped unique-named file in the
 same directory as the org-buffer and insert a link to this file."
@@ -391,6 +470,9 @@ same directory as the org-buffer and insert a link to this file."
     :load-path "/home/weiss/.emacs.d/local-package"
     :init (cl-pushnew '(R . t) load-language-list))
 
+  (use-package ob-sql-mode
+    :init (cl-pushnew '(sql . t) load-language-list))
+
   (org-babel-do-load-languages 'org-babel-load-languages
                                load-language-list)
 
@@ -450,6 +532,21 @@ same directory as the org-buffer and insert a link to this file."
   (require '+org)
   ;; (bind-key "RET" #'+org/dwim-at-point org-mode-map)
 
+;;;; package
+  (use-package org-tempo ; for <s expand in org-babel
+    :diminish
+    :after org
+    :ensure nil
+    :config
+    (add-to-list 'org-structure-template-alist '("le" . "src elisp"))
+    (add-to-list 'org-structure-template-alist '("lp" . "src python"))
+    (add-to-list 'org-structure-template-alist '("ll" . "src latex"))
+    (add-to-list 'org-structure-template-alist '("lj" . "src java"))
+    (add-to-list 'org-structure-template-alist '("lh" . "src html"))
+    (add-to-list 'org-structure-template-alist '("lr" . "src R"))
+    (add-to-list 'org-structure-template-alist '("lc" . "src conf"))
+    (add-to-list 'org-structure-template-alist '("lq" . "src sql"))
+    )
   )
 
 ;;;; org-hook
@@ -474,7 +571,7 @@ same directory as the org-buffer and insert a link to this file."
 
 (fset 'org-agenda-done
       "td")
-;;;; org-Keybinding
+;;;; org-agenda-Keybinding
 (with-eval-after-load 'org-agenda
   (defun weiss-org-agenda-command-mode-define-keys ()
     (weiss--define-keys
@@ -545,21 +642,13 @@ same directory as the org-buffer and insert a link to this file."
        ;; ("y" . undo)
        ;; ("z" . xah-comment-dwim)
        )))
+  (use-package german-holidays
+    :config
+    (setq calendar-holidays holiday-german-RP-holidays)
+    )
   )
 
-;;;; package
-(use-package org-tempo ; for <s expand in org-babel
-  :diminish
-  :after org
-  :ensure nil
-  :config
-  (add-to-list 'org-structure-template-alist '("le" . "src elisp"))
-  (add-to-list 'org-structure-template-alist '("lp" . "src python"))
-  (add-to-list 'org-structure-template-alist '("ll" . "src latex"))
-  (add-to-list 'org-structure-template-alist '("lj" . "src java"))
-  (add-to-list 'org-structure-template-alist '("lh" . "src html"))
-  (add-to-list 'org-structure-template-alist '("lr" . "src R"))
-  )
+;; (add-to-list 'org-latex-packages-alist '("" "tikz" t))
 
 (provide 'weiss_org)
 

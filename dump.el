@@ -71,8 +71,8 @@
 (delete-selection-mode 1)
 (global-auto-revert-mode 1)
 
-(setq electric-pair-inhibit-predicate 'electric-pair-conservative-inhibit)
-(electric-pair-mode 1)
+;; (setq electric-pair-inhibit-predicate 'electric-pair-conservative-inhibit)
+;; (electric-pair-mode 1)
 
 (add-hook 'prog-mode-hook #'subword-mode)
 (add-hook 'minibuffer-setup-hook #'subword-mode)
@@ -233,6 +233,7 @@ single-character strings, or a string of characters."
 (load-theme 'doom-one-light t t)
 
 (dolist (package  '(
+                    weiss_abbrevs
                     diminish
                     bind-key
                     esup
@@ -242,13 +243,13 @@ single-character strings, or a string of characters."
                     hydra
                     weiss_lang
                     weiss_completion
+                    ;; weiss_lsp
                     weiss_magit
                     doom-themes
                     weiss_ui_before_dump
                     weiss_xfk
                     weiss_rime
                     weiss_web
-                    weiss_abbrevs
                     weiss_telega
                     weiss_edit
                     weiss_dired
@@ -258,8 +259,11 @@ single-character strings, or a string of characters."
                     weiss_translation
                     xfk-functions 
                     weiss_org
+                    ;; weiss_sql
                     +org
-                    weiss_flycheck
+                    ;; weiss_flycheck
+                    ;; weiss_latex
+                    ;; latex
                     )) 
   (require package)
   )

@@ -44,7 +44,8 @@
              (tail (substring input 3))
              )
          (cond
-          ((string= head "es ") (snails-add-candiate 'candidates (format "Search in Emacs China: %s" tail) (concat "https://emacs-china.org/search?q=" tail)))
+          ((string= head "bt ") (snails-add-candiate 'candidates (format "Search in BTSOW %s" tail) (concat btsow-adress tail)))
+          ((string= head "ec ") (snails-add-candiate 'candidates (format "Search in Emacs China: %s" tail) (concat "https://emacs-china.org/search?q=" tail)))
           ((string= head "yt ") (snails-add-candiate 'candidates (format "Search in YouTube: %s" tail) (concat "https://www.youtube.com/results?search_query=" tail)))            
           )
          ))

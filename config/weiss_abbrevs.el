@@ -1,3 +1,58 @@
+(defun xah-abbrev-enable-function ()
+  "Return t if not in string or comment. Else nil.
+This is for abbrev table property `:enable-function'.
+Version 2016-10-24"
+  (let (($syntax-state (syntax-ppss)))
+    (not (or (nth 3 $syntax-state) (nth 4 $syntax-state)))))
+
+
+(defun xah-abbrev-position-cursor (&optional @pos)
+  "Move cursor back to ▮ if exist, else put at end.
+Return true if found, else false.
+Version 2016-10-24"
+  (interactive)
+  (let (($found-p (search-backward "▮" (if @pos @pos (max (point-min) (- (point) 100))) t )))
+    (when $found-p (delete-char 1))
+    $found-p
+    ))
+
+(defun xah-expand-abbrev ()
+  "Expand the symbol before cursor,
+if cursor is not in string or comment.
+Returns the abbrev symbol if there's a expansion, else nil.
+Version 2017-01-13"
+  (interactive)
+  (message "%s" "13")
+  (when (xah-abbrev-enable-function) ; abbrev property :enable-function doesn't seem to work, so check here instead
+    (let ( $p1 $p2
+               $abrStr
+               $abrSymbol
+               )
+
+      ;; (save-excursion
+      ;;   (forward-symbol -1)
+      ;;   (setq $p1 (point))
+      ;;   (goto-char $p0)
+      ;;   (setq $p2 $p0))
+
+      (save-excursion
+        ;; 2017-01-16 note: we select the whole symbol to solve a problem. problem is: if “aa”  is a abbrev, and “▮bbcc” is existing word with cursor at beginning, and user wants to type aa-bbcc. Normally, aa immediately expands. This prevent people editing bbcc to become aa-bbcc. This happens for example in elisp “search-forward” to get “re-search-forward”. The downside of this is that, people cannot type a abbrev when in middle of a word.
+        (forward-symbol -1)
+        (setq $p1 (point))
+        (forward-symbol 1)
+        (setq $p2 (point)))
+
+      (setq $abrStr (buffer-substring-no-properties $p1 $p2))
+      (setq $abrSymbol (abbrev-symbol $abrStr))
+      (if $abrSymbol
+          (progn
+            (abbrev-insert $abrSymbol $abrStr $p1 $p2 )
+            (xah-abbrev-position-cursor $p1)
+            $abrSymbol)
+        nil))))
+
+(setq abbrev-expand-function 'xah-expand-abbrev)
+
 (clear-abbrev-table global-abbrev-table)
 
 (define-abbrev-table 'global-abbrev-table
@@ -14,6 +69,58 @@
     )
   )
 
+(when (boundp 'eshell-mode-abbrev-table)
+  (clear-abbrev-table eshell-mode-abbrev-table))
+
+(define-abbrev-table 'eshell-mode-abbrev-table
+  '(
+    ("mm" "module load maple/latest")
+    )
+  )
+
+
+(when (boundp 'sql-mode-abbrev-table)
+  (clear-abbrev-table sql-mode-abbrev-table))
+
+(define-abbrev-table 'sql-mode-abbrev-table
+  '(
+    ("all" "ALL" xah-elisp--ahf)
+    ("and" "AND")
+    ("as" "AS")
+    ("from" "FROM")
+    ("jat" "ALTER TABLE ▮" xah-elisp--ahf)
+    ("jav" "AVG(▮)" xah-elisp--ahf)
+    ("jct" "COUNT(▮)" xah-elisp--ahf)
+    ("jdi" "DISTINCT")
+    ("jdt" "DROP TABLE ▮" xah-elisp--ahf)
+    ("jex" "EXISTS (\n▮\n)" xah-elisp--ahf)
+    ("jgb" "GROUP BY")
+    ("jin" "INSERT INTO ▮" xah-elisp--ahf)
+    ("jinv" "INSERT INTO ▮ VALUES()" xah-elisp--ahf)
+    ("jli" "LIMIT 10" xah-elisp--ahf)
+    ("jma" "MAX(▮)" xah-elisp--ahf)
+    ("jmi" "MIN(▮)" xah-elisp--ahf)
+    ("jnt" "create table ▮ \n(\n\n)" xah-elisp--ahf)
+    ("job" "ORDER BY")
+    ("jpb" "public." xah-elisp--ahf)
+    ("jsf" "SELECT \nFROM ▮")
+    ("jsfw" "SELECT \nFROM ▮\nWHERE ")
+    ("jsl" "SELECT")
+    ("jst" "SELECT * FROM ▮ LIMIT 10" xah-elisp--ahf)
+    ("jun" "UNION")
+    ("jua" "UNION ALL")
+    ("jwh" "WHERE")
+    ("lj" "NATURAL JOIN ▮ ON " xah-elisp--ahf)
+    ("llj" "LEFT OUTER JOIN ▮ ON " xah-elisp--ahf)
+    ("lrj" "RIGHT OUTER JOIN ▮ ON " xah-elisp--ahf)
+    ("not" "NOT")
+    ("in" "IN")    
+    ("or" "OR")
+    ("where" "WHERE")
+    ("with" "WITH ▮ AS (\n\n)" xah-elisp--ahf)
+    )
+  )
+
 (when (boundp 'org-mode-abbrev-table)
   (clear-abbrev-table org-mode-abbrev-table))
 
@@ -26,6 +133,8 @@
     ("algo" "Algorithmus" xah-elisp--ahf)
     ("zad" "außerdem" xah-elisp--ahf)
     ("zag" "Aufgabe" xah-elisp--ahf)
+    ("zbh" "Behauptung" xah-elisp--ahf)
+    ("zbdi" "Beweis durch Induktion" xah-elisp--ahf)
     ("zbj" "bis jetzt")
     ("zbp" "Beispiel" xah-elisp--ahf)
     ("zdef" "Definition" xah-elisp--ahf)
@@ -33,12 +142,17 @@
     ("zeb" "ein bisschen")
     ("zef" "einfach" xah-elisp--ahf)
     ("zfm" "Familie" xah-elisp--ahf)
+    ("zfun" "Funktion" xah-elisp--ahf)
     ("zgb" "Gegenbeispiel" xah-elisp--ahf)
+    ("zgz" "gleichzeitig" xah-elisp--ahf)
+    ("zhs" "höchstens")
     ("zig" "insgesamt")
     ("zin" "Information" xah-elisp--ahf)
     ("zit" "Interesse" xah-elisp--ahf)
     ("zka" "keine Ahnung")
+    ("zls" "Lösung" xah-elisp--ahf)
     ("zma" "Material" xah-elisp--ahf)
+    ("zmg" "Möglichkeit" xah-elisp--ahf)
     ("zn" "nicht")
     ("znl" "natürlich" xah-elisp--ahf)
     ("znm" "nochmal")
@@ -49,12 +163,14 @@
     ("zpj" "Project" xah-elisp--ahf)
     ("zrt" "Richtung" xah-elisp--ahf)
     ("zsl" "schlecht")
+    ("zst" "Schritt" xah-elisp--ahf)
     ("zub" "Übung" xah-elisp--ahf)
     ("zul" "unterschiedlich" xah-elisp--ahf)
     ("zus" "Unterschied" xah-elisp--ahf)
     ("zvl" "Vorlesung" xah-elisp--ahf)
     ("zwr" "während" xah-elisp--ahf)
     ("zzm" "zusammen" xah-elisp--ahf)
+    ("zzf" "Zusammenfassung" xah-elisp--ahf)
 ;;;;; for Org-Noter
     )
   )
@@ -364,7 +480,7 @@
       ("gethash" "(gethash KEY▮ TABLE &optional DFLT)" xah-elisp--ahf)
       ("global-set-key" "(global-set-key (kbd \"C-▮\") 'COMMAND)" xah-elisp--ahf)
       ("goto-char" "(goto-char ▮)" xah-elisp--ahf)
-      ("if" "(if ▮\n    (progn )\n  (progn )\n)" xah-elisp--ahf)
+      ("if" "(if ▮\n    \n  \n)" xah-elisp--ahf)
       ("image-flush" "(image-flush SPEC▮ &optional FRAME)" xah-elisp--ahf)
       ("image-load-path-for-library" "(image-load-path-for-library LIBRARY▮ IMAGE &optional PATH)" xah-elisp--ahf)
       ("image-size" "(image-size SPEC▮ &optional PIXELS FRAME)" xah-elisp--ahf)

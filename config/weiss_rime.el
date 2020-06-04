@@ -4,7 +4,7 @@
   :custom
   (default-input-method "rime")
   :config
-  (define-key global-map (kbd "C-f") 'toggle-input-method)
+  (define-key global-map (kbd "<home>") 'toggle-input-method)
 
   (defun +rime-predicate-current-uppercase-letter-p ()
     "If the current charactor entered is a uppercase letter.

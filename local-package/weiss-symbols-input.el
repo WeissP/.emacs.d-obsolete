@@ -3,6 +3,70 @@
 
 
 ;;; Code:
+(string-to-number "a")
+(defun weiss-latex-tikz-expand ()
+  "Format:
+node: n[i][a]-%d-r/b%d
+edge: e[a][b]-%d-[a][b]-%d"
+  (interactive)
+  (let ((beginning-point)
+        (end-point (point))
+        (input-string-list)
+        (first-char)
+        (output-string ""))
+    (search-backward " ")
+    (setq beginning-point (1+ (point)))
+    (setq first-char (buffer-substring-no-properties (1+ (point)) (+ 2 (point))))
+    (setq input-string-list (split-string (delete-and-extract-region beginning-point end-point) "-"))
+    (forward-char)
+    (cond
+     ((string= first-char "n")
+      ;; (message "%s" "n")
+      (let* ((tikz-node-attribut)
+             (tikz-node-id (nth 1 input-string-list))
+             (tikz-node-pos "")
+             (tikz-node-name (format "{$q_%s$}" tikz-node-id)))
+        (setq tikz-node-attribut "state")
+        (when (string-match "i" (nth 0 input-string-list)) (setq tikz-node-attribut (concat tikz-node-attribut ",initial")))
+        (when (string-match "a" (nth 0 input-string-list)) (setq tikz-node-attribut (concat tikz-node-attribut ",accepting")))
+        (unless (nth 2 input-string-list)
+          (when (string-match "l" (nth 2 input-string-list)) (setq tikz-node-pos (concat tikz-node-pos "left")))
+          (when (string-match "a" (nth 2 input-string-list)) (setq tikz-node-pos (concat tikz-node-pos "above")))
+          (when (string-match "r" (nth 2 input-string-list)) (setq tikz-node-pos (concat tikz-node-pos "right")))
+          (when (string-match "b" (nth 2 input-string-list)) (setq tikz-node-pos (concat tikz-node-pos "below")))
+          (setq tikz-node-pos (format "[%s of = %s]" tikz-node-pos (substring (nth 2 input-string-list) 1 2))))
+        (unless (string= tikz-node-pos ""))
+        (setq output-string (format "\\node[%s] (%s) %s %s;" tikz-node-attribut tikz-node-id tikz-node-pos tikz-node-name))))
+     ;; edge: e[a][b]-%d-[a][b]-text-%d
+     ((string= first-char "e")
+      (let* ((tikz-edge-loop "")
+             (tikz-edge-node-from (nth 1 input-string-list))
+             (tikz-edge-text-pos)
+             (tikz-edge-text (nth 3 input-string-list))
+             (tikz-edge-node-to (nth 4 input-string-list)))
+        (when (string-match "a" (nth 0 input-string-list)) (setq tikz-edge-loop "[loop above]"))
+        (when (string-match "b" (nth 0 input-string-list)) (setq tikz-edge-loop "[loop below]"))
+        (when (string-match "l" (nth 0 input-string-list)) (setq tikz-edge-loop "[bend left]"))
+        (when (string-match "r" (nth 0 input-string-list)) (setq tikz-edge-loop "[bend right]"))
+        (when (string-match "a" (nth 2 input-string-list)) (setq tikz-edge-text-pos "node[above]"))
+        (when (string-match "b" (nth 2 input-string-list)) (setq tikz-edge-text-pos "node[below]"))
+        (when (string-match "l" (nth 2 input-string-list)) (setq tikz-edge-text-pos "node[left]"))
+        (when (string-match "r" (nth 2 input-string-list)) (setq tikz-edge-text-pos "node[right]"))
+        (setq output-string (format "(%s) edge%s %s {%s} (%s)" tikz-edge-node-from tikz-edge-loop tikz-edge-text-pos tikz-edge-text tikz-edge-node-to))))
+     ((string= first-char "f")
+      (let ((tikz-node-attribut ""))
+        (dotimes (i (- (length input-string-list) 1))
+          (setq tikz-node-attribut "")
+          (when (string-match "a" (nth i input-string-list)) (setq tikz-node-attribut (concat tikz-node-attribut ", accepting")))
+          (if (= i 0)
+              (progn
+                (setq output-string (format "\\node[state, initial%s] (0)  {$q_0$};\n" tikz-node-attribut)))
+            (setq output-string (format "%s\\node[state%s] (%d) [right of = %d] {$q_%d$};\n"  output-string tikz-node-attribut i (- i 1) i))))))
+     (t nil))
+    (insert output-string)
+    (indent-region (point-min) (point-max))))
+
+
 
 (defvar weiss-symbols-input-abrvs nil "A abbreviation hash table that maps a string to unicode char.")
 (setq weiss-symbols-input-abrvs (make-hash-table :test 'equal))
@@ -17,86 +81,101 @@
 (weiss-symbols-input--add-to-hash
  ;; xml entities http://xahlee.info/js/html_xml_entities.html
  [
-;;;;; Greek alphabet 
-  ["ga" "\\alpha "]
-  ["gA" "\\Alpha "]
+;;;;; Greek alphabet
+  ["ga" "\\alpha"]
+  ["gA" "\\Alpha"]
 
-  ["gb" "\\beta "]
-  ["gB" "\\Beta "]
+  ["gb" "\\beta"]
+  ["gB" "\\Beta"]
 
-  ["gd" "\\delta "]
-  ["gD" "\\Delta "]
+  ["gd" "\\delta"]
+  ["gD" "\\Delta"]
 
-  ["ge" "\\epsilon "]
-  ["gE" "\\Epsilon "]
+  ["ge" "\\epsilon"]
+  ["gE" "\\Epsilon"]
 
-  ["gf" "\\phi "]
-  ["gF" "\\Phi "]
+  ["gf" "\\phi"]
+  ["gF" "\\Phi"]
 
-  ["gg" "\\gamma "]
-  ["gG" "\\Gamma "]
+  ["gg" "\\gamma"]
+  ["gG" "\\Gamma"]
 
-  ["get" "\\eta "]
-  ["gEt" "\\Eta "]
+  ["get" "\\eta"]
+  ["gEt" "\\Eta"]
 
-  ["gk" "\\kappa "]
-  ["gK" "\\Kappa "]
+  ["gk" "\\kappa"]
+  ["gK" "\\Kappa"]
 
-  ["gl" "\\lambda "]
-  ["gL" "\\Lambda "]
+  ["gl" "\\lambda"]
+  ["gL" "\\Lambda"]
 
-  ["gm" "\\mu "]
-  ["gM" "\\Mu "]
+  ["gm" "\\mu"]
+  ["gM" "\\Mu"]
 
-  ["gn" "\\nu "]
-  ["gN" "\\Nu "]
+  ["gn" "\\nu"]
+  ["gN" "\\Nu"]
 
-  ["go" "\\omega "]
-  ["gO" "\\Omega "]
+  ["go" "\\omega"]
+  ["gO" "\\Omega"]
 
-  ["gp" "\\pi "]
-  ["gP" "\\Pi "]
+  ["gp" "\\pi"]
+  ["gP" "\\Pi"]
 
-  ["gq" "\\theta "]
-  ["gQ" "\\Theta "]
+  ["gq" "\\theta"]
+  ["gQ" "\\Theta"]
 
-  ["gr" "\\rho "]
-  ["gR" "\\Rho "]
+  ["gr" "\\rho"]
+  ["gR" "\\Rho"]
 
-  ["gs" "\\sigma "]
-  ["gS" "\\Sigma "]
+  ["gs" "\\sigma"]
+  ["gS" "\\Sigma"]
 
-  ["gt" "\\tau "]
-  ["gT" "\\Tau "]
+  ["gt" "\\tau"]
+  ["gT" "\\Tau"]
 
-  ["gu" "\\upsilon "]
-  ["gU" "\\Upsilon "]
+  ["gu" "\\upsilon"]
+  ["gU" "\\Upsilon"]
 
-  ["gw" "\\xi "]
-  ["gX" "\\Xi "]
+  ["gv" "\\varepsilon"]
+  ["gV" "\\Varepsilon"]
 
-  ["gx" "\\chi "]
-  ["gX" "\\Chi "]
+  ["gw" "\\xi"]
+  ["gX" "\\Xi"]
 
-  ["gy" "\\psi "]
-  ["gY" "\\Psi "]
+  ["gx" "\\chi"]
+  ["gX" "\\Chi"]
 
-  ["gz" "\\zeta "]
-  ["gZ" "\\Zeta "]
+  ["gy" "\\psi"]
+  ["gY" "\\Psi"]
+
+  ["gz" "\\zeta"]
+  ["gZ" "\\Zeta"]
 
 ;;;;; Logic
-  ["li" "\\in "]
-  ["lni" "\\notin "]
-  ["lsp" "\\supset "]
-  ["lsb" "\\subset "]
-  ["lcu" "\\cup "]
-  ["lca" "\\cap "]
-  ["ln" "\\neg "]
   ["la" "\\wedge "]
-  ["lo" "\\vee "]
-  ["lf" "\\forall "]
+  ["lb" "\\bot "]
+  ["lca" "\\cap "]
+  ["lcu" "\\cup "]
   ["le" "\\exists "]
-
+  ["lf" "\\forall "]
+  ["lfj" "{\\tiny \\textifsym{d|><|d}}"]  
+  ["li" "\\in "]
+  ["lj" "\\bowtie "]
+  ["llj" "{\\tiny \\textifsym{d|><|}}"]  
+  ["ln" "\\neg "]
+  ["lni" "\\notin "]
+  ["lo" "\\vee "]
+  ["lrj" "{\\tiny \\textifsym{|><|d}}"]  
+  ["lsb" "\\subset "]
+  ["lsbe" "\\subseteq "]
+  ["lslj" "\\ltimes "]  
+  ["lsp" "\\supset "]
+  ["lspe" "\\supseteq "]
+  ["lsrj" "\\rtimes "]  
+  ["lt" "\\top "]
+  ["lv" "\\vdash "]
+  ["lvd" "\\vDash "]
+  
 ;;;;; equal symbols
   ["es" "\\stackrel{IV}{=} "]
   ["el" "\\leq "]
@@ -105,10 +184,14 @@
   ["ea" "\\approx "]
 
 ;;;;; operation symbols
-  ["o." "\\cdot "]
+  ["op" "\\cdot "]
   ["ox" "\\times "]
   ["od" "\\div "]
   ["opm" "\\pm "]
+  ["os" "\\sqrt"]
+  ["of" "\\frac"]
+  ["oc" "\\circ "]
+  ["och" "\\choose "]
 
 ;;;;; Arrays
   ["ar" "\\Rightarrow "]
@@ -117,13 +200,43 @@
   ["asl" "\\leftarrow "]
   ["alr" "\\Leftrightarrow "]
   ["aslr" "\\leftrightarrow "]
+  ["at" "\\to "]
 
-;;;;; Font face
+;;;;; Symbols
+  ["si" "\\infty"]
+  ["ss" "\\#"]
+  ["se" "\\emptyset"]
+  ["sd" "\\dots "]
+  ["sb" " \  \ \\text{\\faBolt}"]
+  ["sbs" "\\verb|\\|"]
+  ["sqed" "$\\hfill\\blacksquare$"]
+  ["sl" "\\lim_{n \\to \\infty}"]
+  ["sm" "\\mid "]
+
+;;;;; Fast input
+  ["frp" "\\mathbb{R}^+"]
+  ["fr" "\\mathbb{R}"]
+  ["fzp" "\\mathbb{Z}^+"]
+  ["fz" "\\mathbb{Z}"]
+  ["fnz" "\\mathbb{N}_0"]
+  ["fn" "\\mathbb{N}"]
+
+;;;;; escape
+  ["b" "\\"]
+  ["bb" "\\\\"]
+  ["b-" "\\_ "]
+
 ;;;;; Misc
-  ["b" "\\"]  
-  ["bb" "\\\\"]  
-  ["ml" "\\left"]  
-  ["mr" "\\right"]  
+  ["ml" "\\left"]
+  ["mr" "\\right"]
+  ["mh" "\\hfill"]
+  ["mn" "\\not"]
+  ["mp" "\\path"]
+  ["mb" "\\big"]
+  ["mbb" "\\Big"]
+  ["mbbb" "\\bigg"]
+  ["mbbbb" "\\Bigg"]
+  ["mnp" "\n\n\\newpage"]
   ]
  )
 
@@ -334,6 +447,20 @@ Version 2018-07-09"
   "Turn off `weiss-symbols-input-mode' in current buffer."
   (interactive)
   (weiss-symbols-input-mode 0))
+
+(defun weiss-latex-expand-dwim ()
+  "DOCSTRING"
+  (interactive)
+  (cond
+   ((looking-back "1")
+    (delete-char -1)
+    (insert "."))
+   ((looking-back "2")
+    (delete-char -1)
+    (weiss-latex-tikz-expand))
+   (t (weiss-symbols-input-change-to-symbol))
+   )
+  )
 
 ;;;###autoload
 (define-minor-mode weiss-symbols-input-mode

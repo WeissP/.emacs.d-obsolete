@@ -60,11 +60,13 @@
                             ("car" "cdr")
                             ("add" "remove")
                             ("width" "height")
-                            ("left" "right" "top" "bottom")
+                            ("left" "right")
+                            ("top" "bottom")                            
                             ("Background" "Foreground")
                             ("background" "foreground")
                             ("next" "previous")
                             ("beginning" "end")
+                            ("below" "above")
                             ("up" "down")
                             ("Up" "Down")
                             ("forward" "backward")
@@ -101,7 +103,7 @@
   (if (and (use-region-p) (> (- (region-end) (region-beginning)) 10))
       (progn
         (indent-region (region-beginning) (region-end))
-        (ignore-errors (nox-format))
+        ;; (ignore-errors (nox-format))
         )
     (save-buffer) ; otherwise can nox-format not work
     (deactivate-mark)

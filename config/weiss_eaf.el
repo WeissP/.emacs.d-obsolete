@@ -99,6 +99,7 @@
         )
 
   (eaf-setq eaf-marker-letters "QWERASDFGZXCVB")
+  (eaf-setq eaf-pdf-dark-mode "true")
 
   ;; (setq browse-url-browser-function 'eaf-open-browser)
   ;; (defalias 'browse-web #'eaf-open-browser)

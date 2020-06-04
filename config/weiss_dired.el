@@ -12,6 +12,7 @@
      ("c" . (lambda()(interactive)(find-file "/home/weiss/.config")))
      ("h" . (lambda()(interactive)(find-file "/home/weiss/")))
      ("t" . (lambda()(interactive)(find-file "/home/weiss/.telega/cache/")))
+     ("s" . (lambda()(interactive)(find-file "/ssh:root@95.179.243.76:/usr/config/.aria2c/downloads/")))
      ("e" . (lambda()(interactive)(find-file "/home/weiss/.emacs.d")))))
   (defun weiss-dired-command-mode-define-keys ()
     ;; (define-key xah-fly-key-map (kbd "f") dired-filter-map)
@@ -79,7 +80,7 @@
        ("o" . eaf-open-this-from-dired)
        ("p" . peep-dired)
        ("q" . quit-window)
-       ("r" . tda/rsync-delete)
+       ("r" . weiss-async-move-file)
        ("R" . tda/rsync-delete-sudo)
        ;; ("s" . dired-sort-toggle-or-edit)
        ("S" . hydra-dired-quick-sort/body)
@@ -93,6 +94,23 @@
        ("z" . tda/unzip)
        ("Z" . tda/zip))))
   :config
+  (defun weiss-dired-delete-files-force ()
+    "DOCSTRING"
+    (interactive)
+    (dired-delete-file weiss-dired-marked-files)
+    ;; (dired-delete-file "/home/weiss/Downloads/mp1.pdf")
+    ;; (message "%s" "123")
+    )
+  ;; (dired-get-marked-files)
+  (defun weiss-revert-all-dired-buffer ()
+    "DOCSTRING"
+    (interactive)
+    (dolist (x (buffer-list) nil)
+      (when (string-match "dired" (format "%s" (with-current-buffer x major-mode)))
+        (with-current-buffer x
+          (revert-buffer))
+        ))
+    )
   (setq
    dired-dwim-target t
    dired-recursive-deletes 'always
@@ -131,7 +149,7 @@
   (defun weiss-show-icons-in-dired ()
     "Don't show icons in some Dir due to low performance"
     (interactive)
-    (let ((dired-icons-blacklist '("porn" "/lib/" "/lib64/"))
+    (let ((dired-icons-blacklist '("ssh:" "porn" "/lib/" "/lib64/" "/etc/" "/usr/share/texmf-dist/tex/latex/"))
           r)
       (unless (dolist (x dired-icons-blacklist r)
                 (when (string-match x dired-directory) (setq r t)))

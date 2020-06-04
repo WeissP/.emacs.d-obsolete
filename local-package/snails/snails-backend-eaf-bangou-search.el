@@ -53,7 +53,7 @@
          (tail (substring candidate 3)))
      (cond
       ((string-equal head "JAV") (eaf-open (concat "http://www.javlibrary.com/cn/vl_searchbyid.php?keyword=" tail) "browser"))
-      ((string-equal head "BTS") (eaf-open (concat "https://btsow.club/search/" tail) "browser"))
+      ((string-equal head "BTS") (eaf-open (concat btsow-adress tail) "browser"))
       ((string-equal head "FAN")
        (if (string-match "-" tail) ; convert ssni447 or ssni-447 to ssni00447
            (eaf-open (concat "https://www.dmm.co.jp/search/=/searchstr=" (replace-regexp-in-string "-" "00" tail)) "browser")        

@@ -22,11 +22,6 @@
 
 
 ;;; Code:
-(require 'xfk-functions)
-(require 'meow-keypad)
-(require 'weiss-temp-insert-mode)
-
-
 (defun weiss--define-keys (@keymap-name @key-cmd-alist)
   "Map `define-key' over a alist @key-cmd-alist.
 Example usage:
@@ -43,85 +38,52 @@ Version 2019-02-12"
    (lambda ($pair)
      (define-key @keymap-name (kbd (car $pair)) (cdr $pair))) @key-cmd-alist))
 
+(require 'xfk-functions)
+(require 'meow-keypad)
+(require 'weiss-temp-insert-mode)
+(require 'weiss-select-mode)
+
+
 (defvar move-as-word-p t)
 
-(setq weiss-delimiters "\n{}[]() \-/")
-(setq weiss-delimiters-list '("\n" ";;" "; " "{" "[" "}" " " "]" "(" ")" "-"))
-(setq weiss-non-stop-delimiters-list '("	" " " "\n" ";;" "; " "'"))
-;; (setq weiss-stop-delimiters ";\\.,\"")
-(setq weiss-stop-delimiters-list '(";" "." "," "\"" "-" "+"))
+(setq weiss-org-special-markers '("*" "/" "$"))
+
 (setq uppercase-alphabet '("A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M" "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z"))
-(setq weiss-stop-delimiters ";")
 
-(defun weiss-initial-symbols-regexp ()
-  "initial symbols regexp"
+(defun weiss-change-delimiters-list ()
+  "Change delimiters list by mode"
   (interactive)
-  (setq
-   weiss-non-stop-delimiters-regexp (regexp-opt weiss-non-stop-delimiters-list)
-   weiss-stop-delimiters-regexp (regexp-opt weiss-stop-delimiters-list)
-   xah-left-brackets-regexp (regexp-opt xah-left-brackets)
-   xah-right-brackets-regexp (regexp-opt xah-right-brackets)
-   weiss-non-stop-delimiters-and-right-brackets-regexp (regexp-opt
-                                                        (append
-                                                         weiss-non-stop-delimiters-list
-                                                         xah-right-brackets)
-                                                        )
-   weiss-non-stop-delimiters-and-left-brackets-regexp (regexp-opt
-                                                       (append
-                                                        weiss-non-stop-delimiters-list
-                                                        xah-left-brackets)
-                                                       )
-   weiss-all-symbols-regexp (regexp-opt
-                             (append
-                              xah-left-brackets
-                              xah-right-brackets
-                              weiss-non-stop-delimiters-list
-                              weiss-stop-delimiters-list
-                              ))
-   weiss-all-symbols-and-uppercase-regexp (regexp-opt
-                                           (append
-                                            uppercase-alphabet
-                                            xah-left-brackets
-                                            xah-right-brackets
-                                            weiss-non-stop-delimiters-list
-                                            weiss-stop-delimiters-list
-                                            ))
+  (cond
+   ((eq major-mode 'org-mode) (setq
+                               weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
+                               weiss-stop-delimiters-list '("&" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "|")))   
+   ((eq major-mode 'latex-mode) (setq
+                                 weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
+                                 weiss-stop-delimiters-list '("&" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*")))
+   ((eq major-mode 'java-mode) (setq
+                                weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
+                                weiss-stop-delimiters-list '(";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*")))
+   (t (setq weiss-non-stop-delimiters-list '(";" "	" " " "\n" "'" "\\")
+            weiss-stop-delimiters-list '("." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*")))
    ))
-(weiss-initial-symbols-regexp)
 
-(defun weiss-test ()
-  "Forward and select word, if in quote, then select all"
+
+
+(defun weiss--check-two-char (isForward firstList &optional secondList)
+  "Check two char"
   (interactive)
-  (deactivate-mark)
-  (setq case-fold-search t)
-  (while (or (member (char-to-string (char-before)) (append
-                                                    weiss-non-stop-delimiters-list
-                                                    xah-left-brackets))
-             (looking-back (concat xah-left-brackets-regexp xah-left-brackets-regexp)))
-    (backward-char))
-  (when (member (char-to-string (char-before)) (append 
-                                               xah-left-brackets
-                                               xah-right-brackets
-                                               weiss-non-stop-delimiters-list
-                                               weiss-stop-delimiters-list))
-    (backward-char))
-
-  (call-interactively 'set-mark-command)
-
-  (while (member (char-to-string (char-before)) uppercase-alphabet) (backward-char))
-
-  (while (not (member (char-to-string (char-before)) (append
-                                                     uppercase-alphabet
-                                                     xah-left-brackets
-                                                     xah-right-brackets
-                                                     weiss-non-stop-delimiters-list
-                                                     weiss-stop-delimiters-list)))
-    (backward-char))
-  (when (member  (char-to-string (char-before)) uppercase-alphabet)(backward-char))
-  )
-
-;; (setq weiss-delimiters "\n() \-")
-;; (setq weiss-stop-delimiters "\.,\"\-")
+  (unless secondList (setq secondList firstList))
+  (let ((firstChar)
+        (secondChar))
+    (if isForward
+        (setq firstChar (char-to-string (char-after))
+              secondChar (char-to-string (char-after (+ 1 (point)))))
+      (setq firstChar (char-to-string (char-before))
+            secondChar (char-to-string (char-before (- (point) 1))))
+      )
+    (and (member firstChar firstList) (member secondChar secondList))
+    ;; (message "1:%s 2:%s" firstChar secondChar)
+    ))
 
 (defun weiss-toggle-move-as-word ()
   "if the value is t, navi-keys will move between word"
@@ -142,6 +104,7 @@ Version 2019-02-12"
 (defun weiss-select-line-downward ()
   "Select current line. If current line is in region && cursor at region-end, extend selection downward by line."
   (interactive)
+  (weiss-select-mode-turn-on)
   (if (and (region-active-p)
            (>= (line-beginning-position) (region-beginning))
            (eq (point) (line-end-position)))
@@ -241,6 +204,7 @@ Version 2019-02-12"
 (defun weiss-expand-or-contract-region ()
   "If c-u then contract region"
   (interactive)
+  (weiss-select-mode-turn-on)
   (if current-prefix-arg
       (call-interactively 'er/contract-region)
     (call-interactively 'er/expand-region)
@@ -250,10 +214,21 @@ Version 2019-02-12"
 (defun weiss-next-word-select ()
   "forward word with select"
   (interactive)
+  (weiss-select-mode-turn-on)
   (if (use-region-p)
       (if (eq (point) (region-beginning))
           (backward-word)
         (forward-word))
+    (xah-insert-space-after)))
+
+(defun weiss-next-word-select-reverse ()
+  "forward word with select"
+  (interactive)
+  (weiss-select-mode-turn-on)
+  (if (use-region-p)
+      (if (eq (point) (region-beginning))
+          (forward-word)
+        (backward-word))
     (xah-insert-space-after)))
 
 (defun weiss-backward-word-and-select-current-word ()
@@ -299,13 +274,13 @@ Version 2019-02-12"
   "Forward and select word, if in quote, then select all"
   (interactive)
   (deactivate-mark)
-  (setq case-fold-search t)
+  ;; (setq case-fold-search t)
   (while (or (member (char-to-string (char-after)) (append
                                                     weiss-non-stop-delimiters-list
                                                     xah-right-brackets))
-             (looking-at (concat xah-left-brackets-regexp xah-left-brackets-regexp)))
+             (weiss--check-two-char t xah-left-brackets))
     (forward-char))
-  (when (member (char-to-string (char-after)) (append 
+  (when (member (char-to-string (char-after)) (append
                                                xah-left-brackets
                                                xah-right-brackets
                                                weiss-non-stop-delimiters-list
@@ -329,92 +304,104 @@ Version 2019-02-12"
   (deactivate-mark)
   (setq case-fold-search t)
   (while (or (member (char-to-string (char-before)) (append
-                                                    weiss-non-stop-delimiters-list
-                                                    xah-left-brackets))
-             (looking-back (concat xah-left-brackets-regexp xah-left-brackets-regexp)))
+                                                     weiss-non-stop-delimiters-list
+                                                     xah-left-brackets))
+             (weiss--check-two-char nil xah-right-brackets)
+             )
     (backward-char))
-  (when (member (char-to-string (char-before)) (append 
-                                               xah-left-brackets
-                                               xah-right-brackets
-                                               weiss-non-stop-delimiters-list
-                                               weiss-stop-delimiters-list))
+  (when (member (char-to-string (char-before)) (append
+                                                xah-left-brackets
+                                                xah-right-brackets
+                                                weiss-non-stop-delimiters-list
+                                                weiss-stop-delimiters-list))
     (backward-char))
 
   (call-interactively 'set-mark-command)
 
   (while (member (char-to-string (char-before)) uppercase-alphabet) (backward-char))
 
-  (while (not (member (char-to-string (char-before)) (append
-                                                     uppercase-alphabet
-                                                     xah-left-brackets
-                                                     xah-right-brackets
-                                                     weiss-non-stop-delimiters-list
-                                                     weiss-stop-delimiters-list)))
+  (while (or (not (member (char-to-string (char-before)) (append
+                                                          uppercase-alphabet
+                                                          xah-left-brackets
+                                                          xah-right-brackets
+                                                          weiss-non-stop-delimiters-list
+                                                          weiss-stop-delimiters-list)))
+             ;; (weiss--check-two-char nil '("" ";" ))
+             )
     (backward-char))
   (when (member  (char-to-string (char-before)) uppercase-alphabet)(backward-char))
- )
+  )
 
 (defun weiss-right-key ()
   "smart decide whether move by word or by char"
   (interactive)
-  (when current-prefix-arg (weiss-toggle-move-as-word))
-  (if move-as-word-p
-      (weiss-forward-and-select-word)
-    (forward-char)))
+  (if current-prefix-arg
+      (progn
+        (setq current-prefix-arg nil)
+        (unless (use-region-p) (call-interactively 'set-mark-command))
+        (weiss-select-mode-turn-on)
+        (forward-char))
+    (weiss-forward-and-select-word)))
 
 (defun weiss-left-key ()
   "smart decide whether move by word or by char"
   (interactive)
-  (when current-prefix-arg (weiss-toggle-move-as-word))
-  (if move-as-word-p
-      (weiss-backward-and-select-word)
-    (backward-char)))
+  (if current-prefix-arg
+      (progn
+        (setq current-prefix-arg nil)
+        (unless (use-region-p) (call-interactively 'set-mark-command))
+        (backward-char)
+        (weiss-select-mode-turn-on))    
+    (weiss-backward-and-select-word)
+    ))
 
 (defun weiss-down-key ()
   "DOCSTRING"
   (interactive)
-  (unless move-as-word-p (setq move-as-word-p t))
-  (cond
-   ((and (use-region-p)
-         (string-match "\n" (buffer-substring-no-properties (region-beginning) (region-end))))
-    (next-line)
-    (end-of-line))
-   ((and (use-region-p)
-         (eq (region-beginning) (line-beginning-position))
-         (eq (point) (line-end-position)))
-    (next-line)
-    (end-of-line))
-   ((and (use-region-p)
-         (eq (region-end) (line-end-position))
-         (eq (point) (line-beginning-position)))
-    (exchange-point-and-mark)
-    (next-line)
-    (end-of-line))
-   (t (weiss-next-line-and-select-current-word))
-   ))
+  (weiss-next-line-and-select-current-word)
+  ;; (unless move-as-word-p (setq move-as-word-p t))
+  ;; (cond
+  ;;  ((and (use-region-p)
+  ;;        (string-match "\n" (buffer-substring-no-properties (region-beginning) (region-end))))
+  ;;   (next-line)
+  ;;   (end-of-line))
+  ;;  ((and (use-region-p)
+  ;;        (eq (region-beginning) (line-beginning-position))
+  ;;        (eq (point) (line-end-position)))
+  ;;   (next-line)
+  ;;   (end-of-line))
+  ;;  ((and (use-region-p)
+  ;;        (eq (region-end) (line-end-position))
+  ;;        (eq (point) (line-beginning-position)))
+  ;;   (exchange-point-and-mark)
+  ;;   (next-line)
+  ;;   (end-of-line))
+  ;;  (t (weiss-next-line-and-select-current-word))
+  )
 
 (defun weiss-up-key ()
   "DOCSTRING"
   (interactive)
-  (unless move-as-word-p (setq move-as-word-p t))
-  (cond
-   ((and (use-region-p)
-         (string-match "\n" (buffer-substring-no-properties (region-beginning) (region-end))))
-    (previous-line)
-    (beginning-of-line))
-   ((and (use-region-p)
-         (eq (region-end) (line-end-position))
-         (eq (point) (line-beginning-position)))
-    (previous-line)
-    (beginning-of-line))
-   ((and (use-region-p)
-         (eq (region-beginning) (line-beginning-position))
-         (eq (point) (line-end-position)))
-    (exchange-point-and-mark)
-    (previous-line)
-    (beginning-of-line))
-   (t (weiss-previous-line-and-select-current-word))
-   ))
+  (weiss-previous-line-and-select-current-word)
+  ;; (unless move-as-word-p (setq move-as-word-p t))
+  ;; (cond
+  ;;  ((and (use-region-p)
+  ;;        (string-match "\n" (buffer-substring-no-properties (region-beginning) (region-end))))
+  ;;   (previous-line)
+  ;;   (beginning-of-line))
+  ;;  ((and (use-region-p)
+  ;;        (eq (region-end) (line-end-position))
+  ;;        (eq (point) (line-beginning-position)))
+  ;;   (previous-line)
+  ;;   (beginning-of-line))
+  ;;  ((and (use-region-p)
+  ;;        (eq (region-beginning) (line-beginning-position))
+  ;;        (eq (point) (line-end-position)))
+  ;;   (exchange-point-and-mark)
+  ;;   (previous-line)
+  ;;   (beginning-of-line))
+  ;;  (t (weiss-previous-line-and-select-current-word))
+  )
 
 ;;;; insert-mode
 (defun weiss-disable-abbrev-and-activate-insert-mode ()
@@ -422,6 +409,7 @@ Version 2019-02-12"
   (interactive)
   (deactivate-mark)
   (xah-fly-insert-mode-activate)
+  (when (and (not (eq major-mode 'sql-mode)) (eq (point) (line-beginning-position))) (indent-according-to-mode))
   (when (abbrev-symbol (thing-at-point 'sexp)) (insert " "))
   )
 
@@ -430,7 +418,15 @@ Version 2019-02-12"
   "DOCSTRING"
   (interactive)
   (deactivate-mark)
-  (call-interactively 'newline))
+  (if (ignore-errors (and (derived-mode-p 'prog-mode) (abbrev-symbol (thing-at-point 'sexp)) ))
+      (insert "\n")    
+    ;; (message "%s" "nil")
+    (xah-fly-insert-mode-activate)
+    (when-let ((cmd (key-binding (read-kbd-macro "RET"))))
+      (call-interactively cmd))  
+    (xah-fly-command-mode-activate)
+    )
+  )
 
 (defun weiss-excute-buffer ()
   "If the current buffer is elisp mode, then eval-buffer, else quickrun"
@@ -440,10 +436,16 @@ Version 2019-02-12"
       (eval-buffer)
     (quickrun)))
 
+(defun weiss-refresh ()
+  "DOCSTRING"
+  (interactive)
+  (when flycheck-mode (flycheck-buffer) (flycheck-buffer))
+  )
 ;;;; delete
 (defun weiss-cut-line-or-delete-region ()
   "Cut line or delete region"
   (interactive)
+  (weiss-select-mode-turn-off)
   (unless move-as-word-p (setq move-as-word-p t))
   (if current-prefix-arg
       (delete-char -1)
@@ -452,19 +454,45 @@ Version 2019-02-12"
 (defun weiss-delete-backward-with-region ()
   "Like xah delete backward char or bracket text, but ignore region"
   (interactive)
-  (unless move-as-word-p (setq move-as-word-p t))
   (deactivate-mark)
-  (while (looking-back " ") (delete-char -1))
-  (xah-delete-backward-char-or-bracket-text)
+  (while (string= (char-to-string (char-before)) " ") (delete-char -1))
+  (cond
+   ((eq major-mode 'org-mode) 
+    (if current-prefix-arg
+        (weiss-delete-backward-bracket-and-mark-bracket-text-org-mode)
+      (weiss-delete-backward-bracket-and-text-org-mode)
+      ))
+   ((eq major-mode 'latex-mode)
+    (weiss-delete-backward-bracket-and-mark-bracket-text-latex-mode))
+   (t (xah-delete-backward-char-or-bracket-text))
+   )
   )
 
 (defun weiss-delete-forward-with-region ()
   "Like xah delete forward char or bracket text, but ignore region"
   (interactive)
-  (unless move-as-word-p (setq move-as-word-p t))
   (deactivate-mark)
-  (while (looking-at " ") (delete-char 1))
-  (xah-delete-forward-char-or-bracket-text))
+  (cond
+   ((eq major-mode 'org-mode) 
+    (while (and (string= (char-to-string (char-after)) " ")
+                (not (weiss--check-two-char t '(" ") weiss-org-special-markers)))
+      (delete-char 1))
+    (when (weiss--check-two-char t '(" ") weiss-org-special-markers) (forward-char))
+    (if current-prefix-arg
+        (weiss-delete-forward-bracket-and-mark-bracket-text-org-mode)
+      (weiss-delete-forward-bracket-and-text-org-mode))
+    )
+   ((eq major-mode 'latex-mode)
+    (while (and (string= (char-to-string (char-after)) " ")
+                (not (weiss--check-two-char t '(" ") weiss-org-special-markers)))
+      (delete-char 1))
+    (when (weiss--check-two-char t '(" ") weiss-org-special-markers) (forward-char))
+    (weiss-delete-forward-bracket-and-mark-bracket-text-latex-mode))
+   (t
+    (while (string= (char-to-string (char-after)) " ") (delete-char 1))
+    (xah-delete-forward-char-or-bracket-text))
+   )
+  )
 
 ;;;; edit
 (defun weiss-move-next-bracket-contents ()
@@ -528,6 +556,7 @@ Version 2019-02-12"
 (defun weiss-paste ()
   "Like xah paste or paste previous, but when region only contain one char, deactivate it"
   (interactive)
+  (weiss-select-mode-turn-off)
   (when (and (use-region-p) (< (- (region-end) (region-beginning)) 2)
              (deactivate-mark))
     (deactivate-mark))
@@ -544,13 +573,17 @@ Version 2019-02-12"
 (defun c-x-or-exchange-point ()
   "DOCSTRING"
   (interactive)
+  ;; (weiss-select-mode-turn-off)
   (if (use-region-p)
-      (exchange-point-and-mark)
+      (progn
+        (exchange-point-and-mark)
+        (weiss-select-mode-turn-on))      
     (meow-keypad-start)))
 
 (defun c-c-or-copy ()
   "DOCSTRING"
   (interactive)
+  (weiss-select-mode-turn-off)
   (if (use-region-p)
       (xah-copy-line-or-region)
     (meow-keypad-start)))
@@ -560,10 +593,24 @@ Version 2019-02-12"
 cursor at end of line -> add comment at end of line and activate insert mode
 t -> comment current line"
   (interactive)
-  (unless (and (use-region-p)
+  (if current-prefix-arg
+      (progn
+        (end-of-line)
+        (comment-dwim nil)
+        (xah-fly-insert-mode-activate))
+    (let (($lbp (line-beginning-position))
+          ($lep (line-end-position)))
+      (if (and (region-active-p)
                (string-match "\n" (buffer-substring-no-properties (region-beginning) (region-end))))
-    (deactivate-mark))
-  (xah-comment-dwim))
+          (comment-dwim nil)
+        (if (eq $lbp $lep)
+            (progn
+              (comment-dwim nil))
+          (progn
+            (comment-or-uncomment-region $lbp $lep)
+            (forward-line ))))
+      ))
+  )
 
 (defun weiss-save-current-content ()
   "save current content in temp buffer"
@@ -756,7 +803,7 @@ t -> comment current line"
    ("l" . visual-line-mode)             ;wrap-line
    ("m" . shell-command)
    ("n" . global-display-line-numbers-mode)
-   ("p" . weiss-org-latex-preview-all)
+   ("p" . sql-postgres)
    ("r" . weiss-dired-toggle-read-only)
    ("s" . sudo-edit)
    ("v" . vterm-other-window)
@@ -858,16 +905,43 @@ t -> comment current line"
    ("l" . xah-insert-escape-brace)
    ("s" . xah-insert-escape-star)
    ("SPC" . (lambda () (interactive) (insert " \\ ")))
+   (";" . xah-insert-latex-quote)
    ))
 
+(weiss--define-keys
+ (define-prefix-command 'xah-fly-newline-brackets-keymap)
+ '(
+   ("j" . weiss-insert-paren-with-newline)
+   ("k" . weiss-insert-square-bracket-with-newline)
+   ("l" . weiss-insert-brace-with-newline)
+   (";" . weiss-insert-quote-with-newline)
+   ))
+
+
+(defun weiss-insert-bracket-with-newline (left-bracket right-bracket)
+  "DOCSTRING"
+  (interactive)
+  (insert (format "%s\n\n%s" left-bracket right-bracket))
+  (previous-line)
+  (xah-fly-insert-mode-activate)
+  (indent-according-to-mode)
+  (indent-region (- (point) 20) (+ (point) 20)))
+
+(defun weiss-insert-quote-with-newline () (interactive) (weiss-insert-bracket-with-newline "\"" "\"") )
+(defun weiss-insert-brace-with-newline () (interactive) (weiss-insert-bracket-with-newline "{" "}") )
+(defun weiss-insert-paren-with-newline () (interactive) (weiss-insert-bracket-with-newline "(" ")") )
+(defun weiss-insert-square-bracket-with-newline () (interactive) (weiss-insert-bracket-with-newline "[" "]") )
 (weiss--define-keys
  (define-prefix-command 'xah-fly-esc-keymap)
  '(
    (";" . xah-insert-ascii-double-quote)
+   ("'" . xah-insert-ascii-single-quote)
    ("[" . xah-insert-escape-square-bracket)
    ("-" . xah-insert-underline)
    ("a" . xah-insert-abs)
+   ("b" . xah-insert-latex-newline)
    ("j" . xah-insert-paren)
+   ("q" . xah-insert-markdown-quote)
    ("s" . xah-insert-star)
    ("/" . xah-insert-slash)
    ("4" . xah-insert-dollar)
@@ -876,9 +950,11 @@ t -> comment current line"
    ("," . previous-buffer)
    ("." . next-buffer)
    ("m" . xah-insert-angle-bracket)
-   ("<escape>" . weiss-symbols-input-change-to-symbol)
+   ("<escape>" . weiss-insert-latex-dwim)
    ("SPC" . xah-fly-escape-symbols-keymap)
+   ("n" . xah-fly-newline-brackets-keymap)
    ("<delete>" . xah-insert-backslash)
+   ("RET" . (lambda () (interactive) (insert "$\\\\$\n")))
    ("y" . undo)
    ))
 
@@ -942,7 +1018,7 @@ t -> comment current line"
 
    ("3" . delete-window)
    ("4" . split-window-right)
-   ("5" . balance-windows)
+   ("5" . weiss-refresh)
    ("6" . xah-upcase-sentence)
    ("9" . ispell-word)
 
@@ -986,7 +1062,7 @@ t -> comment current line"
   ;; set control meta, etc keys
 
   (progn
-    (define-key xah-fly-key-map (kbd "<home>") 'xah-fly-command-mode-activate)
+    ;; (define-key xah-fly-key-map (kbd "<home>") 'xah-fly-command-mode-activate)
     (define-key xah-fly-key-map (kbd "<end>") 'xah-fly-command-mode-activate)
     (define-key xah-fly-key-map (kbd "<menu>") 'xah-fly-command-mode-activate)
     (define-key xah-fly-key-map (kbd "<f12>") 'xah-fly-command-mode-activate)
@@ -1030,7 +1106,7 @@ t -> comment current line"
 
      ("SPC" . xah-fly-leader-key-map)
      ("DEL" . xah-fly-leader-key-map)
-     ;; ("RET" . weiss-ret)
+     ("RET" . weiss-ret)
      ("<escape>" . xah-fly-esc-keymap)
 
      ("'" . xah-cycle-hyphen-underscore-space)
@@ -1098,6 +1174,8 @@ Version 2017-01-21"
   (weiss-prog-command-mode-define-keys)
   ;; (message "current-major-mode: %s" major-mode)
   (cond
+   ((eq major-mode 'sql-mode) (weiss-sql-command-mode-define-keys))
+   ((ignore-errors lsp-mode) (weiss-lsp-command-mode-define-keys))
    ((eq major-mode 'magit-status-mode) (weiss-magit-command-mode-define-keys))
    ((eq major-mode 'pdf-view-mode) (weiss-pdf-command-mode-define-keys))
    ((eq major-mode 'org-mode) (weiss-org-command-mode-define-keys))
@@ -1165,11 +1243,11 @@ Version 2018-05-07"
 
      ("'" . nil)
      ;; ("," . nil)
-     ("," . (lambda () (interactive)
-              (if (eq major-mode 'latex-mode) (weiss-symbols-input-change-to-symbol) (call-interactively 'self-insert-command))))
-     ;; ("-" . (lambda () (interactive)(insert "-"))) 
+     ("," . nil)
+     ;; ("-" . (lambda () (interactive)(insert "-")))
      ("-" . nil)
-     ("." . nil)
+     ("." . (lambda () (interactive)
+              (if (eq major-mode 'latex-mode) (weiss-latex-expand-dwim) (call-interactively 'self-insert-command))))
      ("/" . nil)
      (";" . nil)
      ("=" . nil)

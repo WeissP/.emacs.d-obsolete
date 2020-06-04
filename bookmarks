@@ -2,11 +2,36 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("buffer.py"
- (filename . "~/.emacs.d/emacs-application-framework/app/js-video-player/buffer.py")
- (front-context-string . "a(self, session_")
- (rear-context-string . "tore_session_dat")
- (position . 1920))
+(("weiss_sql.el"
+ (filename . "~/.emacs.d/config/weiss_sql.el")
+ (front-context-string)
+ (rear-context-string . ";;\n;;; weiss_sql")
+ (position . 2291))
+("weiss_lsp.el"
+ (filename . "~/.emacs.d/config/weiss_lsp.el")
+ (front-context-string . "(use-package lsp")
+ (rear-context-string)
+ (position . 1))
+("weiss_flycheck.el"
+ (filename . "~/.emacs.d/config/weiss_flycheck.el")
+ (front-context-string . "flycheck-mode)\n ")
+ (rear-context-string . "ok (prog-mode . ")
+ (position . 56))
+("misc.el"
+ (filename . "~/.emacs.d/config/weiss_after_dump_misc.el")
+ (front-context-string)
+ (rear-context-string . "ire 'weiss_eaf)\n")
+ (position . 5359))
+("weiss_latex.el"
+ (filename . "~/.emacs.d/config/weiss_latex.el")
+ (front-context-string)
+ (rear-context-string . "ex.el ends here\n")
+ (position . 6616))
+("R-cal.r"
+ (filename . "~/weiss/latex/R-cal.r")
+ (front-context-string . "\n## (choose(n,6)")
+ (rear-context-string . "%s\", w)\n\nn <- 8\n")
+ (position . 275))
 ("dump.el"
  (filename . "~/.emacs.d/dump.el")
  (front-context-string . ";;              ")
@@ -109,11 +134,6 @@
  (front-context-string . "\n\n\n(provide 'wei")
  (rear-context-string . "ippet-snippets))")
  (position . 13102))
-("weiss_calendar.el"
- (filename . "~/.emacs.d/config/weiss_calendar.el")
- (front-context-string . "orward-equal-sig")
- (rear-context-string . " ;; (\"=\" . xah-f")
- (position . 1506))
 ("Einsammlung.org"
  (filename . "~/Documents/Org/Einsammlung.org")
  (front-context-string . " erotisch\n** [[h")

@@ -45,27 +45,10 @@
   (company-require-match nil)
   (company-global-modes '(not dired-mode dired-sidebar-mode))
   ;; :config
+  ;; (setq completion-ignore-case t) 
   ;; (use-package company-auctex)
-  )
-
-;;; LSP
-;; (use-package lsp-java)
-
-(use-package nox
-  ;; :disabled
-  ;; :quelpa (nox
-  ;;          :fetcher github
-  ;;          :repo manateelazycat/nox)
-  :ensure nil
-  :load-path "/home/weiss/.emacs.d/local-package/nox/"
-  :hook ((python-mode . nox-ensure)
-         (java-mode . nox-ensure)
-         )
-  :bind (:map nox-mode-map
-              ("M-d" . nox-show-doc)
-              )
-  :config
-  (setq nox-python-server 'pyls)
+  ;; (require 'company-sql)
+  ;; (add-to-list 'company-backends 'company-sql)
   )
 
 ;;; yasnippet

@@ -52,6 +52,7 @@
   (add-to-list 'load-path "/home/weiss/.emacs.d/config/")
   (add-to-list 'load-path "/home/weiss/.emacs.d/local-package/dired-video-preview/")
   (add-to-list 'load-path "/usr/local/texlive/2020/bin/x86_64-linux")
+
   (setq-default c-basic-offset   4
                 tab-width        4
                 indent-tabs-mode nil)
@@ -92,9 +93,9 @@
   (delete-selection-mode 1)
   (global-auto-revert-mode 1)
 
-  (setq electric-pair-inhibit-predicate 'electric-pair-conservative-inhibit)
-  (electric-pair-mode 1)
-
+  ;; (setq electric-pair-inhibit-predicate 'electric-pair-conservative-inhibit)
+  ;; (electric-pair-mode 1)
+  
   (add-hook 'prog-mode-hook #'subword-mode)
   (add-hook 'minibuffer-setup-hook #'subword-mode)
 
@@ -132,6 +133,7 @@
     :diminish
     :config
     (add-to-list 'super-save-triggers 'find-file)
+    (add-to-list 'super-save-triggers 'org-edit-special)
     (super-save-mode +1))
 
   (use-package keyfreq
@@ -203,102 +205,19 @@ single-character strings, or a string of characters."
   ;; (require 'weiss_eaf)
   (require 'weiss_dired)
   (require 'weiss_org)
+  ;; (require 'org)
   (require 'weiss_pdf_tools)
   (require 'weiss_flycheck)
   (require 'weiss_translation)
   (require 'weiss_snails)
+  (require 'weiss_sql)
   (require 'weiss_rime)
   (require 'weiss_telega)
   (require 'weiss_abbrevs))
 
-;; (require 'weiss_eaf)
-;; (require 'weiss-dired-video-preview-mode)
-;; (require 'weiss_ui)
-(save-place-mode 1)
 
-;; Recent files
-;; recentf-cleanup will update recentf-list
-(use-package recentf
-  :ensure nil
-  :hook (after-init . recentf-mode)
-  :preface
-  (defun snug/recentf-save-list-silence ()
-    (interactive)
-    (let ((message-log-max nil))
-      (if (fboundp 'shut-up)
-          (shut-up (recentf-save-list))
-        (recentf-save-list)))
-    (message ""))
-  (defun snug/recentf-cleanup-silence ()
-    (interactive)
-    (let ((message-log-max nil))
-      (if (fboundp 'shut-up)
-          (shut-up (recentf-cleanup))
-        (recentf-cleanup)))
-    (message ""))
-  :config
-  ;; (run-at-time nil (* 5 60) 'snug/recentf-save-list-silence)
+;; (load "/home/weiss/.emacs.d/config/weiss_ui_after_dump.el")
+(load "/home/weiss/.emacs.d/config/weiss_after_dump_misc.el")
 
-  (setq
-   recentf-max-menu-items 150
-   recentf-max-saved-items 300
-   recentf-auto-cleanup '60
-   ;; Recentf blacklist
-   recentf-exclude '(
-                     ".*autosave$"
-                     "/ssh:"
-                     ;; "/sudo:"
-                     "recentf$"
-                     ".*archive$"
-                     ".*.jpg$"
-                     ".*.png$"
-                     ".*.gif$"
-                     ".*.mp4$"
-                     ".cache"
-                     "cache"
-                     ))
-  )
-
-;;;; Bookmarks
-;; (bookmark-delete "org-capture-last-stored")
-;; (bookmark-delete "Emacs China")
-
-;;;; tramp
-(use-package tmtxt-async-tasks
-  ;; :disabled
-  :load-path "/home/weiss/.emacs.d/local-package/tmtxt-async-tasks/"
-  :ensure nil
-  :config
-  (setq-default tat/window-close-delay "0")
-  (setq-default tat/window-height 8)
-  (use-package tmtxt-dired-async
-    :load-path "/home/weiss/.emacs.d/local-package/tmtxt-dired-async/"
-    :ensure nil
-    :config
-    (setq-default tda/unzip-command "/usr/bin/unzip")
-    (setq-default tda/unzip-argument "")))
-
-(require 'weiss_snails)
-
-;; Tramp ivy interface
-(use-package counsel-tramp
-  :bind (:map counsel-mode-map
-              ("C-c c T" . counsel-tramp)))
-
-
-;; (require 'weiss_ui_after_dump)
-(load "/home/weiss/.emacs.d/config/weiss_ui_after_dump.el")
-;; (set-face-attribute 'region nil :background "#e8f2ff")
-(add-hook 'switch-buffer-functions 
-          (lambda (prev cur) 
-            (interactive)
-            (change-keybinding)
-            ;; (weiss-activate-rime)
-            ))
-
-(require 'latex)
-(require 'weiss_latex)
-;; (bookmark-load "/home/weiss/.emacs.d/bookmarks" t t t)
-(use-package sudo-edit) 
 (message "Emacs is ready, startup cost: %.3f seconds." (time-to-seconds (time-since user/launch-time)))
 (setq user/launch-time nil)

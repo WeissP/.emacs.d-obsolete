@@ -3,7 +3,7 @@
   :ensure nil
   ;; :defer nil
   :init
-  
+  (setq btsow-adress "https://bteve.com/search/")
   (require 'snails-backend-browser-bookmark)
   (require 'snails-backend-file-bookmark)
   ;; (require 'snails-backend-eaf-youtube-search)

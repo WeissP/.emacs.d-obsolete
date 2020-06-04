@@ -21,7 +21,12 @@
   ;; :diminish doom-modeline-mode
   :init
   ;; (setq doom-modeline-modal-icon nil)
-  (setq doom-modeline-window-width-limit fill-column)
+  (setq doom-modeline-window-width-limit fill-column
+        ;; doom-modeline-project-detection
+        ;; doom-modeline-buffer-file-name-style 'relative-to-project
+        ;; doom-modeline-bar-width 6
+        doom-modeline-window-width-limit 110
+        )
   ;; (setq doom-modeline-minor-modes t)
   (diminish 'abbrev-mode)
   :hook (after-init . doom-modeline-mode)
@@ -155,6 +160,6 @@
                           '(("^.*:Frage:.*$" 0 'font-lock-keyword-face)))
 
   (add-to-list 'org-tag-faces '("Frage" . (:foreground "red"  :weight 'bold)))
-    
+  
   )
 (provide 'weiss_ui_after_dump)

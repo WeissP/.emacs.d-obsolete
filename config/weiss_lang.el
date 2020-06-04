@@ -34,12 +34,28 @@
 
 (use-package xah-elisp-mode)
 
+;;;; ESS/R
 (use-package ess)
+(use-package company-ess
+  :disabled
+  :hook (ess-mode . (lambda ()
+                      (set (make-local-variable 'company-backends) '(company-ess))
+                      (company-mode)))
+  ;; :config
+  ; Enabling the backend :
+  ; Globally - company ess-backend checks ess mode 
+  ;; (add-to-list 'company-backends 'company-ess-backend)
+
+  ; OR locally to ess mode
+  ;(add-hook 'ess-mode-hook  
+  )
+
 
 (use-package quickrun)
 
 ;;;; Java
 (use-package emacs-google-java-format
+  :disabled
   :quelpa (emacs-google-java-format
            :fetcher github
            :repo sideshowcoder/emacs-google-java-format)

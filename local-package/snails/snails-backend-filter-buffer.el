@@ -88,27 +88,30 @@
       (list
        snails-input-buffer
        snails-content-buffer
-       " *code-conversion-work*"
-       " *Echo Area "
-       " *Minibuf-"
-       " *Custom-Work*"
-       " *pyim-page-tooltip-posframe-buffer*"
-       " *load"
-       " *server"
-       " *snails tips*"
-       "*eaf*"
-       " *company-box-"
-       " *emacsql"
-       " *org-src-fontification:"
-       " *which-key"
-       " *counsel"
-       " *temp file*"
-       "*dashboard*"
-       "*straight-process*"
-       " *telega-server*"
-       "*tramp/"
-       " *Org todo*"
-       " *popwin dummy*"
+       "<none>.tex"
+       "frag-master.tex"
+       "_region_.tex"
+       ;; " *code-conversion-work*"
+       ;; " *Echo Area "
+       ;; " *Minibuf-"
+       ;; " *Custom-Work*"
+       ;; " *pyim-page-tooltip-posframe-buffer*"
+       ;; " *load"
+       ;; " *server"
+       ;; " *snails tips*"
+       ;; "*eaf*"
+       ;; " *company-box-"
+       ;; " *emacsql"
+       ;; " *org-src-fontification:"
+       ;; " *which-key"
+       ;; " *counsel"
+       ;; " *temp file*"
+       ;; "*dashboard*"
+       ;; "*straight-process*"
+       ;; " *telega-server*"
+       ;; "*tramp/"
+       ;; " *Org todo*"
+       ;; " *popwin dummy*"
        ))
 
 (setq snails-backend-filter-buffer-whitelist
@@ -118,6 +121,7 @@
        "backup_"
        ;; "*eaf*"
        "*Telega Root*"
+       "*SQL: Postgres*"
        ))
 
 (setq snails-backend-filter-buffer-blacklist-RegEx 
@@ -184,7 +188,7 @@
                   (or (and (snails-backend-filter-buffer-whitelist-buffer buf)
                            (snails-match-input-p input (buffer-name buf)))
                       (and
-                       ;; (snails-backend-filter-buffer-not-blacklist-buffer buf)
+                       (snails-backend-filter-buffer-not-blacklist-buffer buf)
                        (snails-backend-filter-buffer-not-blacklist-buffer-RegEx buf)
                        (or
                         (string-equal input "")

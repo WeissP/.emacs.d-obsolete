@@ -575,14 +575,14 @@ Version 2017-07-02"
     (cond
      ((looking-back "\\s)" 1)
       (if current-prefix-arg
-          (xah-delete-backward-bracket-pair)
+          (xah-delete-backward-bracket-pairs)
         (xah-delete-backward-bracket-text)))
      ((looking-back "\\s(" 1)
       (progn
         (backward-char)
         (forward-sexp)
         (if current-prefix-arg
-            (xah-delete-backward-bracket-pair)
+            (xah-delete-backward-bracket-pairs)
           (xah-delete-backward-bracket-text))))
      ((looking-back "\\s\"" 1)
       (if (nth 3 (syntax-ppss))
@@ -590,7 +590,7 @@ Version 2017-07-02"
             (backward-char )
             (xah-delete-forward-bracket-pairs (not current-prefix-arg)))
         (if current-prefix-arg
-            (xah-delete-backward-bracket-pair)
+            (xah-delete-backward-bracket-pairs)
           (xah-delete-backward-bracket-text))))
      (t
       (delete-char -1)))))
@@ -622,10 +622,11 @@ URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
 Version 2017-09-21"
   (interactive)
   (progn
+    (backward-char)
     (mark-sexp)
     (kill-region (region-beginning) (region-end))))
 
-(defun xah-delete-backward-bracket-pair ()
+(defun xah-delete-backward-bracket-pairs ()
   "Delete the matching brackets/quotes to the left of cursor.
 
 After the command, mark is set at the left matching bracket position, so you can `exchange-point-and-mark' to select it.
@@ -645,6 +646,8 @@ Version 2017-07-02"
     (goto-char $p1)
     (delete-char 1)
     (push-mark (point) t)
+    (setq mark-active t)
+    (setq deactivate-mark nil)
     (goto-char (- $p0 2))))
 
 (defun xah-delete-forward-bracket-pairs ( &optional @delete-inner-text-p)
@@ -669,7 +672,9 @@ Version 2017-07-02"
       (delete-char -1)
       (push-mark (point) t)
       (goto-char $pt)
-      (delete-char 1))))
+      (delete-char 1)
+      (setq mark-active t)
+      (setq deactivate-mark nil))))
 
 (defun xah-delete-forward-char-or-bracket-text ()
   "weiss: change backward to forward. 
@@ -688,14 +693,15 @@ Version 2017-07-02"
      ((looking-at "\\s(")
       (if current-prefix-arg
           (xah-delete-forward-bracket-pairs)
+        (forward-char)
         (xah-delete-forward-bracket-text)))
      ((looking-at "\\s)")
       (progn
         (forward-char)
-        (backward-sexp)
+        ;; (backward-sexp)
         (if current-prefix-arg
-            (xah-delete-forward-bracket-pairs)
-          (xah-delete-forward-bracket-text))))
+            (xah-delete-backward-bracket-pairs)
+          (xah-delete-backward-bracket-text))))
      ((looking-at "\\s\"")
       (if (nth 3 (syntax-ppss))
           (progn
@@ -1880,6 +1886,10 @@ Version 2017-01-17"
 (defun xah-insert-escape-brace () (interactive) (xah-insert-bracket-pair "\\{" "\\}"))
 (defun xah-insert-escape-paren () (interactive) (xah-insert-bracket-pair "\\(" "\\)"))
 (defun xah-insert-escape-star () (interactive) (xah-insert-bracket-pair "\\* " " *\\"))
+(defun xah-insert-markdown-quote () (interactive) (xah-insert-bracket-pair "`" "`") )
+(defun xah-insert-latex-quote () (interactive) (xah-insert-bracket-pair "``" "''" ))
+(defun xah-insert-latex-newline () (interactive) (xah-insert-bracket-pair "& " " \\\\" ))
+
 
 (defun xah-insert-hyphen ()
   "Insert a HYPHEN-MINUS character."
