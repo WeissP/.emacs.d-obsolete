@@ -1,0 +1,43 @@
+(package-initialize)
+(setq package-archives
+      '(("gnu"   . "http://elpa.gnu.org/packages/")
+        ("melpa" . "http://melpa.org/packages/")))
+
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+(setq package-selected-packages
+      '(use-package quelpa-use-package))
+
+(setq use-package-ensure-function 'quelpa)
+(setq quelpa-checkout-melpa-p nil)
+(setq quelpa-update-melpa-p nil)
+(setq use-package-always-demand t)
+(setq use-package-always-ensure t)
+(require 'use-package)
+(require 'quelpa-use-package)
+(quelpa-use-package-activate-advice)
+
+;; Required by `use-package'
+(use-package diminish)
+(use-package bind-key)
+
+(use-package which-key 
+  :diminish
+  :hook (after-init . which-key-mode)
+  )
+
+(use-package ryo-modal
+  :commands ryo-modal-mode
+  :bind ("M-m" . ryo-modal-mode)
+  :config
+  (ryo-modal-keys
+   ("l" right-char :mode 'org-mode)
+   )  
+  (ryo-modal-keys
+   ("l" left-char :mode 'abbrev-mode)
+   )  
+  ) 
+
+

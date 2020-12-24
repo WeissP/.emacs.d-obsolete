@@ -122,6 +122,7 @@
        ;; "*eaf*"
        "*Telega Root*"
        "*SQL: Postgres*"
+       "*ein:"
        ))
 
 (setq snails-backend-filter-buffer-blacklist-RegEx 
@@ -167,8 +168,6 @@
   "Check if buf is in some mode. mode is a string"
   (interactive)
   (string-match mode (format "%s" (with-current-buffer buf major-mode))))
-
-
 
 
 (snails-create-sync-backend

@@ -7,8 +7,7 @@
 (setq use-package-always-ensure t)
 (require 'use-package)
 (require 'quelpa-use-package)
-(quelpa-use-package-activate-advice)  
-
+(quelpa-use-package-activate-advice)
 
 (add-to-list 'load-path "/home/weiss/.emacs.d/local-package/")
 (add-to-list 'load-path "/home/weiss/.emacs.d/local-package/snails/")
@@ -17,8 +16,6 @@
 (add-to-list 'load-path "/home/weiss/.emacs.d/emacs-application-framework/")
 (add-to-list 'load-path "/home/weiss/.emacs.d/local-package/dired-video-preview/")
 (add-to-list 'load-path "/usr/local/texlive/2020/bin/x86_64-linux")
-
-;; (require 'eaf)
 
 (setq weiss-dumped-load-path load-path
       weiss-dumped-p t)
@@ -30,206 +27,8 @@
 (setq gc-cons-threshold most-positive-fixnum
       gc-cons-percentage 0.6)
 
-;;; Misc in init.el
-(defun xah-get-fullpath (@file-relative-path)
-  (concat (file-name-directory (or load-file-name buffer-file-name)) @file-relative-path)
-  )
+(load "/home/weiss/.emacs.d/config/init_before_dump.el")
 
-(setq-default c-basic-offset   4
-              tab-width        4
-              indent-tabs-mode nil)
-(setq
- large-file-warning-threshold 100000000
- ring-bell-function 'ignore
- auto-save-default nil ; Disable auto save
- make-backup-files nil ; Forbide to make backup files
- display-line-numbers 't
- )
-
-
-(fset 'yes-or-no-p 'y-or-n-p)
-
-;;;; UI
-(setq initial-frame-alist (quote ((fullscreen . maximized)))) 
-(unless (eq window-system 'ns)
-  (menu-bar-mode -1))
-(when (fboundp 'tool-bar-mode)
-  (tool-bar-mode -1))
-(when (fboundp 'scroll-bar-mode)
-  (scroll-bar-mode -1))
-(when (fboundp 'horizontal-scroll-bar-mode)
-  (horizontal-scroll-bar-mode -1))
-
-(use-package esup
-  :commands (esup))
-
-;;;; Basic modes
-(ignore-errors (savehist-mode 1))
-(global-linum-mode 1)
-;; (save-place-mode 1)
-;; (show-paren-mode 1)
-(delete-selection-mode 1)
-(global-auto-revert-mode 1)
-
-;; (setq electric-pair-inhibit-predicate 'electric-pair-conservative-inhibit)
-;; (electric-pair-mode 1)
-
-(add-hook 'prog-mode-hook #'subword-mode)
-(add-hook 'minibuffer-setup-hook #'subword-mode)
-
-;;;; Encoding
-;; UTF-8 as the default coding system
-(when (fboundp 'set-charset-priority)
-  (set-charset-priority 'unicode))
-
-;; Explicitly set the prefered coding systems to avoid annoying prompt
-;; from emacs (especially on Microsoft Windows)
-(prefer-coding-system 'utf-8)
-
-(set-language-environment 'utf-8)
-(set-default-coding-systems 'utf-8)
-(set-buffer-file-coding-system 'utf-8)
-(set-clipboard-coding-system 'utf-8)
-(set-file-name-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(set-terminal-coding-system 'utf-8)
-(set-selection-coding-system 'utf-8)
-(modify-coding-system-alist 'process "*" 'utf-8)
-
-(setq locale-coding-system 'utf-8
-      default-process-coding-system '(utf-8 . utf-8))
-
-
-;; Start server
-(use-package server
-  :ensure nil
-  :hook (after-init . server-mode))
-
-(use-package super-save
-  :diminish
-  :config
-  (add-to-list 'super-save-triggers 'find-file)
-  (super-save-mode +1)
-  )
-
-(use-package keyfreq
-  :config
-  (keyfreq-mode 1)
-  (keyfreq-autosave-mode 1)
-  )
-
-(use-package switch-buffer-functions
-  ;; :disabled
-  :quelpa (switch-buffer-functions :fetcher github
-                                   :repo "10sr/switch-buffer-functions-el"))
-
-;; (load "/home/weiss/weiss/switch-buffer-functions-el/switch-buffer-functions.elc") 
-
-(defun weiss-eval-last-sexp()
-  (interactive)
-  (end-of-line)
-  (eval-last-sexp()))
-
-;;;; abbrev
-(setq-default abbrev-mode t)
-(setq save-abbrevs 'silently)
-
-
-(use-package hydra 
-  :diminish)
-
-(defun weiss-dump ()
-  "Dump Emacs."
-  (interactive)
-  (let ((buf "*dump process*"))
-    (make-process
-     :name "dump"
-     :buffer buf
-     :command (list "emacs" "--batch" "-q"
-                    "-l" (expand-file-name "dump.el"
-                                           user-emacs-directory)))
-    (display-buffer buf)))
-
-(defun read-char-picky (prompt chars &optional inherit-input-method seconds)
-  "Read characters like in `read-char-exclusive', but if input is
-not one of CHARS, return nil.  CHARS may be a list of characters,
-single-character strings, or a string of characters."
-  (let ((chars (mapcar (lambda (x)
-                         (if (characterp x) x (string-to-char x)))
-                       (append chars nil)))
-        (char  (read-char-exclusive prompt inherit-input-method seconds)))
-    (when (memq char chars)
-      (char-to-string char))))
-
-(defun weiss-read-char-picky-from-list (picky-list)
-  "Get the inputed number and return the nth element of list"
-  (interactive)
-  (let ((ra "")
-        (rb ""))
-    (nth (- (string-to-number (read-char-picky
-                               (dotimes (i (length picky-list) ra) (setq ra (format "%s %s:%s" ra (1+ i) (nth i picky-list))))
-                               (dotimes (i (length picky-list) rb) (setq rb (format "%s%s" rb (1+ i)))))) 1) picky-list)))
-
-;; (dolist (package  '(
-;;                     use-package
-;;                     hydra
-;;                     ;; ui
-;;                     doom-themes 
-;;                     doom-modeline
-;;                     anzu
-;;                     all-the-icons
-;;                     emojify
-;;                     dashboard
-;;                     popwin
-;;                     which-key
-;;                     winner
-;;                     ;; edit
-;;                     subword
-;;                     rotate-text
-;;                     expand-region 
-;;                     ;; completion
-;;                     company
-;;                     company-prescient
-;;                     company-box
-;;                     company-quickhelp
-;;                     lsp-mode
-;;                     ;; lsp-clients
-;;                     lsp-ui
-;;                     company-lsp
-;;                     lsp-origami
-;;                     lsp-python-ms
-;;                     ccls
-;;                     lsp-julia
-;;                     lsp-java
-;;                     yasnippet
-;;                     ;; lang
-;;                     python
-;;                     live-py-mode
-;;                     php-mode
-;;                     xah-elisp-mode
-;;                     ;; ivy
-;;                     rg
-;;                     ivy
-;;                     counsel                     
-;;                     amx
-;;                     prescient
-;;                     ivy-prescient
-;;                     ivy-yasnippet
-;;                     ivy-xref
-;;                     flyspell-correct-ivy
-;;                     counsel-world-clock
-;;                     counsel-tramp
-;;                     ivy-rich
-;;                     ;; org
-;;                     org
-;;                     org-fancy-priorities
-;;                     org-bullets
-;;                     cdlatex
-;;                     flycheck
-;;                     telega
-;;                     )) 
-;;   (require package)
-;;   )
 (load-theme 'doom-one-light t t)
 
 (dolist (package  '(
@@ -237,13 +36,10 @@ single-character strings, or a string of characters."
                     diminish
                     bind-key
                     esup
-                    super-save
-                    keyfreq
                     switch-buffer-functions
                     hydra
-                    weiss_lang
+                    ;; weiss_lang
                     weiss_completion
-                    ;; weiss_lsp
                     weiss_magit
                     doom-themes
                     weiss_ui_before_dump
@@ -253,23 +49,33 @@ single-character strings, or a string of characters."
                     weiss_telega
                     weiss_edit
                     weiss_dired
-                    weiss_ivy 
+                    weiss_ivy
                     weiss_keybinding
                     weiss_pdf_tools
                     weiss_translation
-                    xfk-functions 
+                    xfk-functions
                     weiss_org
-                    ;; weiss_sql
                     +org
-                    ;; weiss_flycheck
-                    ;; weiss_latex
-                    ;; latex
-                    )) 
+                    weiss_flycheck
+                    weiss_latex
+                    ;; weiss_lsp
+                    weiss_sql
+                    weiss_snails
+                    weiss_project
+                    weiss_cal
+                    weiss_jupyter
+                    ;; weiss_shell_or_terminal
+                    ;; weiss_read
+                    ;; weiss_eaf
+                    ;; weiss_flyspell
+                    ))
   (require package)
   )
 
-
-
+(save-place-mode -1)
+(load "/home/weiss/.emacs.d/recentf")
+;; (recentf-unload-function)
+;; (recentf-mode -1)
 ;; (load-theme 'doom-one-light t t)
 ;; (require 'weiss_ui)
 (dump-emacs-portable "~/.emacs.d/emacs.pdmp")

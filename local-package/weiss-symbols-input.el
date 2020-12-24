@@ -182,6 +182,7 @@ edge: e[a][b]-%d-[a][b]-%d"
   ["eg" "\\ge "]
   ["en" "\\neq "]
   ["ea" "\\approx "]
+  ["ep" "\\prec "]
 
 ;;;;; operation symbols
   ["op" "\\cdot "]
@@ -201,13 +202,17 @@ edge: e[a][b]-%d-[a][b]-%d"
   ["alr" "\\Leftrightarrow "]
   ["aslr" "\\leftrightarrow "]
   ["at" "\\to "]
+  ["atr" "\\twoheadrightarrow"]
+  ["atl" "\\twoheadleftarrow"]
 
 ;;;;; Symbols
+  ["sc" "\\textcircled"]
   ["si" "\\infty"]
+  ["sq" "\\square"]
   ["ss" "\\#"]
   ["se" "\\emptyset"]
   ["sd" "\\dots "]
-  ["sb" " \  \ \\text{\\faBolt}"]
+  ["sb" "\\  \\ \\text{\\faBolt}"]
   ["sbs" "\\verb|\\|"]
   ["sqed" "$\\hfill\\blacksquare$"]
   ["sl" "\\lim_{n \\to \\infty}"]
@@ -363,23 +368,24 @@ If none found, return nil.
 Version 2018-02-16"
   (let ($resultChar $charByNameResult)
     (setq $resultChar (gethash @inputStr weiss-symbols-input-abrvs))
-    (cond
-     ($resultChar $resultChar)
-     ;; begin with u+
-     ((string-match "\\`u\\+\\([0-9a-fA-F]+\\)\\'" @inputStr) (char-to-string (string-to-number (match-string 1 @inputStr) 16)))
-     ;; decimal. 「945」 or 「#945」
-     ((string-match "\\`#?\\([0-9]+\\)\\'" @inputStr) (char-to-string (string-to-number (match-string 1 @inputStr))))
-     ;; e.g. decimal with html entity markup. 「&#945;」
-     ((string-match "\\`&#\\([0-9]+\\);\\'" @inputStr) (char-to-string (string-to-number (match-string 1 @inputStr))))
-     ;; hex number. e.g. 「x3b1」 or 「#x3b1」
-     ((string-match "\\`#?x\\([0-9a-fA-F]+\\)\\'" @inputStr) (char-to-string (string-to-number (match-string 1 @inputStr) 16)))
-     ;; html entity hex number. e.g. 「&#x3b1;」
-     ((string-match "\\`&#x\\([0-9a-fA-F]+\\);\\'" @inputStr) (char-to-string (string-to-number (match-string 1 @inputStr) 16)))
-     ;; unicode full name. e.g. 「GREEK SMALL LETTER ALPHA」
-     ((and (string-match "\\`\\([- a-zA-Z0-9]+\\)\\'" @inputStr)
-           (setq $charByNameResult (weiss-symbols-input--name-to-codepoint @inputStr)))
-      (char-to-string $charByNameResult))
-     (t nil))))
+    ;; (cond
+    ;;  ($resultChar $resultChar)
+    ;;  ;; begin with u+
+    ;;  ((string-match "\\`u\\+\\([0-9a-fA-F]+\\)\\'" @inputStr) (char-to-string (string-to-number (match-string 1 @inputStr) 16)))
+    ;;  ;; decimal. 「945」 or 「#945」
+    ;;  ((string-match "\\`#?\\([0-9]+\\)\\'" @inputStr) (char-to-string (string-to-number (match-string 1 @inputStr))))
+    ;;  ;; e.g. decimal with html entity markup. 「&#945;」
+    ;;  ((string-match "\\`&#\\([0-9]+\\);\\'" @inputStr) (char-to-string (string-to-number (match-string 1 @inputStr))))
+    ;;  ;; hex number. e.g. 「x3b1」 or 「#x3b1」
+    ;;  ((string-match "\\`#?x\\([0-9a-fA-F]+\\)\\'" @inputStr) (char-to-string (string-to-number (match-string 1 @inputStr) 16)))
+    ;;  ;; html entity hex number. e.g. 「&#x3b1;」
+    ;;  ((string-match "\\`&#x\\([0-9a-fA-F]+\\);\\'" @inputStr) (char-to-string (string-to-number (match-string 1 @inputStr) 16)))
+    ;;  ;; unicode full name. e.g. 「GREEK SMALL LETTER ALPHA」
+    ;;  ((and (string-match "\\`\\([- a-zA-Z0-9]+\\)\\'" @inputStr)
+    ;;        (setq $charByNameResult (weiss-symbols-input--name-to-codepoint @inputStr)))
+    ;;   (char-to-string $charByNameResult))
+    ;;  (t nil))
+    ))
 
 (defun weiss-symbols-input--name-to-codepoint (@name)
   "Returns integer that's the codepoint of Unicode char named @name (string).
@@ -421,7 +427,7 @@ Version 2018-07-09"
       ;; if there's no text selection, grab all chars to the left of cursor point up to whitespace, try each string until there a valid abbrev found or none char left.
       (progn
         (setq $p2 (point))
-        (skip-chars-backward "^ \t\n" -20)
+        (skip-chars-backward "^ \t\n" -8)
         (setq $p1 (point))
         (while (and (not $resultChar) (>= (- $p2 $p1) 1))
           (setq $inputStr (buffer-substring-no-properties $p1 $p2))

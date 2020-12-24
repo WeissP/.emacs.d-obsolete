@@ -102,7 +102,7 @@
                (and (string-match "\\/$" file) (snails-match-input-p input (concat "di " file)))
                )
               )
-           (snails-add-candiate 'candidates file file)))
+         (snails-add-candiate 'candidates file file)))
      (snails-sort-candidates input candidates 1 1)
      candidates))
 
@@ -112,7 +112,7 @@
 
  :candidate-do
  (lambda (candidate)
-   (find-file candidate)))
+   (find-file (weiss-reduce-file-path candidate t))))
 
 (provide 'snails-backend-limit-recentf)
 
