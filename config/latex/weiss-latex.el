@@ -265,43 +265,43 @@
  ("u" weiss-latex-buffer-preview)
  ("<escape> <escape>" (
                        ("i" ignore
-                        :name ""
-                        :then ((lambda()(weiss--quick-add-latex-style "")))
+                        :name "mathit"
+                        :then ((lambda()(weiss--quick-add-latex-style "mathit")))
                         )
-                       ;; ("t" ignore
-                       ;;  :name "texttt"
-                       ;;  :then ((lambda()(weiss--quick-add-latex-style "texttt")))
-                       ;;  )
-                       ;; ("b" ignore
-                       ;;  :name "mathbb"
-                       ;;  :then ((lambda()(weiss--quick-add-latex-style "mathbb")))
-                       ;;  )
-                       ;; ("r" ignore
-                       ;;  :name "textrm"
-                       ;;  :then ((lambda()(weiss--quick-add-latex-style "textrm")))
-                       ;;  )
-                       ;; ("s" ignore
-                       ;;  :name "textsc"
-                       ;;  :then ((lambda()(weiss--quick-add-latex-style "textsc")))
-                       ;;  )
-                       ;; ("u" ignore
-                       ;;  :name "underline"
-                       ;;  :then ((lambda()(weiss--quick-add-latex-style "underline")))
-                       ;;  )
-                       ;; ("f" ignore
-                       ;;  :name "textbf"
-                       ;;  :then ((lambda()(weiss--quick-add-latex-style "textbf")))
-                       ;;  )
-                       ;; ("h" ignore
-                       ;;  :name "hat"
-                       ;;  :then ((lambda()(weiss--quick-add-latex-style "hat")))
-                       ;;  )
-                       ;; ("c" ignore
-                       ;;  :name "mathcal"
-                       ;;  :then ((lambda()(weiss--quick-add-latex-style "mathcal")))
-                       ;;  )
-                       ;; ("-" weiss-quick-add-latex-style-sout
-                       ;;  :name "sout")
+                       ("t" ignore
+                        :name "texttt"
+                        :then ((lambda()(weiss--quick-add-latex-style "texttt")))
+                        )
+                       ("b" ignore
+                        :name "mathbb"
+                        :then ((lambda()(weiss--quick-add-latex-style "mathbb")))
+                        )
+                       ("r" ignore
+                        :name "textrm"
+                        :then ((lambda()(weiss--quick-add-latex-style "textrm")))
+                        )
+                       ("s" ignore
+                        :name "textsc"
+                        :then ((lambda()(weiss--quick-add-latex-style "textsc")))
+                        )
+                       ("u" ignore
+                        :name "underline"
+                        :then ((lambda()(weiss--quick-add-latex-style "underline")))
+                        )
+                       ("f" ignore
+                        :name "textbf"
+                        :then ((lambda()(weiss--quick-add-latex-style "textbf")))
+                        )
+                       ("h" ignore
+                        :name "hat"
+                        :then ((lambda()(weiss--quick-add-latex-style "hat")))
+                        )
+                       ("c" ignore
+                        :name "mathcal"
+                        :then ((lambda()(weiss--quick-add-latex-style "mathcal")))
+                        )
+                       ("-" weiss-quick-add-latex-style-sout
+                        :name "sout")
                        )
   )
  )
