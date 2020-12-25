@@ -25,20 +25,28 @@
   ("v" recenter-top-bottom "recenter")
   ("q" nil "quit"))
 
+(defhydra hydra-resize-window (global-map "M-w")
+  "resize window"
+  ("k" shrink-window "height+")
+  ("j" enlarge-window "height-")
+  ("h" shrink-window-horizontally "width-")
+  ("l" enlarge-window-horizontally "width+")
+  ("q" nil "quit")
+  )
+
 (use-package ryo-modal
   :commands ryo-modal-mode
   :bind ("M-m" . ryo-modal-mode) 
   :init 
   (defvar weiss/disable-ryo-list)
   (setq weiss/disable-ryo-list
-    '(magit-mode magit-status-mode snails-mode))
+        '(magit-mode magit-status-mode snails-mode))
 
   (defun weiss-check-ryo ()
     "enable or disable ryo by disable-ryo-list"
     (interactive)
     (if (member major-mode weiss/disable-ryo-list)
         (when ryo-modal-mode (ryo-modal-mode -1))
-
       (unless ryo-modal-mode (ryo-modal-mode 1))    
       )
     )
@@ -50,6 +58,8 @@
 
   (setq ryo-modal-cursor-color weiss/cursor-color)
   :config
+  ;; the default cursor face config for cursor is wrong before dump.
+  (defconst ryo-modal-default-cursor-color weiss/cursor-color  "Default color of cursor.")
   (defun ryo-modal-restart ()
     "restart ryo modal"
     (interactive)
@@ -58,7 +68,7 @@
     )
 
   (push '((nil . "ryo:.*:") . (nil . "")) which-key-replacement-alist)
-)
+  )
 ;; general:1 ends here
 
 ;; quick-insert

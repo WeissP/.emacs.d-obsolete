@@ -1,27 +1,10 @@
 * init
 ** init for dump
 #+begin_src elisp :tangle init/weiss-init.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
-  (defvar weiss/launch-time (current-time))
-  (defvar weiss/after-buffer-change-function-list nil)
-  (defvar weiss/after-major-mode-function-list nil)
-  (defvar weiss/config-path "/home/weiss/.emacs.d/config/")
-  (defvar weiss/local-package-path "/home/weiss/.emacs.d/local-package/")
-  (defun weiss--get-config-file-path (path)
-    "get config path according to weiss/config-path"
-    (interactive)
-    (concat weiss/config-path path)
-    )
-
-  (defvar weiss/cursor-color "#4078f2")
-  (set-cursor-color weiss/cursor-color)
-
-  (defvar weiss/cursor-type '(bar . 2))
-  (setq-default cursor-type weiss/cursor-type)
-
-  (require 'cl-lib)
-
   (defvar weiss-dumped-load-path nil)
-  (if weiss-dumped-load-path
+  (defvar weiss-dumped-p nil)
+
+  (if weiss-dumped-p
       (progn
         (setq load-path weiss-dumped-load-path)
         ;; Some shim code for tramp
@@ -31,7 +14,7 @@
         (global-font-lock-mode t)
         (transient-mark-mode t)
         )
-    (load (weiss--get-config-file-path "init/weiss-basic-and-misc.el"))  
+    (load "/home/weiss/.emacs.d/config/init/weiss-basic-and-misc.el")  
 
     (require 'weiss-keybinding)
     (require 'weiss-edit)
@@ -65,8 +48,26 @@
 #+end_src
 ** basic and misc 
 #+begin_src elisp :tangle init/weiss-basic-and-misc.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
+  (defvar weiss/launch-time (current-time))
+  (defvar weiss/after-buffer-change-function-list nil)
+  (defvar weiss/after-major-mode-function-list nil)
+  (defvar weiss/config-path "/home/weiss/.emacs.d/config/")
+  (defvar weiss/local-package-path "/home/weiss/.emacs.d/local-package/")
+  (defun weiss--get-config-file-path (path)
+    "get config path according to weiss/config-path"
+    (interactive)
+    (concat weiss/config-path path)
+    )
+
+  (defvar weiss/cursor-color "#4078f2")
+  (set-cursor-color weiss/cursor-color)
+
+  (defvar weiss/cursor-type '(bar . 2))
+  (setq-default cursor-type weiss/cursor-type)
+
   (require 'cl)
   (require 'cl-lib)
+  (require 'package)
   ;; Package & use-package & Quelpa initialize
 
   (package-initialize)
@@ -103,6 +104,8 @@
     (normal-top-level-add-subdirs-to-load-path)
     )
   (add-to-list 'load-path "/usr/local/texlive/2020/bin/x86_64-linux")
+
+  (setq weiss-dumped-load-path load-path)
 
   (setq-default c-basic-offset   4
                 tab-width        4
@@ -1772,12 +1775,6 @@
 
   (winner-mode)
 
-
-  (if weiss-dumped-load-path 
-      (enable-theme 'doom-one-light)
-    (load-theme 'doom-one-light t)
-    )
-
   (use-package hl-todo
     :init
     (setq hl-todo-keyword-faces
@@ -1994,7 +1991,7 @@
 #+end_src
 
 ** window/frame
-#+begin_src elisp
+#+begin_src elisp :tangle after-dump/weiss-after-dump.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
   (winner-mode)
   (if (display-graphic-p)
       (progn
@@ -2016,15 +2013,6 @@
       (setq initial-frame-alist '( (tool-bar-lines . 0)))
       (setq default-frame-alist '( (tool-bar-lines . 0)))))
 
-  (defhydra hydra-resize-window (global-map "M-w")
-    "resize window"
-    ("k" shrink-window "height+")
-    ("j" enlarge-window "height-")
-    ("h" shrink-window-horizontally "width-")
-    ("l" enlarge-window-horizontally "width+")
-    ("q" nil "quit")
-    )
-
   (use-package popwin 
     ;; :disabled
     :diminish
@@ -2041,7 +2029,7 @@
 #+end_src
 
 ** theme/modeline
-#+begin_src elisp
+#+begin_src elisp :tangle after-dump/weiss-after-dump.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
   (use-package nyan-mode
     :config
     (nyan-mode))
@@ -2062,14 +2050,14 @@
     :hook (after-init . doom-modeline-mode)
     )
 
-  (if weiss-dumped-load-path 
+  (if weiss-dumped-p 
       (enable-theme 'doom-one-light)
     (load-theme 'doom-one-light t)
     )
 #+end_src
 
 ** line number
-#+begin_src elisp
+#+begin_src elisp :tangle after-dump/weiss-after-dump.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
   (line-number-mode -1)
   (use-package display-line-numbers
     :custom
@@ -2086,7 +2074,7 @@
 #+end_src
 
 ** highlight
-#+begin_src elisp
+#+begin_src elisp :tangle after-dump/weiss-after-dump.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
   (use-package rainbow-mode
     :hook
     (prog-mode . rainbow-mode))
@@ -2144,7 +2132,7 @@
   (use-package origami)
 #+end_src
 ** font
-#+begin_src elisp
+#+begin_src elisp :tangle after-dump/weiss-after-dump.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
   (defun font-installed-p (font-name)
     "Check if font with FONT-NAME is available."
     (find-font (font-spec :name font-name)))
@@ -2200,7 +2188,10 @@
         (message "Reset all-the-icons"))))
 #+end_src
 ** font lock face
-#+begin_src elisp
+:PROPERTIES:
+:header-args: :tangle after-dump/weiss-after-dump.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
+:END:
+#+begin_src elisp 
   (set-face-attribute 'font-lock-keyword-face nil :font "SF mono" :foreground "#5b5e6b" :weight 'bold :slant 'italic)
   (set-face-attribute 'font-lock-doc-face nil :font (font-spec :name "Lato" :size 15 :width 'narrow) :weight 'normal :slant 'italic)
   (set-face-attribute 'region nil :background "#cfe4ff")
@@ -4909,10 +4900,8 @@
 
 #+end_src
 ** misc
-#+begin_src elisp
-  ;; (setq-default cursor-type 'bar)
-  ;; (defvar weiss/cursor-color "#4078f2")
-  (set-cursor-color weiss/cursor-color)
+#+begin_src elisp :tangle after-dump/weiss-after-dump.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
+  (set-face-attribute 'cursor '((nil (:background weiss/cursor-color))))
   (use-package emojify 
     :diminish
     ;; :hook (after-init . global-emojify-mode)
@@ -5922,157 +5911,50 @@
 #+begin_src elisp
   (provide 'weiss-lang)
 #+end_src
-* after dump
-:PROPERTIES:
-:header-args: :tangle after-dump/weiss-after-dump.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
-:END:
+* dump
+#+begin_src elisp :tangle ../dump.el
+  (setq weiss-dumped-p t)
 
-** tramp
-#+begin_src elisp
-;; Tramp ivy interface
-(setq remote-file-name-inhibit-cache nil)
+  ;; Disable GC
+  (setq gc-cons-threshold most-positive-fixnum
+        gc-cons-percentage 0.6)
 
-(use-package sudo-edit)
+  (load "/home/weiss/.emacs.d/config/init/weiss-basic-and-misc.el")  
 
-(use-package counsel-tramp
-  :bind (:map counsel-mode-map
-              ("C-c c T" . counsel-tramp)))
+  (load-theme 'doom-one-light t t)
 
-(use-package docker-tramp)
-#+end_src
-** [[font lock face]]
-** recentf
-#+begin_src elisp
-  ;; Recent files
-  ;; recentf-cleanup will update recentf-list
-  (use-package recentf
-    :ensure nil
-    :hook (after-init . recentf-mode)
-    :preface
-    (defun snug/recentf-save-list-silence ()
-      (interactive)
-      (let ((message-log-max nil))
-        (if (fboundp 'shut-up)
-            (shut-up (recentf-save-list))
-          (recentf-save-list)))
-      (message ""))
-    (defun snug/recentf-cleanup-silence ()
-      (interactive)
-      (let ((message-log-max nil))
-        (if (fboundp 'shut-up)
-            (shut-up (recentf-cleanup))
-          (recentf-cleanup)))
-      (message ""))
-    :init
-    (setq weiss-reduce-recentf-file-path-alist
-          '(
-            ("🅲🅻🅿" . "Compiler and Language-Processing Tools")
-            ("🆂🅲" . "scientififc computing")
-            ("🆅" . "Documents/Vorlesungen")
-            ("🅥" . "Nutstore Files/Vorlesungen")
-            ("🅹" . "src/main/java")
-            ("🅙🅣" . "src/test/java")
-            ))
+  (require 'weiss-keybinding)
+  (require 'weiss-edit)
+  (require 'weiss-completion)
+  (require 'weiss-lang)
+  (require 'weiss-ivy)
+  (require 'weiss-vcs)
+  (require 'weiss-shell-or-terminal)
+  (require 'weiss-dired)
+  (require 'weiss-org)
+  (require 'weiss-pdf)
+  (require 'weiss-flycheck)
+  (require 'weiss-translation)
+  (require 'weiss-snails)
+  (require 'weiss-sql)
+  (require 'weiss-rime)
+  (require 'weiss-latex)
+  (require 'weiss-telega)
+  (require 'weiss-abbrev-mode)
+  (require 'weiss-project)
+  (require 'weiss-lsp)
+  (require 'weiss-ui)
 
-    (defun weiss-reduce-file-path (filename &optional r)
-      "replace long file paths with symbol"
-      (interactive)
-      (let ((search-str)
-            (replace-str))
-        (dolist (x weiss-reduce-recentf-file-path-alist)
-          (if r
-              (setq search-str (car x) 
-                    replace-str (cdr x))
-            (setq search-str (cdr x) 
-                  replace-str (car x)))      
-          (setq filename (replace-regexp-in-string search-str replace-str filename t))
-          )
-        )  
-      filename
-      )
-  
-    (add-to-list 'recentf-filename-handlers 'abbreviate-file-name)
-    (load (weiss--get-config-file-path "recentf"))
-    (setq recentf-save-file (weiss--get-config-file-path "recentf"))
-    :config
-    (defun recentf-cleanup ()
-      "Cleanup the recent list.
-  That is, remove duplicates, non-kept, and excluded files."
-      (interactive)
-      (message "Cleaning up the recentf list...")
-      (let ((n 0)
-            (ht (make-hash-table
-                 :size recentf-max-saved-items
-                 :test 'equal))
-            newlist key)
-        (dolist (f recentf-list)
-          (setq f (weiss-reduce-file-path (recentf-expand-file-name f) t)
-                key (if recentf-case-fold-search (downcase f) f))
-          (if (and (recentf-include-p f)
-                   (recentf-keep-p f)
-                   (not (gethash key ht)))
-              (progn
-                (push (weiss-reduce-file-path f) newlist)
-                (puthash key t ht))
-            (setq n (1+ n))
-            (message "File %s removed from the recentf list" f)))
-        (message "Cleaning up the recentf list...done (%d removed)" n)
-        (setq recentf-list (nreverse newlist))))
-    (run-at-time nil (* 5 60) 'snug/recentf-save-list-silence)
-    (run-at-time nil (* 5 60) 'snug/recentf-cleanup-silence)
-    (setq
-     recentf-max-menu-items 150
-     recentf-max-saved-items 300
-     ;; recentf-auto-cleanup '60
-     ;; Recentf blacklist
-     recentf-exclude '(
-                       ".*autosave$"
-                       "/ssh:"
-                       ;; "/sudo:"
-                       "recentf$"
-                       ".*archive$"
-                       ".*.jpg$"
-                       ".*.png$"
-                       ".*.gif$"
-                       ".*.mp4$"
-                       ".cache"
-                       "cache"
-                       "<none>.tex"
-                       "frag-master.tex"
-                       "_region_.tex"
-                       ))
-    )
-  (add-to-list 'recentf-filename-handlers 'weiss-reduce-file-path)
-  (load (weiss--get-config-file-path "recentf"))
-#+end_src
-** misc
-#+begin_src elisp
-  ;; (require 'weiss-flycheck)
-  ;; (require 'weiss_shell_or_terminal)
-  ;; (require 'weiss_lang)
-  ;; (require 'weiss_lsp)
-  ;; (require 'weiss_eaf)
-  ;; (require 'weiss_flyspell)
-  ;; (require 'weiss_lang)
-  ;; (require 'weiss_lsp)
-  ;; (require 'weiss_read)
-  ;; (require 'weiss_org)
-  ;; (require 'weiss_latex
 
-  (bookmark-load "/home/weiss/.emacs.d/bookmarks" t t t)
-  (setq bookmark-save-flag 1)
+  (load "/home/weiss/.emacs.d/recentf")
 
-  (ignore-errors (savehist-mode 1))
-  (save-place-mode 1)
+  ;; We have to unload tramp in pdump, otherwise tramp will not work.
+  (tramp-unload-tramp)
 
-  ;; (dbus-init-bus :session)   ; for EAF DUMP
+  (save-place-mode -1)
 
-  (setq weiss-left-top-window (selected-frame))
-  (setq weiss-right-top-window (make-frame-command))
-  (select-frame-set-input-focus weiss-left-top-window)
 
-  (setq gc-cons-threshold (* (expt 1024 2) 32)
-        gc-cons-percentage 0.5)
+  (dump-emacs-portable "~/.emacs.d/emacs.pdmp")
 #+end_src
 
 * jupyter
@@ -11493,20 +11375,28 @@
     ("v" recenter-top-bottom "recenter")
     ("q" nil "quit"))
 
+  (defhydra hydra-resize-window (global-map "M-w")
+    "resize window"
+    ("k" shrink-window "height+")
+    ("j" enlarge-window "height-")
+    ("h" shrink-window-horizontally "width-")
+    ("l" enlarge-window-horizontally "width+")
+    ("q" nil "quit")
+    )
+
   (use-package ryo-modal
     :commands ryo-modal-mode
     :bind ("M-m" . ryo-modal-mode) 
     :init 
     (defvar weiss/disable-ryo-list)
     (setq weiss/disable-ryo-list
-      '(magit-mode magit-status-mode snails-mode))
+          '(magit-mode magit-status-mode snails-mode))
 
     (defun weiss-check-ryo ()
       "enable or disable ryo by disable-ryo-list"
       (interactive)
       (if (member major-mode weiss/disable-ryo-list)
           (when ryo-modal-mode (ryo-modal-mode -1))
-
         (unless ryo-modal-mode (ryo-modal-mode 1))    
         )
       )
@@ -11518,6 +11408,8 @@
 
     (setq ryo-modal-cursor-color weiss/cursor-color)
     :config
+    ;; the default cursor face config for cursor is wrong before dump.
+    (defconst ryo-modal-default-cursor-color weiss/cursor-color  "Default color of cursor.")
     (defun ryo-modal-restart ()
       "restart ryo modal"
       (interactive)
@@ -11526,7 +11418,7 @@
       )
 
     (push '((nil . "ryo:.*:") . (nil . "")) which-key-replacement-alist)
-  )
+    )
 #+end_src
 
 #+RESULTS:
@@ -11982,3 +11874,155 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
 #+RESULTS:
 : weiss-keybinding
 
+* after dump
+:PROPERTIES:
+:header-args: :tangle after-dump/weiss-after-dump.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
+:END:
+
+** tramp
+#+begin_src elisp
+;; Tramp ivy interface
+(setq remote-file-name-inhibit-cache nil)
+
+(use-package sudo-edit)
+
+(use-package counsel-tramp
+  :bind (:map counsel-mode-map
+              ("C-c c T" . counsel-tramp)))
+
+(use-package docker-tramp)
+#+end_src
+** [[font lock face]]
+** recentf
+#+begin_src elisp
+  ;; Recent files
+  ;; recentf-cleanup will update recentf-list
+  (use-package recentf
+    :ensure nil
+    :hook (after-init . recentf-mode)
+    :preface
+    (defun snug/recentf-save-list-silence ()
+      (interactive)
+      (let ((message-log-max nil))
+        (if (fboundp 'shut-up)
+            (shut-up (recentf-save-list))
+          (recentf-save-list)))
+      (message ""))
+    (defun snug/recentf-cleanup-silence ()
+      (interactive)
+      (let ((message-log-max nil))
+        (if (fboundp 'shut-up)
+            (shut-up (recentf-cleanup))
+          (recentf-cleanup)))
+      (message ""))
+    :init
+    (setq weiss-reduce-recentf-file-path-alist
+          '(
+            ("🅲🅻🅿" . "Compiler and Language-Processing Tools")
+            ("🆂🅲" . "scientififc computing")
+            ("🆅" . "Documents/Vorlesungen")
+            ("🅥" . "Nutstore Files/Vorlesungen")
+            ("🅹" . "src/main/java")
+            ("🅙🅣" . "src/test/java")
+            ))
+
+    (defun weiss-reduce-file-path (filename &optional r)
+      "replace long file paths with symbol"
+      (interactive)
+      (let ((search-str)
+            (replace-str))
+        (dolist (x weiss-reduce-recentf-file-path-alist)
+          (if r
+              (setq search-str (car x) 
+                    replace-str (cdr x))
+            (setq search-str (cdr x) 
+                  replace-str (car x)))      
+          (setq filename (replace-regexp-in-string search-str replace-str filename t))
+          )
+        )  
+      filename
+      )
+  
+    (add-to-list 'recentf-filename-handlers 'abbreviate-file-name)
+    (load (weiss--get-config-file-path "recentf"))
+    (setq recentf-save-file (weiss--get-config-file-path "recentf"))
+    :config
+    (defun recentf-cleanup ()
+      "Cleanup the recent list.
+  That is, remove duplicates, non-kept, and excluded files."
+      (interactive)
+      (message "Cleaning up the recentf list...")
+      (let ((n 0)
+            (ht (make-hash-table
+                 :size recentf-max-saved-items
+                 :test 'equal))
+            newlist key)
+        (dolist (f recentf-list)
+          (setq f (weiss-reduce-file-path (recentf-expand-file-name f) t)
+                key (if recentf-case-fold-search (downcase f) f))
+          (if (and (recentf-include-p f)
+                   (recentf-keep-p f)
+                   (not (gethash key ht)))
+              (progn
+                (push (weiss-reduce-file-path f) newlist)
+                (puthash key t ht))
+            (setq n (1+ n))
+            (message "File %s removed from the recentf list" f)))
+        (message "Cleaning up the recentf list...done (%d removed)" n)
+        (setq recentf-list (nreverse newlist))))
+    (run-at-time nil (* 5 60) 'snug/recentf-save-list-silence)
+    (run-at-time nil (* 5 60) 'snug/recentf-cleanup-silence)
+    (setq
+     recentf-max-menu-items 150
+     recentf-max-saved-items 300
+     ;; recentf-auto-cleanup '60
+     ;; Recentf blacklist
+     recentf-exclude '(
+                       ".*autosave$"
+                       "/ssh:"
+                       ;; "/sudo:"
+                       "recentf$"
+                       ".*archive$"
+                       ".*.jpg$"
+                       ".*.png$"
+                       ".*.gif$"
+                       ".*.mp4$"
+                       ".cache"
+                       "cache"
+                       "<none>.tex"
+                       "frag-master.tex"
+                       "_region_.tex"
+                       ))
+    )
+  (add-to-list 'recentf-filename-handlers 'weiss-reduce-file-path)
+  (load (weiss--get-config-file-path "recentf"))
+#+end_src
+** misc
+#+begin_src elisp
+  ;; (require 'weiss-flycheck)
+  ;; (require 'weiss_shell_or_terminal)
+  ;; (require 'weiss_lang)
+  ;; (require 'weiss_lsp)
+  ;; (require 'weiss_eaf)
+  ;; (require 'weiss_flyspell)
+  ;; (require 'weiss_lang)
+  ;; (require 'weiss_lsp)
+  ;; (require 'weiss_read)
+  ;; (require 'weiss_org)
+  ;; (require 'weiss_latex
+
+  (bookmark-load "/home/weiss/.emacs.d/bookmarks" t t t)
+  (setq bookmark-save-flag 1)
+
+  (ignore-errors (savehist-mode 1))
+  (save-place-mode 1)
+
+  ;; (dbus-init-bus :session)   ; for EAF DUMP
+
+  (setq weiss-left-top-window (selected-frame))
+  (setq weiss-right-top-window (make-frame-command))
+  (select-frame-set-input-focus weiss-left-top-window)
+
+  (setq gc-cons-threshold (* (expt 1024 2) 32)
+        gc-cons-percentage 0.5)
+#+end_src

@@ -2,27 +2,10 @@
 ;; init for dump
 
 ;; [[file:~/.emacs.d/config/emacs-config.org::*init for dump][init for dump:1]]
-(defvar weiss/launch-time (current-time))
-(defvar weiss/after-buffer-change-function-list nil)
-(defvar weiss/after-major-mode-function-list nil)
-(defvar weiss/config-path "/home/weiss/.emacs.d/config/")
-(defvar weiss/local-package-path "/home/weiss/.emacs.d/local-package/")
-(defun weiss--get-config-file-path (path)
-  "get config path according to weiss/config-path"
-  (interactive)
-  (concat weiss/config-path path)
-  )
-
-(defvar weiss/cursor-color "#4078f2")
-(set-cursor-color weiss/cursor-color)
-
-(defvar weiss/cursor-type '(bar . 2))
-(setq-default cursor-type weiss/cursor-type)
-
-(require 'cl-lib)
-
 (defvar weiss-dumped-load-path nil)
-(if weiss-dumped-load-path
+(defvar weiss-dumped-p nil)
+
+(if weiss-dumped-p
     (progn
       (setq load-path weiss-dumped-load-path)
       ;; Some shim code for tramp
@@ -32,7 +15,7 @@
       (global-font-lock-mode t)
       (transient-mark-mode t)
       )
-  (load (weiss--get-config-file-path "init/weiss-basic-and-misc.el"))  
+  (load "/home/weiss/.emacs.d/config/init/weiss-basic-and-misc.el")  
 
   (require 'weiss-keybinding)
   (require 'weiss-edit)

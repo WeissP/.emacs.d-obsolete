@@ -2,8 +2,26 @@
 ;; basic and misc 
 
 ;; [[file:~/.emacs.d/config/emacs-config.org::*basic and misc][basic and misc:1]]
+(defvar weiss/launch-time (current-time))
+(defvar weiss/after-buffer-change-function-list nil)
+(defvar weiss/after-major-mode-function-list nil)
+(defvar weiss/config-path "/home/weiss/.emacs.d/config/")
+(defvar weiss/local-package-path "/home/weiss/.emacs.d/local-package/")
+(defun weiss--get-config-file-path (path)
+  "get config path according to weiss/config-path"
+  (interactive)
+  (concat weiss/config-path path)
+  )
+
+(defvar weiss/cursor-color "#4078f2")
+(set-cursor-color weiss/cursor-color)
+
+(defvar weiss/cursor-type '(bar . 2))
+(setq-default cursor-type weiss/cursor-type)
+
 (require 'cl)
 (require 'cl-lib)
+(require 'package)
 ;; Package & use-package & Quelpa initialize
 
 (package-initialize)
@@ -40,6 +58,8 @@
   (normal-top-level-add-subdirs-to-load-path)
   )
 (add-to-list 'load-path "/usr/local/texlive/2020/bin/x86_64-linux")
+
+(setq weiss-dumped-load-path load-path)
 
 (setq-default c-basic-offset   4
               tab-width        4
