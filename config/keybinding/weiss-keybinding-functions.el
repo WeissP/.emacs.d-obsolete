@@ -1774,6 +1774,50 @@ Version 2015-10-14"
 ;; misc
 
 ;; [[file:~/.emacs.d/config/emacs-config.org::*misc][misc:1]]
+;; undo-collapse comes from
+;; https://emacs.stackexchange.com/questions/7558/how-to-collapse-undo-history
+(defun undo-collapse-begin ()
+  "push a mark that do nothing to the undo list"
+  (push (list 'apply 'identity nil) buffer-undo-list))
+
+(defun undo-collapse-end ()
+  "Collapse undo history until a matching marker."
+  (let ((marker (list 'apply 'identity nil)))
+    (cond
+     ((equal (car buffer-undo-list) marker)
+      (setq buffer-undo-list (cdr buffer-undo-list))
+      ;; (message "success, car")
+      )   
+     (t
+      (let ((l buffer-undo-list)
+            (limit 0))
+        (while (and (not (equal (cadr l) marker))
+                    )
+          (setq limit (1+ limit))
+          (cond
+           ((null (cdr l))
+            (error "undo-collapse-end with no matching marker"))
+           ((null (cadr l))
+            (setf (cdr l) (cddr l)))
+           (t (setq l (cdr l)))))
+        (setf (cdr l) (cddr l))
+        ))) 
+    ))
+
+
+(defmacro with-undo-collapse (&rest body)
+  "Execute body, then collapse any resulting undo boundaries."
+  (declare (indent 0))
+  (let ((buffer-var (make-symbol "buffer")))
+    `(let ((,buffer-var (current-buffer)))
+       (unwind-protect
+           (progn
+             (undo-collapse-begin)
+             ,@body)
+         (with-current-buffer ,buffer-var
+           (undo-collapse-end))))))
+
+
 (defun read-char-picky (prompt chars &optional inherit-input-method seconds)
   "Read characters like in `read-char-exclusive', but if input is
   not one of CHARS, return nil.  CHARS may be a list of characters,
@@ -1798,7 +1842,7 @@ Version 2015-10-14"
   "eval last sexp this line"
   (interactive)
   (end-of-line)
-  (eval-last-sexp))
+  (eval-last-sexp()))
 
 (defun weiss-universal-argument ()
   "Simulate C-u"

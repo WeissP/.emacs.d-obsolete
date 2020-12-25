@@ -779,6 +779,7 @@
       ("dt" "dotimes" weiss--ahf)
       ("dr" "delete-region" weiss--ahf)
       ("dv" "defvar" weiss--ahf)
+      ("do" "delete-overlay" weiss--ahf)
       ("eb" "erase-buffer" weiss--ahf)
       ("fa" "fillarray" weiss--ahf)
       ("fc" "forward-char" weiss--ahf)
@@ -801,10 +802,14 @@
       ("md" "make-directory" weiss--ahf)
       ("me" "match-end" weiss--ahf)
       ("ml" "make-list" weiss--ahf)
+      ("mo" "make-overlay" weiss--ahf)
       ("ms" "match-string" weiss--ahf)
       ("nl" "(next-line)" weiss--ahf)
       ("mv" "make-vector" weiss--ahf)
       ("ns" "number-sequence" weiss--ahf)
+      ("op" "overlay-put" weiss--ahf)
+      ("os" "overlay-start" weiss--ahf)
+      ("oe" "overlay-end" weiss--ahf)
       ("pm" "point-min" weiss--ahf)
       ("pn" "progn" weiss--ahf)
       ("px" "point-max" weiss--ahf)
@@ -976,6 +981,7 @@
       ("delete-field" "(delete-field ▮)" weiss--ahf)
       ("delete-file" "(delete-file ▮)" weiss--ahf)
       ("delete-region" "(delete-region ▮)" weiss--ahf)
+      ("delete-overlay" "(delete-overlay '▮)" weiss--ahf)
       ("delq" "(delq ▮)" weiss--ahf)
       ("directory-file-name" "(directory-file-name ▮)" weiss--ahf)
       ("directory-files" "(directory-files ▮)" weiss--ahf)
@@ -1056,8 +1062,8 @@
       ("last-buffer" "(last-buffer ▮)" weiss--ahf)
       ("left-char" "(left-char ▮)" weiss--ahf)
       ("length" "(length ▮)" weiss--ahf)
-      ("let" "(let ((▮))\n \n)" weiss--ahf)
-      ("let*" "(let* (▮)\n \n)" weiss--ahf)
+      ("let" "(let ((▮)\n)\n \n)" weiss--ahf)
+      ("let*" "(let* ((▮)\n)\n \n)" weiss--ahf)
       ("line-beginning-position" "(line-beginning-position)" weiss--ahf)
       ("line-end-position" "(line-end-position)" weiss--ahf)
       ("list" "(list ▮)" weiss--ahf)
@@ -1071,6 +1077,7 @@
       ("make-list" "(make-list ▮)" weiss--ahf)
       ("make-local-variable" "(make-local-variable ▮)" weiss--ahf)
       ("make-string" "(make-string count character)" weiss--ahf)
+      ("make-overlay" "(make-overlay ▮)" weiss--ahf)
       ("mapc" "(mapc '▮)" weiss--ahf)
       ("mapcar" "(mapcar '▮)" weiss--ahf)
       ("mapconcat" "(mapconcat ▮)" weiss--ahf)
@@ -1084,7 +1091,7 @@
       ("member-ignore-case" "(member-ignore-case ▮)" weiss--ahf)
       ("memq" "(memq ▮)" weiss--ahf)
       ("memql" "(memql ▮)" weiss--ahf)
-      ("message" "(message \"%s\" ▮)" weiss--ahf)
+      ("message" "(message \": %s\" ▮)" weiss--ahf)
       ("narrow-to-region" "(narrow-to-region ▮)" weiss--ahf)
       ("next-char-property-change" "(next-char-property-change ▮)" weiss--ahf)
       ("next-property-change" "(next-property-change ▮)" weiss--ahf)
@@ -1098,6 +1105,9 @@
       ("number-to-string" "(number-to-string ▮)" weiss--ahf)
       ("or" "(or ▮)" weiss--ahf)
       ("other-buffer" "(other-buffer ▮)" weiss--ahf)
+      ("overlay-put" "(overlay-put ov '▮)" weiss--ahf)
+      ("overlay-start" "(overlay-start ▮)" weiss--ahf)
+      ("overlay-end" "(overlay-end ▮)" weiss--ahf)
       ("point" "(point)" weiss--ahf)
       ("point-max" "(point-max)" weiss--ahf)
       ("point-min" "(point-min)" weiss--ahf)
@@ -5933,106 +5943,107 @@
 ** [[font lock face]]
 ** recentf
 #+begin_src elisp
-;; Recent files
-;; recentf-cleanup will update recentf-list
-(use-package recentf
-  :ensure nil
-  :hook (after-init . recentf-mode)
-  :preface
-  (defun snug/recentf-save-list-silence ()
-    (interactive)
-    (let ((message-log-max nil))
-      (if (fboundp 'shut-up)
-          (shut-up (recentf-save-list))
-        (recentf-save-list)))
-    (message ""))
-  (defun snug/recentf-cleanup-silence ()
-    (interactive)
-    (let ((message-log-max nil))
-      (if (fboundp 'shut-up)
-          (shut-up (recentf-cleanup))
-        (recentf-cleanup)))
-    (message ""))
-  :init
-  (setq weiss-reduce-recentf-file-path-alist
-        '(
-          ("🅲🅻🅿" . "Compiler and Language-Processing Tools")
-          ("🆂🅲" . "scientififc computing")
-          ("🆅" . "Documents/Vorlesungen")
-          ("🅥" . "Nutstore Files/Vorlesungen")
-          ("🅹" . "src/main/java")
-          ("🅙🅣" . "src/test/java")
-          ))
+  ;; Recent files
+  ;; recentf-cleanup will update recentf-list
+  (use-package recentf
+    :ensure nil
+    :hook (after-init . recentf-mode)
+    :preface
+    (defun snug/recentf-save-list-silence ()
+      (interactive)
+      (let ((message-log-max nil))
+        (if (fboundp 'shut-up)
+            (shut-up (recentf-save-list))
+          (recentf-save-list)))
+      (message ""))
+    (defun snug/recentf-cleanup-silence ()
+      (interactive)
+      (let ((message-log-max nil))
+        (if (fboundp 'shut-up)
+            (shut-up (recentf-cleanup))
+          (recentf-cleanup)))
+      (message ""))
+    :init
+    (setq weiss-reduce-recentf-file-path-alist
+          '(
+            ("🅲🅻🅿" . "Compiler and Language-Processing Tools")
+            ("🆂🅲" . "scientififc computing")
+            ("🆅" . "Documents/Vorlesungen")
+            ("🅥" . "Nutstore Files/Vorlesungen")
+            ("🅹" . "src/main/java")
+            ("🅙🅣" . "src/test/java")
+            ))
 
-  (defun weiss-reduce-file-path (filename &optional r)
-    "replace long file paths with symbol"
-    (interactive)
-    (let ((search-str)
-          (replace-str))
-      (dolist (x weiss-reduce-recentf-file-path-alist)
-        (if r
-            (setq search-str (car x) 
-                  replace-str (cdr x))
-          (setq search-str (cdr x) 
-                replace-str (car x)))      
-        (setq filename (replace-regexp-in-string search-str replace-str filename t))
-        )
-      )  
-    filename
+    (defun weiss-reduce-file-path (filename &optional r)
+      "replace long file paths with symbol"
+      (interactive)
+      (let ((search-str)
+            (replace-str))
+        (dolist (x weiss-reduce-recentf-file-path-alist)
+          (if r
+              (setq search-str (car x) 
+                    replace-str (cdr x))
+            (setq search-str (cdr x) 
+                  replace-str (car x)))      
+          (setq filename (replace-regexp-in-string search-str replace-str filename t))
+          )
+        )  
+      filename
+      )
+  
+    (add-to-list 'recentf-filename-handlers 'abbreviate-file-name)
+    (load (weiss--get-config-file-path "recentf"))
+    (setq recentf-save-file (weiss--get-config-file-path "recentf"))
+    :config
+    (defun recentf-cleanup ()
+      "Cleanup the recent list.
+  That is, remove duplicates, non-kept, and excluded files."
+      (interactive)
+      (message "Cleaning up the recentf list...")
+      (let ((n 0)
+            (ht (make-hash-table
+                 :size recentf-max-saved-items
+                 :test 'equal))
+            newlist key)
+        (dolist (f recentf-list)
+          (setq f (weiss-reduce-file-path (recentf-expand-file-name f) t)
+                key (if recentf-case-fold-search (downcase f) f))
+          (if (and (recentf-include-p f)
+                   (recentf-keep-p f)
+                   (not (gethash key ht)))
+              (progn
+                (push (weiss-reduce-file-path f) newlist)
+                (puthash key t ht))
+            (setq n (1+ n))
+            (message "File %s removed from the recentf list" f)))
+        (message "Cleaning up the recentf list...done (%d removed)" n)
+        (setq recentf-list (nreverse newlist))))
+    (run-at-time nil (* 5 60) 'snug/recentf-save-list-silence)
+    (run-at-time nil (* 5 60) 'snug/recentf-cleanup-silence)
+    (setq
+     recentf-max-menu-items 150
+     recentf-max-saved-items 300
+     ;; recentf-auto-cleanup '60
+     ;; Recentf blacklist
+     recentf-exclude '(
+                       ".*autosave$"
+                       "/ssh:"
+                       ;; "/sudo:"
+                       "recentf$"
+                       ".*archive$"
+                       ".*.jpg$"
+                       ".*.png$"
+                       ".*.gif$"
+                       ".*.mp4$"
+                       ".cache"
+                       "cache"
+                       "<none>.tex"
+                       "frag-master.tex"
+                       "_region_.tex"
+                       ))
     )
-  (add-to-list 'recentf-filename-handlers 'abbreviate-file-name)
+  (add-to-list 'recentf-filename-handlers 'weiss-reduce-file-path)
   (load (weiss--get-config-file-path "recentf"))
-  (setq recentf-save-file (weiss--get-config-file-path "recentf"))
-  :config
-  (defun recentf-cleanup ()
-    "Cleanup the recent list.
-That is, remove duplicates, non-kept, and excluded files."
-    (interactive)
-    (message "Cleaning up the recentf list...")
-    (let ((n 0)
-          (ht (make-hash-table
-               :size recentf-max-saved-items
-               :test 'equal))
-          newlist key)
-      (dolist (f recentf-list)
-        (setq f (weiss-reduce-file-path (recentf-expand-file-name f) t)
-              key (if recentf-case-fold-search (downcase f) f))
-        (if (and (recentf-include-p f)
-                 (recentf-keep-p f)
-                 (not (gethash key ht)))
-            (progn
-              (push (weiss-reduce-file-path f) newlist)
-              (puthash key t ht))
-          (setq n (1+ n))
-          (message "File %s removed from the recentf list" f)))
-      (message "Cleaning up the recentf list...done (%d removed)" n)
-      (setq recentf-list (nreverse newlist))))
-  (run-at-time nil (* 5 60) 'snug/recentf-save-list-silence)
-  (run-at-time nil (* 5 60) 'snug/recentf-cleanup-silence)
-  (setq
-   recentf-max-menu-items 150
-   recentf-max-saved-items 300
-   ;; recentf-auto-cleanup '60
-   ;; Recentf blacklist
-   recentf-exclude '(
-                     ".*autosave$"
-                     "/ssh:"
-                     ;; "/sudo:"
-                     "recentf$"
-                     ".*archive$"
-                     ".*.jpg$"
-                     ".*.png$"
-                     ".*.gif$"
-                     ".*.mp4$"
-                     ".cache"
-                     "cache"
-                     "<none>.tex"
-                     "frag-master.tex"
-                     "_region_.tex"
-                     ))
-  )
-(add-to-list 'recentf-filename-handlers 'weiss-reduce-file-path)
-(load (weiss--get-config-file-path "recentf"))
 #+end_src
 ** misc
 #+begin_src elisp
@@ -9403,53 +9414,90 @@ That is, remove duplicates, non-kept, and excluded files."
 *** weiss-temp-insert-mode
 #+begin_src elisp :tangle keybinding/weiss-temp-insert-mode.el :mkdirp yes
   (defvar weiss-temp-insert-mode-map (make-sparse-keymap) "Keybinding for weiss-temp-insert minor mode.")
-  (defvar weiss-temp-insert-mode-p nil "nil")
+  (defvar weiss-temp-insert--overlay-content)
+  (defface weiss-temp-insert-selected-text-face
+    '((t (:strike-through t :foreground "#e45649" :background "#f0f0f0" :weight bold)))
+    "Default face for selected text.")
 
-  (defun weiss-temp-insert-go-back-and-insert ()
-    "DOCSTRING"
+  (defun weiss-temp-insert-exit-and-keep-content ()
+    "exit mode and keep content"
     (interactive)
-    (when weiss-temp-insert-mode-selected-text (insert weiss-temp-insert-mode-selected-text))
+    (weiss-temp-insert--remove-overlay t)
     (when weiss-temp-insert-mode (weiss-temp-insert-mode -1))
-    ;; (xah-fly-command-mode-activate)
-    ;; (ryo-modal-mode 1)
+    (ryo-modal-mode 1)
     )
 
-  (defun weiss-temp-insert-go-back-without-insert ()
-    "DOCSTRING"
+  (defun weiss-temp-insert-exit-and-remove-content ()
+    "exit mode and remove contetn"
     (interactive)
+    (weiss-temp-insert--remove-overlay nil)
     (when weiss-temp-insert-mode (weiss-temp-insert-mode -1))
+    (ryo-modal-mode 1)
+    )
+
+  (defun weiss-temp-insert--set-overlay (p1 p2)
+    "set overlay between p1 and p2"
+    (interactive)
+    ;; it's not necessary to show space at p1
+    (let ((str (buffer-substring-no-properties (1+ p1) p2)))
+      (setq weiss-temp-insert--overlay-content (make-overlay p1 p2 nil t))
+      (overlay-put weiss-temp-insert--overlay-content 'face 'weiss-temp-insert-selected-text-face)
+      (overlay-put weiss-temp-insert--overlay-content 'display str)
+      ))
+
+
+  (defun weiss-temp-insert--remove-overlay (&optional keep-content)
+    "delete the overlay"
+    (interactive)
+    (when (overlayp weiss-temp-insert--overlay-content)
+      (let ((p1 (overlay-start weiss-temp-insert--overlay-content))
+            (p2 (overlay-end weiss-temp-insert--overlay-content)))
+        (delete-overlay weiss-temp-insert--overlay-content)      
+        (setq weiss-temp-insert--overlay-content nil)
+        (if keep-content
+            (delete-region p1 (1+ p1))    
+          (delete-region p1 p2)                
+          )
+        ))
     )
 
   (defun weiss-temp-insert-mode-enable ()
-    "DOCSTRING"
+    "enable temp insert mode"
     (interactive)
+    (undo-collapse-begin)
     (when weiss-select-mode (weiss-select-mode-turn-off))
     (setq weiss-temp-insert-mode-selected-text nil
           weiss-temp-insert-mode-p t)
-    ;; (add-hook 'ryo-modal-mode-hook 'weiss-temp-insert-go-back-without-insert)
-    ;; (add-hook 'xah-fly-keys-hook 'weiss-temp-insert-go-back-without-insert)
-    (if (use-region-p)
-        (setq weiss-temp-insert-mode-selected-text (delete-and-extract-region (region-beginning) (region-end)))
-      (let ((bounds (ignore-errors (bounds-of-thing-at-point 'word ))))
-        (setq weiss-temp-insert-mode-selected-text (ignore-errors (delete-and-extract-region (car bounds) (cdr bounds))))))
-    ;; (xah-fly-insert-mode-activate)
-    ;; (ryo-modal-mode -1)
+    (let (p1 p2)
+      (if (use-region-p)
+          (progn
+            (setq p1 (region-beginning)
+                  p2 (region-end))
+            (goto-char p1)
+            (deactivate-mark)
+            )
+        (setq p2 (point))
+        (skip-syntax-backward "\\w")
+        (setq p1 (point))
+        ) 
+      ;; insert a space to make sure that completion works 
+      (save-excursion (insert " "))
+      (weiss-temp-insert--set-overlay p1 (1+ p2))
+      )
     )
 
   (defun weiss-temp-insert-mode-disable ()
-    "DOCSTRING"
+    "disable temp insert mode"
+    (undo-collapse-end)
     (setq weiss-temp-insert-mode-p nil)
-    ;; (remove-hook 'ryo-modal-mode-hook 'weiss-temp-insert-go-back-without-insert nil)
-    ;; (remove-hook 'xah-fly-keys-hook 'weiss-temp-insert-go-back-without-insert nil)
     )
 
-  (define-key weiss-temp-insert-mode-map (kbd "RET") 'weiss-temp-insert-go-back-and-insert)
-  (define-key weiss-temp-insert-mode-map (kbd "<end>") 'weiss-temp-insert-go-back-without-insert)
+  (define-key weiss-temp-insert-mode-map (kbd "RET") 'weiss-temp-insert-exit-and-keep-content)
+  (define-key weiss-temp-insert-mode-map [remap ryo-modal-mode] 'weiss-temp-insert-exit-and-remove-content)
 
   ;;;###autoload
   (define-minor-mode weiss-temp-insert-mode
-    "Save selected text and activate insert mode, press enter to go back and insert the selected text. When direct go back to Command mode, the selected text will be deleted."
-    ;; t "temp" weiss-temp-insert-mode-map
+    "Save selected text and activate insert mode, press enter to exit and keep the selected text. When direct go back to Command mode, the selected text will be deleted."
     :lighter " temp" ; set a simple mode name in the minor-mode-alist
     (if weiss-temp-insert-mode
         (weiss-temp-insert-mode-enable)
@@ -9457,8 +9505,8 @@ That is, remove duplicates, non-kept, and excluded files."
       )
     )
 
+
   (provide 'weiss-temp-insert-mode)
-  ;;; weiss-temp-insert-mode.el ends here
 #+end_src
 *** weiss-overriding-ryo-mode
 #+begin_src elisp :tangle keybinding/weiss-overriding-ryo-mode.el :mkdirp yes
@@ -11274,6 +11322,50 @@ That is, remove duplicates, non-kept, and excluded files."
 #+end_src
 **** misc
 #+begin_src elisp
+  ;; undo-collapse comes from
+  ;; https://emacs.stackexchange.com/questions/7558/how-to-collapse-undo-history
+  (defun undo-collapse-begin ()
+    "push a mark that do nothing to the undo list"
+    (push (list 'apply 'identity nil) buffer-undo-list))
+
+  (defun undo-collapse-end ()
+    "Collapse undo history until a matching marker."
+    (let ((marker (list 'apply 'identity nil)))
+      (cond
+       ((equal (car buffer-undo-list) marker)
+        (setq buffer-undo-list (cdr buffer-undo-list))
+        ;; (message "success, car")
+        )   
+       (t
+        (let ((l buffer-undo-list)
+              (limit 0))
+          (while (and (not (equal (cadr l) marker))
+                      )
+            (setq limit (1+ limit))
+            (cond
+             ((null (cdr l))
+              (error "undo-collapse-end with no matching marker"))
+             ((null (cadr l))
+              (setf (cdr l) (cddr l)))
+             (t (setq l (cdr l)))))
+          (setf (cdr l) (cddr l))
+          ))) 
+      ))
+
+
+  (defmacro with-undo-collapse (&rest body)
+    "Execute body, then collapse any resulting undo boundaries."
+    (declare (indent 0))
+    (let ((buffer-var (make-symbol "buffer")))
+      `(let ((,buffer-var (current-buffer)))
+         (unwind-protect
+             (progn
+               (undo-collapse-begin)
+               ,@body)
+           (with-current-buffer ,buffer-var
+             (undo-collapse-end))))))
+
+
   (defun read-char-picky (prompt chars &optional inherit-input-method seconds)
     "Read characters like in `read-char-exclusive', but if input is
     not one of CHARS, return nil.  CHARS may be a list of characters,
@@ -11298,7 +11390,7 @@ That is, remove duplicates, non-kept, and excluded files."
     "eval last sexp this line"
     (interactive)
     (end-of-line)
-    (eval-last-sexp))
+    (eval-last-sexp()))
 
   (defun weiss-universal-argument ()
     "Simulate C-u"
@@ -11389,6 +11481,7 @@ That is, remove duplicates, non-kept, and excluded files."
 
   (global-set-key (kbd "<backtab>") 'weiss-indent)
   (global-set-key (kbd "<S-delete>") (lambda () (interactive) (insert "\\")))
+  (global-set-key (kbd "<f5>") 'revert-buffer)
 
   (define-key key-translation-map (kbd "<f12>") (kbd "C-g"))
 
@@ -11700,10 +11793,6 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
    )
 
   (ryo-modal-command-then-ryo "M-m" 'weiss-select-mode-disable weiss-select-mode-map)
-
-  (ryo-modal-command-then-ryo "M-m" 'weiss-temp-insert-go-back-without-insert weiss-temp-insert-mode-map)
-  (ryo-modal-command-then-ryo "RET" 'weiss-temp-insert-go-back-and-insert weiss-temp-insert-mode-map)
-
 
   (ryo-modal-keys
    ("SPC" (

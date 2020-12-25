@@ -64,6 +64,7 @@
       )  
     filename
     )
+
   (add-to-list 'recentf-filename-handlers 'abbreviate-file-name)
   (load (weiss--get-config-file-path "recentf"))
   (setq recentf-save-file (weiss--get-config-file-path "recentf"))
@@ -308,10 +309,6 @@ That is, remove duplicates, non-kept, and excluded files."
  )
 
 (ryo-modal-command-then-ryo "M-m" 'weiss-select-mode-disable weiss-select-mode-map)
-
-(ryo-modal-command-then-ryo "M-m" 'weiss-temp-insert-go-back-without-insert weiss-temp-insert-mode-map)
-(ryo-modal-command-then-ryo "RET" 'weiss-temp-insert-go-back-and-insert weiss-temp-insert-mode-map)
-
 
 (ryo-modal-keys
  ("SPC" (
