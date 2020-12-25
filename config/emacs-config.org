@@ -11370,7 +11370,7 @@
     :init 
     (defvar weiss/disable-ryo-list)
     (setq weiss/disable-ryo-list
-          '(magit-mode magit-status-mode snails-mode))
+          '(magit-mode magit-status-mode snails-mode ediff-mode))
 
     (defun weiss-check-ryo ()
       "enable or disable ryo by disable-ryo-list"
