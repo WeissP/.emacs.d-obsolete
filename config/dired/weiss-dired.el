@@ -31,8 +31,15 @@
 ;; functions
 
 ;; [[file:~/.emacs.d/config/emacs-config.org::*functions][functions:1]]
+(defun weiss-exit-wdired-mode ()
+    "exit wdired mode"
+    (interactive)
+    (wdired-finish-edit)
+    (dired-revert)
+    (ryo-modal-restart))
+
 (defun weiss-dired-delete-files-force ()
-  "DOCSTRING"
+  "delete files without ask"
   (interactive)
   (dired-delete-file weiss-dired-marked-files)
   ;; (dired-delete-file "/home/weiss/Downloads/mp1.pdf")
@@ -180,7 +187,7 @@
 ("SPC" (
         ("l" (
               ("r" dired-toggle-read-only
-               :first (revert-buffer)
+               :first (revert-buffer) :then (ryo-modal-restart)  
                )
               ("v" weiss-dired-single-handed-mode)
               )))
@@ -237,7 +244,7 @@
 ("c"  dired-do-copy)
 ("C"  weiss-dired-rsync)
 ("d"  dired-do-delete)
-("f"  dired-toggle-read-only)
+("f"  dired-toggle-read-only :exit t :first (revert-buffer))
 ("j"  dired-next-line)
 ("h"  dired-omit-mode)
 ("k"  dired-previous-line)
@@ -263,13 +270,11 @@
 ("x"  dired-do-flagged-delete)
 ("z"  dired-do-compress)
 ("Z"  dired-do-compress-to)
+(:mode 'wdired-mode)
+("C-q" weiss-exit-wdired-mode)
 
 (with-eval-after-load "wdired"
-  (define-key wdired-mode-map (kbd "C-q") '(lambda()
-                                             (interactive)
-                                             (wdired-finish-edit)
-                                             (dired-revert)
-                                             (ryo-modal-restart))))
+  (define-key wdired-mode-map (kbd "C-q") 'weiss-exit-wdired-mode))
 ;; keybinding:1 ends here
 
 ;; end

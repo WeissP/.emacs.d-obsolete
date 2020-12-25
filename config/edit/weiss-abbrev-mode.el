@@ -211,7 +211,7 @@ Version 2016-10-24"
   '(
     ("zrl" ":relaxed:" weiss--ahf)
     ("zj" ":joy:" weiss--ahf)
-    ("zwa" "WhatsApp")
+    ("wa" "WhatsApp")
 ;;;;; for Germany language
     ("algo" "Algorithmus" weiss--ahf)
     ("ht" "heute" weiss--ahf)
@@ -244,7 +244,7 @@ Version 2016-10-24"
     ("mg" "Möglichkeit" weiss--ahf)
     ("mi" "zumindest" weiss--ahf)
     ("n" "nicht")
-    ("nl" "natürlich" weiss--ahf)
+    ("nt" "natürlich" weiss--ahf)
     ("nm" "nochmal")
     ("not" "Notation" weiss--ahf)
     ("nx" "nächst" weiss--ahf)

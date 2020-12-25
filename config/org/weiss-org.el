@@ -306,7 +306,7 @@
     (cond
      ((eq arg-v 4) (counsel-org-goto))
      ((> arg-v 4) (counsel-org-goto-all))
-     (t (call-interactively 'swiper-isearch))
+     (t (swiper-isearch-thing-at-point))
      )
     )
   )

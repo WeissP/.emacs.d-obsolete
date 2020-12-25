@@ -37,7 +37,7 @@
 (advice-add 'xah-select-block :after #'weiss-select-mode-turn-on)
 (advice-add 'weiss-select-sexp :after #'weiss-select-mode-turn-on)
 
-(defun weiss-deactivate-mark-unless-in-select-mode ()
+(defun weiss-deactivate-mark-unless-in-select-mode (&optional a b c)
   "deactivate mark unless in select mode"
   (interactive)
   (unless weiss-select-mode (deactivate-mark)))
@@ -53,6 +53,7 @@
 (advice-add 'weiss-comment-dwim :before #'weiss-deactivate-mark-unless-in-select-mode)
 ;; (advice-add 'xah-paste-or-paste-previous :before #'weiss-deactivate-mark-unless-in-select-mode)
 (advice-add 'xah-open-file-at-cursor :before #'weiss-deactivate-mark-unless-in-select-mode)
+(advice-add 'weiss-delete-or-add-parent-sexp :before #'weiss-deactivate-mark-unless-in-select-mode)
 ;; (advice-add 'newline :before #'weiss-deactivate-mark-unless-in-select-mode)
 
 (defun anzu-query-replace (arg)

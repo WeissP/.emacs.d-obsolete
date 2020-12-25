@@ -333,6 +333,7 @@
               end-pos (cdr bounds))))
     (insert (format "( %s)" (delete-and-extract-region start-pos end-pos)))
     (goto-char (1+ cursor-position))
+    (ryo-modal-mode -1)
     ))
 
 (defun weiss-delete-or-add-parent-sexp ()
