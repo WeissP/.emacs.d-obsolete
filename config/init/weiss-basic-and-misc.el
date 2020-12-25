@@ -2,7 +2,6 @@
 ;; basic and misc 
 
 ;; [[file:~/.emacs.d/config/emacs-config.org::*basic and misc][basic and misc:1]]
-(defvar weiss/launch-time (current-time))
 (defvar weiss/after-buffer-change-function-list nil)
 (defvar weiss/after-major-mode-function-list nil)
 (defvar weiss/config-path "/home/weiss/.emacs.d/config/")
