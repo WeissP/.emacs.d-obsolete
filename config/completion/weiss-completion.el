@@ -5,31 +5,40 @@
 ;; :END:
 
 ;; [[file:~/.emacs.d/config/emacs-config.org::*completion][completion:1]]
-;;; Completion
+;;; yasnippet
+(defun +yas-expand-or-company-complete ()
+  (interactive)
+  (or (yas/expand)
+      (call-interactively #'company-indent-or-complete-common)))
 
 (use-package company
+  :hook (company-mode . company-tng-mode)
   :bind
-  (
-   ;; :map company-mode-map
-   ;; ("<tab>" . '+insert-tab)
-   :map company-active-map
-   ("9" . 'weiss-company-select-next-or-toggle-main-frame)
-   ("0" . 'weiss-company-select-previous-other-window)
-   ("<tab>" . 'company-complete-common-or-cycle)
-   ("TAB" . 'company-complete-common-or-cycle)
-   ("RET")
-   ("<return>")
-   ("SPC")
-   :map company-template-nav-map
-   ("RET" . 'company-template-forward-field)
-   ("<return>" . 'company-template-forward-field)
-   ("TAB")
-   ("<tab>"))
+  (:map company-mode-map
+        ("<tab>" . '+yas-expand-or-company-complete)
+        ("TAB" . '+yas-expand-or-company-complete))
+  (:map company-active-map
+        ("<tab>" . 'company-complete-common-or-cycle)
+        ("TAB" . 'company-complete-common-or-cycle)
+        ("9" . 'weiss-company-select-next-or-toggle-main-frame)
+        ("0" . 'weiss-company-select-previous-other-window)
+        ("<escape>")
+        ("RET")
+        ("<return>")
+        ("SPC"))
+  (:map company-template-nav-map
+        ("RET" . 'company-template-forward-field)
+        ("<return>" . 'company-template-forward-field)
+        ("TAB")
+        ("<tab>"))
   :init
   (require 'company-template)
   :hook
-  (after-init . global-company-mode)
+  ((prog-mode . company-mode)
+   (conf-mode . company-mode)
+   (eshell-mode . company-mode))
   :custom
+  (company-tng-auto-configure nil)
   (company-frontends '(company-tng-frontend
                        company-pseudo-tooltip-frontend
                        company-echo-metadata-frontend))
@@ -47,17 +56,17 @@
      delete-backward-char
      weiss-before-insert-mode
      ))
-  (company-idle-delay 0.01)
+  (company-idle-delay 0.1)
+  (company-tooltip-limit 10)
+  (company-tooltip-align-annotations t)
+  (company-tooltip-width-grow-only t)
+  (company-tooltip-idle-delay 0.1)
   (company-minimum-prefix-length 3)
   (company-dabbrev-downcase nil)
   (company-abort-manual-when-too-short t)
   (company-require-match nil)
   (company-global-modes '(not dired-mode dired-sidebar-mode))
-  ;; :config
-  ;; (setq completion-ignore-case t)
-  ;; (use-package company-auctex)
-  ;; (require 'company-sql)
-  ;; (add-to-list 'company-backends 'company-sql)
+  (company-tooltip-margin 1)
   :config
   (defun weiss-company-select-next-or-toggle-main-frame ()
     "DOCSTRING"
@@ -75,11 +84,24 @@
       ))
   )
 
-  ;;; yasnippet
 (use-package yasnippet
-  :diminish yas-minor-mode
-  :hook (after-init . yas-global-mode)
-  :config (use-package yasnippet-snippets))
+  :bind
+  (:map
+   yas-keymap
+   ("<escape>")
+   ("RET" . 'yas-next-field-or-maybe-expand)
+   ("<return>" . 'yas-next-field-or-maybe-expand)
+   ("M-RET" . 'yas-expand-snippet)
+   ("M-<return>" . 'yas-expand-snippet)
+   ("S-<return>" . 'yas-prev-field)
+   ("TAB")
+   ("S-TAB")
+   ("<tab>"))
+  :config
+  (let ((inhibit-message t)) (yas-reload-all))
+  :init
+  (add-hook 'prog-mode-hook #'yas-minor-mode))
+
 
 (provide 'weiss-completion)
 ;; completion:1 ends here
