@@ -3,14 +3,6 @@
 
 
 ;; [[file:~/.emacs.d/config/emacs-config.org::*general][general:1]]
-(use-package weiss-select-mode
-  :load-path "/home/weiss/.emacs.d/local-package/"
-  )
-(use-package weiss-keybinding-functions)
-(use-package weiss-temp-insert-mode)
-(use-package weiss-overriding-ryo-mode)
-
-
 (global-set-key (kbd "<backtab>") 'weiss-indent)
 (global-set-key (kbd "<S-delete>") (lambda () (interactive) (insert "\\")))
 (global-set-key (kbd "<f5>") 'revert-buffer)
@@ -52,6 +44,13 @@
 
   (push '((nil . "ryo:.*:") . (nil . "")) which-key-replacement-alist)
   )
+
+(use-package weiss-select-mode)
+(use-package weiss-keybinding-functions)
+(use-package weiss-temp-insert-mode)
+(use-package weiss-overriding-ryo-mode)
+(use-package weiss-origin-mode
+  :hook (magit-status-mode . weiss-origin-mode))
 ;; general:1 ends here
 
 ;; hydra

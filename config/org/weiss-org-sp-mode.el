@@ -32,7 +32,7 @@
                       ("l" weiss-org-sp-right)
                       ("r" weiss-org-refile)
                       ("v" org-paste-special)
-                      ("n" org-narrow-to-subtree)
+                      ("w" org-narrow-to-subtree)
                       ))
       (fun (lambda (cmd) (interactive) (when (and ryo-modal-mode (weiss-org-sp--special-p))  cmd))))
   (weiss-overriding-ryo-define-key weiss-org-sp-mode-map key-cmd-list fun)  

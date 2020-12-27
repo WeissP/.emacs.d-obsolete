@@ -330,7 +330,7 @@
 
   (defun weiss--ahf-indent ()
     "indent after abbrev expand"
-    (indent-region (- (point) 50) (+ (point) 20))
+    (indent-region (- (point) 50) (+ (point) 50))
     t)
 
   (defun weiss--ahf ()
@@ -425,49 +425,49 @@
   (define-abbrev-table 'sql-mode-abbrev-table
     '(
       ("all" "ALL" weiss--ahf)
-      ("and" "AND")
-      ("as" "AS")
-      ("from" "FROM")
-      ("jat" "ALTER TABLE ▮" weiss--ahf)
-      ("jav" "AVG(▮)" weiss--ahf)
-      ("jct" "COUNT(*▮)" weiss--ahf)
-      ("jdi" "DISTINCT")
-      ("jdt" "DROP TABLE ▮" weiss--ahf)
-      ("jex" "EXISTS (\n▮\n)" weiss--ahf)
-      ("jgb" "GROUP BY")
-      ("jin" "INSERT INTO ▮" weiss--ahf)
-      ("jinv" "INSERT INTO ▮ VALUES()" weiss--ahf)
-      ("jli" "LIMIT 10" weiss--ahf)
-      ("jma" "MAX(▮)" weiss--ahf)
-      ("jmi" "MIN(▮)" weiss--ahf)
-      ("jnt" "CREATE TABLE ▮ \n(\n\n)" weiss--ahf)
-      ("jnv" "CREATE VIEW ▮ AS\n(\n\n)" weiss--ahf)
-      ("jnf" "CREATE OR REPLACE FUNCTION ▮ () RETURNS  AS $$\nDECLARE\nBEGIN\n\nRETURN;\nEND; $$ LANGUAGE plpgsql;\n" weiss--ahf)
-      ("jntr" "CREATE TRIGGER ▮ \nBEFORE INSERT ON \nFOR EACH ROW \nEXECUTE PROCEDURE ;" weiss--ahf)
-      ("job" "ORDER BY")
-      ("jov" "OVER (▮) AS" weiss--ahf)
-      ("jpb" "PARTITION BY")
-      ("jsf" "SELECT \nFROM ▮")
-      ("jsfw" "SELECT \nFROM ▮\nWHERE ")
-      ("jsl" "SELECT")
-      ("jst" "SELECT * FROM ▮ LIMIT 10" weiss--ahf)
-      ("jun" "UNION")
-      ("jua" "UNION ALL")
-      ("jwh" "WHERE")
-      ("jrn" "RAISE NOTICE '▮'" weiss--ahf)
-      ("lj" "NATURAL JOIN")
+      ("and" "AND ")
+      ("as" "AS ")
+      ("from" "FROM ")
+      ("at" "ALTER TABLE ▮" weiss--ahf)
+      ("av" "AVG(▮)" weiss--ahf)
+      ("ct" "COUNT(*▮)" weiss--ahf)
+      ("di" "DISTINCT")
+      ("dt" "DROP TABLE ▮" weiss--ahf)
+      ("ex" "EXISTS (\n▮\n)" weiss--ahf)
+      ("gb" "GROUP BY ")
+      ("ii" "INSERT INTO ▮" weiss--ahf)
+      ("iiv" "INSERT INTO ▮() VALUES\n()" weiss--ahf)
+      ("li" "LIMIT 10" weiss--ahf)
+      ("ma" "MAX(▮)" weiss--ahf)
+      ("mi" "MIN(▮)" weiss--ahf)
+      ("nt" "CREATE TABLE ▮ \n(\n\n)" weiss--ahf)
+      ("nv" "CREATE VIEW ▮ AS\n(\n\n)" weiss--ahf)
+      ("nf" "CREATE OR REPLACE FUNCTION ▮ () RETURNS  AS $$\nDECLARE\nBEGIN\n\nRETURN;\nEND; $$ LANGUAGE plpgsql;\n" weiss--ahf)
+      ("ntr" "CREATE TRIGGER ▮ \nBEFORE INSERT ON \nFOR EACH ROW \nEXECUTE PROCEDURE ;" weiss--ahf)
+      ("ob" "ORDER BY ")
+      ("ov" "OVER (▮) AS" weiss--ahf)
+      ("pb" "PARTITION BY ")
+      ("sf" "SELECT \nFROM ▮")
+      ("sfw" "SELECT \nFROM ▮\nWHERE ")
+      ("sl" "SELECT ")
+      ("st" "SELECT * FROM ▮ LIMIT 10" weiss--ahf)
+      ("un" "UNION ")
+      ("ua" "UNION ALL ")
+      ("wh" "WHERE ")
+      ("rn" "RAISE NOTICE '▮'" weiss--ahf)
+      ("lj" "NATURAL JOIN ")
       ("ljo" "INNER JOIN ▮ ON " weiss--ahf)
       ("llj" "LEFT OUTER JOIN ▮ ON " weiss--ahf)
       ("lrj" "RIGHT OUTER JOIN ▮ ON " weiss--ahf)
       ("sum" "SUM(▮)" weiss--ahf)
       ("max" "MAX(▮)" weiss--ahf)
-      ("not" "NOT")
-      ("in" "IN")    
-      ("or" "OR")
+      ("not" "NOT ")
+      ("in" "IN ")    
+      ("or" "OR ")
       ("jup" "UPDATE ▮ SET WHERE;" weiss--ahf)
       ("elsif" "ELSIF ▮ THEN" weiss--ahf)
       ("if" "IF ▮ THEN\n\nEND IF;" weiss--ahf)
-      ("where" "WHERE")
+      ("where" "WHERE ")
       ("with" "WITH ▮ AS (\n\n)" weiss--ahf)
       ("withr" "WITH RECURSIVE ▮ () \nAS (\n\nUnion ALL\n\n)" weiss--ahf)
       )
@@ -481,9 +481,11 @@
 
   (define-abbrev-table 'org-mode-abbrev-table
     '(
+      ("ta" ":tangle ")
+      ("wa" "WhatsApp")
+  ;;;;; emoji
       ("zrl" ":relaxed:" weiss--ahf)
       ("zj" ":joy:" weiss--ahf)
-      ("wa" "WhatsApp")
   ;;;;; for Germany language
       ("algo" "Algorithmus" weiss--ahf)
       ("ht" "heute" weiss--ahf)
@@ -737,14 +739,16 @@
 
   (define-abbrev-table 'java-mode-abbrev-table
     '(
-      ("rt" "return▮;")
+      ("rt" "return ▮;")
       ("pr" "System.out.println(▮);" weiss--ahf)
-      ("for" "for (int i = 0; i < ▮; i++) {\n\n}" weiss--ahf)
-      ("forj" "for (int j = 0; j < ▮; j++) {\n\n}" weiss--ahf)
-      ("if" "if (▮) {\n\n}" weiss--ahf)
+      ("for" "for (int i = 0; i < ▮; i++) {\n\n}" weiss--ahf-indent)
+      ("forj" "for (int j = 0; j < ▮; j++) {\n\n}" weiss--ahf-indent)
+      ("if" "if (▮) {\n\n}" weiss--ahf-indent)
+      ("try" "try {\n▮\n} catch () {\n\n}" weiss--ahf-indent)
+      ("else" "else {\n▮\n}" weiss--ahf-indent)
       ("pb" "public " weiss--ahf)
       ("pri" "private " weiss--ahf)
-      ("wh" "while (▮) {\n\n}" weiss--ahf)
+      ("wh" "while (▮) {\n\n}" weiss--ahf-indent)
       ))
 #+end_src
 
@@ -846,7 +850,7 @@
       ("pm" "point-min" weiss--ahf)
       ("pn" "progn" weiss--ahf)
       ("px" "point-max" weiss--ahf)
-      ("pv" "(provide '▮)" weiss--ahf)
+      ("pr" "(provide '▮)" weiss--ahf)
       ("qu" ":quelpa" weiss--ahf)
       ("rb" "region-beginning" weiss--ahf)
       ("rc" "right-char" weiss--ahf)
@@ -7629,7 +7633,7 @@
                         ("l" weiss-org-sp-right)
                         ("r" weiss-org-refile)
                         ("v" org-paste-special)
-                        ("n" org-narrow-to-subtree)
+                        ("w" org-narrow-to-subtree)
                         ))
         (fun (lambda (cmd) (interactive) (when (and ryo-modal-mode (weiss-org-sp--special-p))  cmd))))
     (weiss-overriding-ryo-define-key weiss-org-sp-mode-map key-cmd-list fun)  
@@ -8982,6 +8986,62 @@
     )
 
   (provide 'weiss-overriding-ryo-mode)
+#+end_src
+*** weiss-origin-mode
+
+#+begin_src elisp :tangle keybinding/weiss-origin-mode.el :mkdirp yes
+  (defvar weiss-origin-mode-map (make-sparse-keymap))
+  (defvar weiss-origin-keep-keys nil)
+
+  (defun weiss-origin-set-keep-keys (&optional keys)
+    "set keys that also used in origin mode, if @keys is nil, only set spc key"
+    (interactive)
+    (unless keys
+      (setq keys '("SPC")))
+    (setq weiss-origin-keep-keys (mapcar (lambda (key) (string-to-char (kbd key))) keys))
+    )
+
+  (defun weiss-origin-mode-push-keymap ()
+    "push origin-mode keymap"
+    (interactive)
+    (setq weiss-origin-mode-map nil)
+    (let ((ryo-keymap
+           (eval (intern-soft (concat "ryo-" (symbol-name (car ryo-modal-mode-keymaps)) "-map"))))
+          (is-keymap)
+          )
+      (dolist (x ryo-keymap) 
+        (if (eq x 'keymap)
+            (setq is-keymap t)
+          (when (member (car x) weiss-origin-keep-keys)
+            (push x weiss-origin-mode-map)          
+            (when is-keymap
+              (push 'keymap weiss-origin-mode-map))
+            )
+          (setq is-keymap nil)
+          )
+        )    
+      (define-key weiss-origin-mode-map (kbd "SPC SPC") (lookup-key (symbol-value (keymap-symbol (current-local-map))) (kbd "SPC")))
+      (push 'keymap weiss-origin-mode-map)
+      (setq minor-mode-overriding-map-alist (assoc-delete-all 'weiss-origin-mode minor-mode-overriding-map-alist))
+      (push `(weiss-origin-mode . ,weiss-origin-mode-map) minor-mode-overriding-map-alist)
+      ))
+
+  (define-minor-mode weiss-origin-mode
+    "keep origin keybindings and only change few keys (like leader key)"
+    :keymap weiss-origin-mode-map
+    (if weiss-origin-mode
+        (progn
+          (unless weiss-origin-keep-keys
+            (weiss-origin-set-keep-keys))
+          (weiss-origin-mode-push-keymap)        
+          )
+      (setq minor-mode-overriding-map-alist (assoc-delete-all 'weiss-origin-mode minor-mode-overriding-map-alist))
+      (setq weiss-origin-keep-keys nil)
+      )
+    )
+
+  (provide 'weiss-origin-mode)
+
 #+end_src
 *** Functions
 :PROPERTIES:
@@ -10757,6 +10817,16 @@
 #+end_src
 **** misc
 #+begin_src elisp
+  ;; comes from https://stackoverflow.com/questions/14489848/emacs-name-of-current-local-keymap
+  (defun keymap-symbol (keymap)
+    "Return the symbol to which KEYMAP is bound, or nil if no such symbol exists."
+    (catch 'gotit
+      (mapatoms (lambda (sym)
+                  (and (boundp sym)
+                       (eq (symbol-value sym) keymap)
+                       (not (eq sym 'keymap))
+                       (throw 'gotit sym))))))
+
   ;; undo-collapse comes from
   ;; https://emacs.stackexchange.com/questions/7558/how-to-collapse-undo-history
   (defun undo-collapse-begin ()
@@ -10908,14 +10978,6 @@
 *** general
 
 #+begin_src elisp
-  (use-package weiss-select-mode
-    :load-path "/home/weiss/.emacs.d/local-package/"
-    )
-  (use-package weiss-keybinding-functions)
-  (use-package weiss-temp-insert-mode)
-  (use-package weiss-overriding-ryo-mode)
-
-
   (global-set-key (kbd "<backtab>") 'weiss-indent)
   (global-set-key (kbd "<S-delete>") (lambda () (interactive) (insert "\\")))
   (global-set-key (kbd "<f5>") 'revert-buffer)
@@ -10957,6 +11019,13 @@
 
     (push '((nil . "ryo:.*:") . (nil . "")) which-key-replacement-alist)
     )
+
+  (use-package weiss-select-mode)
+  (use-package weiss-keybinding-functions)
+  (use-package weiss-temp-insert-mode)
+  (use-package weiss-overriding-ryo-mode)
+  (use-package weiss-origin-mode
+    :hook (magit-status-mode . weiss-origin-mode))
 #+end_src
 
 #+RESULTS:
@@ -11195,7 +11264,6 @@
 
 #+RESULTS:
 : weiss-quick-insert
-
 *** ryo-bind-keys
 Ryo-modal-mode can not bind void functions, so we bind keys at last.
 #+begin_src elisp :tangle after-dump/weiss-after-dump.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-

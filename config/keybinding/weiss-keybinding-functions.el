@@ -1776,6 +1776,16 @@ Version 2015-10-14"
 ;; misc
 
 ;; [[file:~/.emacs.d/config/emacs-config.org::*misc][misc:1]]
+;; comes from https://stackoverflow.com/questions/14489848/emacs-name-of-current-local-keymap
+(defun keymap-symbol (keymap)
+  "Return the symbol to which KEYMAP is bound, or nil if no such symbol exists."
+  (catch 'gotit
+    (mapatoms (lambda (sym)
+                (and (boundp sym)
+                     (eq (symbol-value sym) keymap)
+                     (not (eq sym 'keymap))
+                     (throw 'gotit sym))))))
+
 ;; undo-collapse comes from
 ;; https://emacs.stackexchange.com/questions/7558/how-to-collapse-undo-history
 (defun undo-collapse-begin ()
