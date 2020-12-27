@@ -14,15 +14,25 @@
                                    (weiss-overriding-define-key
                                     '(
                                       ("n" mc/mark-more-like-this-extended)
+
+                                      ("0" mc/insert-numbers)
+                                      ("1" mc/cycle-backward)
+                                      ("2" mc/cycle-forward)
+
                                       ("j" next-line)
                                       ("k" previous-line)
                                       ("l" right-char)
                                       ("i" left-char)
-                                      ("1" mc/cycle-backward)
-                                      ("2" mc/cycle-forward)
-                                      (";" right-charmc-hide-unmatched-lines-mode)
-                                      ("u" left-charmc/mark-all-like-this-dwim)
                                       ("s" set-mark-command)
+
+                                      (";" mc-hide-unmatched-lines-mode)
+                                      ("<up>" mc/mark-previous-like-this)
+                                      ("K" mc/skip-to-previous-like-this)
+                                      ("M-k" mc/unmark-previous-like-this)
+                                      ("<down>" mc/mark-next-like-this)
+                                      ("J" mc/skip-to-next-like-this)
+                                      ("M-j" mc/unmark-next-like-this)
+                                      ;; ("<up>" mc/mark-previous-like-this)
                                       )
                                     )
                                    (weiss-overriding-ryo-mode t)

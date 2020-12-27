@@ -9,30 +9,13 @@
 (use-package weiss-keybinding-functions)
 (use-package weiss-temp-insert-mode)
 (use-package weiss-overriding-ryo-mode)
-(use-package hydra)
+
 
 (global-set-key (kbd "<backtab>") 'weiss-indent)
 (global-set-key (kbd "<S-delete>") (lambda () (interactive) (insert "\\")))
 (global-set-key (kbd "<f5>") 'revert-buffer)
 
 (define-key key-translation-map (kbd "<f12>") (kbd "C-g"))
-
-(defhydra hydra-error (global-map "M-g")
-  "goto-error"
-  ("h" first-error "first")
-  ("j" next-error "next")
-  ("k" previous-error "prev")
-  ("v" recenter-top-bottom "recenter")
-  ("q" nil "quit"))
-
-(defhydra hydra-resize-window (global-map "M-w")
-  "resize window"
-  ("k" shrink-window "height+")
-  ("j" enlarge-window "height-")
-  ("h" shrink-window-horizontally "width-")
-  ("l" enlarge-window-horizontally "width+")
-  ("q" nil "quit")
-  )
 
 (use-package ryo-modal
   :commands ryo-modal-mode
@@ -70,6 +53,76 @@
   (push '((nil . "ryo:.*:") . (nil . "")) which-key-replacement-alist)
   )
 ;; general:1 ends here
+
+;; hydra
+
+;; [[file:~/.emacs.d/config/emacs-config.org::*hydra][hydra:1]]
+(use-package hydra)
+
+(defhydra hydra-error (global-map "M-g")
+  "goto-error"
+  ("h" first-error "first")
+  ("j" next-error "next")
+  ("k" previous-error "prev")
+  ("v" recenter-top-bottom "recenter")
+  ("q" nil "quit"))
+
+(defhydra hydra-resize-window (global-map "M-w")
+  "resize window"
+  ("k" shrink-window "height+")
+  ("j" enlarge-window "height-")
+  ("h" shrink-window-horizontally "width-")
+  ("l" enlarge-window-horizontally "width+")
+  ("q" nil "quit")
+  )
+(defhydra hydra-multiple-cursors-weiss (global-map "M-c" :hint nil)
+  "
+     ^Up^            ^Down^        ^Miscellaneous^
+----------------------------------------------
+[_p_]   Next    [_n_]   Next    [_l_] Edit lines
+[_P_]   Skip    [_N_]   Skip    [_a_] Mark all
+[_M-p_] Unmark  [_M-n_] Unmark  [_q_] Quit"
+  ("l" mc/edit-lines :exit t)
+  ("a" mc/mark-all-like-this :exit t)
+  ("n" mc/mark-next-like-this)
+  ("3" next-line)
+  ("N" mc/skip-to-next-like-this)
+  ("M-n" mc/unmark-next-like-this)
+  ("p" mc/mark-previous-like-this)
+  ("P" mc/skip-to-previous-like-this)
+  ("M-p" mc/unmark-previous-like-this)
+  ("q" nil))
+
+(defun weiss-test ()
+  "DOCSTRING"
+  (interactive)
+  (set-temporary-overlay-map mc/mark-more-like-this-extended-keymap t))
+
+(defhydra hydra-multiple-cursors (:color blue :hint nil)
+  "
+ Up^^             Down^^           Miscellaneous           % 2(mc/num-cursors) cursor%s(if (> (mc/num-cursors) 1) \"s\" \"\")
+------------------------------------------------------------------
+ [_p_]   Next     [_n_]   Next     [_l_] Edit lines  [_0_] Insert numbers
+ [_P_]   Skip     [_N_]   Skip     [_a_] Mark all    [_A_] Insert letters
+ [_M-p_] Unmark   [_M-n_] Unmark   [_s_] Search
+ [Click] Cursor at point       [_q_] Quit"
+  ("l" mc/edit-lines :exit t)
+  ("a" mc/mark-all-like-this :exit t)
+  ("n" mc/mark-next-like-this)
+  ("N" mc/skip-to-next-like-this)
+  ("M-n" mc/unmark-next-like-this)
+  ("p" mc/mark-previous-like-this)
+  ("P" mc/skip-to-previous-like-this)
+  ("M-p" mc/unmark-previous-like-this)
+  ("s" mc/mark-all-in-region-regexp :exit t)
+  ("0" mc/insert-numbers :exit t)
+  ("A" mc/insert-letters :exit t)
+  ("<mouse-1>" mc/add-cursor-on-click)
+  ;; Help with click recognition in this hydra
+  ("<down-mouse-1>" ignore)
+  ("<drag-mouse-1>" ignore)
+  ("q" nil))
+;; hydra:1 ends here
 
 ;; quick-insert
 
