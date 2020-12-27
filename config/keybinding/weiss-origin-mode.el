@@ -42,6 +42,7 @@
         (unless weiss-origin-keep-keys
           (setq weiss-origin-keep-keys '("SPC" "9" "-")))
         (weiss-origin-mode-push-keymap)        
+        (when ryo-modal-mode (ryo-modal-mode -1))
         )
     (setq minor-mode-overriding-map-alist (assoc-delete-all 'weiss-origin-mode minor-mode-overriding-map-alist))
     (setq weiss-origin-keep-keys nil)

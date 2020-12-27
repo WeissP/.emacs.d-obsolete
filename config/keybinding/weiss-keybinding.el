@@ -15,7 +15,7 @@
   :init 
   (defvar weiss/disable-ryo-list)
   (setq weiss/disable-ryo-list
-        '(magit-mode magit-status-mode snails-mode ediff-mode telega-chat-mode telega-root-mode))
+        '(magit-mode magit-status-mode magit-revision-mode snails-mode ediff-mode telega-chat-mode telega-root-mode))
 
   (defun weiss-check-ryo ()
     "enable or disable ryo by disable-ryo-list"
@@ -53,6 +53,7 @@
   :hook
   (
    (magit-status-mode . weiss-origin-mode)
+   (magit-mode . weiss-origin-mode)
    (telega-chat-mode . weiss-origin-mode)   
    (telega-root-mode . weiss-origin-mode)   
    ))
