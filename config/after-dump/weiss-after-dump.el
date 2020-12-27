@@ -5,14 +5,14 @@
 (winner-mode)
 (if (display-graphic-p)
     (progn
-      (setq initial-frame-alist
+      (setq default-frame-alist
             '(
               (tool-bar-lines . 0)
-              (width . 105) ; chars
+              (width . 104) ; chars
               (height . 53) ; lines
               (left . 1680)
               (top . 0)))
-      (setq default-frame-alist
+      (setq initial-frame-alist
             '(
               (tool-bar-lines . 0)
               (width . 104) ; chars
@@ -2887,7 +2887,10 @@
 ;; misc
 
 ;; [[file:~/.emacs.d/config/emacs-config.org::*misc][misc:1]]
+;; there are some problems to set face attribute before dump
 (set-face-attribute 'cursor '((nil (:background weiss/cursor-color))))
+(set-face-attribute 'mc/cursor-bar-face nil :background weiss/cursor-color)
+(set-cursor-color weiss/cursor-color)
 (use-package emojify 
   :diminish
   ;; :hook (after-init . global-emojify-mode)
@@ -2901,10 +2904,10 @@
 (ryo-modal-keys
  (:mc-all t)
  ("RET" newline :first '(deactivate-mark) :mode 'prog-mode)
- ("'"  xah-cycle-hyphen-underscore-space)
+ ("'"  ryo-modal-repeat)
  (","  xah-backward-left-bracket)
  ("-"  weiss-switch-to-same-side-frame)
- ("="  ryo-modal-repeat)
+ ("="  xah-cycle-hyphen-underscore-space)
  ("."  xah-forward-right-bracket)
  (";"  rotate-text)
  ("/"  xah-goto-matching-bracket)
@@ -3129,14 +3132,16 @@
                ("m"  shell-command)
                ("n"  display-line-numbers-mode)
                ("p"  sql-postgres)
-               ("r"  weiss-dired-toggle-read-only :exit t)
+               ("r"  dired-toggle-read-only :exit t)
                ("s"  sudo-edit)
                ("w"  toggle-word-wrap)
                ))
          ("m"  dired-jump)
          ("n"  end-of-buffer)
          ("o" (
-               ("n" mc/mark-more-like-this-extended)
+               ("n" mc/mark-next-like-this)
+               ("a" mc/mark-all-like-this)
+               ("SPC" hydra-multiple-cursors-weiss/body)
                ))
          ("p"  recenter-top-bottom)
          ("q"  xah-fill-or-unfill)
@@ -3206,60 +3211,37 @@
         (recentf-cleanup)))
     (message ""))
   :init
-  (setq weiss-reduce-recentf-file-path-alist
-        '(
-          ("🅲🅻🅿" . "Compiler and Language-Processing Tools")
-          ("🆂🅲" . "scientififc computing")
-          ("🆅" . "Documents/Vorlesungen")
-          ("🅥" . "Nutstore Files/Vorlesungen")
-          ("🅹" . "src/main/java")
-          ("🅙🅣" . "src/test/java")
-          ))
+  ;; (setq weiss-reduce-recentf-file-path-alist
+  ;;       '(
+  ;;         ("🅲🅻🅿" . "Compiler and Language-Processing Tools")
+  ;;         ("🆂🅲" . "scientififc computing")
+  ;;         ("🆅" . "Documents/Vorlesungen")
+  ;;         ("🅥" . "Nutstore Files/Vorlesungen")
+  ;;         ("🅹" . "src/main/java")
+  ;;         ("🅙🅣" . "src/test/java")
+  ;;         ))
 
-  (defun weiss-reduce-file-path (filename &optional r)
-    "replace long file paths with symbol"
-    (interactive)
-    (let ((search-str)
-          (replace-str))
-      (dolist (x weiss-reduce-recentf-file-path-alist)
-        (if r
-            (setq search-str (car x) 
-                  replace-str (cdr x))
-          (setq search-str (cdr x) 
-                replace-str (car x)))      
-        (setq filename (replace-regexp-in-string search-str replace-str filename t))
-        )
-      )  
-    filename
-    )
+  ;; (defun weiss-reduce-file-path (filename &optional r)
+  ;;   "replace long file paths with symbol"
+  ;;   (interactive)
+  ;;   (let ((search-str)
+  ;;         (replace-str))
+  ;;     (dolist (x weiss-reduce-recentf-file-path-alist)
+  ;;       (if r
+  ;;           (setq search-str (car x) 
+  ;;                 replace-str (cdr x))
+  ;;         (setq search-str (cdr x) 
+  ;;               replace-str (car x)))      
+  ;;       (setq filename (replace-regexp-in-string search-str replace-str filename t))
+  ;;       )
+  ;;     )  
+  ;;   filename
+  ;;   )
 
-  (add-to-list 'recentf-filename-handlers 'abbreviate-file-name)
+  ;; (add-to-list 'recentf-filename-handlers 'abbreviate-file-name)
   (load (weiss--get-config-file-path "recentf"))
   (setq recentf-save-file (weiss--get-config-file-path "recentf"))
   :config
-  (defun recentf-cleanup ()
-    "Cleanup the recent list.
-That is, remove duplicates, non-kept, and excluded files."
-    (interactive)
-    (message "Cleaning up the recentf list...")
-    (let ((n 0)
-          (ht (make-hash-table
-               :size recentf-max-saved-items
-               :test 'equal))
-          newlist key)
-      (dolist (f recentf-list)
-        (setq f (weiss-reduce-file-path (recentf-expand-file-name f) t)
-              key (if recentf-case-fold-search (downcase f) f))
-        (if (and (recentf-include-p f)
-                 (recentf-keep-p f)
-                 (not (gethash key ht)))
-            (progn
-              (push (weiss-reduce-file-path f) newlist)
-              (puthash key t ht))
-          (setq n (1+ n))
-          (message "File %s removed from the recentf list" f)))
-      (message "Cleaning up the recentf list...done (%d removed)" n)
-      (setq recentf-list (nreverse newlist))))
   (run-at-time nil (* 5 60) 'snug/recentf-save-list-silence)
   (run-at-time nil (* 5 60) 'snug/recentf-cleanup-silence)
   (setq

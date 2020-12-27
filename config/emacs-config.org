@@ -328,6 +328,11 @@
       $found-p
       ))
 
+  (defun weiss--ahf-indent ()
+    "indent after abbrev expand"
+    (indent-region (- (point) 50) (+ (point) 20))
+    t)
+
   (defun weiss--ahf ()
     "Abbrev hook function, used for `define-abbrev'.
    Our use is to prevent inserting the char that triggered expansion. Experimental.
@@ -863,7 +868,7 @@
       ("vc" "vconcat" weiss--ahf)
       ("wg" "widget-get" weiss--ahf)
       ("wr" "write-region" weiss--ahf)
-      ("wt" "(defun weiss-test ()\n  \"DOCSTRING\"\n  (interactive)\n  ▮)" weiss--ahf)
+      ("wt" "(defun weiss-test ()\n  \"DOCSTRING\"\n  (interactive)\n  ▮)" weiss--ahf-indent)
 
       ("bfn" "buffer-file-name" weiss--ahf)
       ("bmp" "buffer-modified-p" weiss--ahf)
@@ -889,6 +894,7 @@
       ("len" "length" weiss--ahf)
       ("lep" "(line-end-position)" weiss--ahf)
       ("mlv" "make-local-variable" weiss--ahf)
+      ("msk" "make-sparse-keymap" weiss--ahf)
       ("ntr" "narrow-to-region" weiss--ahf)
       ("nts" "number-to-string" weiss--ahf)
       ("pmi" "point-min" weiss--ahf)
@@ -978,7 +984,7 @@
       ("clrhash" "(clrhash ▮)" weiss--ahf)
       ("compare-strings" "(compare-strings ▮)" weiss--ahf)
       ("concat" "(concat \"▮\" \"\")" weiss--ahf)
-      ("cond" "(cond\n(▮ )\n\n)" weiss--ahf)
+      ("cond" "(cond\n(▮ )\n\n)" weiss--ahf-indent)
       ("condition-case" "(condition-case ▮)" weiss--ahf)
       ("cons" "(cons ▮)" weiss--ahf)
       ("consp" "(consp ▮)" weiss--ahf)
@@ -999,7 +1005,7 @@
       ("define-key" "(define-key ▮ (kbd \"M-b\"))" weiss--ahf)
       ("define-minor-mode" "(define-minor-mode ▮)" weiss--ahf)
       ("defsubst" "(defsubst ▮)" weiss--ahf)
-      ("defun" "(defun ▮ ()\n  \"DOCSTRING\"\n  (interactive)\n  (let (())\n\n ))" weiss--ahf)
+      ("defun" "(defun ▮ ()\n  \"DOCSTRING\"\n  (interactive)\n  (let (())\n\n ))" weiss--ahf-indent)
       ("defvar" "(defvar ▮)" weiss--ahf)
       ("delete" "(delete ▮)" weiss--ahf)
       ("delete-and-extract-region" "(delete-and-extract-region ▮)" weiss--ahf)
@@ -1015,8 +1021,8 @@
       ("directory-files" "(directory-files ▮)" weiss--ahf)
       ("directory-files-recursively" "(directory-files-recursively ▮)" weiss--ahf)
       ("directory-name-p" "(directory-name-p ▮)" weiss--ahf)
-      ("dolist" "(dolist (x ▮) \n)" weiss--ahf)
-      ("dotimes" "(dotimes (i ▮) \n)" weiss--ahf)
+      ("dolist" "(dolist (x ▮) \n)" weiss--ahf-indent)
+      ("dotimes" "(dotimes (i ▮) \n)" weiss--ahf-indent)
       ("elt" "(elt ▮)" weiss--ahf)
       ("end-of-line" "(end-of-line ▮)" weiss--ahf)
       ("eq" "(eq ▮)" weiss--ahf)
@@ -1069,7 +1075,7 @@
       ("gethash" "(gethash ▮)" weiss--ahf)
       ("global-set-key" "(global-set-key (kbd \"C-▮\") )" weiss--ahf)
       ("goto-char" "(goto-char ▮)" weiss--ahf)
-      ("if" "(if ▮\n    \n )" weiss--ahf)
+      ("if" "(if ▮\n    \n )" weiss--ahf-indent)
       ("image-flush" "(image-flush ▮)" weiss--ahf)
       ("image-load-path-for-library" "(image-load-path-for-library ▮)" weiss--ahf)
       ("image-size" "(image-size ▮)" weiss--ahf)
@@ -1090,8 +1096,8 @@
       ("last-buffer" "(last-buffer ▮)" weiss--ahf)
       ("left-char" "(left-char ▮)" weiss--ahf)
       ("length" "(length ▮)" weiss--ahf)
-      ("let" "(let ((▮)\n)\n \n)" weiss--ahf)
-      ("let*" "(let* ((▮)\n)\n \n)" weiss--ahf)
+      ("let" "(let ((▮)\n)\n \n)" weiss--ahf-indent)
+      ("let*" "(let* ((▮)\n)\n \n)" weiss--ahf-indent)
       ("line-beginning-position" "(line-beginning-position)" weiss--ahf)
       ("line-end-position" "(line-end-position)" weiss--ahf)
       ("list" "(list ▮)" weiss--ahf)
@@ -1103,6 +1109,7 @@
       ("make-hash-table" "(make-hash-table :test '▮)" weiss--ahf)
       ("make-indirect-buffer" "(make-indirect-buffer ▮)" weiss--ahf)
       ("make-list" "(make-list ▮)" weiss--ahf)
+      ("make-sparse-keymap" "(make-sparse-keymap)" weiss--ahf)
       ("make-local-variable" "(make-local-variable ▮)" weiss--ahf)
       ("make-string" "(make-string count character)" weiss--ahf)
       ("make-overlay" "(make-overlay ▮)" weiss--ahf)
@@ -1148,9 +1155,9 @@
       ("prin1-to-string" "(prin1-to-string ▮)" weiss--ahf)
       ("princ" "(princ ▮)" weiss--ahf)
       ("print" "(print ▮)" weiss--ahf)
-      ("prog1" "(prog1\n▮)" weiss--ahf)
-      ("prog2" "(prog2\n▮)" weiss--ahf)
-      ("progn" "(progn\n▮\n)" weiss--ahf)
+      ("prog1" "(prog1\n▮)" weiss--ahf-indent)
+      ("prog2" "(prog2\n▮)" weiss--ahf-indent)
+      ("progn" "(progn\n▮\n)" weiss--ahf-indent)
       ("propertize" "(propertize ▮)" weiss--ahf)
       ("push" "(push ▮)" weiss--ahf)
       ("push-mark" "(push-mark ▮)" weiss--ahf)
@@ -1158,7 +1165,7 @@
       ("put-image" "(put-image ▮)" weiss--ahf)
       ("put-text-property" "(put-text-property ▮)" weiss--ahf)
       ("puthash" "(puthash ▮)" weiss--ahf)
-      (":quelpa" ":quelpa (▮ \n :fetcher github \n :repo )" weiss--ahf)
+      (":quelpa" ":quelpa (▮ \n :fetcher github \n :repo )" weiss--ahf-indent)
       ("random" "(random ▮)" weiss--ahf)
       ("rassoc" "(rassoc ▮)" weiss--ahf)
       ("rassoc" "(rassoc ▮)" weiss--ahf)
@@ -1245,7 +1252,7 @@
       ("throw" "(throw '▮)" weiss--ahf)
       ("toggle-read-only" "(toggle-read-only ▮)" weiss--ahf)
       ("unbury-buffer" "(unbury-buffer)" weiss--ahf)
-      ("unless" "(unless ▮\n)" weiss--ahf)
+      ("unless" "(unless ▮\n)" weiss--ahf-indent)
       ("use-region-p" "(use-region-p)" weiss--ahf)
       ("user-error" "(user-error \"%s▮\")" weiss--ahf)
       ("vector" "(vector ▮)" weiss--ahf)
@@ -1254,7 +1261,7 @@
       ("version<=" "(version<= \"24.4\" emacs-version)" weiss--ahf )
       ("visited-file-modtime" "(visited-file-modtime)" weiss--ahf)
       ("when" "(when ▮)" weiss--ahf)
-      ("while" "(while (▮)\n  (setq ))" weiss--ahf)
+      ("while" "(while (▮)\n  (setq ))" weiss--ahf-indent)
       ("widen" "(widen)" weiss--ahf)
       ("widget-get" "(widget-get ▮)" weiss--ahf)
       ("with-current-buffer" "(with-current-buffer ▮)" weiss--ahf)
@@ -1461,25 +1468,27 @@
 
 ** general
 #+begin_src elisp
-(require 'org)
-(require 'latex)
+  (require 'org)
+  ;; (require 'latex)
+  ;; (use-package latex)
 
-(add-to-list 'load-language-list '(latex . t))
+  (add-to-list 'load-language-list '(latex . t))
 #+end_src
 
 ** packages
 #+begin_src elisp
   (use-package company-auctex
+    :disabled
     :hook (LaTeX-mode-hook)
     :config
     (company-auctex-init))
 
-  (require 'ox-enumerate-latex) ;; for export
+  ;; (require 'ox-enumerate-latex) ;; for export
 
   (use-package org-edit-latex
     ;; :disabled
     :ensure nil
-    :load-path "/home/weiss/.emacs.d/local-package/"
+    ;; :load-path "/home/weiss/.emacs.d/local-package/"
     ;; :quelpa (org-edit-latex :fetcher github
     ;; :repo "et2010/org-edit-latex")
     :hook (org-mode . org-edit-latex-mode)
@@ -1652,7 +1661,7 @@
 #+end_src
 
 ** export
-#+begin_src elisp
+#+begin_src elisp 
   (setq LaTeX-command-style '(("" "%(PDF)%(latex) -shell-escape %S%(PDFout)")))
 
   (setq
@@ -1701,7 +1710,7 @@
 #+end_src
 
 ** misc
-#+begin_src elisp
+#+begin_src elisp 
   ;; for delete bracket
   (setq weiss-latex-special-markers '("$"))
   ;; Preview
@@ -2020,14 +2029,14 @@
   (winner-mode)
   (if (display-graphic-p)
       (progn
-        (setq initial-frame-alist
+        (setq default-frame-alist
               '(
                 (tool-bar-lines . 0)
-                (width . 105) ; chars
+                (width . 104) ; chars
                 (height . 53) ; lines
                 (left . 1680)
                 (top . 0)))
-        (setq default-frame-alist
+        (setq initial-frame-alist
               '(
                 (tool-bar-lines . 0)
                 (width . 104) ; chars
@@ -2080,6 +2089,11 @@
       (enable-theme 'doom-one-light)
     (load-theme 'doom-one-light t)
     )
+#+end_src
+
+*** themes
+#+begin_src elisp
+  (use-package doom-themes)
 #+end_src
 
 ** line number
@@ -4927,7 +4941,10 @@
 #+end_src
 ** misc
 #+begin_src elisp :tangle after-dump/weiss-after-dump.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
+  ;; there are some problems to set face attribute before dump
   (set-face-attribute 'cursor '((nil (:background weiss/cursor-color))))
+  (set-face-attribute 'mc/cursor-bar-face nil :background weiss/cursor-color)
+  (set-cursor-color weiss/cursor-color)
   (use-package emojify 
     :diminish
     ;; :hook (after-init . global-emojify-mode)
@@ -5004,212 +5021,6 @@
 :END:
 
 ** lsp-mode
-#+begin_src elisp
-
-  (use-package lsp-mode
-    ;; :disabled
-    :diminish
-    :commands lsp
-    :hook (
-           ;; (python-mode . lsp-deferred)
-           (java-mode . lsp-deferred)
-           ;; (c++-mode . lsp-deferred)
-           ;; (sql-mode . lsp-deferred)
-           )
-    :bind (:map lsp-mode-map
-                ("M-p" . lsp-describe-thing-at-point)
-                ([remap xref-find-definitions] . lsp-find-definition)
-                ([remap xref-find-references] . lsp-find-references))
-    :defines (lsp-clients-python-library-directories lsp-rust-rls-server-command)
-    :init
-    (setq
-     lsp-response-timeout 100
-     lsp-completion-enable-additional-text-edit t
-     lsp-prefer-flymake nil
-     lsp-diagnostic-package :flycheck
-     lsp-auto-guess-root t        ; Detect project root
-     lsp-keep-workspace-alive nil ; Auto-kill LSP server
-     lsp-enable-indentation t
-     flymake-fringe-indicator-position 'right-fringe
-     ;; lsp-auto-configure nil
-     lsp-ui-doc-enable nil
-     lsp-enable-symbol-highlighting nil
-     lsp-flycheck-live-reporting nil
-     lsp-enable-links nil                 ;; no clickable links
-     lsp-enable-folding nil               ;; use `hideshow' instead
-     lsp-enable-snippet nil               ;; no snippet
-     lsp-enable-file-watchers nil         ;; turn off for better performance
-     lsp-enable-text-document-color nil   ;; as above
-     lsp-enable-semantic-highlighting nil ;; as above
-     lsp-enable-symbol-highlighting nil   ;; as above
-     lsp-enable-on-type-formatting nil    ;; disable formatting on the fly
-     lsp-modeline-code-actions-enable nil ;; keep modeline clean
-     lsp-modeline-diagnostics-enable nil  ;; as above
-     lsp-idle-delay 0.5                   ;; lazy refresh
-     lsp-log-io nil                       ;; enable log only for debug
-     ;; lsp-diagnostics-provider :flycheck   ;; prefer `flycheck'
-     lsp-lens-enable t                    ;; enable lens
-     lsp-auto-guess-root t                ;; auto guess root
-     lsp-keep-workspace-alive nil         ;; auto kill lsp server
-     lsp-eldoc-enable-hover t           ;; disable eldoc hover
-     lsp-signature-auto-activate t        ;; show function signature
-     lsp-signature-doc-lines 2            ;; but dont take up more lines
-     )
-    ;; enable log only for debug
-    (setq lsp-log-io nil)
-
-    ;; use `evil-matchit' instead
-    (setq lsp-enable-folding nil)
-
-    ;; no real time syntax check
-    ;; (setq lsp-diagnostic-package nil)
-
-    ;; handle yasnippet by myself
-    (setq lsp-enable-snippet nil)
-
-    ;; use `company-ctags' only.
-    ;; Please note `company-lsp' is automatically enabled if installed
-    (setq lsp-enable-completion-at-point nil)
-
-    ;; use ffip instead
-    ;; (setq lsp-enable-links nil)
-
-    ;; auto restart lsp
-    (setq lsp-restart 'auto-restart)
-
-    ;; don't ping LSP lanaguage server too frequently
-    ;; (defvar lsp-on-touch-time 0)
-    ;; (defadvice lsp-on-change (around lsp-on-change-hack activate)
-    ;;   ;; don't run `lsp-on-change' too frequently
-    ;;   (when (> (- (float-time (current-time))
-    ;;               lsp-on-touch-time) 30) ;; 30 seconds
-    ;;     (setq lsp-on-touch-time (float-time (current-time)))
-    ;;     ad-do-it))
-    ;; :config
-    (setq lsp-signature-auto-activate nil) ; disable doc in minibuffer
-
-    ;; For `lsp-clients'
-    (require 'lsp-clients)
-    (setq lsp-clients-python-library-directories '("/usr/local/" "/usr/"))
-    (unless (executable-find "rls")
-      (setq lsp-rust-rls-server-command '("rustup" "run" "stable" "rls")))
-
-    ;; Completion
-    (use-package company-lsp
-      :init (setq company-lsp-cache-candidates 'auto)
-      :commands company-lsp)
-    ;; (lsp-ui-flycheck-enable)
-
-    (use-package lsp-ui
-      ;; :disabled
-      :commands lsp-ui-mode
-      :bind (:map lsp-mode-map
-                  ("M-d" . 'lsp-ui-doc-show))
-      :init (setq lsp-ui-doc-enable nil
-                  lsp-ui-doc-use-webkit nil
-                  lsp-ui-doc-delay 0.2
-                  lsp-ui-doc-include-signature t
-                  lsp-ui-doc-position 'at-point
-                  lsp-ui-doc-border (face-foreground 'default)
-                  lsp-eldoc-enable-hover nil ; Disable eldoc displays in minibuffer
-
-                  lsp-ui-sideline-enable t
-                  lsp-ui-sideline-show-hover nil
-                  lsp-ui-sideline-show-diagnostics nil
-                  lsp-ui-sideline-update-mode 'line
-                  lsp-ui-sideline-delay 1
-                  lsp-ui-sideline-show-code-actions nil
-                  lsp-ui-sideline-ignore-duplicate nil
-                  )
-      )
-
-
-    ;; ;; Origami integration
-    ;; (use-package lsp-origami
-    ;;   :after lsp-mode
-    ;;   :hook (origami-mode . lsp-origami-mode))
-
-    ;; Microsoft python-language-server support
-
-
-
-
-    ;; (use-package lsp-pyright
-    ;;   :quelpa ( lsp-pyright
-    ;;             :fetcher github 
-    ;;             :repo emacs-lsp/lsp-pyright)
-    ;;   :hook (python-mode . (lambda ()
-    ;;                          (require 'lsp-pyright)
-    ;;                          (setq flycheck-checker 'python-pylint
-    ;;                                python-mode-skeleton-abbrev-table nil
-    ;;                                ;; python-skeleton-autoinsert t
-    ;;                                )
-    ;;                          (face-remap-add-relative
-    ;;                           'font-lock-variable-name-face
-    ;;                           '((:foreground "#383a42" :underline t))
-    ;;                           font-lock-variable-name-face)
-    ;;                          (face-remap-add-relative
-    ;;                           'default
-    ;;                           '((:weight normal))
-    ;;                           )
-    ;;                          (lsp-deferred)
-    ;;                          ))
-    ;;   )
-
-
-
-
-    ;; lsp-java-generate-to-string - Generate toString method.
-    ;; lsp-java-generate-equals-and-hash-code - Generate equals and hashCode methods.
-    ;; lsp-java-generate-overrides - Generate method overrides
-    ;; lsp-java-generate-getters-and-setters - Generate getters and setters.
-
-    )
-
-  (use-package nox
-    ;; :disabled
-    :quelpa (nox
-             :fetcher github
-             :repo manateelazycat/nox)
-    ;; :ensure nil
-    ;; :load-path "/home/weiss/.emacs.d/local-package/nox/"
-    :init
-    (defvar is-nox-activate-p nil)
-    (advice-add 'nox-ensure :after (lambda () (interactive) (make-local-variable 'is-nox-activate-p) (setq is-nox-activate-p t)))
-    (setq nox-python-server "mspyls")
-    ;; (setq nox-python-server "pyls")
-    (setq nox-optimization-p nil)
-
-    :hook (
-           (python-mode . nox-ensure)
-           (go-mode . nox-ensure)
-           (nox-managed-mode-hook . ryo-modal-restart)
-           )
-    :bind (:map nox-mode-map
-                ("M-d" . nox-show-doc)
-                )
-    :ryo
-    (:mode 'nox-mode)
-    ("t" nox-rename)
-    ("u" nox-show-doc)  
-    :config
-    (setq nox-doc-tooltip-font-size "12"
-          nox-doc-tooltip-border-width 3)
-    ;; (setq nox-python-server 'pyls)
-    )
-
-
-  (use-package eglot
-    :disabled
-    :hook ((python-mode . eglot-ensure)
-           (java-mode . eglot-ensure)
-           )
-    )
-
-  (provide 'weiss-lsp)
-
-#+end_src
-
 *** start, bind
 #+begin_src elisp
   (use-package lsp-mode
@@ -5217,16 +5028,13 @@
     :diminish
     :commands lsp
     :hook (
-           ;; (python-mode . lsp-deferred)
            (java-mode . lsp-deferred)
            ;; (c++-mode . lsp-deferred)
-           ;; (sql-mode . lsp-deferred)
            )
     :bind (:map lsp-mode-map
                 ("M-p" . lsp-describe-thing-at-point)
                 ([remap xref-find-definitions] . lsp-find-definition)
                 ([remap xref-find-references] . lsp-find-references))
-    :defines (lsp-clients-python-library-directories lsp-rust-rls-server-command)
 #+end_src
 
 *** init
@@ -5260,8 +5068,8 @@
    lsp-enable-symbol-highlighting nil   ;; as above
    lsp-enable-on-type-formatting nil    ;; disable formatting on the fly
    lsp-modeline-code-actions-enable nil ;; keep modeline clean
-   lsp-modeline-diagnostics-enable nil  ;; as above
-   lsp-idle-delay 0.5                   ;; lazy refresh
+   lsp-modeline-diagnostics-enable t  ;; as above
+   lsp-idle-delay 0.1                   ;; lazy refresh
    ;; lsp-diagnostics-provider :flycheck   ;; prefer `flycheck'
    lsp-lens-enable t                    ;; enable lens
    lsp-auto-guess-root t                ;; auto guess root
@@ -5271,31 +5079,9 @@
    lsp-signature-doc-lines 2            ;; but dont take up more lines
    lsp-restart 'auto-restart  ;; auto restart lsp
    lsp-enable-completion-at-point nil    ;; Please note `company-lsp' is automatically enabled if installed
+   ;; lsp-completion-provider :capf
+   lsp-prefer-capf t
    )
-
-  ;; don't ping LSP lanaguage server too frequently
-  (defvar lsp-on-touch-time 0)
-  (defadvice lsp-on-change (around lsp-on-change-hack activate)
-    ;; don't run `lsp-on-change' too frequently
-    (when (> (- (float-time (current-time))
-                lsp-on-touch-time) 30) ;; 30 seconds
-      (setq lsp-on-touch-time (float-time (current-time)))
-      ad-do-it))
-
-#+end_src
-
-**** lsp-clients, company-lsp
-#+begin_src elisp
-  ;; For `lsp-clients'
-  (require 'lsp-clients)
-  (setq lsp-clients-python-library-directories '("/usr/local/" "/usr/"))
-  (unless (executable-find "rls")
-    (setq lsp-rust-rls-server-command '("rustup" "run" "stable" "rls")))
-
-  ;; Completion
-  (use-package company-lsp
-    :init (setq company-lsp-cache-candidates 'auto)
-    :commands company-lsp)
 #+end_src
 
 **** lsp-ui
@@ -5328,36 +5114,41 @@
 
 #+begin_src elisp
   (use-package lsp-java
-      ;; :disabled
-      :hook (java-mode . (lambda ()
-                           (require 'lsp-java)
-                           (make-local-variable 'lsp-diagnostic-package)
-                           (setq lsp-diagnostic-package :flycheck)
-                           ))
-      :init
-      ;; (setq lsp-java-jdt-download-url  "https://download.eclipse.org/jdtls/milestones/0.57.0/jdt-language-server-0.57.0-202006172108.tar.gz")
-      (setq
-       lsp-java-format-enabled nil
-       lsp-java-format-comments-enabled nil
-       lsp-java-format-settings-profile "GoogleStyle"
-       ;; java-format-settings-url "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml"
-       lsp-java-format-settings-url "/home/weiss/.emacs.d/local-package/eclipse-java-google-style.xml"
-       )
-      :ryo
-      (:mode 'java-mode)
-      ("u" lsp-rename)
-      ("t" (
-            ("t" lsp-java-generate-to-string)
-            ("e" lsp-java-generate-equals-and-hash-code)
-            ("o" lsp-java-generate-overrides)
-            ("g" lsp-java-generate-getters-and-setters)             
-            ))    
-      )
+    ;; :disabled
+    :hook (java-mode . (lambda ()
+                         (require 'lsp-java)
+                         (make-local-variable 'lsp-diagnostic-package)
+                         (setq lsp-diagnostic-package :flycheck)
+                         (lsp-completion-mode)
+                         ;; (lsp-ui-flycheck-enable t)
+                         ;; (lsp-ui-sideline-mode)
+                         ))
+    :requires (lsp-ui-flycheck lsp-ui-sideline)
+    :init
+    ;; (add-hook 'java-mode-hook 'lsp-completion-mode)
+    ;; (setq lsp-java-jdt-download-url  "https://download.eclipse.org/jdtls/milestones/0.57.0/jdt-language-server-0.57.0-202006172108.tar.gz")
+    (setq
+     lsp-java-format-enabled nil
+     lsp-java-format-comments-enabled nil
+     lsp-java-format-settings-profile "GoogleStyle"
+     ;; java-format-settings-url "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml"
+     lsp-java-format-settings-url "/home/weiss/.emacs.d/local-package/eclipse-java-google-style.xml"
+     )
+    :ryo
+    (:mode 'java-mode)
+    ("u" lsp-rename)
+    ("t" (
+          ("t" lsp-java-generate-to-string)
+          ("e" lsp-java-generate-equals-and-hash-code)
+          ("o" lsp-java-generate-overrides)
+          ("g" lsp-java-generate-getters-and-setters)             
+          ))    
+    )
 #+end_src
 
 *** out of use
 
-#+begin_src elisp
+#+begin_src elisp :tangle no
   (use-package lsp-mssql
     :disabled
     :quelpa (lsp-mssql
@@ -5423,6 +5214,19 @@
     )
 #+end_src
 
+**** company-lsp
+#+begin_src elisp
+  (use-package company-lsp
+    :disabled
+    :after  company
+    :ensure t
+    :config
+    (add-hook 'java-mode-hook (lambda () (push 'company-lsp company-backends)))
+    (setq company-lsp-enable-snippet t
+          company-lsp-cache-candidates t)
+    (push 'java-mode company-global-modes))
+#+end_src
+
 *** end
 #+begin_src elisp
 )
@@ -5484,15 +5288,25 @@
                                      (weiss-overriding-define-key
                                       '(
                                         ("n" mc/mark-more-like-this-extended)
+
+                                        ("0" mc/insert-numbers)
+                                        ("1" mc/cycle-backward)
+                                        ("2" mc/cycle-forward)
+
                                         ("j" next-line)
                                         ("k" previous-line)
                                         ("l" right-char)
                                         ("i" left-char)
-                                        ("1" mc/cycle-backward)
-                                        ("2" mc/cycle-forward)
-                                        (";" right-charmc-hide-unmatched-lines-mode)
-                                        ("u" left-charmc/mark-all-like-this-dwim)
                                         ("s" set-mark-command)
+
+                                        (";" mc-hide-unmatched-lines-mode)
+                                        ("<up>" mc/mark-previous-like-this)
+                                        ("K" mc/skip-to-previous-like-this)
+                                        ("M-k" mc/unmark-previous-like-this)
+                                        ("<down>" mc/mark-next-like-this)
+                                        ("J" mc/skip-to-next-like-this)
+                                        ("M-j" mc/unmark-next-like-this)
+                                        ;; ("<up>" mc/mark-previous-like-this)
                                         )
                                       )
                                      (weiss-overriding-ryo-mode t)
@@ -5591,31 +5405,40 @@
 :header-args: :tangle completion/weiss-completion.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
 :END:
 #+begin_src elisp
-    ;;; Completion
+  ;;; yasnippet
+  (defun +yas-expand-or-company-complete ()
+    (interactive)
+    (or (yas/expand)
+        (call-interactively #'company-indent-or-complete-common)))
 
   (use-package company
+    :hook (company-mode . company-tng-mode)
     :bind
-    (
-     ;; :map company-mode-map
-     ;; ("<tab>" . '+insert-tab)
-     :map company-active-map
-     ("9" . 'weiss-company-select-next-or-toggle-main-frame)
-     ("0" . 'weiss-company-select-previous-other-window)
-     ("<tab>" . 'company-complete-common-or-cycle)
-     ("TAB" . 'company-complete-common-or-cycle)
-     ("RET")
-     ("<return>")
-     ("SPC")
-     :map company-template-nav-map
-     ("RET" . 'company-template-forward-field)
-     ("<return>" . 'company-template-forward-field)
-     ("TAB")
-     ("<tab>"))
+    (:map company-mode-map
+          ("<tab>" . '+yas-expand-or-company-complete)
+          ("TAB" . '+yas-expand-or-company-complete))
+    (:map company-active-map
+          ("<tab>" . 'company-complete-common-or-cycle)
+          ("TAB" . 'company-complete-common-or-cycle)
+          ("9" . 'weiss-company-select-next-or-toggle-main-frame)
+          ("0" . 'weiss-company-select-previous-other-window)
+          ("<escape>")
+          ("RET")
+          ("<return>")
+          ("SPC"))
+    (:map company-template-nav-map
+          ("RET" . 'company-template-forward-field)
+          ("<return>" . 'company-template-forward-field)
+          ("TAB")
+          ("<tab>"))
     :init
     (require 'company-template)
     :hook
-    (after-init . global-company-mode)
+    ((prog-mode . company-mode)
+     (conf-mode . company-mode)
+     (eshell-mode . company-mode))
     :custom
+    (company-tng-auto-configure nil)
     (company-frontends '(company-tng-frontend
                          company-pseudo-tooltip-frontend
                          company-echo-metadata-frontend))
@@ -5633,17 +5456,17 @@
        delete-backward-char
        weiss-before-insert-mode
        ))
-    (company-idle-delay 0.01)
+    (company-idle-delay 0.1)
+    (company-tooltip-limit 10)
+    (company-tooltip-align-annotations t)
+    (company-tooltip-width-grow-only t)
+    (company-tooltip-idle-delay 0.1)
     (company-minimum-prefix-length 3)
     (company-dabbrev-downcase nil)
     (company-abort-manual-when-too-short t)
     (company-require-match nil)
     (company-global-modes '(not dired-mode dired-sidebar-mode))
-    ;; :config
-    ;; (setq completion-ignore-case t)
-    ;; (use-package company-auctex)
-    ;; (require 'company-sql)
-    ;; (add-to-list 'company-backends 'company-sql)
+    (company-tooltip-margin 1)
     :config
     (defun weiss-company-select-next-or-toggle-main-frame ()
       "DOCSTRING"
@@ -5661,14 +5484,26 @@
         ))
     )
 
-    ;;; yasnippet
   (use-package yasnippet
-    :diminish yas-minor-mode
-    :hook (after-init . yas-global-mode)
-    :config (use-package yasnippet-snippets))
+    :bind
+    (:map
+     yas-keymap
+     ("<escape>")
+     ("RET" . 'yas-next-field-or-maybe-expand)
+     ("<return>" . 'yas-next-field-or-maybe-expand)
+     ("M-RET" . 'yas-expand-snippet)
+     ("M-<return>" . 'yas-expand-snippet)
+     ("S-<return>" . 'yas-prev-field)
+     ("TAB")
+     ("S-TAB")
+     ("<tab>"))
+    :config
+    (let ((inhibit-message t)) (yas-reload-all))
+    :init
+    (add-hook 'prog-mode-hook #'yas-minor-mode))
+
 
   (provide 'weiss-completion)
-
 #+end_src
 
 * lang
@@ -6418,6 +6253,104 @@
                   (setq dired-auto-revert-buffer 't)))
 #+end_src
 
+*** keybinding 
+#+begin_src elisp
+  :ryo
+  (:mode 'dired-mode)
+  ("SPC" (
+          ("l" (
+                ("r" dired-toggle-read-only
+                 :first (revert-buffer)
+                 :then (ryo-modal-restart)  
+                 )
+                ("v" weiss-dired-single-handed-mode)
+                )))
+   )
+  ("g" (
+        ("d" ignore
+         :then ((lambda()(interactive)(find-file "/home/weiss/Downloads")))
+         :name "Downloads"
+         )
+        ("v"  ignore
+         :then ((lambda()(interactive)(find-file "/home/weiss/Documents/Vorlesungen")))
+         :name "Vorlesungen"
+         )
+        ("m"  ignore
+         :then ((lambda()(interactive)(find-file "/run/media/weiss")))
+         :name "usb"
+         )
+        ("p"  ignore
+         :then ((lambda()(interactive)(find-file "/run/media/weiss/Seagate_Backup/porn/")))
+         :name "Seagate_Backup"
+         )
+        ("c"  ignore
+         :then ((lambda()(interactive)(find-file "/home/weiss/.config")))
+         :name "config"
+         )
+        ("h"  ignore
+         :then ((lambda()(interactive)(find-file "/home/weiss/")))
+         :name "home"
+         )
+        ("t"  ignore
+         :then ((lambda()(interactive)(find-file "/home/weiss/.telega/cache/")))
+         :name "telega"
+         )
+        ("s"  ignore
+         :then ((lambda()(interactive)(find-file "/ssh:root@95.179.243.76:/usr/config/.aria2c/downloads/")))
+         :name "vultr"
+         )
+        ("k"  ignore
+         :then ((lambda()(interactive)(find-file "/docker:14a4442774f8:/home/ubuntu/catkin_ws/src/")))
+         :name "catkin_ws"
+         )
+        ("e"  ignore
+         :then ((lambda()(interactive)(find-file "/home/weiss/.emacs.d")))       
+         :name ".emacs.d"        
+         )))
+  ("RET" dired-find-file)
+  (","  beginning-of-buffer)
+  ("."  end-of-buffer)
+  (";"  dired-maybe-insert-subdir)
+  ("5"  revert-buffer)
+  ("8"  dired-hide-details-mode)
+  ("a"  dired-sort-toggle-or-edit)
+  ("A"  hydra-dired-filter-actress/body)
+  ("c"  dired-do-copy)
+  ("C"  weiss-dired-rsync)
+  ("d"  dired-do-delete)
+  ("f"  dired-toggle-read-only :exit t :first '(revert-buffer))
+  ("j"  dired-next-line)
+  ("h"  dired-omit-mode)
+  ("k"  dired-previous-line)
+  ("i"  ignore
+   :then '((lambda()(interactive)(find-alternate-file "..")))
+   :name "up directory")
+  ("l"  dired-find-alternate-file)
+  ("L"  dired-do-symlink)
+  ("m"  dired-mark)
+  ("o"  xah-open-in-external-app)
+  ("O"  eaf-open-this-from-dired)
+  ("p"  peep-dired)
+  ("q"  quit-window)
+  ("r"  dired-do-rename)
+  ("S"  hydra-dired-quick-sort/body)
+  ("t"  dired-toggle-marks)
+  ("u"  dired-unmark)
+  ("U"  dired-unmark-all-marks)
+  ("v"  weiss-dired-git-clone)
+  ("w" ignore
+   :then '((lambda()(interactive)(dired-copy-filename-as-kill 0)))
+   :name "copy filename")
+  ("x"  dired-do-flagged-delete)
+  ("z"  dired-do-compress)
+  ("Z"  dired-do-compress-to)
+  (:mode 'wdired-mode)
+  ("C-q" weiss-exit-wdired-mode)
+
+  (with-eval-after-load 'wdired
+    (define-key wdired-mode-map (kbd "C-q") 'weiss-exit-wdired-mode))
+#+end_src
+
 *** config
 #+begin_src elisp
   :config
@@ -6538,8 +6471,37 @@
     ;; :disabled
     :diminish
     :hook (dired-mode . weiss-show-icons-in-dired) 
-    ;; :hook (dired-mode . (lambda () (interactive) (message "path: %s" (string-match "x" dired-directory))))
-    )
+    (with-no-warnings
+      (advice-add #'dired-do-create-files :around #'all-the-icons-dired--refresh-advice)
+      (advice-add #'dired-create-directory :around #'all-the-icons-dired--refresh-advice)
+      (advice-add #'wdired-abort-changes :around #'all-the-icons-dired--refresh-advice))
+
+    (with-no-warnings
+      (defun my-all-the-icons-dired--refresh ()
+        "Display the icons of files in a dired buffer."
+        (all-the-icons-dired--remove-all-overlays)
+        ;; NOTE: don't display icons it too many items
+        (if (<= (count-lines (point-min) (point-max)) 1000)
+            (save-excursion
+              (goto-char (point-min))
+              (while (not (eobp))
+                (when (dired-move-to-filename nil)
+                  (let ((file (file-local-name (dired-get-filename 'relative 'noerror))))
+                    (when file
+                      (let ((icon (if (file-directory-p file)
+                                      (all-the-icons-icon-for-dir file
+                                                                  :face 'all-the-icons-dired-dir-face
+                                                                  :height 0.9
+                                                                  :v-adjust all-the-icons-dired-v-adjust)
+                                    (all-the-icons-icon-for-file file :height 0.9 :v-adjust all-the-icons-dired-v-adjust))))
+                        (if (member file '("." ".."))
+                            (all-the-icons-dired--add-overlay (point) "  \t")
+                          (all-the-icons-dired--add-overlay (point) (concat icon "\t")))))))
+                (forward-line 1)))
+          (message "Not display icons because of too many items.")))
+      (advice-add #'all-the-icons-dired--refresh :override #'my-all-the-icons-dired--refresh))
+  ;; :hook (dired-mode . (lambda () (interactive) (message "path: %s" (string-match "x" dired-directory))))
+  )
 
 #+end_src
 **** misc packages
@@ -6568,103 +6530,6 @@
   (require 'weiss-dired-single-handed-mode)
 
 #+end_src
-*** keybinding 
-#+begin_src elisp
-  :ryo
-  (:mode 'dired-mode)
-  ("SPC" (
-          ("l" (
-                ("r" dired-toggle-read-only
-                 :first (revert-buffer) :then (ryo-modal-restart)  
-                 )
-                ("v" weiss-dired-single-handed-mode)
-                )))
-   )
-  ("g" (
-        ("d" ignore
-         :then ((lambda()(interactive)(find-file "/home/weiss/Downloads")))
-         :name "Downloads"
-         )
-        ("v"  ignore
-         :then ((lambda()(interactive)(find-file "/home/weiss/Documents/Vorlesungen")))
-         :name "Vorlesungen"
-         )
-        ("m"  ignore
-         :then ((lambda()(interactive)(find-file "/run/media/weiss")))
-         :name "usb"
-         )
-        ("p"  ignore
-         :then ((lambda()(interactive)(find-file "/run/media/weiss/Seagate_Backup/porn/")))
-         :name "Seagate_Backup"
-         )
-        ("c"  ignore
-         :then ((lambda()(interactive)(find-file "/home/weiss/.config")))
-         :name "config"
-         )
-        ("h"  ignore
-         :then ((lambda()(interactive)(find-file "/home/weiss/")))
-         :name "home"
-         )
-        ("t"  ignore
-         :then ((lambda()(interactive)(find-file "/home/weiss/.telega/cache/")))
-         :name "telega"
-         )
-        ("s"  ignore
-         :then ((lambda()(interactive)(find-file "/ssh:root@95.179.243.76:/usr/config/.aria2c/downloads/")))
-         :name "vultr"
-         )
-        ("k"  ignore
-         :then ((lambda()(interactive)(find-file "/docker:14a4442774f8:/home/ubuntu/catkin_ws/src/")))
-         :name "catkin_ws"
-         )
-        ("e"  ignore
-         :then ((lambda()(interactive)(find-file "/home/weiss/.emacs.d")))       
-         :name ".emacs.d"        
-         )))
-  ("RET" dired-find-file)
-  (","  beginning-of-buffer)
-  ("."  end-of-buffer)
-  (";"  dired-maybe-insert-subdir)
-  ("5"  revert-buffer)
-  ("8"  dired-hide-details-mode)
-  ("a"  dired-sort-toggle-or-edit)
-  ("A"  hydra-dired-filter-actress/body)
-  ("c"  dired-do-copy)
-  ("C"  weiss-dired-rsync)
-  ("d"  dired-do-delete)
-  ("f"  dired-toggle-read-only :exit t :first (revert-buffer))
-  ("j"  dired-next-line)
-  ("h"  dired-omit-mode)
-  ("k"  dired-previous-line)
-  ("i"  ignore
-   :then '((lambda()(interactive)(find-alternate-file "..")))
-   :name "up directory")
-  ("l"  dired-find-alternate-file)
-  ("L"  dired-do-symlink)
-  ("m"  dired-mark)
-  ("o"  xah-open-in-external-app)
-  ("O"  eaf-open-this-from-dired)
-  ("p"  peep-dired)
-  ("q"  quit-window)
-  ("r"  dired-do-rename)
-  ("S"  hydra-dired-quick-sort/body)
-  ("t"  dired-toggle-marks)
-  ("u"  dired-unmark)
-  ("U"  dired-unmark-all-marks)
-  ("v"  weiss-dired-git-clone)
-  ("w" ignore
-   :then '((lambda()(interactive)(dired-copy-filename-as-kill 0)))
-   :name "copy filename")
-  ("x"  dired-do-flagged-delete)
-  ("z"  dired-do-compress)
-  ("Z"  dired-do-compress-to)
-  (:mode 'wdired-mode)
-  ("C-q" weiss-exit-wdired-mode)
-
-  (with-eval-after-load "wdired"
-    (define-key wdired-mode-map (kbd "C-q") 'weiss-exit-wdired-mode))
-#+end_src
-
 *** end
 #+begin_src elisp
   )
@@ -7701,7 +7566,7 @@
           '(
             ("Duden" "Duden" "duden" t)
             ("新德汉词典" "新德汉词典" "xindehan" t)
-            ;; ("牛津现代英汉双解词典" "牛津现代英汉双解词典" nil t)
+            ("牛津现代英汉双解词典" "牛津现代英汉双解词典" nil t)
             ("niujing"    "牛津高阶英汉双解"  "oald" t)
             ("21shiji"    "21世纪英汉汉英双向词典" "21cen" t)
             ("21shjikj"   "21世纪双语科技词典"  nil t)))
@@ -10347,12 +10212,7 @@
       (other-window 1)
       )
     )
-#+end_src
 
-#+RESULTS:
-: weiss-switch-buffer-or-otherside-frame-without-top
-**** weiss-buffer-frame-change-hook
-#+begin_src elisp 
   (defun get-frame-name (&optional frame)
     "Return the string that names FRAME (a frame).  Default is selected frame."
     (unless frame (setq frame (selected-frame)))
@@ -10374,7 +10234,12 @@
           (t (error
               "Function `get-frame-name': Arg neither a string nor a frame: `%s'"
               frame))))
+#+end_src
 
+#+RESULTS:
+: weiss-switch-buffer-or-otherside-frame-without-top
+**** weiss-buffer-frame-change-hook
+#+begin_src elisp 
   (defun weiss-after-change-frame-or-window (&optional a b c)
     "run after change frame or window"
     (interactive)
@@ -10409,6 +10274,7 @@
                      fundamental-mode-hook
                      dired-mode-hook
                      special-mode-hook
+                     conf-mode-hook
                      )))
     (dolist (x hook-list)
       (add-hook x 'weiss-after-major-mode))
@@ -10943,8 +10809,9 @@
         (goto-char (point-min)))))
 
   (defun weiss-refresh ()
-    "DOCSTRING"
+    "let flycheck refresh"
     (interactive)
+    (save-buffer)
     (when flycheck-mode (flycheck-buffer))
     )
 
@@ -10966,12 +10833,13 @@
     (cond
      ((or (eq major-mode 'xah-elisp-mode) (eq major-mode 'emacs-lisp-mode)) (eval-buffer))
      ((string= (file-name-directory (buffer-file-name)) "/home/weiss/KaRat/datenbank/")
-      (shell-command-to-string "javac -Werror  QuizzesSearch.java")
-      (message "%s" (shell-command-to-string "java -cp postgresql-42.2.18.jar: QuizzesSearch"))
+      (message "compile: %s" (shell-command-to-string "javac -Werror -cp '.:commons-io-2.8.0.jar' QuizzesSearch.java"))
+      (message "output: %s" (shell-command-to-string "java -cp postgresql-42.2.18.jar:commons-io-2.8.0.jar:. QuizzesSearch"))
       )
      (t (quickrun))
      )
     )
+
 
   (defun weiss--execute-kbd-macro (kbd-macro)
     "Execute KBD-MACRO."
@@ -10993,30 +10861,13 @@
   (use-package weiss-keybinding-functions)
   (use-package weiss-temp-insert-mode)
   (use-package weiss-overriding-ryo-mode)
-  (use-package hydra)
+
 
   (global-set-key (kbd "<backtab>") 'weiss-indent)
   (global-set-key (kbd "<S-delete>") (lambda () (interactive) (insert "\\")))
   (global-set-key (kbd "<f5>") 'revert-buffer)
 
   (define-key key-translation-map (kbd "<f12>") (kbd "C-g"))
-
-  (defhydra hydra-error (global-map "M-g")
-    "goto-error"
-    ("h" first-error "first")
-    ("j" next-error "next")
-    ("k" previous-error "prev")
-    ("v" recenter-top-bottom "recenter")
-    ("q" nil "quit"))
-
-  (defhydra hydra-resize-window (global-map "M-w")
-    "resize window"
-    ("k" shrink-window "height+")
-    ("j" enlarge-window "height-")
-    ("h" shrink-window-horizontally "width-")
-    ("l" enlarge-window-horizontally "width+")
-    ("q" nil "quit")
-    )
 
   (use-package ryo-modal
     :commands ryo-modal-mode
@@ -11057,6 +10908,74 @@
 
 #+RESULTS:
 : ryo-modal-mode
+*** hydra
+#+begin_src elisp
+  (use-package hydra)
+
+  (defhydra hydra-error (global-map "M-g")
+    "goto-error"
+    ("h" first-error "first")
+    ("j" next-error "next")
+    ("k" previous-error "prev")
+    ("v" recenter-top-bottom "recenter")
+    ("q" nil "quit"))
+
+  (defhydra hydra-resize-window (global-map "M-w")
+    "resize window"
+    ("k" shrink-window "height+")
+    ("j" enlarge-window "height-")
+    ("h" shrink-window-horizontally "width-")
+    ("l" enlarge-window-horizontally "width+")
+    ("q" nil "quit")
+    )
+  (defhydra hydra-multiple-cursors-weiss (global-map "M-c" :hint nil)
+    "
+       ^Up^            ^Down^        ^Miscellaneous^
+  ----------------------------------------------
+  [_p_]   Next    [_n_]   Next    [_l_] Edit lines
+  [_P_]   Skip    [_N_]   Skip    [_a_] Mark all
+  [_M-p_] Unmark  [_M-n_] Unmark  [_q_] Quit"
+    ("l" mc/edit-lines :exit t)
+    ("a" mc/mark-all-like-this :exit t)
+    ("n" mc/mark-next-like-this)
+    ("3" next-line)
+    ("N" mc/skip-to-next-like-this)
+    ("M-n" mc/unmark-next-like-this)
+    ("p" mc/mark-previous-like-this)
+    ("P" mc/skip-to-previous-like-this)
+    ("M-p" mc/unmark-previous-like-this)
+    ("q" nil))
+
+  (defun weiss-test ()
+    "DOCSTRING"
+    (interactive)
+    (set-temporary-overlay-map mc/mark-more-like-this-extended-keymap t))
+
+  (defhydra hydra-multiple-cursors (:color blue :hint nil)
+    "
+   Up^^             Down^^           Miscellaneous           % 2(mc/num-cursors) cursor%s(if (> (mc/num-cursors) 1) \"s\" \"\")
+  ------------------------------------------------------------------
+   [_p_]   Next     [_n_]   Next     [_l_] Edit lines  [_0_] Insert numbers
+   [_P_]   Skip     [_N_]   Skip     [_a_] Mark all    [_A_] Insert letters
+   [_M-p_] Unmark   [_M-n_] Unmark   [_s_] Search
+   [Click] Cursor at point       [_q_] Quit"
+    ("l" mc/edit-lines :exit t)
+    ("a" mc/mark-all-like-this :exit t)
+    ("n" mc/mark-next-like-this)
+    ("N" mc/skip-to-next-like-this)
+    ("M-n" mc/unmark-next-like-this)
+    ("p" mc/mark-previous-like-this)
+    ("P" mc/skip-to-previous-like-this)
+    ("M-p" mc/unmark-previous-like-this)
+    ("s" mc/mark-all-in-region-regexp :exit t)
+    ("0" mc/insert-numbers :exit t)
+    ("A" mc/insert-letters :exit t)
+    ("<mouse-1>" mc/add-cursor-on-click)
+    ;; Help with click recognition in this hydra
+    ("<down-mouse-1>" ignore)
+    ("<drag-mouse-1>" ignore)
+    ("q" nil))
+#+end_src
 *** quick-insert
 #+begin_src elisp
   (defvar quick-insert-new-line nil)
@@ -11458,14 +11377,16 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
                  ("m"  shell-command)
                  ("n"  display-line-numbers-mode)
                  ("p"  sql-postgres)
-                 ("r"  weiss-dired-toggle-read-only :exit t)
+                 ("r"  dired-toggle-read-only :exit t)
                  ("s"  sudo-edit)
                  ("w"  toggle-word-wrap)
                  ))
            ("m"  dired-jump)
            ("n"  end-of-buffer)
            ("o" (
-                 ("n" mc/mark-more-like-this-extended)
+                 ("n" mc/mark-next-like-this)
+                 ("a" mc/mark-all-like-this)
+                 ("SPC" hydra-multiple-cursors-weiss/body)
                  ))
            ("p"  recenter-top-bottom)
            ("q"  xah-fill-or-unfill)
@@ -11546,60 +11467,37 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
           (recentf-cleanup)))
       (message ""))
     :init
-    (setq weiss-reduce-recentf-file-path-alist
-          '(
-            ("🅲🅻🅿" . "Compiler and Language-Processing Tools")
-            ("🆂🅲" . "scientififc computing")
-            ("🆅" . "Documents/Vorlesungen")
-            ("🅥" . "Nutstore Files/Vorlesungen")
-            ("🅹" . "src/main/java")
-            ("🅙🅣" . "src/test/java")
-            ))
+    ;; (setq weiss-reduce-recentf-file-path-alist
+    ;;       '(
+    ;;         ("🅲🅻🅿" . "Compiler and Language-Processing Tools")
+    ;;         ("🆂🅲" . "scientififc computing")
+    ;;         ("🆅" . "Documents/Vorlesungen")
+    ;;         ("🅥" . "Nutstore Files/Vorlesungen")
+    ;;         ("🅹" . "src/main/java")
+    ;;         ("🅙🅣" . "src/test/java")
+    ;;         ))
 
-    (defun weiss-reduce-file-path (filename &optional r)
-      "replace long file paths with symbol"
-      (interactive)
-      (let ((search-str)
-            (replace-str))
-        (dolist (x weiss-reduce-recentf-file-path-alist)
-          (if r
-              (setq search-str (car x) 
-                    replace-str (cdr x))
-            (setq search-str (cdr x) 
-                  replace-str (car x)))      
-          (setq filename (replace-regexp-in-string search-str replace-str filename t))
-          )
-        )  
-      filename
-      )
-  
-    (add-to-list 'recentf-filename-handlers 'abbreviate-file-name)
+    ;; (defun weiss-reduce-file-path (filename &optional r)
+    ;;   "replace long file paths with symbol"
+    ;;   (interactive)
+    ;;   (let ((search-str)
+    ;;         (replace-str))
+    ;;     (dolist (x weiss-reduce-recentf-file-path-alist)
+    ;;       (if r
+    ;;           (setq search-str (car x) 
+    ;;                 replace-str (cdr x))
+    ;;         (setq search-str (cdr x) 
+    ;;               replace-str (car x)))      
+    ;;       (setq filename (replace-regexp-in-string search-str replace-str filename t))
+    ;;       )
+    ;;     )  
+    ;;   filename
+    ;;   )
+
+    ;; (add-to-list 'recentf-filename-handlers 'abbreviate-file-name)
     (load (weiss--get-config-file-path "recentf"))
     (setq recentf-save-file (weiss--get-config-file-path "recentf"))
     :config
-    (defun recentf-cleanup ()
-      "Cleanup the recent list.
-  That is, remove duplicates, non-kept, and excluded files."
-      (interactive)
-      (message "Cleaning up the recentf list...")
-      (let ((n 0)
-            (ht (make-hash-table
-                 :size recentf-max-saved-items
-                 :test 'equal))
-            newlist key)
-        (dolist (f recentf-list)
-          (setq f (weiss-reduce-file-path (recentf-expand-file-name f) t)
-                key (if recentf-case-fold-search (downcase f) f))
-          (if (and (recentf-include-p f)
-                   (recentf-keep-p f)
-                   (not (gethash key ht)))
-              (progn
-                (push (weiss-reduce-file-path f) newlist)
-                (puthash key t ht))
-            (setq n (1+ n))
-            (message "File %s removed from the recentf list" f)))
-        (message "Cleaning up the recentf list...done (%d removed)" n)
-        (setq recentf-list (nreverse newlist))))
     (run-at-time nil (* 5 60) 'snug/recentf-save-list-silence)
     (run-at-time nil (* 5 60) 'snug/recentf-cleanup-silence)
     (setq

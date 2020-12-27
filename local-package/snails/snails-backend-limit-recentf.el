@@ -112,7 +112,9 @@
 
  :candidate-do
  (lambda (candidate)
-   (find-file (weiss-reduce-file-path candidate t))))
+   (find-file candidate)))
+;; (find-file (weiss-reduce-file-path candidate t))))
+
 
 (provide 'snails-backend-limit-recentf)
 

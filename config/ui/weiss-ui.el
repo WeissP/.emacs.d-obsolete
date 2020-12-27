@@ -1,4 +1,10 @@
 ;; -*- lexical-binding: t -*-
+;; themes
+
+;; [[file:~/.emacs.d/config/emacs-config.org::*themes][themes:1]]
+(use-package doom-themes)
+;; themes:1 ends here
+
 ;; format/indent
 
 ;; [[file:~/.emacs.d/config/emacs-config.org::*format/indent][format/indent:1]]

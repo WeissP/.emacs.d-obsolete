@@ -22,6 +22,105 @@
                 (setq dired-auto-revert-buffer 't)))
 ;; hook:1 ends here
 
+;; keybinding 
+
+;; [[file:~/.emacs.d/config/emacs-config.org::*keybinding][keybinding:1]]
+:ryo
+(:mode 'dired-mode)
+("SPC" (
+        ("l" (
+              ("r" dired-toggle-read-only
+               :first (revert-buffer)
+               :then (ryo-modal-restart)  
+               )
+              ("v" weiss-dired-single-handed-mode)
+              )))
+ )
+("g" (
+      ("d" ignore
+       :then ((lambda()(interactive)(find-file "/home/weiss/Downloads")))
+       :name "Downloads"
+       )
+      ("v"  ignore
+       :then ((lambda()(interactive)(find-file "/home/weiss/Documents/Vorlesungen")))
+       :name "Vorlesungen"
+       )
+      ("m"  ignore
+       :then ((lambda()(interactive)(find-file "/run/media/weiss")))
+       :name "usb"
+       )
+      ("p"  ignore
+       :then ((lambda()(interactive)(find-file "/run/media/weiss/Seagate_Backup/porn/")))
+       :name "Seagate_Backup"
+       )
+      ("c"  ignore
+       :then ((lambda()(interactive)(find-file "/home/weiss/.config")))
+       :name "config"
+       )
+      ("h"  ignore
+       :then ((lambda()(interactive)(find-file "/home/weiss/")))
+       :name "home"
+       )
+      ("t"  ignore
+       :then ((lambda()(interactive)(find-file "/home/weiss/.telega/cache/")))
+       :name "telega"
+       )
+      ("s"  ignore
+       :then ((lambda()(interactive)(find-file "/ssh:root@95.179.243.76:/usr/config/.aria2c/downloads/")))
+       :name "vultr"
+       )
+      ("k"  ignore
+       :then ((lambda()(interactive)(find-file "/docker:14a4442774f8:/home/ubuntu/catkin_ws/src/")))
+       :name "catkin_ws"
+       )
+      ("e"  ignore
+       :then ((lambda()(interactive)(find-file "/home/weiss/.emacs.d")))       
+       :name ".emacs.d"        
+       )))
+("RET" dired-find-file)
+(","  beginning-of-buffer)
+("."  end-of-buffer)
+(";"  dired-maybe-insert-subdir)
+("5"  revert-buffer)
+("8"  dired-hide-details-mode)
+("a"  dired-sort-toggle-or-edit)
+("A"  hydra-dired-filter-actress/body)
+("c"  dired-do-copy)
+("C"  weiss-dired-rsync)
+("d"  dired-do-delete)
+("f"  dired-toggle-read-only :exit t :first '(revert-buffer))
+("j"  dired-next-line)
+("h"  dired-omit-mode)
+("k"  dired-previous-line)
+("i"  ignore
+ :then '((lambda()(interactive)(find-alternate-file "..")))
+ :name "up directory")
+("l"  dired-find-alternate-file)
+("L"  dired-do-symlink)
+("m"  dired-mark)
+("o"  xah-open-in-external-app)
+("O"  eaf-open-this-from-dired)
+("p"  peep-dired)
+("q"  quit-window)
+("r"  dired-do-rename)
+("S"  hydra-dired-quick-sort/body)
+("t"  dired-toggle-marks)
+("u"  dired-unmark)
+("U"  dired-unmark-all-marks)
+("v"  weiss-dired-git-clone)
+("w" ignore
+ :then '((lambda()(interactive)(dired-copy-filename-as-kill 0)))
+ :name "copy filename")
+("x"  dired-do-flagged-delete)
+("z"  dired-do-compress)
+("Z"  dired-do-compress-to)
+(:mode 'wdired-mode)
+("C-q" weiss-exit-wdired-mode)
+
+(with-eval-after-load 'wdired
+  (define-key wdired-mode-map (kbd "C-q") 'weiss-exit-wdired-mode))
+;; keybinding:1 ends here
+
 ;; config
 
 ;; [[file:~/.emacs.d/config/emacs-config.org::*config][config:1]]
@@ -149,8 +248,37 @@
   ;; :disabled
   :diminish
   :hook (dired-mode . weiss-show-icons-in-dired) 
-  ;; :hook (dired-mode . (lambda () (interactive) (message "path: %s" (string-match "x" dired-directory))))
-  )
+  (with-no-warnings
+    (advice-add #'dired-do-create-files :around #'all-the-icons-dired--refresh-advice)
+    (advice-add #'dired-create-directory :around #'all-the-icons-dired--refresh-advice)
+    (advice-add #'wdired-abort-changes :around #'all-the-icons-dired--refresh-advice))
+
+  (with-no-warnings
+    (defun my-all-the-icons-dired--refresh ()
+      "Display the icons of files in a dired buffer."
+      (all-the-icons-dired--remove-all-overlays)
+      ;; NOTE: don't display icons it too many items
+      (if (<= (count-lines (point-min) (point-max)) 1000)
+          (save-excursion
+            (goto-char (point-min))
+            (while (not (eobp))
+              (when (dired-move-to-filename nil)
+                (let ((file (file-local-name (dired-get-filename 'relative 'noerror))))
+                  (when file
+                    (let ((icon (if (file-directory-p file)
+                                    (all-the-icons-icon-for-dir file
+                                                                :face 'all-the-icons-dired-dir-face
+                                                                :height 0.9
+                                                                :v-adjust all-the-icons-dired-v-adjust)
+                                  (all-the-icons-icon-for-file file :height 0.9 :v-adjust all-the-icons-dired-v-adjust))))
+                      (if (member file '("." ".."))
+                          (all-the-icons-dired--add-overlay (point) "  \t")
+                        (all-the-icons-dired--add-overlay (point) (concat icon "\t")))))))
+              (forward-line 1)))
+        (message "Not display icons because of too many items.")))
+    (advice-add #'all-the-icons-dired--refresh :override #'my-all-the-icons-dired--refresh))
+;; :hook (dired-mode . (lambda () (interactive) (message "path: %s" (string-match "x" dired-directory))))
+)
 ;; ui:1 ends here
 
 ;; misc packages
@@ -178,104 +306,6 @@
 (require 'weiss-dired-filter)
 (require 'weiss-dired-single-handed-mode)
 ;; misc packages:1 ends here
-
-;; keybinding 
-
-;; [[file:~/.emacs.d/config/emacs-config.org::*keybinding][keybinding:1]]
-:ryo
-(:mode 'dired-mode)
-("SPC" (
-        ("l" (
-              ("r" dired-toggle-read-only
-               :first (revert-buffer) :then (ryo-modal-restart)  
-               )
-              ("v" weiss-dired-single-handed-mode)
-              )))
- )
-("g" (
-      ("d" ignore
-       :then ((lambda()(interactive)(find-file "/home/weiss/Downloads")))
-       :name "Downloads"
-       )
-      ("v"  ignore
-       :then ((lambda()(interactive)(find-file "/home/weiss/Documents/Vorlesungen")))
-       :name "Vorlesungen"
-       )
-      ("m"  ignore
-       :then ((lambda()(interactive)(find-file "/run/media/weiss")))
-       :name "usb"
-       )
-      ("p"  ignore
-       :then ((lambda()(interactive)(find-file "/run/media/weiss/Seagate_Backup/porn/")))
-       :name "Seagate_Backup"
-       )
-      ("c"  ignore
-       :then ((lambda()(interactive)(find-file "/home/weiss/.config")))
-       :name "config"
-       )
-      ("h"  ignore
-       :then ((lambda()(interactive)(find-file "/home/weiss/")))
-       :name "home"
-       )
-      ("t"  ignore
-       :then ((lambda()(interactive)(find-file "/home/weiss/.telega/cache/")))
-       :name "telega"
-       )
-      ("s"  ignore
-       :then ((lambda()(interactive)(find-file "/ssh:root@95.179.243.76:/usr/config/.aria2c/downloads/")))
-       :name "vultr"
-       )
-      ("k"  ignore
-       :then ((lambda()(interactive)(find-file "/docker:14a4442774f8:/home/ubuntu/catkin_ws/src/")))
-       :name "catkin_ws"
-       )
-      ("e"  ignore
-       :then ((lambda()(interactive)(find-file "/home/weiss/.emacs.d")))       
-       :name ".emacs.d"        
-       )))
-("RET" dired-find-file)
-(","  beginning-of-buffer)
-("."  end-of-buffer)
-(";"  dired-maybe-insert-subdir)
-("5"  revert-buffer)
-("8"  dired-hide-details-mode)
-("a"  dired-sort-toggle-or-edit)
-("A"  hydra-dired-filter-actress/body)
-("c"  dired-do-copy)
-("C"  weiss-dired-rsync)
-("d"  dired-do-delete)
-("f"  dired-toggle-read-only :exit t :first (revert-buffer))
-("j"  dired-next-line)
-("h"  dired-omit-mode)
-("k"  dired-previous-line)
-("i"  ignore
- :then '((lambda()(interactive)(find-alternate-file "..")))
- :name "up directory")
-("l"  dired-find-alternate-file)
-("L"  dired-do-symlink)
-("m"  dired-mark)
-("o"  xah-open-in-external-app)
-("O"  eaf-open-this-from-dired)
-("p"  peep-dired)
-("q"  quit-window)
-("r"  dired-do-rename)
-("S"  hydra-dired-quick-sort/body)
-("t"  dired-toggle-marks)
-("u"  dired-unmark)
-("U"  dired-unmark-all-marks)
-("v"  weiss-dired-git-clone)
-("w" ignore
- :then '((lambda()(interactive)(dired-copy-filename-as-kill 0)))
- :name "copy filename")
-("x"  dired-do-flagged-delete)
-("z"  dired-do-compress)
-("Z"  dired-do-compress-to)
-(:mode 'wdired-mode)
-("C-q" weiss-exit-wdired-mode)
-
-(with-eval-after-load "wdired"
-  (define-key wdired-mode-map (kbd "C-q") 'weiss-exit-wdired-mode))
-;; keybinding:1 ends here
 
 ;; end
 

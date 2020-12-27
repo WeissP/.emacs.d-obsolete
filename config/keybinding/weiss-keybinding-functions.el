@@ -1280,11 +1280,7 @@ Version 2018-06-04"
     (other-window 1)
     )
   )
-;; buffer/frame switching:1 ends here
 
-;; weiss-buffer-frame-change-hook
-
-;; [[file:~/.emacs.d/config/emacs-config.org::*weiss-buffer-frame-change-hook][weiss-buffer-frame-change-hook:1]]
 (defun get-frame-name (&optional frame)
   "Return the string that names FRAME (a frame).  Default is selected frame."
   (unless frame (setq frame (selected-frame)))
@@ -1306,7 +1302,11 @@ Version 2018-06-04"
         (t (error
             "Function `get-frame-name': Arg neither a string nor a frame: `%s'"
             frame))))
+;; buffer/frame switching:1 ends here
 
+;; weiss-buffer-frame-change-hook
+
+;; [[file:~/.emacs.d/config/emacs-config.org::*weiss-buffer-frame-change-hook][weiss-buffer-frame-change-hook:1]]
 (defun weiss-after-change-frame-or-window (&optional a b c)
   "run after change frame or window"
   (interactive)
@@ -1341,6 +1341,7 @@ Version 2018-06-04"
                    fundamental-mode-hook
                    dired-mode-hook
                    special-mode-hook
+                   conf-mode-hook
                    )))
   (dolist (x hook-list)
     (add-hook x 'weiss-after-major-mode))
@@ -1880,8 +1881,9 @@ Version 2019-12-02"
       (goto-char (point-min)))))
 
 (defun weiss-refresh ()
-  "DOCSTRING"
+  "let flycheck refresh"
   (interactive)
+  (save-buffer)
   (when flycheck-mode (flycheck-buffer))
   )
 
@@ -1903,12 +1905,13 @@ Version 2019-12-02"
   (cond
    ((or (eq major-mode 'xah-elisp-mode) (eq major-mode 'emacs-lisp-mode)) (eval-buffer))
    ((string= (file-name-directory (buffer-file-name)) "/home/weiss/KaRat/datenbank/")
-    (shell-command-to-string "javac -Werror  QuizzesSearch.java")
-    (message "%s" (shell-command-to-string "java -cp postgresql-42.2.18.jar: QuizzesSearch"))
+    (message "compile: %s" (shell-command-to-string "javac -Werror -cp '.:commons-io-2.8.0.jar' QuizzesSearch.java"))
+    (message "output: %s" (shell-command-to-string "java -cp postgresql-42.2.18.jar:commons-io-2.8.0.jar:. QuizzesSearch"))
     )
    (t (quickrun))
    )
   )
+
 
 (defun weiss--execute-kbd-macro (kbd-macro)
   "Execute KBD-MACRO."

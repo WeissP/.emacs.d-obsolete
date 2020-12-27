@@ -3,7 +3,8 @@
 
 ;; [[file:~/.emacs.d/config/emacs-config.org::*general][general:1]]
 (require 'org)
-(require 'latex)
+;; (require 'latex)
+;; (use-package latex)
 
 (add-to-list 'load-language-list '(latex . t))
 ;; general:1 ends here
@@ -12,16 +13,17 @@
 
 ;; [[file:~/.emacs.d/config/emacs-config.org::*packages][packages:1]]
 (use-package company-auctex
+  :disabled
   :hook (LaTeX-mode-hook)
   :config
   (company-auctex-init))
 
-(require 'ox-enumerate-latex) ;; for export
+;; (require 'ox-enumerate-latex) ;; for export
 
 (use-package org-edit-latex
   ;; :disabled
   :ensure nil
-  :load-path "/home/weiss/.emacs.d/local-package/"
+  ;; :load-path "/home/weiss/.emacs.d/local-package/"
   ;; :quelpa (org-edit-latex :fetcher github
   ;; :repo "et2010/org-edit-latex")
   :hook (org-mode . org-edit-latex-mode)
