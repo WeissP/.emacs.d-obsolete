@@ -87,6 +87,33 @@
 
 (recentf-mode 1)
 
+(setq weiss-reduce-recentf-file-path-alist
+      '(
+        ("🅲🅻🅿" . "Compiler-and-Language-Processing-Tools")
+        ("🆂🅲" . "scientififc computing")
+        ("🆅" . "Documents/Vorlesungen")
+        ("🅥" . "Nutstore Files/Vorlesungen")
+        ("🅹" . "src/main/java")
+        ("🅙🅣" . "src/test/java")
+        ))
+
+(defun weiss-reduce-file-path (filename &optional r)
+  "replace long file paths with symbol, if @r is non-nil, then replace symbol with path"
+  (interactive)
+  (let ((search-str)
+        (replace-str))
+    (dolist (x weiss-reduce-recentf-file-path-alist)
+      (if r
+          (setq search-str (car x) 
+                replace-str (cdr x))
+        (setq search-str (cdr x) 
+              replace-str (car x)))      
+      (setq filename (replace-regexp-in-string search-str replace-str filename t))
+      )
+    )  
+  filename
+  )
+
 (snails-create-sync-backend
  :name
  "LIMIT-RECENTF"
@@ -102,7 +129,7 @@
                (and (string-match "\\/$" file) (snails-match-input-p input (concat "di " file)))
                )
               )
-         (snails-add-candiate 'candidates file file)))
+         (snails-add-candiate 'candidates (weiss-reduce-file-path file) file)))
      (snails-sort-candidates input candidates 1 1)
      candidates))
 
