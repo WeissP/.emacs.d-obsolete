@@ -248,6 +248,7 @@
   ;; :disabled
   :diminish
   :hook (dired-mode . weiss-show-icons-in-dired) 
+  :config
   (with-no-warnings
     (advice-add #'dired-do-create-files :around #'all-the-icons-dired--refresh-advice)
     (advice-add #'dired-create-directory :around #'all-the-icons-dired--refresh-advice)

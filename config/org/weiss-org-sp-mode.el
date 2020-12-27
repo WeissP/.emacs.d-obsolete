@@ -32,6 +32,7 @@
                       ("l" weiss-org-sp-right)
                       ("r" weiss-org-refile)
                       ("v" org-paste-special)
+                      ("n" org-narrow-to-subtree)
                       ))
       (fun (lambda (cmd) (interactive) (when (and ryo-modal-mode (weiss-org-sp--special-p))  cmd))))
   (weiss-overriding-ryo-define-key weiss-org-sp-mode-map key-cmd-list fun)  
@@ -237,6 +238,57 @@ calling `self-insert-command'."
       (weiss-org-sp--ensure-visible)
       result))
   )
+(defun weiss-org-sp-right ()
+  "If cursor is at the begin of #+ block, edit it, otherwise go to the child element, if there is no more child:
+if on a: 
+todo keyword: cycle it between todo and done
+link: follow it
+otherwise, go to next special position
+"
+  (interactive)
+  (if (looking-at-p weiss-org-sp-sharp-begin)
+      (org-edit-special)  
+    (let ((pt (point))
+          result)
+      (save-restriction
+        (org-narrow-to-subtree)
+        (forward-char)
+        (if (re-search-forward weiss-org-sp-regex nil t)
+            (progn
+              (goto-char (match-beginning 0))
+              (setq result t))
+          (re-search-forward " ")
+          (let* ((context (org-element-context))
+                 (type (org-element-type context)))
+            (while (and context (memq type '(verbatim code bold italic underline strike-through subscript superscript)))
+              (setq context (org-element-property :parent context)
+                    type (org-element-type context)))
+            (pcase type
+              (`headline
+               (when (or (org-element-property :todo-type context)
+                         (org-element-property :scheduled context))
+                 (org-todo
+                  (if (eq (org-element-property :todo-type context) 'done)
+                      '"TODO"
+                    '"DONE")))
+               )
+              (`link
+               (let* ((lineage (org-element-lineage context '(link) t))
+                      (path (org-element-property :path lineage)))
+                 (if (or (equal (org-element-property :type lineage) "img")
+                         (and path (image-type-from-file-name path)))
+                     (+org--toggle-inline-images-in-subtree
+                      (org-element-property :begin lineage)
+                      (org-element-property :end lineage))
+                   (org-open-at-point))))
+              (_ ignore)
+              )
+            (goto-char pt)
+            )))
+      (weiss-org-sp--ensure-visible)
+      result))
+  )
+
 
 (defun weiss-org-sp-left ()
   "Move one level up backwards."
@@ -248,10 +300,10 @@ calling `self-insert-command'."
 
 
 (defun weiss-org-sp-switch ()
-  "Switch between special position and end of line"
+  "Switch between special position and normal position"
   (interactive)
   (if (weiss-org-sp--special-p)
-      (end-of-line)
+      (re-search-forward " ")
     (weiss-org-sp-backward)
     )
   )
