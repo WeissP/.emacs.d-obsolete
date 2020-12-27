@@ -1347,111 +1347,110 @@
 :header-args: :tangle snails/weiss-snails.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
 :END:
 #+begin_src elisp
-  (use-package snails
-    :load-path "/home/weiss/.emacs.d/snails"
-    :ensure nil
-    ;; :defer nil
-    :init
-    ;; (setq snails-fuz-library-load-status "load")
-    (setq snails-fame-width-proportion 0.8)
-    (setq snails-default-show-prefix-tips nil)
-    (setq btsow-adress "https://btsow.fun/search/")
-    (require 'snails-backend-browser-bookmark)
-    (require 'snails-backend-file-bookmark)
-    ;; (require 'snails-backend-eaf-youtube-search)
-    (require 'snails-backend-filter-buffer)
-    (require 'snails-backend-limit-recentf)
-    (require 'snails-backend-rg-curdir)
+    (use-package snails
+      :load-path "/home/weiss/.emacs.d/snails"
+      :ensure nil
+      ;; :defer nil
+      :init
+      ;; (setq snails-fuz-library-load-status "load")
+      (setq snails-fame-width-proportion 0.8)
+      (setq snails-default-show-prefix-tips nil)
+      (require 'snails-backend-browser-bookmark)
+      (require 'snails-backend-file-bookmark)
+      ;; (require 'snails-backend-eaf-youtube-search)
+      (require 'snails-backend-filter-buffer)
+      (require 'snails-backend-limit-recentf)
+      (require 'snails-backend-rg-curdir)
 
-    (define-key snails-mode-map [remap next-line] #'snails-select-next-item)
-    (define-key snails-mode-map [remap previous-line] #'snails-select-prev-item)
-    :config
-    ;; (add-to-list 'snails-backend-buffer-blacklist " *snails tips*")
-    ;; (add-to-list 'snails-backend-buffer-blacklist "*eaf*")
-    ;; (weiss--define-keys
-    ;;  (define-prefix-command 'snails-mode-map)
-    ;;  '(
-    ;;    ("C-j" . snails-select-next-item)
-    ;;    ("C-k" . snails-select-prev-item)
-    ;;    ("C-s" . snails-select-prev-backend)
-    ;;    ("C-d" . snails-select-next-backend)
-    ;;    ))
+      (define-key snails-mode-map [remap next-line] #'snails-select-next-item)
+      (define-key snails-mode-map [remap previous-line] #'snails-select-prev-item)
+      :config
+      ;; (add-to-list 'snails-backend-buffer-blacklist " *snails tips*")
+      ;; (add-to-list 'snails-backend-buffer-blacklist "*eaf*")
+      ;; (weiss--define-keys
+      ;;  (define-prefix-command 'snails-mode-map)
+      ;;  '(
+      ;;    ("C-j" . snails-select-next-item)
+      ;;    ("C-k" . snails-select-prev-item)
+      ;;    ("C-s" . snails-select-prev-backend)
+      ;;    ("C-d" . snails-select-next-backend)
+      ;;    ))
 
-    (defun snails-init-face-with-theme ()
-      "disable change face with theme"
-      (let* ((bg-mode (frame-parameter nil 'background-mode))
-             (default-background-color (face-background 'default))
-             (default-foreground-color (face-foreground 'default))
-             input-buffer-color
-             content-buffer-color)
-        (cond ((eq bg-mode 'dark)
-               (setq input-buffer-color (snails-color-blend default-background-color "#000000" 0.9))
-               (setq content-buffer-color (snails-color-blend default-background-color "#000000" 0.8)))
-              ((eq bg-mode 'light)
-               (setq input-buffer-color (snails-color-blend default-background-color "#000000" 0.95))
-               (setq content-buffer-color (snails-color-blend default-background-color "#000000" 0.9))))
-        (set-face-attribute 'snails-input-buffer-face nil
-                            :foreground default-foreground-color
-                            :background input-buffer-color)
+      (defun snails-init-face-with-theme ()
+        "disable change face with theme"
+        (let* ((bg-mode (frame-parameter nil 'background-mode))
+               (default-background-color (face-background 'default))
+               (default-foreground-color (face-foreground 'default))
+               input-buffer-color
+               content-buffer-color)
+          (cond ((eq bg-mode 'dark)
+                 (setq input-buffer-color (snails-color-blend default-background-color "#000000" 0.9))
+                 (setq content-buffer-color (snails-color-blend default-background-color "#000000" 0.8)))
+                ((eq bg-mode 'light)
+                 (setq input-buffer-color (snails-color-blend default-background-color "#000000" 0.95))
+                 (setq content-buffer-color (snails-color-blend default-background-color "#000000" 0.9))))
+          (set-face-attribute 'snails-input-buffer-face nil
+                              :foreground default-foreground-color
+                              :background input-buffer-color)
 
-        (set-face-attribute 'snails-content-buffer-face nil
-                            :foreground default-foreground-color
-                            :background content-buffer-color)
+          (set-face-attribute 'snails-content-buffer-face nil
+                              :foreground default-foreground-color
+                              :background content-buffer-color)
 
-        (set-face-attribute 'snails-select-line-face nil
-                            :slant 'italic
-                            :foreground "#383a42"
-                            :background "wheat" )
-        ))
+          (set-face-attribute 'snails-select-line-face nil
+                              :slant 'italic
+                              :foreground "#383a42"
+                              :background "wheat" )
+          ))
 
-    (defun snails-render-web-icon ()
-      (all-the-icons-faicon "globe"))
+      (defun snails-render-web-icon ()
+        (all-the-icons-faicon "globe"))
 
-    (defun snails-normal-backends ()
-      (interactive)
-      (setq snails-start-frame (selected-frame))
-      ;; (setq current-buf-name (buffer-name))
-      (snails '(
-                snails-backend-filter-buffer
-                snails-backend-file-bookmark
-                snails-backend-limit-recentf
-                ;; snails-backend-projectile
-                ))
-      ;; (select-frame-set-input-focus snails-start-frame)
+      (defun snails-normal-backends ()
+        (interactive)
+        (setq snails-start-frame (selected-frame))
+        ;; (setq current-buf-name (buffer-name))
+        (snails '(
+                  snails-backend-filter-buffer
+                  snails-backend-file-bookmark
+                  snails-backend-limit-recentf
+                  ;; snails-backend-projectile
+                  ))
+        ;; (select-frame-set-input-focus snails-start-frame)
+        )
+      ;; (snails '(snails-backend-rg))
+      ;; (snails '(snails-backend-current-buffer))
+      (setq snails-prefix-backends
+            '((";" '(snails-backend-directory-files snails-backend-projectile))
+              ("," '(snails-backend-imenu snails-backend-current-buffer snails-backend-rg-curdir))
+              ;; ("," '(snails-backend-imenu snails-backend-current-buffer))
+              ("!" '(snails-backend-search-pdf))
+              ))
+
+      (setq snails-default-backends
+            '(
+              snails-backend-filter-buffer
+              snails-backend-file-bookmark
+              snails-backend-limit-recentf
+              ;; snails-backend-projectile
+              ))
+
+      ;; (snails '(snails-backend-current-buffer))
+      (define-key snails-mode-map (kbd "C-j") #'snails-select-next-item)
+      (define-key snails-mode-map (kbd "C-k") #'snails-select-prev-item)
+      (define-key snails-mode-map (kbd "C-s") #'snails-select-prev-backend)
+      (define-key snails-mode-map (kbd "C-d") #'snails-select-next-backend)
+
+  (setq snails-fuz-library-load-status "unload")
+      ;; (require 'fuz)
+
+      ;; (add-hook 'snails-mode-hook 'weiss-snails-mode-setup)
+
+      ;; (snails '(snails-backend-filter-buffer))
+      ;; (string-match ".*" "*65ba-sdf1-sdf8-12gg-dsf8-xcv8-asds")
       )
-    ;; (snails '(snails-backend-rg))
-    ;; (snails '(snails-backend-current-buffer))
-    (setq snails-prefix-backends
-          '((";" '(snails-backend-directory-files snails-backend-projectile))
-            ("," '(snails-backend-imenu snails-backend-current-buffer snails-backend-rg-curdir))
-            ;; ("," '(snails-backend-imenu snails-backend-current-buffer))
-            ("!" '(snails-backend-search-pdf))
-            ))
 
-    (setq snails-default-backends
-          '(
-            snails-backend-filter-buffer
-            snails-backend-file-bookmark
-            snails-backend-limit-recentf
-            ;; snails-backend-projectile
-            ))
-
-    ;; (snails '(snails-backend-current-buffer))
-    (define-key snails-mode-map (kbd "C-j") #'snails-select-next-item)
-    (define-key snails-mode-map (kbd "C-k") #'snails-select-prev-item)
-    (define-key snails-mode-map (kbd "C-s") #'snails-select-prev-backend)
-    (define-key snails-mode-map (kbd "C-d") #'snails-select-next-backend)
-
-(setq snails-fuz-library-load-status "unload")
-    ;; (require 'fuz)
-
-    ;; (add-hook 'snails-mode-hook 'weiss-snails-mode-setup)
-
-    ;; (snails '(snails-backend-filter-buffer))
-    ;; (string-match ".*" "*65ba-sdf1-sdf8-12gg-dsf8-xcv8-asds")
-    )
-
-  (provide 'weiss-snails)
+    (provide 'weiss-snails)
 #+end_src
 
 ** out of use
@@ -6773,12 +6772,13 @@
                            ))
 
     :config
+    ;; (setq telega-server-libs-prefix "/usr/lib")
     (telega-notifications-mode 1)
-    :ryo
-    (:mode 'telega)
-    ("g" telega-chat-with)
-    ("n" next-line)
-    ("p" previous-line)
+    ;; :ryo
+    ;; (:mode 'telega)
+    ;; ("g" telega-chat-with)
+    ;; ("n" next-line)
+    ;; ("p" previous-line)
     :bind
     (
      :map telega-chat-mode-map
@@ -6835,16 +6835,6 @@
                                      magit-status-mode)))
                         nil
                       '(display-buffer-same-window)))))
-
-    ;; :hook
-    ;; (magit-mode . (lambda () (interactive)(message "%s" "magit mode") (ryo-modal-mode -1)))
-    ;; (magit-status-mode . (lambda () (interactive)(message "%s" "magit mode") (ryo-modal-mode -1)))
-    :bind
-    (:map magit-mode-map
-          ("9" . 'weiss-switch-to-otherside-top-frame)
-          ;; ("-" . 'weiss-switch-to-same-side-frame)
-          )
-
     :config
     ;; Access Git forges from Magit
     ;; (when (executable-find "cc")
@@ -8993,14 +8983,6 @@
   (defvar weiss-origin-mode-map (make-sparse-keymap))
   (defvar weiss-origin-keep-keys nil)
 
-  (defun weiss-origin-set-keep-keys (&optional keys)
-    "set keys that also used in origin mode, if @keys is nil, only set spc key"
-    (interactive)
-    (unless keys
-      (setq keys '("SPC")))
-    (setq weiss-origin-keep-keys (mapcar (lambda (key) (string-to-char (kbd key))) keys))
-    )
-
   (defun weiss-origin-mode-push-keymap ()
     "push origin-mode keymap"
     (interactive)
@@ -9012,7 +8994,7 @@
       (dolist (x ryo-keymap) 
         (if (eq x 'keymap)
             (setq is-keymap t)
-          (when (member (car x) weiss-origin-keep-keys)
+          (when (member (help-key-description (make-vector 1 (car x)) nil) weiss-origin-keep-keys)
             (push x weiss-origin-mode-map)          
             (when is-keymap
               (push 'keymap weiss-origin-mode-map))
@@ -9020,8 +9002,11 @@
           (setq is-keymap nil)
           )
         )    
-      (define-key weiss-origin-mode-map (kbd "SPC SPC") (lookup-key (symbol-value (keymap-symbol (current-local-map))) (kbd "SPC")))
       (push 'keymap weiss-origin-mode-map)
+      (mapc 
+       (lambda (key)       
+         (define-key weiss-origin-mode-map (kbd (format "SPC %s" key)) (lookup-key (symbol-value (keymap-symbol (current-local-map))) (kbd key)))
+         ) weiss-origin-keep-keys)
       (setq minor-mode-overriding-map-alist (assoc-delete-all 'weiss-origin-mode minor-mode-overriding-map-alist))
       (push `(weiss-origin-mode . ,weiss-origin-mode-map) minor-mode-overriding-map-alist)
       ))
@@ -9032,7 +9017,7 @@
     (if weiss-origin-mode
         (progn
           (unless weiss-origin-keep-keys
-            (weiss-origin-set-keep-keys))
+            (setq weiss-origin-keep-keys '("SPC" "9" "-")))
           (weiss-origin-mode-push-keymap)        
           )
       (setq minor-mode-overriding-map-alist (assoc-delete-all 'weiss-origin-mode minor-mode-overriding-map-alist))
@@ -10990,7 +10975,7 @@
     :init 
     (defvar weiss/disable-ryo-list)
     (setq weiss/disable-ryo-list
-          '(magit-mode magit-status-mode snails-mode ediff-mode))
+          '(magit-mode magit-status-mode snails-mode ediff-mode telega-chat-mode telega-root-mode))
 
     (defun weiss-check-ryo ()
       "enable or disable ryo by disable-ryo-list"
@@ -11025,7 +11010,12 @@
   (use-package weiss-temp-insert-mode)
   (use-package weiss-overriding-ryo-mode)
   (use-package weiss-origin-mode
-    :hook (magit-status-mode . weiss-origin-mode))
+    :hook
+    (
+     (magit-status-mode . weiss-origin-mode)
+     (telega-chat-mode . weiss-origin-mode)   
+     (telega-root-mode . weiss-origin-mode)   
+     ))
 #+end_src
 
 #+RESULTS:
@@ -11588,33 +11578,6 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
           (recentf-cleanup)))
       (message ""))
     :init
-    ;; (setq weiss-reduce-recentf-file-path-alist
-    ;;       '(
-    ;;         ("🅲🅻🅿" . "Compiler and Language-Processing Tools")
-    ;;         ("🆂🅲" . "scientififc computing")
-    ;;         ("🆅" . "Documents/Vorlesungen")
-    ;;         ("🅥" . "Nutstore Files/Vorlesungen")
-    ;;         ("🅹" . "src/main/java")
-    ;;         ("🅙🅣" . "src/test/java")
-    ;;         ))
-
-    ;; (defun weiss-reduce-file-path (filename &optional r)
-    ;;   "replace long file paths with symbol"
-    ;;   (interactive)
-    ;;   (let ((search-str)
-    ;;         (replace-str))
-    ;;     (dolist (x weiss-reduce-recentf-file-path-alist)
-    ;;       (if r
-    ;;           (setq search-str (car x) 
-    ;;                 replace-str (cdr x))
-    ;;         (setq search-str (cdr x) 
-    ;;               replace-str (car x)))      
-    ;;       (setq filename (replace-regexp-in-string search-str replace-str filename t))
-    ;;       )
-    ;;     )  
-    ;;   filename
-    ;;   )
-
     ;; (add-to-list 'recentf-filename-handlers 'abbreviate-file-name)
     (load (weiss--get-config-file-path "recentf"))
     (setq recentf-save-file (weiss--get-config-file-path "recentf"))

@@ -13,7 +13,6 @@
     ;; (setq snails-fuz-library-load-status "load")
     (setq snails-fame-width-proportion 0.8)
     (setq snails-default-show-prefix-tips nil)
-    (setq btsow-adress "https://btsow.fun/search/")
     (require 'snails-backend-browser-bookmark)
     (require 'snails-backend-file-bookmark)
     ;; (require 'snails-backend-eaf-youtube-search)

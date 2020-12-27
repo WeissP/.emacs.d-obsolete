@@ -6,14 +6,6 @@
 (defvar weiss-origin-mode-map (make-sparse-keymap))
 (defvar weiss-origin-keep-keys nil)
 
-(defun weiss-origin-set-keep-keys (&optional keys)
-  "set keys that also used in origin mode, if @keys is nil, only set spc key"
-  (interactive)
-  (unless keys
-    (setq keys '("SPC")))
-  (setq weiss-origin-keep-keys (mapcar (lambda (key) (string-to-char (kbd key))) keys))
-  )
-
 (defun weiss-origin-mode-push-keymap ()
   "push origin-mode keymap"
   (interactive)
@@ -25,7 +17,7 @@
     (dolist (x ryo-keymap) 
       (if (eq x 'keymap)
           (setq is-keymap t)
-        (when (member (car x) weiss-origin-keep-keys)
+        (when (member (help-key-description (make-vector 1 (car x)) nil) weiss-origin-keep-keys)
           (push x weiss-origin-mode-map)          
           (when is-keymap
             (push 'keymap weiss-origin-mode-map))
@@ -33,8 +25,11 @@
         (setq is-keymap nil)
         )
       )    
-    (define-key weiss-origin-mode-map (kbd "SPC SPC") (lookup-key (symbol-value (keymap-symbol (current-local-map))) (kbd "SPC")))
     (push 'keymap weiss-origin-mode-map)
+    (mapc 
+     (lambda (key)       
+       (define-key weiss-origin-mode-map (kbd (format "SPC %s" key)) (lookup-key (symbol-value (keymap-symbol (current-local-map))) (kbd key)))
+       ) weiss-origin-keep-keys)
     (setq minor-mode-overriding-map-alist (assoc-delete-all 'weiss-origin-mode minor-mode-overriding-map-alist))
     (push `(weiss-origin-mode . ,weiss-origin-mode-map) minor-mode-overriding-map-alist)
     ))
@@ -45,7 +40,7 @@
   (if weiss-origin-mode
       (progn
         (unless weiss-origin-keep-keys
-          (weiss-origin-set-keep-keys))
+          (setq weiss-origin-keep-keys '("SPC" "9" "-")))
         (weiss-origin-mode-push-keymap)        
         )
     (setq minor-mode-overriding-map-alist (assoc-delete-all 'weiss-origin-mode minor-mode-overriding-map-alist))

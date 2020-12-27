@@ -25,12 +25,13 @@
                          ))
 
   :config
+  ;; (setq telega-server-libs-prefix "/usr/lib")
   (telega-notifications-mode 1)
-  :ryo
-  (:mode 'telega)
-  ("g" telega-chat-with)
-  ("n" next-line)
-  ("p" previous-line)
+  ;; :ryo
+  ;; (:mode 'telega)
+  ;; ("g" telega-chat-with)
+  ;; ("n" next-line)
+  ;; ("p" previous-line)
   :bind
   (
    :map telega-chat-mode-map

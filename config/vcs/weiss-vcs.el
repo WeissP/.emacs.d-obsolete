@@ -23,16 +23,6 @@
                                    magit-status-mode)))
                       nil
                     '(display-buffer-same-window)))))
-
-  ;; :hook
-  ;; (magit-mode . (lambda () (interactive)(message "%s" "magit mode") (ryo-modal-mode -1)))
-  ;; (magit-status-mode . (lambda () (interactive)(message "%s" "magit mode") (ryo-modal-mode -1)))
-  :bind
-  (:map magit-mode-map
-        ("9" . 'weiss-switch-to-otherside-top-frame)
-        ;; ("-" . 'weiss-switch-to-same-side-frame)
-        )
-
   :config
   ;; Access Git forges from Magit
   ;; (when (executable-find "cc")

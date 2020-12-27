@@ -3211,33 +3211,6 @@
         (recentf-cleanup)))
     (message ""))
   :init
-  ;; (setq weiss-reduce-recentf-file-path-alist
-  ;;       '(
-  ;;         ("🅲🅻🅿" . "Compiler and Language-Processing Tools")
-  ;;         ("🆂🅲" . "scientififc computing")
-  ;;         ("🆅" . "Documents/Vorlesungen")
-  ;;         ("🅥" . "Nutstore Files/Vorlesungen")
-  ;;         ("🅹" . "src/main/java")
-  ;;         ("🅙🅣" . "src/test/java")
-  ;;         ))
-
-  ;; (defun weiss-reduce-file-path (filename &optional r)
-  ;;   "replace long file paths with symbol"
-  ;;   (interactive)
-  ;;   (let ((search-str)
-  ;;         (replace-str))
-  ;;     (dolist (x weiss-reduce-recentf-file-path-alist)
-  ;;       (if r
-  ;;           (setq search-str (car x) 
-  ;;                 replace-str (cdr x))
-  ;;         (setq search-str (cdr x) 
-  ;;               replace-str (car x)))      
-  ;;       (setq filename (replace-regexp-in-string search-str replace-str filename t))
-  ;;       )
-  ;;     )  
-  ;;   filename
-  ;;   )
-
   ;; (add-to-list 'recentf-filename-handlers 'abbreviate-file-name)
   (load (weiss--get-config-file-path "recentf"))
   (setq recentf-save-file (weiss--get-config-file-path "recentf"))

@@ -15,7 +15,7 @@
   :init 
   (defvar weiss/disable-ryo-list)
   (setq weiss/disable-ryo-list
-        '(magit-mode magit-status-mode snails-mode ediff-mode))
+        '(magit-mode magit-status-mode snails-mode ediff-mode telega-chat-mode telega-root-mode))
 
   (defun weiss-check-ryo ()
     "enable or disable ryo by disable-ryo-list"
@@ -50,7 +50,12 @@
 (use-package weiss-temp-insert-mode)
 (use-package weiss-overriding-ryo-mode)
 (use-package weiss-origin-mode
-  :hook (magit-status-mode . weiss-origin-mode))
+  :hook
+  (
+   (magit-status-mode . weiss-origin-mode)
+   (telega-chat-mode . weiss-origin-mode)   
+   (telega-root-mode . weiss-origin-mode)   
+   ))
 ;; general:1 ends here
 
 ;; hydra
