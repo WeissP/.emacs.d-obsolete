@@ -21,7 +21,7 @@
         ("<tab>" . 'company-complete-common-or-cycle)
         ("TAB" . 'company-complete-common-or-cycle)
         ("9" . 'weiss-company-select-next-or-toggle-main-frame)
-        ("0" . 'weiss-company-select-previous-other-window)
+        ("8" . (lambda () (interactive) (company-complete-common-or-cycle -1)))
         ("<escape>")
         ("RET")
         ("<return>")
@@ -73,7 +73,7 @@
     (interactive)
     (if ryo-modal-mode
         (weiss-switch-to-otherside-top-frame)
-      (company-select-next)
+      (company-complete-common-or-cycle 1)
       ))
   (defun weiss-company-select-previous-other-window ()
     "DOCSTRING"
