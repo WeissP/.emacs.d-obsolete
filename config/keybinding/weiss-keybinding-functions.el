@@ -1133,6 +1133,45 @@ Version 2018-06-04"
 (defvar weiss-right-frame-pos 1690 "the position of left bord of right frame")
 (defvar weiss-is-laptop nil)
 
+(defvar weiss-desktop-left-frame-alist
+  '((tool-bar-lines . 0)
+    (width . 104) ; chars
+    (height . 53) ; lines
+    (left . 1680)
+    (top . 0)))
+
+(defvar weiss-desktop-right-frame-alist
+  '((tool-bar-lines . 0)
+    (width . 104) ; chars
+    (height . 53) ; lines
+    (left . 2639)
+    (top . 0)))
+
+(defvar weiss-laptop-left-frame-alist
+  '((tool-bar-lines . 0)
+    (width . 104) ; chars
+    (height . 53) ; lines
+    (left . 0)
+    (top . 0)))
+
+(defvar weiss-laptop-right-frame-alist
+  '((tool-bar-lines . 0)
+    (width . 104) ; chars
+    (height . 53) ; lines
+    (left . 840)
+    (top . 0)))
+
+
+
+(defun weiss-new-frame ()
+  "make new frame on the same side of current frame or on the other side with prefix-arg"
+  (interactive)
+  (if (eq (weiss-is-frame-in-right-pos) current-prefix-arg)
+      (make-frame default-frame-alist)
+    (make-frame initial-frame-alist)
+    )
+  )
+
 (defun weiss-delete-other-window ()
   "If the current buffer ist org src file, switch between maximize window size(but not delete other windows) and half window size, else delete other windows"
   (interactive)
@@ -1149,8 +1188,12 @@ Version 2018-06-04"
   "DOCSTRING"
   (interactive)
   (if weiss-is-laptop
-      (setq weiss-right-frame-pos 835)  
-    (setq weiss-right-frame-pos 1690)  
+      (setq weiss-right-frame-pos 835
+            default-frame-alist weiss-laptop-left-frame-alist
+            initial-frame-alist weiss-laptop-right-frame-alist)  
+    (setq weiss-right-frame-pos 1690
+          default-frame-alist weiss-desktop-left-frame-alist
+          initial-frame-alist weiss-desktop-right-frame-alist)  
     )
   (setq weiss-is-laptop (not weiss-is-laptop))
   )
@@ -1447,6 +1490,30 @@ Version 2018-06-04"
 ;; save/open/new/copy
 
 ;; [[file:~/.emacs.d/config/emacs-config.org::*save/open/new/copy][save/open/new/copy:1]]
+(defun weiss-kill-append ()
+  "append region to kill-ring"
+  (interactive)
+  (when (use-region-p)
+    (let ((rbeg (region-beginning))
+          (rend (region-end))
+          )
+      (kill-append (buffer-substring-no-properties rbeg rend) nil)
+      )))
+
+(defun weiss-exchange-region-kill-ring-car ()
+  "insert pop current kill-ring and kill region"
+  (interactive)
+  (when (use-region-p)
+    (when-let ((rbeg (region-beginning))
+               (rend (region-end))
+               (rep (pop kill-ring))
+               )
+      (push (delete-and-extract-region rbeg rend) kill-ring)
+      (insert rep)
+      )
+    )
+  )
+
 (defun xah-make-backup-and-save ()
   "Backup of current file and save, or backup dired marked files.
 For detail, see `xah-make-backup'.

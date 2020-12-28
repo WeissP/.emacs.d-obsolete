@@ -108,9 +108,10 @@
 ("u"  dired-unmark)
 ("U"  dired-unmark-all-marks)
 ("v"  weiss-dired-git-clone)
-("w" ignore
- :then '((lambda()(interactive)(dired-copy-filename-as-kill 0)))
- :name "copy filename")
+("w"  weiss-dired-copy-file-name)
+;; ("w" ignore
+;;  :then '((lambda()(interactive)(dired-copy-filename-as-kill 0)))
+;;  :name "copy filename with path")
 ("x"  dired-do-flagged-delete)
 ("z"  dired-do-compress)
 ("Z"  dired-do-compress-to)
@@ -130,12 +131,24 @@
 ;; functions
 
 ;; [[file:~/.emacs.d/config/emacs-config.org::*functions][functions:1]]
+(defun weiss-dired-copy-file-name ()
+  "copy file name or copy path with prefix-arg"
+  (interactive)
+  (if current-prefix-arg
+      (let ((current-prefix-arg 0))
+        (dired-copy-filename-as-kill)
+        )
+    (let ((current-prefix-arg nil))
+      (dired-copy-filename-as-kill)      
+      )
+    ))
+
 (defun weiss-exit-wdired-mode ()
-    "exit wdired mode"
-    (interactive)
-    (wdired-finish-edit)
-    (dired-revert)
-    (ryo-modal-restart))
+  "exit wdired mode"
+  (interactive)
+  (wdired-finish-edit)
+  (dired-revert)
+  (ryo-modal-restart))
 
 (defun weiss-dired-delete-files-force ()
   "delete files without ask"

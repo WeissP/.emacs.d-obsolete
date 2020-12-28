@@ -5,20 +5,9 @@
 (winner-mode)
 (if (display-graphic-p)
     (progn
-      (setq default-frame-alist
-            '(
-              (tool-bar-lines . 0)
-              (width . 104) ; chars
-              (height . 53) ; lines
-              (left . 1680)
-              (top . 0)))
-      (setq initial-frame-alist
-            '(
-              (tool-bar-lines . 0)
-              (width . 104) ; chars
-              (height . 53) ; lines
-              (left . 2639)
-              (top . 0))))
+      (setq default-frame-alist weiss-desktop-left-frame-alist)
+      (setq initial-frame-alist weiss-desktop-right-frame-alist)
+      )
   (progn
     (setq initial-frame-alist '( (tool-bar-lines . 0)))
     (setq default-frame-alist '( (tool-bar-lines . 0)))))
@@ -3021,7 +3010,12 @@
          ("b"  xah-toggle-previous-letter-case)
          ("c"  (
                 ("k" save-buffers-kill-terminal)
+                ("a" weiss-kill-append)
                 ("p" xah-copy-file-path)
+                ("e" weiss-exchange-region-kill-ring-car)
+                ("f" ignore
+                 :name "copy file name"
+                 :then ((lambda () (interactive) (kill-new (buffer-file-name)))))
                 ("b" ignore
                  :name "copy whole buffer"
                  :then ((lambda () (interactive) (kill-new (buffer-string)))))
@@ -3159,7 +3153,7 @@
          ("w" (
                ("f"  xref-find-definitions)
                ("m"  list-bookmarks)
-               ("n"  make-frame-command)
+               ("n"  weiss-new-frame)
                ("t"  weiss-test)
                ("l"  xref-pop-marker-stack)
                ("y"  winner-undo)                  ;windows setting

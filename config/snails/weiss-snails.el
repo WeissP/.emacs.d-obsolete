@@ -14,9 +14,6 @@
   (setq snails-fame-width-proportion 0.8)
   (setq snails-default-show-prefix-tips nil)
 
-  (define-key snails-mode-map [remap next-line] #'snails-select-next-item)
-  (define-key snails-mode-map [remap previous-line] #'snails-select-prev-item)
-
   (require 'snails-backend-file-bookmark)
   (require 'snails-backend-filter-buffer)
   (require 'snails-backend-recentf-weiss)
@@ -75,6 +72,12 @@
   (define-key snails-mode-map (kbd "C-k") #'snails-select-prev-item)
   (define-key snails-mode-map (kbd "C-s") #'snails-select-prev-backend)
   (define-key snails-mode-map (kbd "C-d") #'snails-select-next-backend)
+
+  (define-key snails-mode-map [remap next-line] #'snails-select-next-backend)
+  (define-key snails-mode-map [remap previous-line] #'snails-select-prev-backend)
+
+  (define-key snails-mode-map (kbd "8") 'snails-select-prev-item)
+  (define-key snails-mode-map (kbd "9") 'snails-select-next-item)
 
   (setq snails-fuz-library-load-status "unload")
   ;; (require 'fuz)

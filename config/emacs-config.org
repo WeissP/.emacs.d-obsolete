@@ -873,6 +873,7 @@
       ("wg" "widget-get" weiss--ahf)
       ("wr" "write-region" weiss--ahf)
       ("wt" "(defun weiss-test ()\n  \"DOCSTRING\"\n  (interactive)\n  ▮)" weiss--ahf-indent)
+      ("wl" "when-let" weiss--ahf)
 
       ("bfn" "buffer-file-name" weiss--ahf)
       ("bmp" "buffer-modified-p" weiss--ahf)
@@ -1265,6 +1266,7 @@
       ("version<=" "(version<= \"24.4\" emacs-version)" weiss--ahf )
       ("visited-file-modtime" "(visited-file-modtime)" weiss--ahf)
       ("when" "(when ▮)" weiss--ahf)
+      ("when-let" "(when-let ((▮))\n\n)" weiss--ahf-indent)
       ("while" "(while (▮)\n  (setq ))" weiss--ahf-indent)
       ("widen" "(widen)" weiss--ahf)
       ("widget-get" "(widget-get ▮)" weiss--ahf)
@@ -1358,9 +1360,6 @@
     (setq snails-fame-width-proportion 0.8)
     (setq snails-default-show-prefix-tips nil)
 
-    (define-key snails-mode-map [remap next-line] #'snails-select-next-item)
-    (define-key snails-mode-map [remap previous-line] #'snails-select-prev-item)
-
     (require 'snails-backend-file-bookmark)
     (require 'snails-backend-filter-buffer)
     (require 'snails-backend-recentf-weiss)
@@ -1419,6 +1418,12 @@
     (define-key snails-mode-map (kbd "C-k") #'snails-select-prev-item)
     (define-key snails-mode-map (kbd "C-s") #'snails-select-prev-backend)
     (define-key snails-mode-map (kbd "C-d") #'snails-select-next-backend)
+
+    (define-key snails-mode-map [remap next-line] #'snails-select-next-backend)
+    (define-key snails-mode-map [remap previous-line] #'snails-select-prev-backend)
+
+    (define-key snails-mode-map (kbd "8") 'snails-select-prev-item)
+    (define-key snails-mode-map (kbd "9") 'snails-select-next-item)
 
     (setq snails-fuz-library-load-status "unload")
     ;; (require 'fuz)
@@ -2808,20 +2813,9 @@
   (winner-mode)
   (if (display-graphic-p)
       (progn
-        (setq default-frame-alist
-              '(
-                (tool-bar-lines . 0)
-                (width . 104) ; chars
-                (height . 53) ; lines
-                (left . 1680)
-                (top . 0)))
-        (setq initial-frame-alist
-              '(
-                (tool-bar-lines . 0)
-                (width . 104) ; chars
-                (height . 53) ; lines
-                (left . 2639)
-                (top . 0))))
+        (setq default-frame-alist weiss-desktop-left-frame-alist)
+        (setq initial-frame-alist weiss-desktop-right-frame-alist)
+        )
     (progn
       (setq initial-frame-alist '( (tool-bar-lines . 0)))
       (setq default-frame-alist '( (tool-bar-lines . 0)))))
@@ -6200,7 +6194,7 @@
           ("<tab>" . 'company-complete-common-or-cycle)
           ("TAB" . 'company-complete-common-or-cycle)
           ("9" . 'weiss-company-select-next-or-toggle-main-frame)
-          ("0" . 'weiss-company-select-previous-other-window)
+          ("8" . (lambda () (interactive) (company-complete-common-or-cycle -1)))
           ("<escape>")
           ("RET")
           ("<return>")
@@ -6252,7 +6246,7 @@
       (interactive)
       (if ryo-modal-mode
           (weiss-switch-to-otherside-top-frame)
-        (company-select-next)
+        (company-complete-common-or-cycle 1)
         ))
     (defun weiss-company-select-previous-other-window ()
       "DOCSTRING"
@@ -7117,9 +7111,10 @@
   ("u"  dired-unmark)
   ("U"  dired-unmark-all-marks)
   ("v"  weiss-dired-git-clone)
-  ("w" ignore
-   :then '((lambda()(interactive)(dired-copy-filename-as-kill 0)))
-   :name "copy filename")
+  ("w"  weiss-dired-copy-file-name)
+  ;; ("w" ignore
+  ;;  :then '((lambda()(interactive)(dired-copy-filename-as-kill 0)))
+  ;;  :name "copy filename with path")
   ("x"  dired-do-flagged-delete)
   ("z"  dired-do-compress)
   ("Z"  dired-do-compress-to)
@@ -7136,12 +7131,24 @@
 #+end_src
 **** functions
 #+begin_src elisp
+  (defun weiss-dired-copy-file-name ()
+    "copy file name or copy path with prefix-arg"
+    (interactive)
+    (if current-prefix-arg
+        (let ((current-prefix-arg 0))
+          (dired-copy-filename-as-kill)
+          )
+      (let ((current-prefix-arg nil))
+        (dired-copy-filename-as-kill)      
+        )
+      ))
+
   (defun weiss-exit-wdired-mode ()
-      "exit wdired mode"
-      (interactive)
-      (wdired-finish-edit)
-      (dired-revert)
-      (ryo-modal-restart))
+    "exit wdired mode"
+    (interactive)
+    (wdired-finish-edit)
+    (dired-revert)
+    (ryo-modal-restart))
 
   (defun weiss-dired-delete-files-force ()
     "delete files without ask"
@@ -7903,6 +7910,8 @@
               (counsel-pt . ivy-prescient-non-fuzzy)
               (counsel-grep . ivy-prescient-non-fuzzy)
               (counsel-imenu . ivy-prescient-non-fuzzy)
+              (counsel-org-goto . ivy-prescient-non-fuzzy)
+              (counsel-org-goto-all . ivy-prescient-non-fuzzy)
               ;; (counsel-M-x . ivy-prescient-non-fuzzy)
               (counsel-yank-pop . ivy-prescient-non-fuzzy)
               (swiper . ivy-prescient-non-fuzzy)
@@ -10940,6 +10949,45 @@
   (defvar weiss-right-frame-pos 1690 "the position of left bord of right frame")
   (defvar weiss-is-laptop nil)
 
+  (defvar weiss-desktop-left-frame-alist
+    '((tool-bar-lines . 0)
+      (width . 104) ; chars
+      (height . 53) ; lines
+      (left . 1680)
+      (top . 0)))
+
+  (defvar weiss-desktop-right-frame-alist
+    '((tool-bar-lines . 0)
+      (width . 104) ; chars
+      (height . 53) ; lines
+      (left . 2639)
+      (top . 0)))
+
+  (defvar weiss-laptop-left-frame-alist
+    '((tool-bar-lines . 0)
+      (width . 104) ; chars
+      (height . 53) ; lines
+      (left . 0)
+      (top . 0)))
+
+  (defvar weiss-laptop-right-frame-alist
+    '((tool-bar-lines . 0)
+      (width . 104) ; chars
+      (height . 53) ; lines
+      (left . 840)
+      (top . 0)))
+
+
+
+  (defun weiss-new-frame ()
+    "make new frame on the same side of current frame or on the other side with prefix-arg"
+    (interactive)
+    (if (eq (weiss-is-frame-in-right-pos) current-prefix-arg)
+        (make-frame default-frame-alist)
+      (make-frame initial-frame-alist)
+      )
+    )
+
   (defun weiss-delete-other-window ()
     "If the current buffer ist org src file, switch between maximize window size(but not delete other windows) and half window size, else delete other windows"
     (interactive)
@@ -10956,8 +11004,12 @@
     "DOCSTRING"
     (interactive)
     (if weiss-is-laptop
-        (setq weiss-right-frame-pos 835)  
-      (setq weiss-right-frame-pos 1690)  
+        (setq weiss-right-frame-pos 835
+              default-frame-alist weiss-laptop-left-frame-alist
+              initial-frame-alist weiss-laptop-right-frame-alist)  
+      (setq weiss-right-frame-pos 1690
+            default-frame-alist weiss-desktop-left-frame-alist
+            initial-frame-alist weiss-desktop-right-frame-alist)  
       )
     (setq weiss-is-laptop (not weiss-is-laptop))
     )
@@ -11253,6 +11305,29 @@
 #+end_src
 **** save/open/new/copy
 #+begin_src elisp
+  (defun weiss-kill-append ()
+    "append region to kill-ring"
+    (interactive)
+    (when (use-region-p)
+      (let ((rbeg (region-beginning))
+            (rend (region-end))
+            )
+        (kill-append (buffer-substring-no-properties rbeg rend) nil)
+        )))
+
+  (defun weiss-exchange-region-kill-ring-car ()
+    "insert pop current kill-ring and kill region"
+    (interactive)
+    (when (use-region-p)
+      (when-let ((rbeg (region-beginning))
+                 (rend (region-end))
+                 (rep (pop kill-ring))
+                 )
+        (push (delete-and-extract-region rbeg rend) kill-ring)
+        (insert rep)
+        )
+      )
+    )
 
   (defun xah-make-backup-and-save ()
     "Backup of current file and save, or backup dired marked files.
@@ -12155,7 +12230,12 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
            ("b"  xah-toggle-previous-letter-case)
            ("c"  (
                   ("k" save-buffers-kill-terminal)
+                  ("a" weiss-kill-append)
                   ("p" xah-copy-file-path)
+                  ("e" weiss-exchange-region-kill-ring-car)
+                  ("f" ignore
+                   :name "copy file name"
+                   :then ((lambda () (interactive) (kill-new (buffer-file-name)))))
                   ("b" ignore
                    :name "copy whole buffer"
                    :then ((lambda () (interactive) (kill-new (buffer-string)))))
@@ -12293,7 +12373,7 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
            ("w" (
                  ("f"  xref-find-definitions)
                  ("m"  list-bookmarks)
-                 ("n"  make-frame-command)
+                 ("n"  weiss-new-frame)
                  ("t"  weiss-test)
                  ("l"  xref-pop-marker-stack)
                  ("y"  winner-undo)                  ;windows setting
