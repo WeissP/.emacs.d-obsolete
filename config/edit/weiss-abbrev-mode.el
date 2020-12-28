@@ -610,6 +610,7 @@ Version 2016-10-24"
     ("wg" "widget-get" weiss--ahf)
     ("wr" "write-region" weiss--ahf)
     ("wt" "(defun weiss-test ()\n  \"DOCSTRING\"\n  (interactive)\n  ▮)" weiss--ahf-indent)
+    ("wl" "when-let" weiss--ahf)
 
     ("bfn" "buffer-file-name" weiss--ahf)
     ("bmp" "buffer-modified-p" weiss--ahf)
@@ -1002,6 +1003,7 @@ Version 2016-10-24"
     ("version<=" "(version<= \"24.4\" emacs-version)" weiss--ahf )
     ("visited-file-modtime" "(visited-file-modtime)" weiss--ahf)
     ("when" "(when ▮)" weiss--ahf)
+    ("when-let" "(when-let ((▮))\n\n)" weiss--ahf-indent)
     ("while" "(while (▮)\n  (setq ))" weiss--ahf-indent)
     ("widen" "(widen)" weiss--ahf)
     ("widget-get" "(widget-get ▮)" weiss--ahf)

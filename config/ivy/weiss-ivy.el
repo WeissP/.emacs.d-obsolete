@@ -222,6 +222,8 @@ This is for use in `ivy-re-builders-alist'."
             (counsel-pt . ivy-prescient-non-fuzzy)
             (counsel-grep . ivy-prescient-non-fuzzy)
             (counsel-imenu . ivy-prescient-non-fuzzy)
+            (counsel-org-goto . ivy-prescient-non-fuzzy)
+            (counsel-org-goto-all . ivy-prescient-non-fuzzy)
             ;; (counsel-M-x . ivy-prescient-non-fuzzy)
             (counsel-yank-pop . ivy-prescient-non-fuzzy)
             (swiper . ivy-prescient-non-fuzzy)
