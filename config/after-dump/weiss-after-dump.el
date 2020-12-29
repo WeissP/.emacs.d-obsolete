@@ -131,14 +131,43 @@
 ;; font
 
 ;; [[file:~/.emacs.d/config/emacs-config.org::*font][font:1]]
+(use-package ligature
+  :disabled
+  :quelpa (ligature 
+           :fetcher github 
+           :repo mickeynp/ligature.el)
+  :config
+  ;; Enable the "www" ligature in every possible major mode
+  (ligature-set-ligatures 't '("www"))
+  ;; Enable traditional ligature support in eww-mode, if the
+  ;; `variable-pitch' face supports it
+  (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+  ;; Enable all Cascadia Code ligatures in programming modes
+  (ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
+                                       ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+                                       "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+                                       "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
+                                       "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
+                                       "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+                                       "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
+                                       "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
+                                       ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
+                                       "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
+                                       "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
+                                       "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+                                       "://"))
+  ;; Enables ligature checks globally in all buffers. You can also do it
+  ;; per mode with `ligature-mode'.
+  (global-ligature-mode t))
+
 (defun font-installed-p (font-name)
   "Check if font with FONT-NAME is available."
   (find-font (font-spec :name font-name)))
 
 (when (display-graphic-p)
   ;; Set default font
-  (cl-loop for font in '("SF Mono" "Hack" "Source Code Pro" "Fira Code"
-                         "Menlo" "Monaco" "DejaVu Sans Mono" "Consolas")
+  (cl-loop for font in '("JetBrainsMono" "Fira Code" "DejaVu Sans Mono" "M+1m" "SF Mono" "iosevka" "Hack" "Source Code Pro" 
+                         "Menlo" "Monaco" "Consolas")
            when (font-installed-p font)
            return (set-face-attribute 'default nil
                                       :font font
@@ -161,8 +190,14 @@
 ;; :END:
 
 ;; [[file:~/.emacs.d/config/emacs-config.org::*font lock face][font lock face:1]]
-(set-face-attribute 'font-lock-keyword-face nil :font "SF mono" :foreground "#5b5e6b" :weight 'bold :slant 'italic)
-(set-face-attribute 'font-lock-doc-face nil :font (font-spec :name "Lato" :size 15 :width 'narrow) :weight 'normal :slant 'italic)
+(set-face-attribute 'default nil :font "JetBrainsMono")
+(set-face-attribute 'fixed-pitch nil :font "JetBrainsMono")
+;; (set-face-attribute 'variable-pitch nil :font "Route159" :height 1.05)
+(set-face-attribute 'variable-pitch nil :font "lato" :height 1.05)
+
+(set-face-attribute 'font-lock-keyword-face nil :foreground "#5b5e6b" :weight 'extrabold :slant 'italic)
+(set-face-attribute 'font-lock-comment-face nil :foreground "#9ca0a4" :weight 'light :slant 'normal)
+(set-face-attribute 'font-lock-doc-face nil :font (font-spec :name "Route159") :weight 'normal :slant 'normal)
 (set-face-attribute 'region nil :background "#cfe4ff")
 (set-face-attribute 'font-lock-builtin-face nil :foreground "#a0522d" :slant 'italic)
 (set-face-attribute 'font-lock-variable-name-face nil :foreground "#383a42" :underline t)
@@ -2752,6 +2787,18 @@
    ))
 ;; elisp:1 ends here
 
+;; snails
+
+;; [[file:~/.emacs.d/config/emacs-config.org::*snails][snails:1]]
+(when (featurep 'snails)
+  (set-face-attribute 'snails-header-line-face nil :inherit 'variable-pitch :foreground "#a626a4" :underline t :weight 'normal :slant 'italic :height 1.3)
+  (set-face-attribute 'snails-header-index-face nil :inherit 'snails-header-line-face :height 0.7 :slant 'italic)
+  (set-face-attribute 'snails-candiate-content-face nil :inherit 'variable-pitch :weight 'light :slant 'normal)
+  (set-face-attribute 'snails-input-buffer-face nil :inherit 'variable-pitch :font (font-spec :name "lato") :height 260)
+  (set-face-attribute 'snails-content-buffer-face nil :inherit 'variable-pitch :font (font-spec :name "lato") :height 150)
+  )
+;; snails:1 ends here
+
 ;; java
 
 ;; [[file:~/.emacs.d/config/emacs-config.org::*java][java:1]]
@@ -2779,8 +2826,16 @@
 
 ;; [[file:~/.emacs.d/config/emacs-config.org::*org][org:1]]
 (when (featurep 'org)
+  (add-hook 'org-mode-hook (lambda ()
+                             (variable-pitch-mode)
+                             ))
+  ;; fix indentation when variable-pitch-mode is called
+  (require 'org-indent)
+  (set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))  
+
   (set-face-attribute 'bold  nil
-                      :weight 'bold
+                      :weight 'demibold
+                      :slant 'normal
                       :underline 'nil
                       :foreground "#f5355e"
                       :background nil)
@@ -2788,11 +2843,11 @@
                       :weight 'normal
                       :underline 'nil
                       :slant 'italic
-                      :height 0.9
+                      :height 0.95
                       :foreground "#606060"
                       :background nil)
   (set-face-attribute 'underline nil
-                      :weight 'bold
+                      :weight 'normal
                       :underline 'nil
                       :foreground "medium sea green"
                       :background nil)
@@ -2803,59 +2858,77 @@
                       :background nil)
   (set-face-attribute 'org-block-begin-line nil
                       :weight 'normal
-                      :slant 'italic
+                      :slant 'normal
                       :extend t
                       :underline 'nil
                       :foreground "#999999"
                       :background "#FAFAFA")
   (set-face-attribute 'org-block nil
+                      :font "JetBrainsMono"
                       :extend nil
                       :background "#FAFAFA")
   (set-face-attribute 'org-drawer nil
                       :foreground "#999999"
-                      ;; :slant 'italic
+                      :slant 'normal
+                      :weight 'light
                       :background nil)
+  (set-face-attribute 'org-special-keyword nil
+                      :height 1.1
+                      :weight 'bold
+                      :slant 'normal
+                      :inherit 'org-drawer)
+  (set-face-attribute 'org-property-value nil
+                      :weight 'normal
+                      :slant 'normal
+                      :height 1.0
+                      :inherit 'org-special-keyword)
   (set-face-attribute 'org-headline-done nil
                       :strike-through t
                       :weight 'normal)
   (set-face-attribute 'org-level-1 nil
-                      :height 1.2
+                      :height 1.35
                       :foreground "#ff5a19"
                       :weight 'bold)
   (set-face-attribute 'org-level-2 nil
-                      :height 1.1
+                      :height 0.95
                       :foreground "#040404"
-                      :weight 'normal)
+                      :weight 'normal
+                      :inherit 'org-level-1)
   (set-face-attribute 'org-level-3 nil
-                      :height 1.0
+                      :height 0.95
                       :foreground "#040404"
-                      :weight 'normal)
+                      :weight 'normal
+                      :inherit 'org-level-2)
   (set-face-attribute 'org-level-4 nil
-                      :height 1.0
+                      :height 0.95
                       :foreground "#040404"
-                      :weight 'normal)
+                      :weight 'normal
+                      :inherit 'org-level-3)
   (set-face-attribute 'org-level-5 nil
                       :height 1.0
                       :foreground "#040404"
-                      :weight 'normal)
+                      :weight 'normal
+                      :inherit 'org-level-4)
   (set-face-attribute 'org-level-6 nil
                       :height 1.0
                       :foreground "#040404"
-                      :weight 'normal)
+                      :weight 'normal
+                      :inherit 'org-level-5)
   (set-face-attribute 'org-level-7 nil
                       :height 1.0
                       :foreground "#040404"
-                      :weight 'normal)
+                      :weight 'normal
+                      :inherit 'org-level-6)
   (set-face-attribute 'org-level-8 nil
                       :height 1.0
                       :foreground "#040404"
-                      :weight 'normal)
+                      :weight 'normal
+                      :inherit 'org-level-7)
 
   (font-lock-add-keywords 'org-mode
                           '(("^.*:Frage:.*$" 0 'font-lock-keyword-face)))
 
   (add-to-list 'org-tag-faces '("Frage" . (:foreground "red"  :weight 'bold)))
-
   )
 ;; org:1 ends here
 
@@ -2876,6 +2949,8 @@
 ;; misc
 
 ;; [[file:~/.emacs.d/config/emacs-config.org::*misc][misc:1]]
+(setq inhibit-startup-screen t)
+
 ;; there are some problems to set face attribute before dump
 (set-face-attribute 'cursor '((nil (:background weiss/cursor-color))))
 (set-face-attribute 'mc/cursor-bar-face nil :background weiss/cursor-color)
@@ -3009,17 +3084,18 @@
          ("a"  mark-whole-buffer :then (weiss-select-mode-turn-on))
          ("b"  xah-toggle-previous-letter-case)
          ("c"  (
-                ("k" save-buffers-kill-terminal)
                 ("a" weiss-kill-append)
-                ("p" xah-copy-file-path)
+                ("b" ignore
+                 :name "copy whole buffer"
+                 :then ((lambda () (interactive) (kill-new (buffer-string)))))
                 ("e" weiss-exchange-region-kill-ring-car)
                 ("f" ignore
                  :name "copy file name"
                  :then ((lambda () (interactive) (kill-new (buffer-file-name)))))
-                ("b" ignore
-                 :name "copy whole buffer"
-                 :then ((lambda () (interactive) (kill-new (buffer-string)))))
-                ))
+                ("k" save-buffers-kill-terminal)
+                ("p" xah-copy-file-path)
+                )
+          )
          ("d" (
                ;; ("a"  weiss-custom-daily-agenda)
                ("b"  weiss-save-current-content)
@@ -3052,6 +3128,7 @@
                ("m"  all-the-icons-insert)
                ("p"  bookmark-set)
                ("s"  yasdcv-translate-at-point)
+               ("v"  counsel-yank-pop)
                ))
          ("j" (
                ("K"  Info-goto-emacs-key-command-node)
@@ -3158,7 +3235,7 @@
                ("l"  xref-pop-marker-stack)
                ("y"  winner-undo)                  ;windows setting
                ("r"  winner-redo)
-               ("k"  delete-frame)
+               ("k"  delete-frame :then ((lambda () (interactive) (weiss-update-top-windows t))))
                ("o"  org-babel-tangle-jump-to-org)
                ))
          ;; ("x"  xah-cut-all-or-region)
@@ -3205,7 +3282,6 @@
         (recentf-cleanup)))
     (message ""))
   :init
-  ;; (add-to-list 'recentf-filename-handlers 'abbreviate-file-name)
   (load (weiss--get-config-file-path "recentf"))
   (setq recentf-save-file (weiss--get-config-file-path "recentf"))
   :config
@@ -3233,7 +3309,7 @@
                      "_region_.tex"
                      ))
   )
-(add-to-list 'recentf-filename-handlers 'weiss-reduce-file-path)
+
 (load (weiss--get-config-file-path "recentf"))
 ;; recentf:1 ends here
 

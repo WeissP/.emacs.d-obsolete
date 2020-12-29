@@ -475,7 +475,7 @@ Version 2016-10-24"
 (define-abbrev-table 'java-mode-abbrev-table
   '(
     ("rt" "return ▮;")
-    ("pr" "System.out.println(▮);" weiss--ahf)
+    ("pr" "System.out.println(String.format(\"▮\"));" weiss--ahf)
     ("for" "for (int i = 0; i < ▮; i++) {\n\n}" weiss--ahf-indent)
     ("forj" "for (int j = 0; j < ▮; j++) {\n\n}" weiss--ahf-indent)
     ("if" "if (▮) {\n\n}" weiss--ahf-indent)

@@ -43,10 +43,11 @@
                             :background content-buffer-color)
 
         (set-face-attribute 'snails-select-line-face nil
-                            :slant 'italic
+                            :slant 'normal
                             :foreground default-foreground-color
                             :background "wheat" )
-        ))
+        )
+      )
     (advice-add 'snails-init-face-with-theme :override 'weiss-snails-init-face-with-theme)
     )
 

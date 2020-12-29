@@ -24,6 +24,8 @@
                                       ("l" right-char)
                                       ("i" left-char)
                                       ("s" set-mark-command)
+                                      ("S" mc/sort-regions)
+                                      ("R" mc/reverse-regions)
 
                                       (";" mc-hide-unmatched-lines-mode)
                                       ("<up>" mc/mark-previous-like-this)

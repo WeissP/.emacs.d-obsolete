@@ -28,6 +28,7 @@
 ;; [[file:~/.emacs.d/config/emacs-config.org::*variable][variable:1]]
 (setq
  lsp-log-io nil                       ;; enable log only for debug
+ lsp-headerline-breadcrumb-enable nil
  lsp-response-timeout 100
  lsp-completion-enable-additional-text-edit t
  lsp-prefer-flymake nil
@@ -161,7 +162,7 @@
   ;; :load-path "/home/weiss/.emacs.d/local-package/nox/"
   :init
   (defvar is-nox-activate-p nil)
-  (advice-add 'nox-ensure :after (lambda () (interactive) (make-local-variable 'is-nox-activate-p) (setq is-nox-activate-p t)))
+  ;; (advice-add 'nox-ensure :after (lambda () (interactive) (make-local-variable 'is-nox-activate-p) (setq is-nox-activate-p t)))
   (setq nox-python-server "mspyls")
   ;; (setq nox-python-server "pyls")
   (setq nox-optimization-p nil)
@@ -169,7 +170,7 @@
   :hook (
          (python-mode . nox-ensure)
          (go-mode . nox-ensure)
-         (nox-managed-mode-hook . ryo-modal-restart)
+         ;; (nox-managed-mode-hook . ryo-modal-restart)
          )
   :bind (:map nox-mode-map
               ("M-d" . nox-show-doc)

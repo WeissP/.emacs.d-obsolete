@@ -3,7 +3,8 @@
 
 
 ;; [[file:~/.emacs.d/config/emacs-config.org::*general][general:1]]
-(global-set-key (kbd "<backtab>") 'weiss-indent)
+(define-key prog-mode-map (kbd "<tab>") 'weiss-indent)
+(global-set-key (kbd "<backtab>") 'indent-for-tab-command)
 (global-set-key (kbd "<S-delete>") (lambda () (interactive) (insert "\\")))
 (global-set-key (kbd "<f5>") 'revert-buffer)
 

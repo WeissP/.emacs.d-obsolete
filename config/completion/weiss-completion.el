@@ -6,17 +6,9 @@
 
 ;; [[file:~/.emacs.d/config/emacs-config.org::*completion][completion:1]]
 ;;; yasnippet
-(defun +yas-expand-or-company-complete ()
-  (interactive)
-  (or (yas/expand)
-      (call-interactively #'company-indent-or-complete-common)))
-
 (use-package company
   :hook (company-mode . company-tng-mode)
   :bind
-  (:map company-mode-map
-        ("<tab>" . '+yas-expand-or-company-complete)
-        ("TAB" . '+yas-expand-or-company-complete))
   (:map company-active-map
         ("<tab>" . 'company-complete-common-or-cycle)
         ("TAB" . 'company-complete-common-or-cycle)

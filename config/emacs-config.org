@@ -740,7 +740,7 @@
   (define-abbrev-table 'java-mode-abbrev-table
     '(
       ("rt" "return ▮;")
-      ("pr" "System.out.println(▮);" weiss--ahf)
+      ("pr" "System.out.println(String.format(\"▮\"));" weiss--ahf)
       ("for" "for (int i = 0; i < ▮; i++) {\n\n}" weiss--ahf-indent)
       ("forj" "for (int j = 0; j < ▮; j++) {\n\n}" weiss--ahf-indent)
       ("if" "if (▮) {\n\n}" weiss--ahf-indent)
@@ -1389,10 +1389,11 @@
                               :background content-buffer-color)
 
           (set-face-attribute 'snails-select-line-face nil
-                              :slant 'italic
+                              :slant 'normal
                               :foreground default-foreground-color
                               :background "wheat" )
-          ))
+          )
+        )
       (advice-add 'snails-init-face-with-theme :override 'weiss-snails-init-face-with-theme)
       )
 
@@ -1450,10 +1451,11 @@
           ("🅥" . "Nutstore Files/Vorlesungen")
           ("🅹" . "src/main/java")
           ("🅙🅣" . "src/test/java")
+          ("~" . "/home/weiss")
           ))
 
   (defun weiss-reduce-file-path (filename &optional r)
-    "replace long file paths with symbol, if @r is non-nil, then replace symbol with path"
+    "replace long file paths with symbol, if `r' is non-nil, then replace symbol with path"
     (interactive)
     (let ((search-str)
           (replace-str))
@@ -1482,6 +1484,7 @@
                 (snails-match-input-p input file)
                 )
            (snails-add-candiate 'candidates (weiss-reduce-file-path file) file))
+           ;; (snails-add-candiate 'candidates "123" file))
          )
        (snails-sort-candidates input candidates 1 1)
        ))
@@ -2564,250 +2567,6 @@
 :PROPERTIES:
 :header-args: :tangle ui/weiss-ui.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
 :END:
-** after dump
-:PROPERTIES:
-:header-args: :tangle no
-:END:
-#+begin_src elisp
-  (setq display-line-numbers 'relative)
-  (if (display-graphic-p)
-      (progn
-        (setq initial-frame-alist
-              '(
-                (tool-bar-lines . 0)
-                (width . 105) ; chars
-                (height . 53) ; lines
-                (left . 1680)
-                (top . 0)))
-        (setq default-frame-alist
-              '(
-                (tool-bar-lines . 0)
-                (width . 104) ; chars
-                (height . 53) ; lines
-                (left . 2639)
-                (top . 0))))
-    (progn
-      (setq initial-frame-alist '( (tool-bar-lines . 0)))
-      (setq default-frame-alist '( (tool-bar-lines . 0)))))
-  (frame-edges)
-
-  (winner-mode)
-
-  (use-package hl-todo
-    :init
-    (setq hl-todo-keyword-faces
-          '(("TODO"   . "#FF0000")
-            ("FIXME"  . "#FF0000")
-            ("DEBUG"  . "#A020F0")
-            ("GOTCHA" . "#FF4500")
-            ("STUB"   . "#1E90FF")))
-    :config
-    (defhydra hydra-todo (global-map "M-t")
-      "goto-todo"
-      ("o" hl-todo-occur "occur")
-      ("j" hl-todo-next "next")
-      ("k" hl-todo-previous "prev")
-      ("i" hl-todo-insert "insert")
-      ("q" nil "quit"))
-    (global-hl-todo-mode))
-
-  ;; (load-theme 'doom-one t)
-  ;; (set-face-attribute 'region nil :background "#cfe4ff")
-  ;; (set-face-attribute 'region nil :background "#eae8ff")
-  ;; (global-hl-line-mode 1)
-  ;; (set-face-attribute 'hl-line nil :background "#eae8ff")
-  ;; (set-face-attribute 'hl-line nil :background "#e3e5d0")
-  ;; ;; (set-face-attribute 'highlight nil)
-
-  ;; (setq doom-modeline-major-mode-icon t)
-  ;; (doom-modeline-mode)
-
-  (use-package doom-modeline 
-    :diminish
-    ;; :diminish doom-modeline-mode
-    :init
-    ;; (setq doom-modeline-modal-icon nil)
-    (setq doom-modeline-window-width-limit fill-column
-          ;; doom-modeline-project-detection
-          ;; doom-modeline-buffer-file-name-style 'relative-to-project
-          ;; doom-modeline-bar-width 6
-          doom-modeline-window-width-limit 110
-          )
-    ;; (setq doom-modeline-minor-modes t)
-    (diminish 'abbrev-mode)
-    :hook (after-init . doom-modeline-mode)
-    )
-
-  (use-package dashboard 
-    :diminish
-    :config
-    (dashboard-setup-startup-hook)
-    (set-face-attribute 'dashboard-footer nil :weight 'semi-light :slant 'italic)
-    (setq dashboard-items '(
-                            (agenda . 25)
-                            )
-          dashboard-init-info
-          (format "[Init: %.2fs] [GC: %dx]"
-                  (float-time (time-subtract after-init-time before-init-time))
-                  gcs-done)
-          ;; show-week-agenda-p t
-          dashboard-banner-logo-title ""
-          dashboard-startup-banner "/home/weiss/Documents/OrgFiles/Bilder/ue-light.png"
-          dashboard-show-shortcuts nil
-          dashboard-footer-icon (all-the-icons-octicon "dashboard"
-                                                       :height 1.1
-                                                       :v-adjust -0.05
-                                                       :face 'font-lock-keyword-face)
-          dashboard-footer (emacs-version)
-          )
-    )
-
-  ;; Fonts
-  (defun font-installed-p (font-name)
-    "Check if font with FONT-NAME is available."
-    (find-font (font-spec :name font-name)))
-
-  (when (display-graphic-p)
-    ;; Set default font
-    (cl-loop for font in '("SF Mono" "Hack" "Source Code Pro" "Fira Code"
-                           "Menlo" "Monaco" "DejaVu Sans Mono" "Consolas")
-             when (font-installed-p font)
-             return (set-face-attribute 'default nil
-                                        ;; :background "#FFFFFF"
-                                        :font (font-spec
-                                               :name font
-                                               :size 15
-                                               )
-                                        :height 110))
-
-    ;; Specify font for all unicode characters
-    (cl-loop for font in '("Symbola" "Apple Symbols" "Symbol" "icons-in-terminal")
-             when (font-installed-p font)
-             return (set-fontset-font t 'unicode font nil 'prepend))
-
-    ;; Specify font for Chinese characters
-    (cl-loop for font in '("WenQuanYi Micro Hei" "Microsoft Yahei")
-             when (font-installed-p font)
-             return (set-fontset-font t '(#x4e00 . #x9fff) font)))
-
-  (set-face-attribute 'font-lock-keyword-face nil :font "SF mono" :foreground "#5b5e6b" :weight 'bold :slant 'italic)
-  (set-face-attribute 'font-lock-doc-face nil :font (font-spec :name "Lato" :size 15 :width 'narrow) :weight 'normal :slant 'italic)
-  (set-face-attribute 'region nil :background "#cfe4ff")
-  (use-package highlight-parentheses
-    :hook (prog-mode . highlight-parentheses-mode)
-    :config
-    (setq
-     hl-paren-highlight-adjacent t
-     hl-paren-colors '("#E53E3E" "#383a42" "#383a42" "#383a42")
-     )
-    (set-face-attribute 'hl-paren-face nil :weight 'bold)
-    ;; (setq hl-paren-background-colors '("#E53E3E" "#c9bce9" "#FAFAFA""#FAFAFA"))
-    )
-
-  (use-package beacon
-    :disabled
-    :quelpa (beacon :type git
-                    :host github
-                    :repo "Malabarba/beacon")
-    :init
-    (setq beacon-color "#ffe27b") 
-    :config
-    (beacon-mode 1)
-    )
-
-  (use-package nyan-mode
-    :config
-    (nyan-mode))
-
-  (rainbow-mode)
-
-  (use-package web-beautify)
-
-  (use-package origami)
-
-  ;;;; org
-  (when (featurep 'org)
-    (set-face-attribute 'bold  nil
-                        :weight 'bold
-                        :underline 'nil
-                        :foreground "#f5355e"
-                        :background nil)
-    (set-face-attribute 'italic nil
-                        :weight 'normal
-                        :underline 'nil
-                        :slant 'italic
-                        :height 0.9
-                        :foreground "#606060"
-                        :background nil)
-    (set-face-attribute 'underline nil
-                        :weight 'bold
-                        :underline 'nil
-                        :foreground "medium sea green"
-                        :background nil)
-    (set-face-attribute 'org-link nil
-                        :weight 'normal
-                        :underline 'nil
-                        :foreground "#20B2AA"
-                        :background nil)
-    (set-face-attribute 'org-block-begin-line nil
-                        :weight 'normal
-                        :slant 'italic
-                        :extend t
-                        :underline 'nil
-                        :foreground "#999999"
-                        :background "#FAFAFA")
-    (set-face-attribute 'org-block nil
-                        :extend nil
-                        :background "#FAFAFA")
-    (set-face-attribute 'org-drawer nil
-                        :foreground "#999999"
-                        ;; :slant 'italic
-                        :background nil)
-    (set-face-attribute 'org-headline-done nil
-                        :strike-through t
-                        :weight 'normal)
-    (set-face-attribute 'org-level-1 nil
-                        :height 1.2
-                        :foreground "#ff5a19"
-                        :weight 'bold)
-    (set-face-attribute 'org-level-2 nil
-                        :height 1.1
-                        :foreground "#040404"
-                        :weight 'normal)
-    (set-face-attribute 'org-level-3 nil
-                        :height 1.0
-                        :foreground "#040404"
-                        :weight 'normal)
-    (set-face-attribute 'org-level-4 nil
-                        :height 1.0
-                        :foreground "#040404"
-                        :weight 'normal)
-    (set-face-attribute 'org-level-5 nil
-                        :height 1.0
-                        :foreground "#040404"
-                        :weight 'normal)
-    (set-face-attribute 'org-level-6 nil
-                        :height 1.0
-                        :foreground "#040404"
-                        :weight 'normal)
-    (set-face-attribute 'org-level-7 nil
-                        :height 1.0
-                        :foreground "#040404"
-                        :weight 'normal)
-    (set-face-attribute 'org-level-8 nil
-                        :height 1.0
-                        :foreground "#040404"
-                        :weight 'normal)
-
-    (font-lock-add-keywords 'org-mode
-                            '(("^.*:Frage:.*$" 0 'font-lock-keyword-face)))
-
-    (add-to-list 'org-tag-faces '("Frage" . (:foreground "red"  :weight 'bold)))
-
-    )
-
-#+end_src
-
 ** window/frame
 #+begin_src elisp :tangle after-dump/weiss-after-dump.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
   (winner-mode)
@@ -2946,14 +2705,43 @@
 #+end_src
 ** font
 #+begin_src elisp :tangle after-dump/weiss-after-dump.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
+  (use-package ligature
+    :disabled
+    :quelpa (ligature 
+             :fetcher github 
+             :repo mickeynp/ligature.el)
+    :config
+    ;; Enable the "www" ligature in every possible major mode
+    (ligature-set-ligatures 't '("www"))
+    ;; Enable traditional ligature support in eww-mode, if the
+    ;; `variable-pitch' face supports it
+    (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+    ;; Enable all Cascadia Code ligatures in programming modes
+    (ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
+                                         ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+                                         "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+                                         "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
+                                         "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
+                                         "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+                                         "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
+                                         "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
+                                         ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
+                                         "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
+                                         "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
+                                         "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+                                         "://"))
+    ;; Enables ligature checks globally in all buffers. You can also do it
+    ;; per mode with `ligature-mode'.
+    (global-ligature-mode t))
+
   (defun font-installed-p (font-name)
     "Check if font with FONT-NAME is available."
     (find-font (font-spec :name font-name)))
 
   (when (display-graphic-p)
     ;; Set default font
-    (cl-loop for font in '("SF Mono" "Hack" "Source Code Pro" "Fira Code"
-                           "Menlo" "Monaco" "DejaVu Sans Mono" "Consolas")
+    (cl-loop for font in '("JetBrainsMono" "Fira Code" "DejaVu Sans Mono" "M+1m" "SF Mono" "iosevka" "Hack" "Source Code Pro" 
+                           "Menlo" "Monaco" "Consolas")
              when (font-installed-p font)
              return (set-face-attribute 'default nil
                                         :font font
@@ -2973,44 +2761,22 @@
 
 #+end_src
 
-** icons
-#+begin_src elisp
-  ;; NOTE: Must run `M-x all-the-icons-install-fonts', and install fonts manually 
-  (use-package all-the-icons 
-    :diminish
-    :if (display-graphic-p)
-    :config
-    (add-to-list 'all-the-icons-mode-icon-alist '(xah-elisp-mode all-the-icons-fileicon "elisp" :height 1.0 :v-adjust -0.2 :face all-the-icons-purple))
-    (add-to-list 'all-the-icons-mode-icon-alist '(eaf-mode all-the-icons-alltheicon "atom" :height 1.0 :v-adjust -0.2 :face all-the-icons-purple))
-    (add-to-list 'all-the-icons-mode-icon-alist '(debugger-mode all-the-icons-faicon "bug" :height 1.0 :v-adjust -0.2 :face all-the-icons-purple))
-    (add-to-list 'all-the-icons-mode-icon-alist '(telega-root-mode all-the-icons-fileicon "telegram" :height 1.0 :v-adjust -0.2 :face all-the-icons-purple))
-    (add-to-list 'all-the-icons-mode-icon-alist '(telega-chat-mode all-the-icons-material "chat" :height 1.0 :v-adjust -0.2 :face all-the-icons-purple))
-    (with-no-warnings
-      (defun all-the-icons-reset ()
-        "Reset (unmemoize/memoize) the icons."
-        (interactive)
-        (dolist (f '(all-the-icons-icon-for-file
-                     all-the-icons-icon-for-mode
-                     all-the-icons-icon-for-url
-                     all-the-icons-icon-family-for-file
-                     all-the-icons-icon-family-for-mode
-                     all-the-icons-icon-family))
-          (ignore-errors
-            (memoize-restore f)
-            (memoize f)))
-        (message "Reset all-the-icons"))))
-#+end_src
 ** font lock face
 :PROPERTIES:
 :header-args: :tangle after-dump/weiss-after-dump.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
 :END:
 #+begin_src elisp 
-  (set-face-attribute 'font-lock-keyword-face nil :font "SF mono" :foreground "#5b5e6b" :weight 'bold :slant 'italic)
-  (set-face-attribute 'font-lock-doc-face nil :font (font-spec :name "Lato" :size 15 :width 'narrow) :weight 'normal :slant 'italic)
+  (set-face-attribute 'default nil :font "JetBrainsMono")
+  (set-face-attribute 'fixed-pitch nil :font "JetBrainsMono")
+  ;; (set-face-attribute 'variable-pitch nil :font "Route159" :height 1.05)
+  (set-face-attribute 'variable-pitch nil :font "lato" :height 1.05)
+
+  (set-face-attribute 'font-lock-keyword-face nil :foreground "#5b5e6b" :weight 'extrabold :slant 'italic)
+  (set-face-attribute 'font-lock-comment-face nil :foreground "#9ca0a4" :weight 'light :slant 'normal)
+  (set-face-attribute 'font-lock-doc-face nil :font (font-spec :name "Route159") :weight 'normal :slant 'normal)
   (set-face-attribute 'region nil :background "#cfe4ff")
   (set-face-attribute 'font-lock-builtin-face nil :foreground "#a0522d" :slant 'italic)
   (set-face-attribute 'font-lock-variable-name-face nil :foreground "#383a42" :underline t)
-
 
 #+end_src
 *** elisp 
@@ -5596,6 +5362,16 @@
      ))
 
 #+end_src
+*** snails
+#+begin_src elisp
+  (when (featurep 'snails)
+    (set-face-attribute 'snails-header-line-face nil :inherit 'variable-pitch :foreground "#a626a4" :underline t :weight 'normal :slant 'italic :height 1.3)
+    (set-face-attribute 'snails-header-index-face nil :inherit 'snails-header-line-face :height 0.7 :slant 'italic)
+    (set-face-attribute 'snails-candiate-content-face nil :inherit 'variable-pitch :weight 'light :slant 'normal)
+    (set-face-attribute 'snails-input-buffer-face nil :inherit 'variable-pitch :font (font-spec :name "lato") :height 260)
+    (set-face-attribute 'snails-content-buffer-face nil :inherit 'variable-pitch :font (font-spec :name "lato") :height 150)
+    )
+#+end_src
 *** java
 #+begin_src elisp
   (font-lock-add-keywords
@@ -5620,8 +5396,16 @@
 *** org
 #+begin_src elisp
   (when (featurep 'org)
+    (add-hook 'org-mode-hook (lambda ()
+                               (variable-pitch-mode)
+                               ))
+    ;; fix indentation when variable-pitch-mode is called
+    (require 'org-indent)
+    (set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))  
+
     (set-face-attribute 'bold  nil
-                        :weight 'bold
+                        :weight 'demibold
+                        :slant 'normal
                         :underline 'nil
                         :foreground "#f5355e"
                         :background nil)
@@ -5629,11 +5413,11 @@
                         :weight 'normal
                         :underline 'nil
                         :slant 'italic
-                        :height 0.9
+                        :height 0.95
                         :foreground "#606060"
                         :background nil)
     (set-face-attribute 'underline nil
-                        :weight 'bold
+                        :weight 'normal
                         :underline 'nil
                         :foreground "medium sea green"
                         :background nil)
@@ -5644,59 +5428,77 @@
                         :background nil)
     (set-face-attribute 'org-block-begin-line nil
                         :weight 'normal
-                        :slant 'italic
+                        :slant 'normal
                         :extend t
                         :underline 'nil
                         :foreground "#999999"
                         :background "#FAFAFA")
     (set-face-attribute 'org-block nil
+                        :font "JetBrainsMono"
                         :extend nil
                         :background "#FAFAFA")
     (set-face-attribute 'org-drawer nil
                         :foreground "#999999"
-                        ;; :slant 'italic
+                        :slant 'normal
+                        :weight 'light
                         :background nil)
+    (set-face-attribute 'org-special-keyword nil
+                        :height 1.1
+                        :weight 'bold
+                        :slant 'normal
+                        :inherit 'org-drawer)
+    (set-face-attribute 'org-property-value nil
+                        :weight 'normal
+                        :slant 'normal
+                        :height 1.0
+                        :inherit 'org-special-keyword)
     (set-face-attribute 'org-headline-done nil
                         :strike-through t
                         :weight 'normal)
     (set-face-attribute 'org-level-1 nil
-                        :height 1.2
+                        :height 1.35
                         :foreground "#ff5a19"
                         :weight 'bold)
     (set-face-attribute 'org-level-2 nil
-                        :height 1.1
+                        :height 0.95
                         :foreground "#040404"
-                        :weight 'normal)
+                        :weight 'normal
+                        :inherit 'org-level-1)
     (set-face-attribute 'org-level-3 nil
-                        :height 1.0
+                        :height 0.95
                         :foreground "#040404"
-                        :weight 'normal)
+                        :weight 'normal
+                        :inherit 'org-level-2)
     (set-face-attribute 'org-level-4 nil
-                        :height 1.0
+                        :height 0.95
                         :foreground "#040404"
-                        :weight 'normal)
+                        :weight 'normal
+                        :inherit 'org-level-3)
     (set-face-attribute 'org-level-5 nil
                         :height 1.0
                         :foreground "#040404"
-                        :weight 'normal)
+                        :weight 'normal
+                        :inherit 'org-level-4)
     (set-face-attribute 'org-level-6 nil
                         :height 1.0
                         :foreground "#040404"
-                        :weight 'normal)
+                        :weight 'normal
+                        :inherit 'org-level-5)
     (set-face-attribute 'org-level-7 nil
                         :height 1.0
                         :foreground "#040404"
-                        :weight 'normal)
+                        :weight 'normal
+                        :inherit 'org-level-6)
     (set-face-attribute 'org-level-8 nil
                         :height 1.0
                         :foreground "#040404"
-                        :weight 'normal)
+                        :weight 'normal
+                        :inherit 'org-level-7)
 
     (font-lock-add-keywords 'org-mode
                             '(("^.*:Frage:.*$" 0 'font-lock-keyword-face)))
 
     (add-to-list 'org-tag-faces '("Frage" . (:foreground "red"  :weight 'bold)))
-
     )
 #+end_src
 *** python
@@ -5712,8 +5514,37 @@
                                   )))
 
 #+end_src
+** icons
+#+begin_src elisp
+  ;; NOTE: Must run `M-x all-the-icons-install-fonts', and install fonts manually 
+  (use-package all-the-icons 
+    :diminish
+    :if (display-graphic-p)
+    :config
+    (add-to-list 'all-the-icons-mode-icon-alist '(xah-elisp-mode all-the-icons-fileicon "elisp" :height 1.0 :v-adjust -0.2 :face all-the-icons-purple))
+    (add-to-list 'all-the-icons-mode-icon-alist '(eaf-mode all-the-icons-alltheicon "atom" :height 1.0 :v-adjust -0.2 :face all-the-icons-purple))
+    (add-to-list 'all-the-icons-mode-icon-alist '(debugger-mode all-the-icons-faicon "bug" :height 1.0 :v-adjust -0.2 :face all-the-icons-purple))
+    (add-to-list 'all-the-icons-mode-icon-alist '(telega-root-mode all-the-icons-fileicon "telegram" :height 1.0 :v-adjust -0.2 :face all-the-icons-purple))
+    (add-to-list 'all-the-icons-mode-icon-alist '(telega-chat-mode all-the-icons-material "chat" :height 1.0 :v-adjust -0.2 :face all-the-icons-purple))
+    (with-no-warnings
+      (defun all-the-icons-reset ()
+        "Reset (unmemoize/memoize) the icons."
+        (interactive)
+        (dolist (f '(all-the-icons-icon-for-file
+                     all-the-icons-icon-for-mode
+                     all-the-icons-icon-for-url
+                     all-the-icons-icon-family-for-file
+                     all-the-icons-icon-family-for-mode
+                     all-the-icons-icon-family))
+          (ignore-errors
+            (memoize-restore f)
+            (memoize f)))
+        (message "Reset all-the-icons"))))
+#+end_src
 ** misc
 #+begin_src elisp :tangle after-dump/weiss-after-dump.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
+  (setq inhibit-startup-screen t)
+
   ;; there are some problems to set face attribute before dump
   (set-face-attribute 'cursor '((nil (:background weiss/cursor-color))))
   (set-face-attribute 'mc/cursor-bar-face nil :background weiss/cursor-color)
@@ -5820,6 +5651,7 @@
 #+begin_src elisp
   (setq
    lsp-log-io nil                       ;; enable log only for debug
+   lsp-headerline-breadcrumb-enable nil
    lsp-response-timeout 100
    lsp-completion-enable-additional-text-edit t
    lsp-prefer-flymake nil
@@ -6015,7 +5847,7 @@
     ;; :load-path "/home/weiss/.emacs.d/local-package/nox/"
     :init
     (defvar is-nox-activate-p nil)
-    (advice-add 'nox-ensure :after (lambda () (interactive) (make-local-variable 'is-nox-activate-p) (setq is-nox-activate-p t)))
+    ;; (advice-add 'nox-ensure :after (lambda () (interactive) (make-local-variable 'is-nox-activate-p) (setq is-nox-activate-p t)))
     (setq nox-python-server "mspyls")
     ;; (setq nox-python-server "pyls")
     (setq nox-optimization-p nil)
@@ -6023,7 +5855,7 @@
     :hook (
            (python-mode . nox-ensure)
            (go-mode . nox-ensure)
-           (nox-managed-mode-hook . ryo-modal-restart)
+           ;; (nox-managed-mode-hook . ryo-modal-restart)
            )
     :bind (:map nox-mode-map
                 ("M-d" . nox-show-doc)
@@ -6071,6 +5903,8 @@
                                         ("l" right-char)
                                         ("i" left-char)
                                         ("s" set-mark-command)
+                                        ("S" mc/sort-regions)
+                                        ("R" mc/reverse-regions)
 
                                         (";" mc-hide-unmatched-lines-mode)
                                         ("<up>" mc/mark-previous-like-this)
@@ -6179,17 +6013,9 @@
 :END:
 #+begin_src elisp
   ;;; yasnippet
-  (defun +yas-expand-or-company-complete ()
-    (interactive)
-    (or (yas/expand)
-        (call-interactively #'company-indent-or-complete-common)))
-
   (use-package company
     :hook (company-mode . company-tng-mode)
     :bind
-    (:map company-mode-map
-          ("<tab>" . '+yas-expand-or-company-complete)
-          ("TAB" . '+yas-expand-or-company-complete))
     (:map company-active-map
           ("<tab>" . 'company-complete-common-or-cycle)
           ("TAB" . 'company-complete-common-or-cycle)
@@ -7039,6 +6865,7 @@
                 ("v" weiss-dired-single-handed-mode)
                 )))
    )
+  ("e" ora-ediff-files)
   ("g" (
         ("d" ignore
          :then ((lambda()(interactive)(find-file "/home/weiss/Downloads")))
@@ -7131,6 +6958,26 @@
 #+end_src
 **** functions
 #+begin_src elisp
+  (defun ora-ediff-files ()
+    (interactive)
+    (let ((files (dired-get-marked-files))
+          (wnd (current-window-configuration)))
+      (if (<= (length files) 2)
+          (let ((file1 (car files))
+                (file2 (if (cdr files)
+                           (cadr files)
+                         (read-file-name
+                          "file: "
+                          (dired-dwim-target-directory)))))
+            (if (file-newer-than-file-p file1 file2)
+                (ediff-files file2 file1)
+              (ediff-files file1 file2))
+            (add-hook 'ediff-after-quit-hook-internal
+                      (lambda ()
+                        (setq ediff-after-quit-hook-internal nil)
+                        (set-window-configuration wnd))))
+        (error "no more than 2 files should be marked"))))
+
   (defun weiss-dired-copy-file-name ()
     "copy file name or copy path with prefix-arg"
     (interactive)
@@ -9820,6 +9667,20 @@
 :END:
 **** editing
 #+begin_src elisp
+  (defun move-line-up ()
+    "Move up the current line."
+    (interactive)
+    (transpose-lines 1)
+    (forward-line -2)
+    (indent-according-to-mode))
+
+  (defun move-line-down ()
+    "Move down the current line."
+    (interactive)
+    (forward-line 1)
+    (transpose-lines 1)
+    (forward-line -1)
+    (indent-according-to-mode))
 
   (defun weiss-insert-semicolon ()
     "insert semicolon at the end of line"
@@ -9829,13 +9690,11 @@
     (weiss-indent-nearby-lines)
     )
 
-
   (defun weiss-indent-paragraph()
     (interactive)
     (if (use-region-p)
         (progn
           (indent-region (region-beginning) (region-end))
-          ;; (ignore-errors (nox-format))
           )
       (let ((start)
             (end))            
@@ -10868,14 +10727,21 @@
   (defun weiss-down-key ()
     "DOCSTRING"
     (interactive)
-    (weiss-next-line-and-select-current-word)
+    (if current-prefix-arg
+        (move-line-down)
+      (weiss-next-line-and-select-current-word)      
+      )
     )
 
   (defun weiss-up-key ()
     "DOCSTRING"
     (interactive)
-    (weiss-previous-line-and-select-current-word)
+    (if current-prefix-arg
+        (move-line-up)
+      (weiss-previous-line-and-select-current-word)      
+      )
     )
+
   (defun weiss-next-line-and-select-current-word ()
     "weiss next line and select current word"
     (interactive)
@@ -10977,7 +10843,7 @@
       (left . 840)
       (top . 0)))
 
-
+  (advice-add 'weiss-new-frame :after (lambda () (interactive) (weiss-update-top-windows t)))
 
   (defun weiss-new-frame ()
     "make new frame on the same side of current frame or on the other side with prefix-arg"
@@ -11015,10 +10881,9 @@
     )
 
   (defun weiss-is-frame-in-right-pos (&optional frame)
-    "DOCSTRING"
+    "check if the current is on the right side"
     (interactive)  
-    (> (car (frame-edges frame)) 1690)
-    ;; (> (car (frame-edges frame)) 835)
+    (> (car (frame-edges frame)) weiss-right-frame-pos)
     )
 
   (defun weiss--select-frame-with-check (frame)
@@ -11089,9 +10954,8 @@
         )
       ))
 
-
   (defun weiss-update-top-windows (&optional shallow-update)
-    "DOCSTRING"
+    "update the top window"
     (interactive)
     (let ((current-frame (selected-frame)))
       (if (weiss-is-frame-in-right-pos)
@@ -11202,6 +11066,7 @@
                      dired-mode-hook
                      special-mode-hook
                      conf-mode-hook
+                     quickrun-after-run-hook
                      )))
     (dolist (x hook-list)
       (add-hook x 'weiss-after-major-mode))
@@ -11815,7 +11680,8 @@
 *** general
 
 #+begin_src elisp
-  (global-set-key (kbd "<backtab>") 'weiss-indent)
+  (define-key prog-mode-map (kbd "<tab>") 'weiss-indent)
+  (global-set-key (kbd "<backtab>") 'indent-for-tab-command)
   (global-set-key (kbd "<S-delete>") (lambda () (interactive) (insert "\\")))
   (global-set-key (kbd "<f5>") 'revert-buffer)
 
@@ -12229,17 +12095,18 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
            ("a"  mark-whole-buffer :then (weiss-select-mode-turn-on))
            ("b"  xah-toggle-previous-letter-case)
            ("c"  (
-                  ("k" save-buffers-kill-terminal)
                   ("a" weiss-kill-append)
-                  ("p" xah-copy-file-path)
+                  ("b" ignore
+                   :name "copy whole buffer"
+                   :then ((lambda () (interactive) (kill-new (buffer-string)))))
                   ("e" weiss-exchange-region-kill-ring-car)
                   ("f" ignore
                    :name "copy file name"
                    :then ((lambda () (interactive) (kill-new (buffer-file-name)))))
-                  ("b" ignore
-                   :name "copy whole buffer"
-                   :then ((lambda () (interactive) (kill-new (buffer-string)))))
-                  ))
+                  ("k" save-buffers-kill-terminal)
+                  ("p" xah-copy-file-path)
+                  )
+            )
            ("d" (
                  ;; ("a"  weiss-custom-daily-agenda)
                  ("b"  weiss-save-current-content)
@@ -12272,6 +12139,7 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
                  ("m"  all-the-icons-insert)
                  ("p"  bookmark-set)
                  ("s"  yasdcv-translate-at-point)
+                 ("v"  counsel-yank-pop)
                  ))
            ("j" (
                  ("K"  Info-goto-emacs-key-command-node)
@@ -12378,7 +12246,7 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
                  ("l"  xref-pop-marker-stack)
                  ("y"  winner-undo)                  ;windows setting
                  ("r"  winner-redo)
-                 ("k"  delete-frame)
+                 ("k"  delete-frame :then ((lambda () (interactive) (weiss-update-top-windows t))))
                  ("o"  org-babel-tangle-jump-to-org)
                  ))
            ;; ("x"  xah-cut-all-or-region)
@@ -12436,7 +12304,6 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
           (recentf-cleanup)))
       (message ""))
     :init
-    ;; (add-to-list 'recentf-filename-handlers 'abbreviate-file-name)
     (load (weiss--get-config-file-path "recentf"))
     (setq recentf-save-file (weiss--get-config-file-path "recentf"))
     :config
@@ -12464,7 +12331,7 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
                        "_region_.tex"
                        ))
     )
-  (add-to-list 'recentf-filename-handlers 'weiss-reduce-file-path)
+
   (load (weiss--get-config-file-path "recentf"))
 #+end_src
 ** misc

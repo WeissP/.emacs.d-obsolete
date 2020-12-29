@@ -2,6 +2,21 @@
 ;; editing
 
 ;; [[file:~/.emacs.d/config/emacs-config.org::*editing][editing:1]]
+(defun move-line-up ()
+  "Move up the current line."
+  (interactive)
+  (transpose-lines 1)
+  (forward-line -2)
+  (indent-according-to-mode))
+
+(defun move-line-down ()
+  "Move down the current line."
+  (interactive)
+  (forward-line 1)
+  (transpose-lines 1)
+  (forward-line -1)
+  (indent-according-to-mode))
+
 (defun weiss-insert-semicolon ()
   "insert semicolon at the end of line"
   (interactive)
@@ -10,13 +25,11 @@
   (weiss-indent-nearby-lines)
   )
 
-
 (defun weiss-indent-paragraph()
   (interactive)
   (if (use-region-p)
       (progn
         (indent-region (region-beginning) (region-end))
-        ;; (ignore-errors (nox-format))
         )
     (let ((start)
           (end))            
@@ -1051,14 +1064,21 @@ Version 2018-06-04"
 (defun weiss-down-key ()
   "DOCSTRING"
   (interactive)
-  (weiss-next-line-and-select-current-word)
+  (if current-prefix-arg
+      (move-line-down)
+    (weiss-next-line-and-select-current-word)      
+    )
   )
 
 (defun weiss-up-key ()
   "DOCSTRING"
   (interactive)
-  (weiss-previous-line-and-select-current-word)
+  (if current-prefix-arg
+      (move-line-up)
+    (weiss-previous-line-and-select-current-word)      
+    )
   )
+
 (defun weiss-next-line-and-select-current-word ()
   "weiss next line and select current word"
   (interactive)
@@ -1161,7 +1181,7 @@ Version 2018-06-04"
     (left . 840)
     (top . 0)))
 
-
+(advice-add 'weiss-new-frame :after (lambda () (interactive) (weiss-update-top-windows t)))
 
 (defun weiss-new-frame ()
   "make new frame on the same side of current frame or on the other side with prefix-arg"
@@ -1199,10 +1219,9 @@ Version 2018-06-04"
   )
 
 (defun weiss-is-frame-in-right-pos (&optional frame)
-  "DOCSTRING"
+  "check if the current is on the right side"
   (interactive)  
-  (> (car (frame-edges frame)) 1690)
-  ;; (> (car (frame-edges frame)) 835)
+  (> (car (frame-edges frame)) weiss-right-frame-pos)
   )
 
 (defun weiss--select-frame-with-check (frame)
@@ -1273,9 +1292,8 @@ Version 2018-06-04"
       )
     ))
 
-
 (defun weiss-update-top-windows (&optional shallow-update)
-  "DOCSTRING"
+  "update the top window"
   (interactive)
   (let ((current-frame (selected-frame)))
     (if (weiss-is-frame-in-right-pos)
@@ -1385,6 +1403,7 @@ Version 2018-06-04"
                    dired-mode-hook
                    special-mode-hook
                    conf-mode-hook
+                   quickrun-after-run-hook
                    )))
   (dolist (x hook-list)
     (add-hook x 'weiss-after-major-mode))
