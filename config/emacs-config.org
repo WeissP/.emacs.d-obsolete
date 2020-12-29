@@ -217,6 +217,7 @@
   (require 'weiss-abbrev-mode)
   (require 'weiss-project)
   (require 'weiss-lsp)
+  (require 'weiss-jupyter)
   (require 'weiss-ui)
 #+end_src
 ** dump
@@ -927,6 +928,8 @@
       ("wtb" "with-temp-buffer" weiss--ahf)
       ("wtf" "with-temp-file" weiss--ahf)
 
+      ("weal" "with-eval-after-load" weiss--ahf)
+
       ("botap" "bounds-of-thing-at-point" weiss--ahf)
       ("bsnp" "(buffer-substring-no-properties ▮)" weiss--ahf)
       ("daer" "delete-and-extract-region" weiss--ahf)
@@ -1275,6 +1278,7 @@
       ("with-output-to-temp-buffer" "(with-output-to-temp-buffer ▮)" weiss--ahf)
       ("with-temp-buffer" "(with-temp-buffer ▮)" weiss--ahf)
       ("with-temp-file" "(with-temp-file ▮)" weiss--ahf)
+      ("with-eval-after-load" "(with-eval-after-load '▮\n\n)" weiss--ahf-indent)
       ("write-char" "(write-char ▮)" weiss--ahf)
       ("write-file" "(write-file ▮)" weiss--ahf)
       ("write-region" "(write-region (point-min) (point-max) ▮)" weiss--ahf)
@@ -1752,7 +1756,9 @@
        ;; (let ((rest-buffer-list (cdr (buffer-list))))
        ;; (dolist (buf rest-buffer-list)
        (dolist (buf (buffer-list))
-         (when (and (or (and (snails-backend-filter-buffer-whitelist-buffer buf)
+         (when (and
+                (not (string= (buffer-name snails-start-buffer) (buffer-name buf)))
+                (or (and (snails-backend-filter-buffer-whitelist-buffer buf)
                              (snails-match-input-p input (buffer-name buf)))
                         (and
                          (snails-backend-filter-buffer-not-blacklist-buffer buf)
@@ -2706,7 +2712,7 @@
 ** font
 #+begin_src elisp :tangle after-dump/weiss-after-dump.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
   (use-package ligature
-    :disabled
+    ;; :disabled
     :quelpa (ligature 
              :fetcher github 
              :repo mickeynp/ligature.el)
@@ -6383,14 +6389,11 @@
 
 
   (use-package ein
-    :bind (:map ein:notebook-mode-map
-                ([remap save-buffer] . ein:notebook-save-notebook-command)
-                )
-    :ryo
-    (:mode 'ein:markdown-mode)
-    ("u" xor-preview-md-cell-latex)
     :config
     (setq ein:output-area-inlined-images t)
+    (with-eval-after-load 'ein-notebooklist
+      (define-key ein:notebook-mode-map [remap save-buffer] 'ein:notebook-save-notebook-command)      
+      )
     (defun xor-preview-md-cell-latex ()
       "Preview LaTeX from the current markdown cell in a separate buffer."
       ;; https://github.com/millejoh/emacs-ipython-notebook/issues/88
@@ -6416,6 +6419,12 @@
            '((display-buffer-below-selected display-buffer-at-bottom)
              (inhibit-same-window . t)))
           (fit-window-to-buffer (window-in-direction 'below)))))
+
+    ;; (ryo-modal-keys
+     ;; ("u" xor-preview-md-cell-latex :mode 'ein:markdown-mode))
+    :ryo
+    (:mode 'ein:markdown-mode)
+    ("u" xor-preview-md-cell-latex)
     )
 
   (provide 'weiss-jupyter)
@@ -6936,7 +6945,7 @@
   ("S"  hydra-dired-quick-sort/body)
   ("t"  dired-toggle-marks)
   ("u"  dired-unmark)
-  ("U"  dired-unmark-all-marks)
+  ("U"  dired-unmark-all-marks :then '(revert-buffer))
   ("v"  weiss-dired-git-clone)
   ("w"  weiss-dired-copy-file-name)
   ;; ("w" ignore
@@ -9615,10 +9624,11 @@
   (defvar weiss-origin-mode-map (make-sparse-keymap))
   (defvar weiss-origin-keep-keys nil)
 
-  (defun weiss-origin-mode-push-keymap ()
-    "push origin-mode keymap"
+  (defun weiss-origin-mode-push-keymap (&optional key-list)
+    "push origin-mode keymap, the first element in `weiss-origin-keep-keys' will be the only leader key"
     (interactive)
     (setq weiss-origin-mode-map nil)
+    (unless key-list (setq key-list '("SPC" "9" "s" "-" "<deletechar>")))
     (let ((ryo-keymap
            (eval (intern-soft (concat "ryo-" (symbol-name (car ryo-modal-mode-keymaps)) "-map"))))
           (is-keymap)
@@ -9626,7 +9636,7 @@
       (dolist (x ryo-keymap) 
         (if (eq x 'keymap)
             (setq is-keymap t)
-          (when (member (help-key-description (make-vector 1 (car x)) nil) weiss-origin-keep-keys)
+          (when (member (help-key-description (make-vector 1 (car x)) nil) key-list)
             (push x weiss-origin-mode-map)          
             (when is-keymap
               (push 'keymap weiss-origin-mode-map))
@@ -9637,8 +9647,8 @@
       (push 'keymap weiss-origin-mode-map)
       (mapc 
        (lambda (key)       
-         (define-key weiss-origin-mode-map (kbd (format "SPC %s" key)) (lookup-key (symbol-value (keymap-symbol (current-local-map))) (kbd key)))
-         ) weiss-origin-keep-keys)
+         (define-key weiss-origin-mode-map (kbd (format "%s %s" (car key-list) key)) (lookup-key (symbol-value (keymap-symbol (current-local-map))) (kbd key)))
+         ) key-list)
       (setq minor-mode-overriding-map-alist (assoc-delete-all 'weiss-origin-mode minor-mode-overriding-map-alist))
       (push `(weiss-origin-mode . ,weiss-origin-mode-map) minor-mode-overriding-map-alist)
       ))
@@ -9647,14 +9657,11 @@
     "keep origin keybindings and only change few keys (like leader key)"
     :keymap weiss-origin-mode-map
     (if weiss-origin-mode
-        (progn
-          (unless weiss-origin-keep-keys
-            (setq weiss-origin-keep-keys '("SPC" "9" "-")))
-          (weiss-origin-mode-push-keymap)        
+        (progn        
+          (weiss-origin-mode-push-keymap (cdr (assoc major-mode weiss-origin-keep-keys)))        
           (when ryo-modal-mode (ryo-modal-mode -1))
           )
       (setq minor-mode-overriding-map-alist (assoc-delete-all 'weiss-origin-mode minor-mode-overriding-map-alist))
-      (setq weiss-origin-keep-keys nil)
       )
     )
 
@@ -10815,31 +10822,35 @@
   (defvar weiss-right-frame-pos 1690 "the position of left bord of right frame")
   (defvar weiss-is-laptop nil)
 
+  ;; (car (frame-edges))
+  ;; (frame-width)
+  ;; (frame-height)
+
   (defvar weiss-desktop-left-frame-alist
     '((tool-bar-lines . 0)
       (width . 104) ; chars
-      (height . 53) ; lines
+      (height . 48) ; lines
       (left . 1680)
       (top . 0)))
 
   (defvar weiss-desktop-right-frame-alist
     '((tool-bar-lines . 0)
       (width . 104) ; chars
-      (height . 53) ; lines
+      (height . 48) ; lines
       (left . 2639)
       (top . 0)))
 
   (defvar weiss-laptop-left-frame-alist
     '((tool-bar-lines . 0)
       (width . 104) ; chars
-      (height . 53) ; lines
+      (height . 48) ; lines
       (left . 0)
       (top . 0)))
 
   (defvar weiss-laptop-right-frame-alist
     '((tool-bar-lines . 0)
       (width . 104) ; chars
-      (height . 53) ; lines
+      (height . 48) ; lines
       (left . 840)
       (top . 0)))
 
@@ -11170,6 +11181,35 @@
 #+end_src
 **** save/open/new/copy
 #+begin_src elisp
+  (defun xah-make-backup ()
+    "Make a backup copy of current file or dired marked files.
+  If in dired, backup current file or marked files.
+  The backup file name is in this format
+   x.html~2018-05-15_133429~
+   The last part is hour, minutes, seconds.
+  in the same dir. If such a file already exist, it's overwritten.
+  If the current buffer is not associated with a file, nothing's done.
+
+  URL `http://ergoemacs.org/emacs/elisp_make-backup.html'
+  Version 2018-06-06"
+    (interactive)
+    (let (($fname (buffer-file-name))
+          ($date-time-format "%Y-%m-%d_%H%M%S"))
+      (if $fname
+          (let (($backup-name
+                 (concat $fname "~" (format-time-string $date-time-format) "~")))
+            (copy-file $fname $backup-name t)
+            (message (concat "Backup saved at: " $backup-name)))
+        (if (eq major-mode 'dired-mode)
+            (progn
+              (mapc (lambda ($x)
+                      (let (($backup-name
+                             (concat $x "~" (format-time-string $date-time-format) "~")))
+                        (copy-file $x $backup-name t)))
+                    (dired-get-marked-files))
+              (revert-buffer))
+          (user-error "buffer not file nor dired")))))
+
   (defun weiss-kill-append ()
     "append region to kill-ring"
     (interactive)
@@ -11728,13 +11768,20 @@
   (use-package weiss-temp-insert-mode)
   (use-package weiss-overriding-ryo-mode)
   (use-package weiss-origin-mode
-    :hook
-    (
-     (magit-status-mode . weiss-origin-mode)
-     (magit-mode . weiss-origin-mode)
-     (telega-chat-mode . weiss-origin-mode)   
-     (telega-root-mode . weiss-origin-mode)   
-     ))
+    :config
+    (push '(telega-chat-mode . ("<deletechar>" "9" "-" "0")) weiss-origin-keep-keys)
+    (let ((hook-list '(
+                       magit-status-mode-hook
+                       magit-mode-hook
+                       telega-chat-mode-hook
+                       telega-root-mode-hook
+                       )))
+      (dolist (x hook-list)
+        (add-hook x 'weiss-origin-mode))
+      )  
+    )
+
+
 #+end_src
 
 #+RESULTS:
@@ -11915,6 +11962,10 @@
             :then ((lambda () (interactive) (weiss-insert-bracket-pair "`" "`" quick-insert-new-line)))
             :name "insert markdown quote"
             )
+           ("w" ignore
+            :then ((lambda () (interactive) (weiss-insert-bracket-pair "`" "'" quick-insert-new-line)))
+            :name "insert elisp quote"
+            )
            ("s" ignore
             :then ((lambda () (interactive) (weiss-insert-bracket-pair "*" "*" quick-insert-new-line)))
             :name "insert star"
@@ -12065,8 +12116,8 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
 
   (ryo-modal-command-then-ryo "M-m" 'weiss-select-mode-disable weiss-select-mode-map)
 
-  (ryo-modal-keys
-   ("SPC" (
+  (let ((leader-keymap
+         '(
            (","  (
                   ("e"  weiss-excute-buffer)
                   ("c"  quickrun-compile-only)
@@ -12251,7 +12302,15 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
                  ))
            ;; ("x"  xah-cut-all-or-region)
            ;; ("y"  xah-search-current-word)
-           )))
+           )
+         ))
+    (eval `(ryo-modal-keys
+            ("SPC" ,leader-keymap)
+            ("<deletechar>" ,leader-keymap)
+            ))
+    )
+
+
 
 #+end_src
 ** end
@@ -12344,9 +12403,9 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
 
   (dbus-init-bus :session)   ; for EAF DUMP
 
-  (setq weiss-left-top-window (selected-frame))
-  (setq weiss-right-top-window (make-frame-command))
-  (select-frame-set-input-focus weiss-left-top-window)
+  (setq weiss-right-top-window (selected-frame))
+  (setq weiss-left-top-window (make-frame-command))
+  (select-frame-set-input-focus weiss-right-top-window)
 
   (setq gc-cons-threshold (* (expt 1024 2) 32)
         gc-cons-percentage 0.5)

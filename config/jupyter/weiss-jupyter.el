@@ -4,7 +4,7 @@
 ;; :header-args: :tangle jupyter/weiss-jupyter.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
 ;; :END:
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*jupyter][jupyter:1]]
+;; [[file:../emacs-config.org::*jupyter][jupyter:1]]
 (use-package jupyter
   :disabled
   :init
@@ -12,14 +12,11 @@
 
 
 (use-package ein
-  :bind (:map ein:notebook-mode-map
-              ([remap save-buffer] . ein:notebook-save-notebook-command)
-              )
-  :ryo
-  (:mode 'ein:markdown-mode)
-  ("u" xor-preview-md-cell-latex)
   :config
   (setq ein:output-area-inlined-images t)
+  (with-eval-after-load 'ein-notebooklist
+    (define-key ein:notebook-mode-map [remap save-buffer] 'ein:notebook-save-notebook-command)      
+    )
   (defun xor-preview-md-cell-latex ()
     "Preview LaTeX from the current markdown cell in a separate buffer."
     ;; https://github.com/millejoh/emacs-ipython-notebook/issues/88
@@ -45,6 +42,12 @@
          '((display-buffer-below-selected display-buffer-at-bottom)
            (inhibit-same-window . t)))
         (fit-window-to-buffer (window-in-direction 'below)))))
+
+  ;; (ryo-modal-keys
+   ;; ("u" xor-preview-md-cell-latex :mode 'ein:markdown-mode))
+  :ryo
+  (:mode 'ein:markdown-mode)
+  ("u" xor-preview-md-cell-latex)
   )
 
 (provide 'weiss-jupyter)

@@ -4,14 +4,14 @@
 ;; :header-args: :tangle dired/weiss-dired.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
 ;; :END:
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*dired][dired:1]]
+;; [[file:../emacs-config.org::*dired][dired:1]]
 (use-package dired
   :ensure nil
 ;; dired:1 ends here
 
 ;; hook
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*hook][hook:1]]
+;; [[file:../emacs-config.org::*hook][hook:1]]
 :hook
 (dired-mode . (lambda () (interactive)
                 (dired-hide-details-mode 1)
@@ -24,7 +24,7 @@
 
 ;; keybinding 
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*keybinding][keybinding:1]]
+;; [[file:../emacs-config.org::*keybinding][keybinding:1]]
 :ryo
 (:mode 'dired-mode)
 ("SPC" (
@@ -107,7 +107,7 @@
 ("S"  hydra-dired-quick-sort/body)
 ("t"  dired-toggle-marks)
 ("u"  dired-unmark)
-("U"  dired-unmark-all-marks)
+("U"  dired-unmark-all-marks :then '(revert-buffer))
 ("v"  weiss-dired-git-clone)
 ("w"  weiss-dired-copy-file-name)
 ;; ("w" ignore
@@ -125,13 +125,13 @@
 
 ;; config
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*config][config:1]]
+;; [[file:../emacs-config.org::*config][config:1]]
 :config
 ;; config:1 ends here
 
 ;; functions
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*functions][functions:1]]
+;; [[file:../emacs-config.org::*functions][functions:1]]
 (defun ora-ediff-files ()
   (interactive)
   (let ((files (dired-get-marked-files))
@@ -258,7 +258,7 @@
 
 ;; variable
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*variable][variable:1]]
+;; [[file:../emacs-config.org::*variable][variable:1]]
 (setq
  dired-dwim-target t
  dired-recursive-deletes 'always
@@ -271,7 +271,7 @@
 
 ;; ui
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*ui][ui:1]]
+;; [[file:../emacs-config.org::*ui][ui:1]]
 ;; Colourful dired
 (use-package diredfl
   ;; :disabled
@@ -318,7 +318,7 @@
 
 ;; misc packages
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*misc packages][misc packages:1]]
+;; [[file:../emacs-config.org::*misc packages][misc packages:1]]
 (use-package dired-hacks-utils)
 
 (use-package dired-avfs)
@@ -344,7 +344,7 @@
 
 ;; end
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*end][end:1]]
+;; [[file:../emacs-config.org::*end][end:1]]
 )
 (provide 'weiss-dired)
 ;; end:1 ends here

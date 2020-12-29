@@ -1,7 +1,7 @@
 ;; -*- lexical-binding: t -*-
 ;; weiss-select-mode
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*weiss-select-mode][weiss-select-mode:1]]
+;; [[file:../emacs-config.org::*weiss-select-mode][weiss-select-mode:1]]
 (defvar weiss-select-mode-p nil "nil")
 
 (setq mark-select-mode-color "#ffcfe4")

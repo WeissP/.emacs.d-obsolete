@@ -4,7 +4,7 @@
 ;; :header-args: :tangle dired/weiss-dired-single-handed-mode.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
 ;; :END:
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*weiss-dired-single-handed-mode][weiss-dired-single-handed-mode:1]]
+;; [[file:../emacs-config.org::*weiss-dired-single-handed-mode][weiss-dired-single-handed-mode:1]]
 (define-minor-mode weiss-dired-single-handed-mode
   "weiss-dired-single-handed-mode"
   :lighter " single-hand"

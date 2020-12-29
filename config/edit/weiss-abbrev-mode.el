@@ -1,7 +1,7 @@
 ;; -*- lexical-binding: t -*-
 ;; functions and init
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*functions and init][functions and init:1]]
+;; [[file:../emacs-config.org::*functions and init][functions and init:1]]
 (set-default 'abbrev-mode nil)
 (abbrev-mode -1)
 (setq save-abbrevs nil)
@@ -89,7 +89,7 @@ Version 2016-10-24"
 
 ;; telega
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*telega][telega:1]]
+;; [[file:../emacs-config.org::*telega][telega:1]]
 (when (boundp 'telega-chat-mode-abbrev-table)
   (clear-abbrev-table telega-chat-mode-abbrev-table))
 
@@ -150,7 +150,7 @@ Version 2016-10-24"
 
 ;; sql
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*sql][sql:1]]
+;; [[file:../emacs-config.org::*sql][sql:1]]
 (when (boundp 'sql-mode-abbrev-table)
   (clear-abbrev-table sql-mode-abbrev-table))
 
@@ -208,7 +208,7 @@ Version 2016-10-24"
 
 ;; org
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*org][org:1]]
+;; [[file:../emacs-config.org::*org][org:1]]
 (when (boundp 'org-mode-abbrev-table)
   (clear-abbrev-table org-mode-abbrev-table))
 
@@ -275,7 +275,7 @@ Version 2016-10-24"
 
 ;; latex
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*latex][latex:1]]
+;; [[file:../emacs-config.org::*latex][latex:1]]
 (when (boundp 'latex-mode-abbrev-table)
   (clear-abbrev-table latex-mode-abbrev-table))
 
@@ -468,7 +468,7 @@ Version 2016-10-24"
 
 ;; java
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*java][java:1]]
+;; [[file:../emacs-config.org::*java][java:1]]
 (when (boundp 'java-mode-abbrev-table)
   (clear-abbrev-table java-mode-abbrev-table))
 
@@ -489,7 +489,7 @@ Version 2016-10-24"
 
 ;; html
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*html][html:1]]
+;; [[file:../emacs-config.org::*html][html:1]]
 (when (boundp 'html-mode-abbrev-table)
   (clear-abbrev-table html-mode-abbrev-table))
 
@@ -513,7 +513,7 @@ Version 2016-10-24"
 
 ;; elisp
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*elisp][elisp:1]]
+;; [[file:../emacs-config.org::*elisp][elisp:1]]
 (when (boundp 'emacs-lisp-mode-abbrev-table)
   (clear-abbrev-table emacs-lisp-mode-abbrev-table))
 
@@ -663,6 +663,8 @@ Version 2016-10-24"
     ("wcb" "with-current-buffer" weiss--ahf)
     ("wtb" "with-temp-buffer" weiss--ahf)
     ("wtf" "with-temp-file" weiss--ahf)
+
+    ("weal" "with-eval-after-load" weiss--ahf)
 
     ("botap" "bounds-of-thing-at-point" weiss--ahf)
     ("bsnp" "(buffer-substring-no-properties ▮)" weiss--ahf)
@@ -1012,6 +1014,7 @@ Version 2016-10-24"
     ("with-output-to-temp-buffer" "(with-output-to-temp-buffer ▮)" weiss--ahf)
     ("with-temp-buffer" "(with-temp-buffer ▮)" weiss--ahf)
     ("with-temp-file" "(with-temp-file ▮)" weiss--ahf)
+    ("with-eval-after-load" "(with-eval-after-load '▮\n\n)" weiss--ahf-indent)
     ("write-char" "(write-char ▮)" weiss--ahf)
     ("write-file" "(write-file ▮)" weiss--ahf)
     ("write-region" "(write-region (point-min) (point-max) ▮)" weiss--ahf)
@@ -1031,7 +1034,7 @@ Version 2016-10-24"
 
 ;; python
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*python][python:1]]
+;; [[file:../emacs-config.org::*python][python:1]]
 (when (boundp 'python-mode-abbrev-table)
   (clear-abbrev-table python-mode-abbrev-table)
   )
@@ -1053,7 +1056,7 @@ Version 2016-10-24"
 
 ;; misc
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*misc][misc:1]]
+;; [[file:../emacs-config.org::*misc][misc:1]]
 (when (boundp 'eshell-mode-abbrev-table)
   (clear-abbrev-table eshell-mode-abbrev-table))
 
@@ -1082,6 +1085,6 @@ Version 2016-10-24"
 
 ;; end
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*end][end:1]]
+;; [[file:../emacs-config.org::*end][end:1]]
 (provide 'weiss-abbrev-mode)
 ;; end:1 ends here

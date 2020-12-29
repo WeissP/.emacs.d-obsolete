@@ -1,7 +1,7 @@
 ;; -*- lexical-binding: t -*-
 ;; general
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*general][general:1]]
+;; [[file:../emacs-config.org::*general][general:1]]
 (require 'org)
 ;; (require 'latex)
 ;; (use-package latex)
@@ -11,7 +11,7 @@
 
 ;; packages
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*packages][packages:1]]
+;; [[file:../emacs-config.org::*packages][packages:1]]
 (use-package company-auctex
   :disabled
   :hook (LaTeX-mode-hook)
@@ -41,7 +41,7 @@
 
 ;; functions
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*functions][functions:1]]
+;; [[file:../emacs-config.org::*functions][functions:1]]
 (defun weiss-add-enumerate-to-all-headlines ()
   "DOCSTRING"
   (interactive)
@@ -198,7 +198,7 @@
 
 ;; export
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*export][export:1]]
+;; [[file:../emacs-config.org::*export][export:1]]
 (setq LaTeX-command-style '(("" "%(PDF)%(latex) -shell-escape %S%(PDFout)")))
 
 (setq
@@ -248,7 +248,7 @@
 
 ;; misc
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*misc][misc:1]]
+;; [[file:../emacs-config.org::*misc][misc:1]]
 ;; for delete bracket
   (setq weiss-latex-special-markers '("$"))
   ;; Preview
@@ -261,7 +261,7 @@
 
 ;; keybinding
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*keybinding][keybinding:1]]
+;; [[file:../emacs-config.org::*keybinding][keybinding:1]]
 (ryo-modal-keys
  (:mode 'latex-mode)
  ("u" weiss-latex-buffer-preview)
@@ -311,6 +311,6 @@
 
 ;; end
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*end][end:1]]
+;; [[file:../emacs-config.org::*end][end:1]]
 (provide 'weiss-latex)
 ;; end:1 ends here

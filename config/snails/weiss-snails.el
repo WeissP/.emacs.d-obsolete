@@ -1,7 +1,7 @@
 ;; -*- lexical-binding: t -*-
 ;; general
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*general][general:1]]
+;; [[file:../emacs-config.org::*general][general:1]]
 (use-package snails
   ;; :quelpa (snails 
   ;;          :fetcher github 

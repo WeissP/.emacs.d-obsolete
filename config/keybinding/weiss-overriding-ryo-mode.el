@@ -1,7 +1,7 @@
 ;; -*- lexical-binding: t -*-
 ;; weiss-overriding-ryo-mode
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*weiss-overriding-ryo-mode][weiss-overriding-ryo-mode:1]]
+;; [[file:../emacs-config.org::*weiss-overriding-ryo-mode][weiss-overriding-ryo-mode:1]]
 (define-minor-mode weiss-overriding-ryo-mode
   "weiss-overriding-ryo-mode"
   :keymap (make-sparse-keymap)

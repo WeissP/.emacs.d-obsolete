@@ -4,7 +4,7 @@
 ;; :header-args: :tangle rime/weiss-rime.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
 ;; :END:
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*rime][rime:1]]
+;; [[file:../emacs-config.org::*rime][rime:1]]
 (use-package rime
   :load-path "/home/weiss/.emacs.d/emacs-rime/"
   :ensure nil

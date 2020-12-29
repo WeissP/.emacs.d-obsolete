@@ -1,20 +1,20 @@
 ;; -*- lexical-binding: t -*-
 ;; themes
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*themes][themes:1]]
+;; [[file:../emacs-config.org::*themes][themes:1]]
 (use-package doom-themes)
 ;; themes:1 ends here
 
 ;; format/indent
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*format/indent][format/indent:1]]
+;; [[file:../emacs-config.org::*format/indent][format/indent:1]]
 (use-package web-beautify)
 (use-package origami)
 ;; format/indent:1 ends here
 
 ;; icons
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*icons][icons:1]]
+;; [[file:../emacs-config.org::*icons][icons:1]]
 ;; NOTE: Must run `M-x all-the-icons-install-fonts', and install fonts manually 
 (use-package all-the-icons 
   :diminish
@@ -43,13 +43,13 @@
 
 ;; end
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*end][end:1]]
+;; [[file:../emacs-config.org::*end][end:1]]
 (provide 'weiss-ui)
 ;; end:1 ends here
 
 ;; out of use
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*out of use][out of use:1]]
+;; [[file:../emacs-config.org::*out of use][out of use:1]]
 (use-package rainbow-blocks
   :disabled
   :hook (xah-elisp-mode . rainbow-blocks-mode)

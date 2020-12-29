@@ -4,7 +4,7 @@
 ;; :header-args: :tangle translation/weiss-translation.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
 ;; :END:
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*translation][translation:1]]
+;; [[file:../emacs-config.org::*translation][translation:1]]
 (use-package youdao-dictionary
   :disabled
   :config

@@ -4,7 +4,7 @@
 ;; :header-args: :tangle shell-or-terminal/weiss-shell-or-terminal.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
 ;; :END:
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*shell or terminal][shell or terminal:1]]
+;; [[file:../emacs-config.org::*shell or terminal][shell or terminal:1]]
 (use-package aweshell
   ;; :disabled                             
   :quelpa (aweshell
@@ -37,7 +37,7 @@
 
 ;; after dump
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*after dump][after dump:1]]
+;; [[file:../emacs-config.org::*after dump][after dump:1]]
 (use-package emacs-yakuake
   :load-path "/home/weiss/.emacs.d/local-package/dropdown-remote/"
   :ensure nil

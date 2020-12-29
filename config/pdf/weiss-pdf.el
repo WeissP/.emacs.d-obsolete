@@ -4,7 +4,7 @@
 ;; :header-args: :tangle pdf/weiss-pdf.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
 ;; :END:
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*pdf][pdf:1]]
+;; [[file:../emacs-config.org::*pdf][pdf:1]]
 (use-package org-noter
   :after org
   :bind (:map org-noter-notes-mode-map

@@ -1,7 +1,7 @@
 ;; -*- lexical-binding: t -*-
 ;; start, bind
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*start, bind][start, bind:1]]
+;; [[file:../emacs-config.org::*start, bind][start, bind:1]]
 (use-package lsp-mode
   ;; :disabled
   :diminish
@@ -18,14 +18,14 @@
 
 ;; init
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*init][init:1]]
+;; [[file:../emacs-config.org::*init][init:1]]
 :init
 ;; init:1 ends here
 
 ;; variable
 
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*variable][variable:1]]
+;; [[file:../emacs-config.org::*variable][variable:1]]
 (setq
  lsp-log-io nil                       ;; enable log only for debug
  lsp-headerline-breadcrumb-enable nil
@@ -68,7 +68,7 @@
 
 ;; lsp-ui
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*lsp-ui][lsp-ui:1]]
+;; [[file:../emacs-config.org::*lsp-ui][lsp-ui:1]]
 (use-package lsp-ui
     ;; :disabled
     :commands lsp-ui-mode
@@ -96,7 +96,7 @@
 ;; lsp-java
 
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*lsp-java][lsp-java:1]]
+;; [[file:../emacs-config.org::*lsp-java][lsp-java:1]]
 (use-package lsp-java
   ;; :disabled
   :hook (java-mode . (lambda ()
@@ -132,7 +132,7 @@
 
 ;; company-lsp
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*company-lsp][company-lsp:1]]
+;; [[file:../emacs-config.org::*company-lsp][company-lsp:1]]
 (use-package company-lsp
   :disabled
   :after  company
@@ -146,13 +146,13 @@
 
 ;; end
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*end][end:1]]
+;; [[file:../emacs-config.org::*end][end:1]]
 )
 ;; end:1 ends here
 
 ;; nox
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*nox][nox:1]]
+;; [[file:../emacs-config.org::*nox][nox:1]]
 (use-package nox
   ;; :disabled
   :quelpa (nox
@@ -188,6 +188,6 @@
 
 ;; end
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*end][end:1]]
+;; [[file:../emacs-config.org::*end][end:1]]
 (provide 'weiss-lsp)
 ;; end:1 ends here

@@ -1,7 +1,7 @@
 ;; -*- lexical-binding: t -*-
 ;; define mode
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*define mode][define mode:1]]
+;; [[file:../emacs-config.org::*define mode][define mode:1]]
 (defvar weiss-org-sp-mode-map (make-sparse-keymap))
 
 (define-minor-mode weiss-org-sp-mode
@@ -54,7 +54,7 @@
 ;; predicate
 
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*predicate][predicate:1]]
+;; [[file:../emacs-config.org::*predicate][predicate:1]]
 (defvar weiss-org-sp-sharp "^#\\+"
   "Shortcut for the org's #+ regex.")
 
@@ -103,7 +103,7 @@ calling `self-insert-command'."
 
 ;; functions
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*functions][functions:1]]
+;; [[file:../emacs-config.org::*functions][functions:1]]
 (defun weiss-org-sp-up ()
   "Move ARG headings up."
   (interactive)
@@ -373,7 +373,7 @@ otherwise, go to next special position
 
 ;; addvices
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*addvices][addvices:1]]
+;; [[file:../emacs-config.org::*addvices][addvices:1]]
 (advice-add 'xah-open-file-at-cursor
             :before
             '(lambda () (interactive)
@@ -387,6 +387,6 @@ otherwise, go to next special position
 
 ;; end
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*end][end:1]]
+;; [[file:../emacs-config.org::*end][end:1]]
 (provide 'weiss-org-sp-mode)
 ;; end:1 ends here

@@ -4,7 +4,7 @@
 ;; :header-args: :tangle vcs/weiss-vcs.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
 ;; :END:
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*vcs][vcs:1]]
+;; [[file:../emacs-config.org::*vcs][vcs:1]]
 ;; Git
 (use-package magit
   :init

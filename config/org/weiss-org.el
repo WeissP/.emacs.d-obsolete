@@ -4,7 +4,7 @@
 ;; :header-args: :tangle org/weiss-org.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
 ;; :END:
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*org][org:1]]
+;; [[file:../emacs-config.org::*org][org:1]]
 (defvar weiss/org-file-path "/home/weiss/Documents/OrgFiles/")
 (defun weiss--get-org-file-path (path)
   "get org-file path according to weiss/org-file-path"
@@ -16,7 +16,7 @@
 
 ;; hooks
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*hooks][hooks:1]]
+;; [[file:../emacs-config.org::*hooks][hooks:1]]
 :hook ((org-mode . (lambda ()
                      ;; (company-mode -1)
                      (if (eq major-mode 'org-mode)
@@ -79,7 +79,7 @@
 
 ;; init
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*init][init:1]]
+;; [[file:../emacs-config.org::*init][init:1]]
 :init
 (advice-add 'org-edit-special
             :after
@@ -93,7 +93,7 @@
 
 ;; variables
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*variables][variables:1]]
+;; [[file:../emacs-config.org::*variables][variables:1]]
 (setq
  org-directory "~/Documents/OrgFiles/"
  ;; org-agenda-files '("/home/weiss/Documents/OrgFiles/calendar.org" "/home/weiss/Documents/OrgFiles/todo.org")
@@ -178,7 +178,7 @@
 
 ;; keybinding
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*keybinding][keybinding:1]]
+;; [[file:../emacs-config.org::*keybinding][keybinding:1]]
 :bind
 (
  :map org-mode-map
@@ -270,13 +270,13 @@
 
 ;; config
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*config][config:1]]
+;; [[file:../emacs-config.org::*config][config:1]]
 :config
 ;; config:1 ends here
 
 ;; functions
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*functions][functions:1]]
+;; [[file:../emacs-config.org::*functions][functions:1]]
 (defun weiss-org-refile (arg)
   "normally only refile current file, refile all files in org-refile-targets with current-prefix-arg"
   (interactive "p")
@@ -623,7 +623,7 @@ Return non-nil if the window was shrunk, nil otherwise."
 
 ;; babel
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*babel][babel:1]]
+;; [[file:../emacs-config.org::*babel][babel:1]]
 (setq org-confirm-babel-evaluate nil
       org-src-fontify-natively t
       org-src-tab-acts-natively t)
@@ -684,14 +684,14 @@ Return non-nil if the window was shrunk, nil otherwise."
 
 ;; export
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*export][export:1]]
+;; [[file:../emacs-config.org::*export][export:1]]
 ;; Enable markdown backend
 (add-to-list 'org-export-backends 'md)
 ;; export:1 ends here
 
 ;; misc packages
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*misc packages][misc packages:1]]
+;; [[file:../emacs-config.org::*misc packages][misc packages:1]]
 (use-package org-agenda)
 (use-package org-fancy-priorities
   :diminish
@@ -739,7 +739,7 @@ Return non-nil if the window was shrunk, nil otherwise."
 
 ;; end
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*end][end:1]]
+;; [[file:../emacs-config.org::*end][end:1]]
 )
 (provide 'weiss-org)
 ;; end:1 ends here

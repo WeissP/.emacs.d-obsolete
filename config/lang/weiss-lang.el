@@ -1,7 +1,7 @@
 ;; -*- lexical-binding: t -*-
 ;; python
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*python][python:1]]
+;; [[file:../emacs-config.org::*python][python:1]]
 (use-package python
   ;; :disabled
   :ensure nil
@@ -42,7 +42,7 @@
 
 ;; c++
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*c++][c++:1]]
+;; [[file:../emacs-config.org::*c++][c++:1]]
 (use-package ccls
   :disabled
   :defines projectile-project-root-files-top-down-recurring
@@ -87,7 +87,7 @@
 
 ;; misc
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*misc][misc:1]]
+;; [[file:../emacs-config.org::*misc][misc:1]]
 (use-package http)
 
 (use-package markdown-mode
@@ -119,6 +119,6 @@
 
 ;; end
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*end][end:1]]
+;; [[file:../emacs-config.org::*end][end:1]]
 (provide 'weiss-lang)
 ;; end:1 ends here

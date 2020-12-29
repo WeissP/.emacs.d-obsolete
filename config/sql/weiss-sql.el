@@ -4,7 +4,7 @@
 ;; :header-args: :tangle sql/weiss-sql.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
 ;; :END:
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*sql][sql:1]]
+;; [[file:../emacs-config.org::*sql][sql:1]]
 (use-package sql
   :hook (sql-mode . (lambda () 
                       (linum-mode -1)

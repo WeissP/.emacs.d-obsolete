@@ -1,7 +1,7 @@
 ;; -*- lexical-binding: t -*-
 ;; editing
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*editing][editing:1]]
+;; [[file:../emacs-config.org::*editing][editing:1]]
 (defun move-line-up ()
   "Move up the current line."
   (interactive)
@@ -804,7 +804,7 @@
 
 ;; cursor movement
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*cursor movement][cursor movement:1]]
+;; [[file:../emacs-config.org::*cursor movement][cursor movement:1]]
 (defun xah-beginning-of-line-or-block ()
   "Move cursor to beginning of line or previous paragraph.
 
@@ -1149,35 +1149,39 @@ Version 2018-06-04"
 
 ;; buffer/frame switching
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*buffer/frame switching][buffer/frame switching:1]]
+;; [[file:../emacs-config.org::*buffer/frame switching][buffer/frame switching:1]]
 (defvar weiss-right-frame-pos 1690 "the position of left bord of right frame")
 (defvar weiss-is-laptop nil)
+
+;; (car (frame-edges))
+;; (frame-width)
+;; (frame-height)
 
 (defvar weiss-desktop-left-frame-alist
   '((tool-bar-lines . 0)
     (width . 104) ; chars
-    (height . 53) ; lines
+    (height . 48) ; lines
     (left . 1680)
     (top . 0)))
 
 (defvar weiss-desktop-right-frame-alist
   '((tool-bar-lines . 0)
     (width . 104) ; chars
-    (height . 53) ; lines
+    (height . 48) ; lines
     (left . 2639)
     (top . 0)))
 
 (defvar weiss-laptop-left-frame-alist
   '((tool-bar-lines . 0)
     (width . 104) ; chars
-    (height . 53) ; lines
+    (height . 48) ; lines
     (left . 0)
     (top . 0)))
 
 (defvar weiss-laptop-right-frame-alist
   '((tool-bar-lines . 0)
     (width . 104) ; chars
-    (height . 53) ; lines
+    (height . 48) ; lines
     (left . 840)
     (top . 0)))
 
@@ -1367,7 +1371,7 @@ Version 2018-06-04"
 
 ;; weiss-buffer-frame-change-hook
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*weiss-buffer-frame-change-hook][weiss-buffer-frame-change-hook:1]]
+;; [[file:../emacs-config.org::*weiss-buffer-frame-change-hook][weiss-buffer-frame-change-hook:1]]
 (defun weiss-after-change-frame-or-window (&optional a b c)
   "run after change frame or window"
   (interactive)
@@ -1412,7 +1416,7 @@ Version 2018-06-04"
 
 ;; select
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*select][select:1]]
+;; [[file:../emacs-config.org::*select][select:1]]
 (defun weiss-expand-region-by-word ()
   "expand region word by word on the same side of cursor"
   (interactive)
@@ -1508,7 +1512,36 @@ Version 2018-06-04"
 
 ;; save/open/new/copy
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*save/open/new/copy][save/open/new/copy:1]]
+;; [[file:../emacs-config.org::*save/open/new/copy][save/open/new/copy:1]]
+(defun xah-make-backup ()
+  "Make a backup copy of current file or dired marked files.
+If in dired, backup current file or marked files.
+The backup file name is in this format
+ x.html~2018-05-15_133429~
+ The last part is hour, minutes, seconds.
+in the same dir. If such a file already exist, it's overwritten.
+If the current buffer is not associated with a file, nothing's done.
+
+URL `http://ergoemacs.org/emacs/elisp_make-backup.html'
+Version 2018-06-06"
+  (interactive)
+  (let (($fname (buffer-file-name))
+        ($date-time-format "%Y-%m-%d_%H%M%S"))
+    (if $fname
+        (let (($backup-name
+               (concat $fname "~" (format-time-string $date-time-format) "~")))
+          (copy-file $fname $backup-name t)
+          (message (concat "Backup saved at: " $backup-name)))
+      (if (eq major-mode 'dired-mode)
+          (progn
+            (mapc (lambda ($x)
+                    (let (($backup-name
+                           (concat $x "~" (format-time-string $date-time-format) "~")))
+                      (copy-file $x $backup-name t)))
+                  (dired-get-marked-files))
+            (revert-buffer))
+        (user-error "buffer not file nor dired")))))
+
 (defun weiss-kill-append ()
   "append region to kill-ring"
   (interactive)
@@ -1834,7 +1867,7 @@ Version 2015-10-14"
 
 ;; keybinding
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*keybinding][keybinding:1]]
+;; [[file:../emacs-config.org::*keybinding][keybinding:1]]
 (defun weiss-overriding-ryo-define-key (keymap key-cmd-list fun)
   (interactive)
   (mapc
@@ -1861,7 +1894,7 @@ Version 2015-10-14"
 
 ;; misc
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*misc][misc:1]]
+;; [[file:../emacs-config.org::*misc][misc:1]]
 ;; comes from https://stackoverflow.com/questions/14489848/emacs-name-of-current-local-keymap
 (defun keymap-symbol (keymap)
   "Return the symbol to which KEYMAP is bound, or nil if no such symbol exists."
@@ -2017,6 +2050,6 @@ Version 2019-12-02"
 
 ;; end
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*end][end:1]]
+;; [[file:../emacs-config.org::*end][end:1]]
 (provide 'weiss-keybinding-functions)
 ;; end:1 ends here

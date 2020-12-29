@@ -4,7 +4,7 @@
 ;; :header-args: :tangle ivy/weiss-ivy.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
 ;; :END:
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*ivy][ivy:1]]
+;; [[file:../emacs-config.org::*ivy][ivy:1]]
 ;;; init-ivy.el --- Initialize ivy configurations.	-*- lexical-binding: t -*-
 
 ;;; Code:

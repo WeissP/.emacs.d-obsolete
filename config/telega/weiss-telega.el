@@ -4,7 +4,7 @@
 ;; :header-args: :tangle telega/weiss-telega.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
 ;; :END:
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*telega][telega:1]]
+;; [[file:../emacs-config.org::*telega][telega:1]]
 (use-package telega
   :hook
   ('telega-chat-mode . (lambda ()

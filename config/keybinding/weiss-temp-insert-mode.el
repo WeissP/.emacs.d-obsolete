@@ -1,7 +1,7 @@
 ;; -*- lexical-binding: t -*-
 ;; weiss-temp-insert-mode
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*weiss-temp-insert-mode][weiss-temp-insert-mode:1]]
+;; [[file:../emacs-config.org::*weiss-temp-insert-mode][weiss-temp-insert-mode:1]]
 (defvar weiss-temp-insert-mode-map (make-sparse-keymap) "Keybinding for weiss-temp-insert minor mode.")
 (defvar weiss-temp-insert--overlay-content)
 (defface weiss-temp-insert-selected-text-face

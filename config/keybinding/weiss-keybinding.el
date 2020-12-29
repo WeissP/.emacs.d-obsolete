@@ -2,7 +2,7 @@
 ;; general
 
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*general][general:1]]
+;; [[file:../emacs-config.org::*general][general:1]]
 (define-key prog-mode-map (kbd "<tab>") 'weiss-indent)
 (global-set-key (kbd "<backtab>") 'indent-for-tab-command)
 (global-set-key (kbd "<S-delete>") (lambda () (interactive) (insert "\\")))
@@ -51,18 +51,23 @@
 (use-package weiss-temp-insert-mode)
 (use-package weiss-overriding-ryo-mode)
 (use-package weiss-origin-mode
-  :hook
-  (
-   (magit-status-mode . weiss-origin-mode)
-   (magit-mode . weiss-origin-mode)
-   (telega-chat-mode . weiss-origin-mode)   
-   (telega-root-mode . weiss-origin-mode)   
-   ))
+  :config
+  (push '(telega-chat-mode . ("<deletechar>" "9" "-" "0")) weiss-origin-keep-keys)
+  (let ((hook-list '(
+                     magit-status-mode-hook
+                     magit-mode-hook
+                     telega-chat-mode-hook
+                     telega-root-mode-hook
+                     )))
+    (dolist (x hook-list)
+      (add-hook x 'weiss-origin-mode))
+    )  
+  )
 ;; general:1 ends here
 
 ;; hydra
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*hydra][hydra:1]]
+;; [[file:../emacs-config.org::*hydra][hydra:1]]
 (use-package hydra)
 
 (defhydra hydra-error (global-map "M-g")
@@ -132,7 +137,7 @@
 
 ;; quick-insert
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*quick-insert][quick-insert:1]]
+;; [[file:../emacs-config.org::*quick-insert][quick-insert:1]]
 (defvar quick-insert-new-line nil)
 (defvar quick-insert-if-exit-ryo nil)
 
@@ -239,6 +244,10 @@
           :then ((lambda () (interactive) (weiss-insert-bracket-pair "`" "`" quick-insert-new-line)))
           :name "insert markdown quote"
           )
+         ("w" ignore
+          :then ((lambda () (interactive) (weiss-insert-bracket-pair "`" "'" quick-insert-new-line)))
+          :name "insert elisp quote"
+          )
          ("s" ignore
           :then ((lambda () (interactive) (weiss-insert-bracket-pair "*" "*" quick-insert-new-line)))
           :name "insert star"
@@ -297,6 +306,6 @@
 
 ;; end
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*end][end:1]]
+;; [[file:../emacs-config.org::*end][end:1]]
 (provide 'weiss-keybinding)
 ;; end:1 ends here

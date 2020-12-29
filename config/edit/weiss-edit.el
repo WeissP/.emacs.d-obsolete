@@ -2,7 +2,7 @@
 ;; multiple-cursors                                                
 
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*multiple-cursors][multiple-cursors:1]]
+;; [[file:../emacs-config.org::*multiple-cursors][multiple-cursors:1]]
 (use-package multiple-cursors
   :init
   ;; (add-hook 'multiple-cursors-mode-hook 'ryo-modal-restart)
@@ -57,7 +57,7 @@
 
 ;; rotate-text
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*rotate-text][rotate-text:1]]
+;; [[file:../emacs-config.org::*rotate-text][rotate-text:1]]
 (use-package rotate-text
   :quelpa (rotate-text
            :fetcher github
@@ -102,7 +102,7 @@
 
 ;; misc
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*misc][misc:1]]
+;; [[file:../emacs-config.org::*misc][misc:1]]
 (use-package shiftless 
   :diminish
   :load-path "/home/weiss/.emacs.d/local-package/shiftless.el"
@@ -125,6 +125,6 @@
 
 ;; end
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*end][end:1]]
+;; [[file:../emacs-config.org::*end][end:1]]
 (provide 'weiss-edit)
 ;; end:1 ends here

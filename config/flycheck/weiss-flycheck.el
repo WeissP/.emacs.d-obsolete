@@ -4,7 +4,7 @@
 ;; :header-args: :tangle flycheck/weiss-flycheck.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
 ;; :END:
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*flycheck][flycheck:1]]
+;; [[file:../emacs-config.org::*flycheck][flycheck:1]]
 (use-package flycheck
   :diminish
   ;; :hook (after-init . global-flycheck-mode)

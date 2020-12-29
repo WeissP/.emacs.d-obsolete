@@ -1,7 +1,7 @@
 ;; -*- lexical-binding: t -*-
 ;; init for dump
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*init for dump][init for dump:1]]
+;; [[file:../emacs-config.org::*init for dump][init for dump:1]]
 (defvar weiss/launch-time (current-time))
 (defvar weiss-dumped-load-path nil)
 (defvar weiss-dumped-p nil)

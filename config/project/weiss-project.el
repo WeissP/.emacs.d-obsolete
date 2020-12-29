@@ -4,7 +4,7 @@
 ;; :header-args: :tangle project/weiss-project.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
 ;; :END:
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*projectile][projectile:1]]
+;; [[file:../emacs-config.org::*projectile][projectile:1]]
 (use-package projectile
   :bind
   (:map

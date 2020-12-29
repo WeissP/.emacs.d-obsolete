@@ -1,7 +1,7 @@
 ;; -*- lexical-binding: t -*-
 ;; window/frame
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*window/frame][window/frame:1]]
+;; [[file:../emacs-config.org::*window/frame][window/frame:1]]
 (winner-mode)
 (if (display-graphic-p)
     (progn
@@ -29,7 +29,7 @@
 
 ;; theme/modeline
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*theme/modeline][theme/modeline:1]]
+;; [[file:../emacs-config.org::*theme/modeline][theme/modeline:1]]
 (use-package nyan-mode
   :config
   (nyan-mode))
@@ -58,7 +58,7 @@
 
 ;; line number
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*line number][line number:1]]
+;; [[file:../emacs-config.org::*line number][line number:1]]
 (line-number-mode -1)
 (use-package display-line-numbers
   :custom
@@ -76,7 +76,7 @@
 
 ;; highlight
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*highlight][highlight:1]]
+;; [[file:../emacs-config.org::*highlight][highlight:1]]
 (use-package rainbow-mode
   :hook
   (prog-mode . rainbow-mode))
@@ -130,9 +130,9 @@
 
 ;; font
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*font][font:1]]
+;; [[file:../emacs-config.org::*font][font:1]]
 (use-package ligature
-  :disabled
+  ;; :disabled
   :quelpa (ligature 
            :fetcher github 
            :repo mickeynp/ligature.el)
@@ -189,7 +189,7 @@
 ;; :header-args: :tangle after-dump/weiss-after-dump.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
 ;; :END:
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*font lock face][font lock face:1]]
+;; [[file:../emacs-config.org::*font lock face][font lock face:1]]
 (set-face-attribute 'default nil :font "JetBrainsMono")
 (set-face-attribute 'fixed-pitch nil :font "JetBrainsMono")
 ;; (set-face-attribute 'variable-pitch nil :font "Route159" :height 1.05)
@@ -205,7 +205,7 @@
 
 ;; elisp 
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*elisp][elisp:1]]
+;; [[file:../emacs-config.org::*elisp][elisp:1]]
 (defvar xah-elisp-ampersand-words nil "List of elisp special syntax, just &optional and &rest,")
 (setq xah-elisp-ampersand-words '( "&optional" "&rest" "t" "nil"))
 
@@ -2789,7 +2789,7 @@
 
 ;; snails
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*snails][snails:1]]
+;; [[file:../emacs-config.org::*snails][snails:1]]
 (when (featurep 'snails)
   (set-face-attribute 'snails-header-line-face nil :inherit 'variable-pitch :foreground "#a626a4" :underline t :weight 'normal :slant 'italic :height 1.3)
   (set-face-attribute 'snails-header-index-face nil :inherit 'snails-header-line-face :height 0.7 :slant 'italic)
@@ -2801,7 +2801,7 @@
 
 ;; java
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*java][java:1]]
+;; [[file:../emacs-config.org::*java][java:1]]
 (font-lock-add-keywords
  'java-mode
  '(
@@ -2824,7 +2824,7 @@
 
 ;; org
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*org][org:1]]
+;; [[file:../emacs-config.org::*org][org:1]]
 (when (featurep 'org)
   (add-hook 'org-mode-hook (lambda ()
                              (variable-pitch-mode)
@@ -2934,7 +2934,7 @@
 
 ;; python
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*python][python:1]]
+;; [[file:../emacs-config.org::*python][python:1]]
 (add-hook 'python-mode-hook '(lambda ()
                                (face-remap-add-relative
                                 'font-lock-variable-name-face
@@ -2948,7 +2948,7 @@
 
 ;; misc
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*misc][misc:1]]
+;; [[file:../emacs-config.org::*misc][misc:1]]
 (setq inhibit-startup-screen t)
 
 ;; there are some problems to set face attribute before dump
@@ -2964,7 +2964,7 @@
 ;; ryo-bind-keys
 ;; Ryo-modal-mode can not bind void functions, so we bind keys at last.
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*ryo-bind-keys][ryo-bind-keys:1]]
+;; [[file:../emacs-config.org::*ryo-bind-keys][ryo-bind-keys:1]]
 (ryo-modal-keys
  (:mc-all t)
  ("RET" newline :first '(deactivate-mark) :mode 'prog-mode)
@@ -3054,8 +3054,8 @@
 
 (ryo-modal-command-then-ryo "M-m" 'weiss-select-mode-disable weiss-select-mode-map)
 
-(ryo-modal-keys
- ("SPC" (
+(let ((leader-keymap
+       '(
          (","  (
                 ("e"  weiss-excute-buffer)
                 ("c"  quickrun-compile-only)
@@ -3240,12 +3240,18 @@
                ))
          ;; ("x"  xah-cut-all-or-region)
          ;; ("y"  xah-search-current-word)
-         )))
+         )
+       ))
+  (eval `(ryo-modal-keys
+          ("SPC" ,leader-keymap)
+          ("<deletechar>" ,leader-keymap)
+          ))
+  )
 ;; ryo-bind-keys:1 ends here
 
 ;; tramp
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*tramp][tramp:1]]
+;; [[file:../emacs-config.org::*tramp][tramp:1]]
 ;; Tramp ivy interface
 (setq remote-file-name-inhibit-cache nil)
 
@@ -3260,7 +3266,7 @@
 
 ;; recentf
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*recentf][recentf:1]]
+;; [[file:../emacs-config.org::*recentf][recentf:1]]
 ;; Recent files
 ;; recentf-cleanup will update recentf-list
 (use-package recentf
@@ -3315,7 +3321,7 @@
 
 ;; misc
 
-;; [[file:~/.emacs.d/config/emacs-config.org::*misc][misc:1]]
+;; [[file:../emacs-config.org::*misc][misc:1]]
 (bookmark-load "/home/weiss/.emacs.d/bookmarks" t t t)
 (setq bookmark-save-flag 1)
 
@@ -3324,9 +3330,9 @@
 
 (dbus-init-bus :session)   ; for EAF DUMP
 
-(setq weiss-left-top-window (selected-frame))
-(setq weiss-right-top-window (make-frame-command))
-(select-frame-set-input-focus weiss-left-top-window)
+(setq weiss-right-top-window (selected-frame))
+(setq weiss-left-top-window (make-frame-command))
+(select-frame-set-input-focus weiss-right-top-window)
 
 (setq gc-cons-threshold (* (expt 1024 2) 32)
       gc-cons-percentage 0.5)
