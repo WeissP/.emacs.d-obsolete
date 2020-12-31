@@ -155,7 +155,7 @@
   (keyfreq-autosave-mode 1))
 
 (defun weiss-empty-defun-list (fun-list)
-  "DOCSTRING"
+  "Ryo don't support void function, so we need define some functions before."
   (interactive)
   (dolist (fun fun-list)
     (defalias fun (lambda ()
@@ -165,7 +165,6 @@
 ;; save sh file auto with executable permission
 (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 
-(defvar ryo-void-fun-list '(weiss-dired-git-clone eaf-open-this-from-dired weiss-dired-rsync org-noter-sync-current-note weiss-add-enumerate-to-all-headlines weiss-export-pdf-dwim weiss-export-pdf-dwim weiss-flyspell-save-word winner-undo winner-redo weiss-test weiss-dired-toggle-read-only))
-
+(defvar ryo-void-fun-list '(org-noter-sync-current-note weiss-add-enumerate-to-all-headlines weiss-test))
 (weiss-empty-defun-list ryo-void-fun-list)
 ;; basic and misc:1 ends here

@@ -77,6 +77,7 @@
   )
 
 (use-package yasnippet
+  :disabled
   :bind
   (:map
    yas-keymap

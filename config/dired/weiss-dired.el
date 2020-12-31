@@ -100,7 +100,7 @@
 ("L"  dired-do-symlink)
 ("m"  dired-mark)
 ("o"  xah-open-in-external-app)
-("O"  eaf-open-this-from-dired)
+;; ("O"  eaf-open-this-from-dired)
 ("p"  peep-dired)
 ("q"  quit-window)
 ("r"  dired-do-rename)

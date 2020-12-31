@@ -14,8 +14,9 @@
 (use-package ein
   :config
   (setq ein:output-area-inlined-images t)
-  (with-eval-after-load 'ein-notebooklist
+  (with-eval-after-load 'ein-notebook
     (define-key ein:notebook-mode-map [remap save-buffer] 'ein:notebook-save-notebook-command)      
+    (define-key ein:notebook-mode-map [remap weiss-excute-buffer] 'ein:worksheet-execute-all-cells-above)      
     )
   (defun xor-preview-md-cell-latex ()
     "Preview LaTeX from the current markdown cell in a separate buffer."
