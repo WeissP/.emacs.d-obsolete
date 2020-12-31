@@ -77,9 +77,45 @@
 ;; highlight
 
 ;; [[file:../emacs-config.org::*highlight][highlight:1]]
+(use-package highlight-indent-guides 
+  ;; :disabled
+  :diminish
+  :hook
+  (python-mode . highlight-indent-guides-mode)
+  :config
+  ;; (defun my-highlighter (level responsive display)
+  ;;   ;; (if (or (< level 2)(= 0 (mod level 2)))
+  ;;   ;; (if (= 0 (mod level 2))
+  ;;   (if (or (< level 1))
+  ;;       nil
+  ;;     (highlight-indent-guides--highlighter-default level responsive display)))
+  ;; character style
+  ;; (setq highlight-indent-guides-method 'character)
+  ;; (setq highlight-indent-guides-character ?\>)
+  ;; (setq highlight-indent-guides-highlighter-function 'my-highlighter)
+
+  ;; column style
+  (setq highlight-indent-guides-auto-enabled nil)
+  (setq highlight-indent-guides-method 'character)
+  (set-face-attribute 'highlight-indent-guides-character-face nil :foreground "gray")
+  ;; (setq highlight-indent-guides-auto-odd-face-perc #a9a9a9)
+  ;; (set-face-background 'highlight-indent-guides-odd-face "#a9a9a9")
+  ;; (set-face-background 'highlight-indent-guides-even-face "#FAFAFA")
+  ;; (setq highlight-indent-guides-auto-even-face-perc 15)
+  )
+
 (use-package rainbow-mode
   :hook
-  (prog-mode . rainbow-mode))
+  (prog-mode . rainbow-mode)
+  :init
+  (setq rainbow-html-colors nil)
+  (setq rainbow-html-colors nil)
+  (setq rainbow-r-colors nil)
+  (setq rainbow-x-colors nil)
+  (setq rainbow-ansi-colors nil)
+  (setq rainbow-latex-colors nil)
+  (setq rainbow-r-colors-alist nil)
+  )
 
 (use-package highlight-parentheses
   :hook (prog-mode . highlight-parentheses-mode)
@@ -143,19 +179,24 @@
   ;; `variable-pitch' face supports it
   (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
   ;; Enable all Cascadia Code ligatures in programming modes
-  (ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
-                                       ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
-                                       "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
-                                       "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
-                                       "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
-                                       "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
-                                       "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
-                                       "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
-                                       ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
-                                       "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
-                                       "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
-                                       "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
-                                       "://"))
+  (let ((ligatures '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
+                     ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+                     "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+                     "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
+                     "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
+                     "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+                     "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
+                     "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
+                     ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
+                     "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
+                     "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
+                     "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+                     "://"))
+        )
+    (ligature-set-ligatures 'prog-mode ligatures)    
+    (ligature-set-ligatures 'sgml-mode ligatures)    
+    )
+
   ;; Enables ligature checks globally in all buffers. You can also do it
   ;; per mode with `ligature-mode'.
   (global-ligature-mode t))
@@ -2968,6 +3009,7 @@
 (ryo-modal-keys
  (:mc-all t)
  ("RET" newline :first '(deactivate-mark) :mode 'prog-mode)
+ ("RET" newline :first '(deactivate-mark) :mode 'html-mode)
  ("'"  ryo-modal-repeat)
  (","  xah-backward-left-bracket)
  ("-"  weiss-switch-to-same-side-frame)
@@ -3031,6 +3073,11 @@
         :then ((lambda () (interactive) (weiss--execute-kbd-macro "C-c '")))
         :name "C-c '"
         )         
+       ("o" ignore
+        :then ((lambda () (interactive) (weiss--execute-kbd-macro "C-c C-o")))
+        :name "C-c C-o"
+        )
+
        ))
  ("u"  weiss-delete-or-add-parent-sexp)
  ("v"  xah-paste-or-paste-previous)
@@ -3210,6 +3257,7 @@
          ("m"  dired-jump)
          ("n"  end-of-buffer)
          ("o" (
+               ("v" yank-rectangle)
                ("n" mc/mark-next-like-this)
                ("a" mc/mark-all-like-this)
                ("SPC" hydra-multiple-cursors-weiss/body)
