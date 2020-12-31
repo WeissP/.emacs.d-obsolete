@@ -19,7 +19,7 @@
 (require 'weiss-sql)
 (require 'weiss-rime)
 (require 'weiss-latex)
-(require 'weiss-telega)
+;; (require 'weiss-telega)
 (require 'weiss-abbrev-mode)
 (require 'weiss-project)
 (require 'weiss-lsp)

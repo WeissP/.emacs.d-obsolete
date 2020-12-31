@@ -214,7 +214,7 @@
   (require 'weiss-sql)
   (require 'weiss-rime)
   (require 'weiss-latex)
-  (require 'weiss-telega)
+  ;; (require 'weiss-telega)
   (require 'weiss-abbrev-mode)
   (require 'weiss-project)
   (require 'weiss-lsp)
@@ -7647,7 +7647,7 @@
 
 * telega
 :PROPERTIES:
-:header-args: :tangle telega/weiss-telega.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
+:header-args: :tangle after-dump/weiss-after-dump.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
 :END:
 #+begin_src elisp
   (use-package telega
