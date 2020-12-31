@@ -47,27 +47,28 @@
                      ;; (push '("[X]" . ?☑) prettify-symbols-alist)
                      ;; (push '("[-]" . ?⛝) prettify-symbols-alist)
 
-                     (push '("#+ARCHIVE:" . ?📦) prettify-symbols-alist)
-                     ;; (push '("#+AUTHOR:" . ?👤) prettify-symbols-alist)
-                     ;; (push '("#+CREATOR:" . ?💁) prettify-symbols-alist)
-                     (push '("#+DATE:" . ?📆) prettify-symbols-alist)
-                     (push '("#+DESCRIPTION:" . ?⸙) prettify-symbols-alist)
-                     (push '("#+EMAIL:" . ?🖂) prettify-symbols-alist)
-                     (push '("#+OPTIONS:" . ?⛭) prettify-symbols-alist)
-                     (push '("#+SETUPFILE:" . ?⛮) prettify-symbols-alist)
-                     (push '("#+TAGS:" . ?🏷) prettify-symbols-alist)
-                     ;; (push '("#+TITLE:" . ?📓) prettify-symbols-alist)
+                     ;; (push '("#+ARCHIVE:" . ?📦) prettify-symbols-alist)
+                     ;; ;; (push '("#+AUTHOR:" . ?👤) prettify-symbols-alist)
+                     ;; ;; (push '("#+CREATOR:" . ?💁) prettify-symbols-alist)
+                     ;; (push '("#+DATE:" . ?📆) prettify-symbols-alist)
+                     ;; (push '("#+DESCRIPTION:" . ?⸙) prettify-symbols-alist)
+                     ;; (push '("#+EMAIL:" . ?🖂) prettify-symbols-alist)
+                     ;; (push '("#+OPTIONS:" . ?⛭) prettify-symbols-alist)
+                     ;; (push '("#+SETUPFILE:" . ?⛮) prettify-symbols-alist)
+                     ;; (push '("#+TAGS:" . ?🏷) prettify-symbols-alist)
+                     ;; ;; (push '("#+TITLE:" . ?📓) prettify-symbols-alist)
 
-                     (push '("#+BEGIN_SRC" . ?✎) prettify-symbols-alist)
-                     (push '("#+begin_src" . ?✎) prettify-symbols-alist)
-                     (push '("#+END_SRC" . ?⬝) prettify-symbols-alist)
-                     (push '("#+end_src" . ?⬝) prettify-symbols-alist)
-                     (push '("#+BEGIN_QUOTE" . ?») prettify-symbols-alist)
-                     (push '("#+END_QUOTE" . ?«) prettify-symbols-alist)
-                     (push '("#+HEADERS" . ?☰) prettify-symbols-alist)
-                     (push '("#+RESULTS:" . ?💻) prettify-symbols-alist)
+                     ;; (push '("#+BEGIN_SRC" . ?✎) prettify-symbols-alist)
+                     ;; (push '("#+begin_src" . ?✎) prettify-symbols-alist)
+                     ;; (push '("#+END_SRC" . ?⬝) prettify-symbols-alist)
+                     ;; (push '("#+end_src" . ?⬝) prettify-symbols-alist)
+                     ;; (push '("#+BEGIN_QUOTE" . ?») prettify-symbols-alist)
+                     ;; (push '("#+END_QUOTE" . ?«) prettify-symbols-alist)
+                     ;; (push '("#+HEADERS" . ?☰) prettify-symbols-alist)
+                     ;; (push '("#+RESULTS:" . ?💻) prettify-symbols-alist)
 
-                     (prettify-symbols-mode 1)))
+                     ;; (prettify-symbols-mode 1)
+                     ))
 
        (org-indent-mode . (lambda()
                             (diminish 'org-indent-mode)
@@ -103,8 +104,8 @@
  ;; (sequence "⚑(T)" "🏴(I)" "❓(H)" "|" "✔(D)" "✘(C)"))
  org-cycle-max-level 15
  org-agenda-skip-scheduled-if-done t
- org-hide-leading-stars t
- org-hide-leading-stars-before-indent-mode t
+ org-hide-leading-stars nil
+ org-indent-mode-turns-on-hiding-stars nil
  org-list-description-max-indent 4
  org-startup-indented t
  org-log-done 'time
@@ -161,7 +162,7 @@
                            ("a" "Abgabe" entry (file "~/Documents/OrgFiles/Vorlesungen.org")
                             "* [[%F][%f]]  \n ")
                            )
- org-ellipsis (if (char-displayable-p ?) "  " nil)
+ ;; org-ellipsis (if (char-displayable-p ?) "  " nil)
  org-pretty-entities nil
  ;; hide ** //
  org-hide-emphasis-markers nil
@@ -209,9 +210,9 @@
       ("i" outline-up-heading)
       ("l" org-down-element)
       ("a" weiss-org-screenshot)
-      ("n" weiss-flyspell-save-word)
+      ;; ("n" weiss-flyspell-save-word)
       ("o" org-noter)
-      ("p" weiss-export-pdf-dwim)
+      ;; ("p" weiss-export-pdf-dwim)
       ("q" org-set-tags-command)
       ("s" org-noter-sync-current-note)
       ("t" org-todo)
@@ -705,6 +706,7 @@ Return non-nil if the window was shrunk, nil otherwise."
                              (67 :foreground "#0098dd"))))
 
 (use-package org-bullets
+  :disabled
   :diminish
   :after org
   :hook (org-mode . org-bullets-mode)
@@ -718,6 +720,7 @@ Return non-nil if the window was shrunk, nil otherwise."
   :diminish
   :bind (:map org-mode-map
               ("C-v" . org-rich-yank)))
+
 (use-package org-tempo ; for <s expand in org-babel
   ;; :disabled
   :diminish
