@@ -21,6 +21,8 @@
 (require 'cl)
 (require 'cl-lib)
 (require 'package)
+(require 'mode-local)
+
 ;; Package & use-package & Quelpa initialize
 
 (package-initialize)

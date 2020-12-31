@@ -929,29 +929,35 @@ Version 2018-06-04"
 
 (setq uppercase-alphabet '("A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M" "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z"))
 
-(defun weiss-change-delimiters-list ()
-  "Change delimiters list by mode"
-  (interactive)
-  (cond
-   ((eq major-mode 'python-mode) (setq weiss-non-stop-delimiters-list '(";" "	" " " "\n" "'" "\\")
-                                       weiss-stop-delimiters-list '(":" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*")))
 
-   ((eq major-mode 'org-mode) (setq
-                               weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
-                               weiss-stop-delimiters-list '("&" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "|")))   
-   ((eq major-mode 'latex-mode) (setq
-                                 weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
-                                 weiss-stop-delimiters-list '("&" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*")))
-   ((eq major-mode 'java-mode) (setq
-                                weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
-                                weiss-stop-delimiters-list '(";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*")))
-   ((eq major-mode 'html-mode) (setq weiss-non-stop-delimiters-list '(";" "	" " " "\n" "'" "\\")
-                                     weiss-stop-delimiters-list '("<" ">" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*")))
-   (t (setq weiss-non-stop-delimiters-list '(";" "	" " " "\n" "'" "\\")
-            weiss-stop-delimiters-list '("." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*")))
+(defvar weiss-non-stop-delimiters-list '(";" "	" " " "\n" "'" "\\"))
+(defvar weiss-stop-delimiters-list '("." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
 
-   ))
+;; need mode-local.el
+(setq-mode-local
+ python-mode
+ weiss-non-stop-delimiters-list '(";" "	" " " "\n" "'" "\\")
+ weiss-stop-delimiters-list '(":" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
 
+(setq-mode-local
+ org-mode
+ weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
+ weiss-stop-delimiters-list '("&" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "|"))
+
+(setq-mode-local
+ latex-mode
+ weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
+ weiss-stop-delimiters-list '("&" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
+
+(setq-mode-local
+ sgml-mode
+ weiss-non-stop-delimiters-list '(";" "	" " " "\n" "'" "\\")
+ weiss-stop-delimiters-list '(":" "<" ">" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
+
+(setq-mode-local
+ java-mode
+ weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
+ weiss-stop-delimiters-list '(";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
 
 (defun weiss--check-two-char (isForward firstList &optional secondList)
   "Check two char"
@@ -1190,9 +1196,9 @@ Version 2018-06-04"
 (defun weiss-new-frame ()
   "make new frame on the same side of current frame or on the other side with prefix-arg"
   (interactive)
-  (if (eq (weiss-is-frame-in-right-pos) current-prefix-arg)
-      (make-frame default-frame-alist)
-    (make-frame initial-frame-alist)
+  (if (eq (weiss-is-frame-in-right-pos) (null current-prefix-arg))
+      (make-frame initial-frame-alist)
+    (make-frame default-frame-alist)
     )
   )
 
@@ -1408,6 +1414,7 @@ Version 2018-06-04"
                    special-mode-hook
                    conf-mode-hook
                    quickrun-after-run-hook
+                   custom-mode-hook
                    )))
   (dolist (x hook-list)
     (add-hook x 'weiss-after-major-mode))

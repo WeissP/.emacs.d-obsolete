@@ -33,8 +33,6 @@
   (add-to-list 'weiss/after-buffer-change-function-list 'weiss-check-ryo)
   (add-to-list 'weiss/after-major-mode-function-list 'weiss-check-ryo)
 
-  (add-to-list 'weiss/after-major-mode-function-list 'weiss-change-delimiters-list)  
-
   (setq ryo-modal-cursor-color weiss/cursor-color)
   :config
   ;; the default cursor face config for cursor is wrong before dump.

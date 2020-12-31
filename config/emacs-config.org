@@ -45,6 +45,8 @@
   (require 'cl)
   (require 'cl-lib)
   (require 'package)
+  (require 'mode-local)
+
   ;; Package & use-package & Quelpa initialize
 
   (package-initialize)
@@ -179,7 +181,7 @@
     (keyfreq-autosave-mode 1))
 
   (defun weiss-empty-defun-list (fun-list)
-    "DOCSTRING"
+    "Ryo don't support void function, so we need define some functions before."
     (interactive)
     (dolist (fun fun-list)
       (defalias fun (lambda ()
@@ -189,8 +191,7 @@
   ;; save sh file auto with executable permission
   (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 
-  (defvar ryo-void-fun-list '(weiss-dired-git-clone eaf-open-this-from-dired weiss-dired-rsync org-noter-sync-current-note weiss-add-enumerate-to-all-headlines weiss-export-pdf-dwim weiss-export-pdf-dwim weiss-flyspell-save-word winner-undo winner-redo weiss-test weiss-dired-toggle-read-only))
-
+  (defvar ryo-void-fun-list '(org-noter-sync-current-note weiss-add-enumerate-to-all-headlines weiss-test))
   (weiss-empty-defun-list ryo-void-fun-list)
 
 #+end_src
@@ -245,6 +246,15 @@
 
 ** out of use
 #+begin_src elisp :tangle no
+  (advice-add 'mwheel-scroll :around #'me/mwheel-scroll)
+
+  (defun me/mwheel-scroll (original &rest arguments)
+    "Like `mwheel-scroll' but preserve screen position.
+  See `scroll-preserve-screen-position'."
+    (let ((scroll-preserve-screen-position :always))
+      (apply original arguments)))
+
+
   (use-package auto-package-update
     :disabled
     :config
@@ -760,19 +770,27 @@
 
   (define-abbrev-table 'html-mode-abbrev-table
     '(
-      ("zh1" "<h1>▮ </h1>")
-      ("zli" "<li>▮ </li>")
-      ("zol" "<ol start=1 type=a> \n▮ \n </ol>")
-      ("zul" "<ul> \n▮ \n </ul>")
-      ("zb" "<b>▮ </b>")
-      ("zi" "<i>▮ </i>")
-      ("zp" "<p>▮ </p>")
-      ("za" "<a href=\"▮\"> </a>" weiss--ahf)
+      ("h1" "<h1> ▮ </h1>")
+      ("li" "<li> ▮ </li>")
+      ("ol" "<ol start=1 type=a> \n▮ \n </ol>" weiss--ahf-indent)
+      ("ul" "<ul> \n▮ \n </ul>" weiss--ahf-indent)
+      ("b" "<b> ▮ </b>")
+      ("i" "<i> ▮ </i>")
+      ("p" "<p> ▮ </p>")
+      ("a" "<a href=\"▮\"> </a>" weiss--ahf)
       ("esl" "&lt;" weiss--ahf)
       ("esg" "&gt;" weiss--ahf)
       ("eslg" "&lt;▮&gt;" weiss--ahf)
-      ("zbr" "<br>" weiss--ahf)
-      ("zhd" "<head>\n<meta charset=\"utf-8\">\n<title>▮</title>\n</head>" weiss--ahf)
+      ("esa" "&amp" weiss--ahf)
+      ("esq" "&quot;" weiss--ahf)
+      ("br" "<br>" weiss--ahf)
+      ("tr" "<tr>\n▮\n</tr>" weiss--ahf-indent)
+      ("td" "<td>▮</td>" weiss--ahf)
+      ("th" "<th>▮</th>" weiss--ahf)
+      ("s" "style" weiss--ahf-indent)
+      ("style" "<style>\n▮\n</style>" weiss--ahf-indent)
+      ("hd" "<head>\n<meta charset=\"utf-8\">\n<title>▮</title>\n</head>" weiss--ahf-indent)
+      ("temp" "<!doctype html>\n<html lang=\"de\">\n\n<head>\n<meta charset=\"utf-8\">\n<title>▮</title>\n</head>\n\n<body>\n\n</body>" weiss--ahf-indent)
       ))
 #+end_src
 
@@ -1029,7 +1047,7 @@
       ("directory-files" "(directory-files ▮)" weiss--ahf)
       ("directory-files-recursively" "(directory-files-recursively ▮)" weiss--ahf)
       ("directory-name-p" "(directory-name-p ▮)" weiss--ahf)
-      ("dolist" "(dolist (x ▮) \n)" weiss--ahf-indent)
+      ("dolist" "(dolist (x ▮) \n\n)" weiss--ahf-indent)
       ("dotimes" "(dotimes (i ▮) \n)" weiss--ahf-indent)
       ("elt" "(elt ▮)" weiss--ahf)
       ("end-of-line" "(end-of-line ▮)" weiss--ahf)
@@ -1227,6 +1245,7 @@
       ("set-visited-file-modtime" "(set-visited-file-modtime ▮)" weiss--ahf)
       ("set-visited-file-name" "(set-visited-file-name ▮)" weiss--ahf)
       ("setq" "(setq ▮)" weiss--ahf)
+      ("setf" "(setf ▮)" weiss--ahf)
       ("max" "(max ▮)" weiss--ahf)
       ("shell-command" "(shell-command ▮)" weiss--ahf)
       ("shell-quote-argument" "(shell-quote-argument ▮)" weiss--ahf)
@@ -1506,6 +1525,172 @@
 
 
   ;;; snails-backend-recentf-weiss.el ends here
+#+end_src
+
+** imenu
+#+begin_src elisp
+;;; snails-backend-imenu.el --- IMenu backend for snails
+
+;; Filename: snails-backend-imenu.el
+;; Description: IMenu backend for snails
+;; Author: Andy Stewart <lazycat.manatee@gmail.com>
+;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
+;; Copyright (C) 2019, Andy Stewart, all rights reserved.
+;; Created: 2019-07-26 08:03:06
+;; Version: 0.1
+;; Last-Updated: 2019-07-26 08:03:06
+;;           By: Andy Stewart
+;; URL: http://www.emacswiki.org/emacs/download/snails-backend-imenu.el
+;; Keywords:
+;; Compatibility: GNU Emacs 26.2
+;;
+;; Features that might be required by this library:
+;;
+;;
+;;
+
+;;; This file is NOT part of GNU Emacs
+
+;;; License
+;;
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 3, or (at your option)
+;; any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program; see the file COPYING.  If not, write to
+;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth
+;; Floor, Boston, MA 02110-1301, USA.
+
+;;; Commentary:
+;;
+;; IMenu backend for snails
+;;
+
+;;; Installation:
+;;
+;; Put snails-backend-imenu.el to your load-path.
+;; The load-path is usually ~/elisp/.
+;; It's set in your ~/.emacs like this:
+;; (add-to-list 'load-path (expand-file-name "~/elisp"))
+;;
+;; And the following to your ~/.emacs startup file.
+;;
+;; (require 'snails-backend-imenu)
+;;
+;; No need more.
+
+;;; Customize:
+;;
+;;
+;;
+;; All of the above can customize by:
+;;      M-x customize-group RET snails-backend-imenu RET
+;;
+
+;;; Change log:
+;;
+;; 2019/07/26
+;;      * First released.
+;;
+
+;;; Acknowledgements:
+;;
+;;
+;;
+
+;;; TODO
+;;
+;;
+;;
+
+;;; Require
+(require 'imenu)
+
+;;; Code:
+
+(defvar snails-backend-imenu-cached-candidates nil)
+(defvar snails-backend-imenu-cached-buffer nil)
+
+(defun snails-backend-imenu-candidates (buffer)
+  (with-current-buffer buffer
+    (prog1
+        (if
+            ;; Use cache candidates when `snails-backend-imenu-cached-candidates' is non-nil.
+            ;; Need re-generate cache when user switch different buffer.
+            (and snails-backend-imenu-cached-candidates
+                 (or
+                  (not snails-backend-imenu-cached-buffer)
+                  (equal snails-backend-imenu-cached-buffer buffer)))
+            snails-backend-imenu-cached-candidates
+          (setq snails-backend-imenu-cached-candidates
+                (let ((index (ignore-errors (imenu--make-index-alist t))))
+                  (when index
+                    (snails-backend-imenu-build-candidates
+                     (delete (assoc "*Rescan*" index) index))))))
+      (setq snails-backend-imenu-cached-buffer buffer))))
+
+(defun snails-backend-imenu-build-candidates (alist)
+  (cl-remove-if
+   (lambda (c)
+     (or (string-equal (car c) "Types")
+         (string-equal (car c) "Variables")
+         ))
+   (cl-loop for elm in alist
+            nconc (cond
+                   ((imenu--subalist-p elm)
+                    (snails-backend-imenu-build-candidates
+                     (cl-loop for (e . v) in (cdr elm) collect
+                              (cons
+                               e
+                               (if (integerp v) (copy-marker v) v)))))
+                   ((listp (cdr elm))
+                    (and elm (list elm)))
+                   (t
+                    (and (cdr elm)
+                         (setcdr elm (pcase (cdr elm)
+                                       ((and ov (pred overlayp))
+                                        (copy-overlay ov))
+                                       ((and mk (or (pred markerp)
+                                                    (pred integerp)))
+                                        (copy-marker mk))))
+                         (list elm)))))))
+
+(snails-create-sync-backend
+ :name
+ "IMENU"
+
+ :candidate-filter
+ (lambda (input)
+   (let ((imenu-items (snails-backend-imenu-candidates snails-start-buffer))
+         candidates)
+     (dolist (imenu-item imenu-items)
+       (when (or
+              (string-equal input "")
+              (snails-match-input-p input (car imenu-item)))
+
+         (snails-add-candiate 'candidates
+                              (car imenu-item)
+                              (number-to-string (marker-position (cdr imenu-item))))))
+
+     (snails-sort-candidates input candidates 0 0)))
+
+ :candidate-do
+ (lambda (candidate)
+   (goto-char (string-to-number candidate))
+
+   (snails-flash-line)))
+
+(provide 'snails-backend-imenu)
+
+;;; snails-backend-imenu.el ends here
+
 #+end_src
 
 ** rg-curdir
@@ -2653,9 +2838,45 @@
 
 ** highlight
 #+begin_src elisp :tangle after-dump/weiss-after-dump.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
+  (use-package highlight-indent-guides 
+    ;; :disabled
+    :diminish
+    :hook
+    (python-mode . highlight-indent-guides-mode)
+    :config
+    ;; (defun my-highlighter (level responsive display)
+    ;;   ;; (if (or (< level 2)(= 0 (mod level 2)))
+    ;;   ;; (if (= 0 (mod level 2))
+    ;;   (if (or (< level 1))
+    ;;       nil
+    ;;     (highlight-indent-guides--highlighter-default level responsive display)))
+    ;; character style
+    ;; (setq highlight-indent-guides-method 'character)
+    ;; (setq highlight-indent-guides-character ?\>)
+    ;; (setq highlight-indent-guides-highlighter-function 'my-highlighter)
+
+    ;; column style
+    (setq highlight-indent-guides-auto-enabled nil)
+    (setq highlight-indent-guides-method 'character)
+    (set-face-attribute 'highlight-indent-guides-character-face nil :foreground "gray")
+    ;; (setq highlight-indent-guides-auto-odd-face-perc #a9a9a9)
+    ;; (set-face-background 'highlight-indent-guides-odd-face "#a9a9a9")
+    ;; (set-face-background 'highlight-indent-guides-even-face "#FAFAFA")
+    ;; (setq highlight-indent-guides-auto-even-face-perc 15)
+    )
+
   (use-package rainbow-mode
     :hook
-    (prog-mode . rainbow-mode))
+    (prog-mode . rainbow-mode)
+    :init
+    (setq rainbow-html-colors nil)
+    (setq rainbow-html-colors nil)
+    (setq rainbow-r-colors nil)
+    (setq rainbow-x-colors nil)
+    (setq rainbow-ansi-colors nil)
+    (setq rainbow-latex-colors nil)
+    (setq rainbow-r-colors-alist nil)
+    )
 
   (use-package highlight-parentheses
     :hook (prog-mode . highlight-parentheses-mode)
@@ -2723,19 +2944,24 @@
     ;; `variable-pitch' face supports it
     (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
     ;; Enable all Cascadia Code ligatures in programming modes
-    (ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
-                                         ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
-                                         "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
-                                         "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
-                                         "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
-                                         "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
-                                         "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
-                                         "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
-                                         ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
-                                         "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
-                                         "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
-                                         "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
-                                         "://"))
+    (let ((ligatures '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
+                       ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+                       "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+                       "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
+                       "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
+                       "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+                       "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
+                       "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
+                       ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
+                       "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
+                       "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
+                       "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+                       "://"))
+          )
+      (ligature-set-ligatures 'prog-mode ligatures)    
+      (ligature-set-ligatures 'sgml-mode ligatures)    
+      )
+
     ;; Enables ligature checks globally in all buffers. You can also do it
     ;; per mode with `ligature-mode'.
     (global-ligature-mode t))
@@ -5573,29 +5799,6 @@
     :config  
     )
 
-  (use-package highlight-indent-guides 
-    :disabled
-    :diminish
-    :config
-    (defun my-highlighter (level responsive display)
-      ;; (if (or (< level 2)(= 0 (mod level 2)))
-      ;; (if (= 0 (mod level 2))
-      (if (or (< level 1))
-          nil
-        (highlight-indent-guides--highlighter-default level responsive display)))
-    ;; character style
-    ;; (setq highlight-indent-guides-method 'character)
-    ;; (setq highlight-indent-guides-character ?\>)
-    ;; (setq highlight-indent-guides-highlighter-function 'my-highlighter)
-
-    ;; column style
-    (setq highlight-indent-guides-auto-enabled nil)
-    (setq highlight-indent-guides-method 'column)
-    ;; (setq highlight-indent-guides-auto-odd-face-perc #a9a9a9)
-    (set-face-background 'highlight-indent-guides-odd-face "#f5f5f5")
-    (set-face-background 'highlight-indent-guides-even-face "#FAFAFA")
-    ;; (setq highlight-indent-guides-auto-even-face-perc 15)
-    )
   (use-package elispfl 
     :diminish
     :disabled
@@ -5900,9 +6103,12 @@
                                       '(
                                         ("n" mc/mark-more-like-this-extended)
 
-                                        ("0" mc/insert-numbers)
+                                        ("0" mc/insert-numbers-default)
+                                        ("A" mc/insert-letters)
                                         ("1" mc/cycle-backward)
                                         ("2" mc/cycle-forward)
+
+                                        ("e" weiss-mc-safty-delete)
 
                                         ("j" next-line)
                                         ("k" previous-line)
@@ -5928,6 +6134,16 @@
                                  )
                                ))
     :config
+    (defun weiss-mc-safty-delete ()
+      "if now is at the beginning of line, do nothing"
+      (interactive)
+      (deactivate-mark)
+      (while (string= (char-to-string (char-before)) " ") (delete-char -1))
+      (unless (looking-back "^")
+        (delete-char -1)
+        )
+      )
+  
     (global-unset-key (kbd "S-<down-mouse-1>"))
     (global-set-key (kbd "S-<mouse-1>") 'mc/add-cursor-on-click)
     (global-set-key (kbd "C-c n") 'mc/mark-more-like-this-extended)
@@ -6090,6 +6306,7 @@
     )
 
   (use-package yasnippet
+    :disabled
     :bind
     (:map
      yas-keymap
@@ -6156,6 +6373,49 @@
     )
 #+end_src
 
+** html
+#+begin_src elisp
+  (use-package http
+    :config
+    (ryo-modal-keys
+     (:mode 'sgml-mode)
+     ("<escape> <escape>" (
+                    ("b" ignore
+                     :name "<b>"
+                     :then ((lambda () (interactive) (weiss-insert-bracket-pair "<b>" "</b>" quick-insert-new-line)))
+                     )
+                    ("i" ignore
+                     :name "<i>"
+                     :then ((lambda () (interactive) (weiss-insert-bracket-pair "<i>" "</i>" quick-insert-new-line)))
+                     )
+                    ("u" ignore
+                     :name "<u>"
+                     :then ((lambda () (interactive) (weiss-insert-bracket-pair "<u>" "</u>" quick-insert-new-line)))
+                     )
+
+                    ("p" ignore
+                     :name "<p>"
+                     :then ((lambda () (interactive) (weiss-insert-bracket-pair "<p>" "</p>" quick-insert-new-line)))
+                     )
+                    ("l" ignore
+                     :name "<li>"
+                     :then ((lambda () (interactive) (weiss-insert-bracket-pair "<li>" "</li>" quick-insert-new-line)))
+                     )
+                    ("s" ignore
+                     :name "<span>"
+                     :then ((lambda () (interactive) (weiss-insert-bracket-pair "<span >" "</span>" quick-insert-new-line)))
+                     )
+
+                    ("d" ignore
+                     :name "<div>"
+                     :then ((lambda () (interactive) (weiss-insert-bracket-pair "<div >" "</div>" quick-insert-new-line)))
+                     )
+                    )
+      )
+     )
+    )
+#+end_src
+
 ** c++
 #+begin_src elisp
   (use-package ccls
@@ -6202,8 +6462,6 @@
 
 ** misc
 #+begin_src elisp
-  (use-package http)
-
   (use-package markdown-mode
     :ensure t
     :ryo
@@ -6391,8 +6649,9 @@
   (use-package ein
     :config
     (setq ein:output-area-inlined-images t)
-    (with-eval-after-load 'ein-notebooklist
+    (with-eval-after-load 'ein-notebook
       (define-key ein:notebook-mode-map [remap save-buffer] 'ein:notebook-save-notebook-command)      
+      (define-key ein:notebook-mode-map [remap weiss-excute-buffer] 'ein:worksheet-execute-all-cells-above)      
       )
     (defun xor-preview-md-cell-latex ()
       "Preview LaTeX from the current markdown cell in a separate buffer."
@@ -6938,7 +7197,7 @@
   ("L"  dired-do-symlink)
   ("m"  dired-mark)
   ("o"  xah-open-in-external-app)
-  ("O"  eaf-open-this-from-dired)
+  ;; ("O"  eaf-open-this-from-dired)
   ("p"  peep-dired)
   ("q"  quit-window)
   ("r"  dired-do-rename)
@@ -8647,27 +8906,28 @@
                        ;; (push '("[X]" . ?☑) prettify-symbols-alist)
                        ;; (push '("[-]" . ?⛝) prettify-symbols-alist)
 
-                       (push '("#+ARCHIVE:" . ?📦) prettify-symbols-alist)
-                       ;; (push '("#+AUTHOR:" . ?👤) prettify-symbols-alist)
-                       ;; (push '("#+CREATOR:" . ?💁) prettify-symbols-alist)
-                       (push '("#+DATE:" . ?📆) prettify-symbols-alist)
-                       (push '("#+DESCRIPTION:" . ?⸙) prettify-symbols-alist)
-                       (push '("#+EMAIL:" . ?🖂) prettify-symbols-alist)
-                       (push '("#+OPTIONS:" . ?⛭) prettify-symbols-alist)
-                       (push '("#+SETUPFILE:" . ?⛮) prettify-symbols-alist)
-                       (push '("#+TAGS:" . ?🏷) prettify-symbols-alist)
-                       ;; (push '("#+TITLE:" . ?📓) prettify-symbols-alist)
+                       ;; (push '("#+ARCHIVE:" . ?📦) prettify-symbols-alist)
+                       ;; ;; (push '("#+AUTHOR:" . ?👤) prettify-symbols-alist)
+                       ;; ;; (push '("#+CREATOR:" . ?💁) prettify-symbols-alist)
+                       ;; (push '("#+DATE:" . ?📆) prettify-symbols-alist)
+                       ;; (push '("#+DESCRIPTION:" . ?⸙) prettify-symbols-alist)
+                       ;; (push '("#+EMAIL:" . ?🖂) prettify-symbols-alist)
+                       ;; (push '("#+OPTIONS:" . ?⛭) prettify-symbols-alist)
+                       ;; (push '("#+SETUPFILE:" . ?⛮) prettify-symbols-alist)
+                       ;; (push '("#+TAGS:" . ?🏷) prettify-symbols-alist)
+                       ;; ;; (push '("#+TITLE:" . ?📓) prettify-symbols-alist)
 
-                       (push '("#+BEGIN_SRC" . ?✎) prettify-symbols-alist)
-                       (push '("#+begin_src" . ?✎) prettify-symbols-alist)
-                       (push '("#+END_SRC" . ?⬝) prettify-symbols-alist)
-                       (push '("#+end_src" . ?⬝) prettify-symbols-alist)
-                       (push '("#+BEGIN_QUOTE" . ?») prettify-symbols-alist)
-                       (push '("#+END_QUOTE" . ?«) prettify-symbols-alist)
-                       (push '("#+HEADERS" . ?☰) prettify-symbols-alist)
-                       (push '("#+RESULTS:" . ?💻) prettify-symbols-alist)
+                       ;; (push '("#+BEGIN_SRC" . ?✎) prettify-symbols-alist)
+                       ;; (push '("#+begin_src" . ?✎) prettify-symbols-alist)
+                       ;; (push '("#+END_SRC" . ?⬝) prettify-symbols-alist)
+                       ;; (push '("#+end_src" . ?⬝) prettify-symbols-alist)
+                       ;; (push '("#+BEGIN_QUOTE" . ?») prettify-symbols-alist)
+                       ;; (push '("#+END_QUOTE" . ?«) prettify-symbols-alist)
+                       ;; (push '("#+HEADERS" . ?☰) prettify-symbols-alist)
+                       ;; (push '("#+RESULTS:" . ?💻) prettify-symbols-alist)
 
-                       (prettify-symbols-mode 1)))
+                       ;; (prettify-symbols-mode 1)
+                       ))
 
          (org-indent-mode . (lambda()
                               (diminish 'org-indent-mode)
@@ -8700,8 +8960,8 @@
    ;; (sequence "⚑(T)" "🏴(I)" "❓(H)" "|" "✔(D)" "✘(C)"))
    org-cycle-max-level 15
    org-agenda-skip-scheduled-if-done t
-   org-hide-leading-stars t
-   org-hide-leading-stars-before-indent-mode t
+   org-hide-leading-stars nil
+   org-indent-mode-turns-on-hiding-stars nil
    org-list-description-max-indent 4
    org-startup-indented t
    org-log-done 'time
@@ -8758,7 +9018,7 @@
                              ("a" "Abgabe" entry (file "~/Documents/OrgFiles/Vorlesungen.org")
                               "* [[%F][%f]]  \n ")
                              )
-   org-ellipsis (if (char-displayable-p ?) "  " nil)
+   ;; org-ellipsis (if (char-displayable-p ?) "  " nil)
    org-pretty-entities nil
    ;; hide ** //
    org-hide-emphasis-markers nil
@@ -8804,9 +9064,9 @@
         ("i" outline-up-heading)
         ("l" org-down-element)
         ("a" weiss-org-screenshot)
-        ("n" weiss-flyspell-save-word)
+        ;; ("n" weiss-flyspell-save-word)
         ("o" org-noter)
-        ("p" weiss-export-pdf-dwim)
+        ;; ("p" weiss-export-pdf-dwim)
         ("q" org-set-tags-command)
         ("s" org-noter-sync-current-note)
         ("t" org-todo)
@@ -9296,6 +9556,7 @@
                                (67 :foreground "#0098dd"))))
 
   (use-package org-bullets
+    :disabled
     :diminish
     :after org
     :hook (org-mode . org-bullets-mode)
@@ -9309,6 +9570,7 @@
     :diminish
     :bind (:map org-mode-map
                 ("C-v" . org-rich-yank)))
+
   (use-package org-tempo ; for <s expand in org-babel
     ;; :disabled
     :diminish
@@ -10599,29 +10861,35 @@
 
   (setq uppercase-alphabet '("A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M" "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z"))
 
-  (defun weiss-change-delimiters-list ()
-    "Change delimiters list by mode"
-    (interactive)
-    (cond
-     ((eq major-mode 'python-mode) (setq weiss-non-stop-delimiters-list '(";" "	" " " "\n" "'" "\\")
-                                         weiss-stop-delimiters-list '(":" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*")))
 
-     ((eq major-mode 'org-mode) (setq
-                                 weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
-                                 weiss-stop-delimiters-list '("&" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "|")))   
-     ((eq major-mode 'latex-mode) (setq
-                                   weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
-                                   weiss-stop-delimiters-list '("&" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*")))
-     ((eq major-mode 'java-mode) (setq
-                                  weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
-                                  weiss-stop-delimiters-list '(";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*")))
-     ((eq major-mode 'html-mode) (setq weiss-non-stop-delimiters-list '(";" "	" " " "\n" "'" "\\")
-                                       weiss-stop-delimiters-list '("<" ">" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*")))
-     (t (setq weiss-non-stop-delimiters-list '(";" "	" " " "\n" "'" "\\")
-              weiss-stop-delimiters-list '("." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*")))
+  (defvar weiss-non-stop-delimiters-list '(";" "	" " " "\n" "'" "\\"))
+  (defvar weiss-stop-delimiters-list '("." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
 
-     ))
+  ;; need mode-local.el
+  (setq-mode-local
+   python-mode
+   weiss-non-stop-delimiters-list '(";" "	" " " "\n" "'" "\\")
+   weiss-stop-delimiters-list '(":" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
 
+  (setq-mode-local
+   org-mode
+   weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
+   weiss-stop-delimiters-list '("&" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "|"))
+
+  (setq-mode-local
+   latex-mode
+   weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
+   weiss-stop-delimiters-list '("&" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
+
+  (setq-mode-local
+   sgml-mode
+   weiss-non-stop-delimiters-list '(";" "	" " " "\n" "'" "\\")
+   weiss-stop-delimiters-list '(":" "<" ">" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
+
+  (setq-mode-local
+   java-mode
+   weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
+   weiss-stop-delimiters-list '(";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
 
   (defun weiss--check-two-char (isForward firstList &optional secondList)
     "Check two char"
@@ -10815,7 +11083,6 @@
        ((looking-back (regexp-opt xah-right-brackets) (max (- (point) 1) 1))
         (backward-sexp))
        (t (backward-up-list 1 'ESCAPE-STRINGS 'NO-SYNTAX-CROSSING)))))
-
 #+end_src
 **** buffer/frame switching
 #+begin_src elisp
@@ -10859,9 +11126,9 @@
   (defun weiss-new-frame ()
     "make new frame on the same side of current frame or on the other side with prefix-arg"
     (interactive)
-    (if (eq (weiss-is-frame-in-right-pos) current-prefix-arg)
-        (make-frame default-frame-alist)
-      (make-frame initial-frame-alist)
+    (if (eq (weiss-is-frame-in-right-pos) (null current-prefix-arg))
+        (make-frame initial-frame-alist)
+      (make-frame default-frame-alist)
       )
     )
 
@@ -11078,6 +11345,7 @@
                      special-mode-hook
                      conf-mode-hook
                      quickrun-after-run-hook
+                     custom-mode-hook
                      )))
     (dolist (x hook-list)
       (add-hook x 'weiss-after-major-mode))
@@ -11721,6 +11989,9 @@
 
 #+begin_src elisp
   (define-key prog-mode-map (kbd "<tab>") 'weiss-indent)
+  (with-eval-after-load 'sgml-mode
+    (define-key sgml-mode-map (kbd "<tab>") 'weiss-indent)
+    )
   (global-set-key (kbd "<backtab>") 'indent-for-tab-command)
   (global-set-key (kbd "<S-delete>") (lambda () (interactive) (insert "\\")))
   (global-set-key (kbd "<f5>") 'revert-buffer)
@@ -11746,8 +12017,6 @@
 
     (add-to-list 'weiss/after-buffer-change-function-list 'weiss-check-ryo)
     (add-to-list 'weiss/after-major-mode-function-list 'weiss-check-ryo)
-
-    (add-to-list 'weiss/after-major-mode-function-list 'weiss-change-delimiters-list)  
 
     (setq ryo-modal-cursor-color weiss/cursor-color)
     :config
@@ -11783,6 +12052,8 @@
 
 
 #+end_src
+
+
 
 #+RESULTS:
 : ryo-modal-mode
@@ -12030,6 +12301,7 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
   (ryo-modal-keys
    (:mc-all t)
    ("RET" newline :first '(deactivate-mark) :mode 'prog-mode)
+   ("RET" newline :first '(deactivate-mark) :mode 'html-mode)
    ("'"  ryo-modal-repeat)
    (","  xah-backward-left-bracket)
    ("-"  weiss-switch-to-same-side-frame)
@@ -12093,6 +12365,11 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
           :then ((lambda () (interactive) (weiss--execute-kbd-macro "C-c '")))
           :name "C-c '"
           )         
+         ("o" ignore
+          :then ((lambda () (interactive) (weiss--execute-kbd-macro "C-c C-o")))
+          :name "C-c C-o"
+          )
+
          ))
    ("u"  weiss-delete-or-add-parent-sexp)
    ("v"  xah-paste-or-paste-previous)
@@ -12272,6 +12549,7 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
            ("m"  dired-jump)
            ("n"  end-of-buffer)
            ("o" (
+                 ("v" yank-rectangle)
                  ("n" mc/mark-next-like-this)
                  ("a" mc/mark-all-like-this)
                  ("SPC" hydra-multiple-cursors-weiss/body)
