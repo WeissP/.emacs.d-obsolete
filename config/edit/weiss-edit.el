@@ -15,9 +15,12 @@
                                     '(
                                       ("n" mc/mark-more-like-this-extended)
 
-                                      ("0" mc/insert-numbers)
+                                      ("0" mc/insert-numbers-default)
+                                      ("A" mc/insert-letters)
                                       ("1" mc/cycle-backward)
                                       ("2" mc/cycle-forward)
+
+                                      ("e" weiss-mc-safty-delete)
 
                                       ("j" next-line)
                                       ("k" previous-line)
@@ -43,6 +46,16 @@
                                )
                              ))
   :config
+  (defun weiss-mc-safty-delete ()
+    "if now is at the beginning of line, do nothing"
+    (interactive)
+    (deactivate-mark)
+    (while (string= (char-to-string (char-before)) " ") (delete-char -1))
+    (unless (looking-back "^")
+      (delete-char -1)
+      )
+    )
+
   (global-unset-key (kbd "S-<down-mouse-1>"))
   (global-set-key (kbd "S-<mouse-1>") 'mc/add-cursor-on-click)
   (global-set-key (kbd "C-c n") 'mc/mark-more-like-this-extended)
