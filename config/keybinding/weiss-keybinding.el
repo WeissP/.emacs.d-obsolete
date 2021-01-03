@@ -59,6 +59,7 @@
                      magit-mode-hook
                      telega-chat-mode-hook
                      telega-root-mode-hook
+                     image-mode-hook
                      )))
     (dolist (x hook-list)
       (add-hook x 'weiss-origin-mode))
@@ -164,7 +165,8 @@
     (progn ; no text selection
       (let ($p1 $p2)
         (cond
-         ((or ; cursor is at end of word or buffer. i.e. xyz▮
+         ((or ; cursor is not around "word"
+           (not (looking-back "[w_\\-]"))
            (looking-at "[^-_[:alnum:]]")
            (eq (point) (point-max)))
           (progn

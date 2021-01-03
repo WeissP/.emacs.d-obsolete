@@ -895,11 +895,34 @@ Version 2018-06-04"
           (< (- (region-end) (region-beginning)) 1)) 
       (progn
         (deactivate-mark)
-        (xah-beginning-of-line-or-block)
+        (beginning-of-line)
+        (push-mark nil t)
+        (back-to-indentation)
+        (setq mark-active t)
         )
     (exchange-point-and-mark)
     (weiss-select-mode-turn-on)  
     )
+  )
+
+(defun weiss-mark-brackets ()
+  "DOCSTRING"
+  (interactive)
+  ;; (re-search-forward (regexp-opt xah-right-brackets) nil t)
+  (when (eq last-command this-command)
+    (when-let ((p1 (region-beginning))
+               (p2 (region-end))
+               (rb1 (save-excursion (re-search-backward (regexp-opt xah-left-brackets) nil t)))
+               )
+
+      )
+    )
+  (right-char 1)
+  (re-search-forward (regexp-opt xah-right-brackets) nil t)
+  ;; (left-char 1)
+  (push-mark nil t)
+  (xah-goto-matching-bracket)
+  (setq mark-active t)
   )
 
 
@@ -1006,19 +1029,27 @@ Version 2018-06-04"
   "Forward and select word, if in quote, then select all"
   (interactive)
   (deactivate-mark)
-  ;; (setq case-fold-search t)
-  (while (or (member (char-to-string (char-after)) (append
-                                                    weiss-non-stop-delimiters-list
-                                                    xah-right-brackets))
-             (weiss--check-two-char t xah-left-brackets))
-    (forward-char))
-  (when (member (char-to-string (char-after)) (append
-                                               xah-left-brackets
-                                               xah-right-brackets
-                                               weiss-non-stop-delimiters-list
-                                               weiss-stop-delimiters-list))
-    (forward-char))
-
+  (let ((l (line-number-at-pos))
+        (p (point))
+        )
+    (save-excursion
+      (while (or (member (char-to-string (char-after)) (append
+                                                        weiss-non-stop-delimiters-list
+                                                        xah-right-brackets))
+                 (weiss--check-two-char t xah-left-brackets))
+        (forward-char))
+      (when (member (char-to-string (char-after)) (append
+                                                   xah-left-brackets
+                                                   xah-right-brackets
+                                                   weiss-non-stop-delimiters-list
+                                                   weiss-stop-delimiters-list))
+        (forward-char))
+      (when (= l (line-number-at-pos))
+        (setq p (point))
+        )
+      )    
+    (goto-char p)
+    )
   ;; (call-interactively 'set-mark-command)
   (push-mark nil t)
   (while (member (char-to-string (char-after)) uppercase-alphabet) (forward-char))
@@ -1037,19 +1068,28 @@ Version 2018-06-04"
   (interactive)
   (deactivate-mark)
   (setq case-fold-search t)
-  (while (or (member (char-to-string (char-before)) (append
-                                                     weiss-non-stop-delimiters-list
-                                                     xah-left-brackets))
-             (weiss--check-two-char nil xah-right-brackets)
-             )
-    (backward-char))
-  (when (member (char-to-string (char-before)) (append
-                                                xah-left-brackets
-                                                xah-right-brackets
-                                                weiss-non-stop-delimiters-list
-                                                weiss-stop-delimiters-list))
-    (backward-char))
-
+  (let ((l (line-number-at-pos))
+        (p (point))
+        )
+    (save-excursion
+      (while (or (member (char-to-string (char-before)) (append
+                                                         weiss-non-stop-delimiters-list
+                                                         xah-left-brackets))
+                 (weiss--check-two-char nil xah-right-brackets)
+                 )
+        (backward-char))
+      (when (member (char-to-string (char-before)) (append
+                                                    xah-left-brackets
+                                                    xah-right-brackets
+                                                    weiss-non-stop-delimiters-list
+                                                    weiss-stop-delimiters-list))
+        (backward-char))   
+      (when (= l (line-number-at-pos))
+        (setq p (point))
+        )
+      )
+    (goto-char p)
+    )
   (push-mark nil t)
 
   (while (member (char-to-string (char-before)) uppercase-alphabet) (backward-char))
@@ -1134,23 +1174,29 @@ Version 2018-06-04"
   (backward-char)
   )
 
-(defun xah-goto-matching-bracket ()
-  "Move cursor to the matching bracket.
-              If cursor is not on a bracket, call `backward-up-list'.
-              The list of brackets to jump to is defined by `xah-left-brackets' and `xah-right-brackets'.
-              URL `http://ergoemacs.org/emacs/emacs_navigating_keys_for_brackets.html'
-              Version 2016-11-22"
+(defun weiss-mark-brackets ()
+  "mark the nearst brackets"
   (interactive)
-  (if (nth 3 (syntax-ppss))
-      (backward-up-list 1 'ESCAPE-STRINGS 'NO-SYNTAX-CROSSING)
-    (cond
-     ((eq (char-after) ?\") (forward-sexp))
-     ((eq (char-before) ?\") (backward-sexp ))
-     ((looking-at (regexp-opt xah-left-brackets))
-      (forward-sexp))
-     ((looking-back (regexp-opt xah-right-brackets) (max (- (point) 1) 1))
-      (backward-sexp))
-     (t (backward-up-list 1 'ESCAPE-STRINGS 'NO-SYNTAX-CROSSING)))))
+  (deactivate-mark)
+  (cond
+   ((eq last-command this-command)
+    (backward-up-list 1 'ESCAPE-STRINGS 'NO-SYNTAX-CROSSING)
+    (push-mark nil t)
+    (forward-sexp)    
+    )
+   ((looking-at (regexp-opt xah-left-brackets))
+    (push-mark nil t)
+    (forward-sexp))
+   ((looking-back (regexp-opt xah-right-brackets) (max (- (point) 1) 1))
+    (push-mark nil t)
+    (backward-sexp))
+   (t
+    (backward-up-list 1 'ESCAPE-STRINGS 'NO-SYNTAX-CROSSING)
+    (push-mark nil t)
+    (forward-sexp)
+    ))
+  (setq mark-active t)
+  )
 ;; cursor movement:1 ends here
 
 ;; buffer/frame switching
