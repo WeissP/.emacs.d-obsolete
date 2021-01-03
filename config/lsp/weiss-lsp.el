@@ -1,20 +1,21 @@
 ;; -*- lexical-binding: t -*-
-;; start, bind
+;; start, hook, bind
 
-;; [[file:../emacs-config.org::*start, bind][start, bind:1]]
+;; [[file:../emacs-config.org::*start, hook, bind][start, hook, bind:1]]
 (use-package lsp-mode
   ;; :disabled
   :diminish
   :commands lsp
   :hook (
          (java-mode . lsp-deferred)
+         (go-mode . lsp-deferred)
          ;; (c++-mode . lsp-deferred)
          )
   :bind (:map lsp-mode-map
               ("M-p" . lsp-describe-thing-at-point)
               ([remap xref-find-definitions] . lsp-find-definition)
               ([remap xref-find-references] . lsp-find-references))
-;; start, bind:1 ends here
+;; start, hook, bind:1 ends here
 
 ;; init
 
@@ -53,14 +54,14 @@
  lsp-modeline-diagnostics-enable t  ;; as above
  lsp-idle-delay 0.1                   ;; lazy refresh
  ;; lsp-diagnostics-provider :flycheck   ;; prefer `flycheck'
- lsp-lens-enable t                    ;; enable lens
+ lsp-lens-enable nil                    ;; disable lens
  lsp-auto-guess-root t                ;; auto guess root
  lsp-keep-workspace-alive nil         ;; auto kill lsp server
  lsp-eldoc-enable-hover t           ;; disable eldoc hover
  lsp-signature-auto-activate t        ;; show function signature
  lsp-signature-doc-lines 2            ;; but dont take up more lines
  lsp-restart 'auto-restart  ;; auto restart lsp
- lsp-enable-completion-at-point nil    ;; Please note `company-lsp' is automatically enabled if installed
+ lsp-enable-completion-at-point t    ;; Please note `company-lsp' is automatically enabled if installed
  ;; lsp-completion-provider :capf
  lsp-prefer-capf t
  )
@@ -169,7 +170,7 @@
 
   :hook (
          (python-mode . nox-ensure)
-         (go-mode . nox-ensure)
+         ;; (go-mode . nox-ensure)
          ;; (nox-managed-mode-hook . ryo-modal-restart)
          )
   :bind (:map nox-mode-map
@@ -177,6 +178,9 @@
               )
   :ryo
   (:mode 'python-mode)
+  ("u" nox-rename)
+  ("t" nox-show-doc)
+  (:mode 'go-mode)
   ("u" nox-rename)
   ("t" nox-show-doc)  
   :config

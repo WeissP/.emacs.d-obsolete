@@ -11,7 +11,13 @@
    projectile-mode-map
    ("C-c C-p" . 'projectile-command-map))
   :init
-  (projectile-global-mode 1))
+  (projectile-global-mode 1)
+  :config
+  (projectile-register-project-type 'go '("go.mod")
+                                    :compile "go build"
+                                    :test "go test"
+                                    :run "go run")
+  )
 
 (provide 'weiss-project)
 ;; projectile:1 ends here
