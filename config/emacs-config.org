@@ -316,7 +316,9 @@
           (xah-abbrev-position-cursor p1)
           )
         abrSymbol
-        )))  
+        )
+      )
+    )  
 
   (setq abbrev-expand-function 'weiss-check-or-expand-abbrev)
 
@@ -792,6 +794,28 @@
       ("hd" "<head>\n<meta charset=\"utf-8\">\n<title>▮</title>\n</head>" weiss--ahf-indent)
       ("temp" "<!doctype html>\n<html lang=\"de\">\n\n<head>\n<meta charset=\"utf-8\">\n<title>▮</title>\n</head>\n\n<body>\n\n</body>" weiss--ahf-indent)
       ))
+#+end_src
+
+** go
+#+begin_src elisp
+  (when (boundp 'go-mode-abbrev-table)
+    (clear-abbrev-table go-mode-abbrev-table))
+
+  (define-abbrev-table 'go-mode-abbrev-table
+    '(
+      ("v" "var ▮" weiss--ahf)
+      ("sv" "%v" weiss--ahf)
+      ("i" "import (\n\"▮\"\n)" weiss--ahf-indent)
+      ("ie" "if err != nil {\n▮\n}" weiss--ahf-indent)
+      ("p" "package ▮" weiss--ahf)
+      ("e" ":= ▮" weiss--ahf)
+      ("st" "%T" weiss--ahf)
+      ("rt" "return ▮" weiss--ahf)
+      ("pr" "fmt.Printf(\"%v\", ▮)")
+      ("f" "func ▮(){\n\n}" weiss--ahf-indent)
+      ("fr" "for i, x := range ▮{\n\n}" weiss--ahf-indent)
+      ))
+
 #+end_src
 
 ** elisp
@@ -5834,7 +5858,7 @@
 :END:
 
 ** lsp-mode
-*** start, bind
+*** start, hook, bind
 #+begin_src elisp
   (use-package lsp-mode
     ;; :disabled
@@ -5842,6 +5866,7 @@
     :commands lsp
     :hook (
            (java-mode . lsp-deferred)
+           (go-mode . lsp-deferred)
            ;; (c++-mode . lsp-deferred)
            )
     :bind (:map lsp-mode-map
@@ -5885,14 +5910,14 @@
    lsp-modeline-diagnostics-enable t  ;; as above
    lsp-idle-delay 0.1                   ;; lazy refresh
    ;; lsp-diagnostics-provider :flycheck   ;; prefer `flycheck'
-   lsp-lens-enable t                    ;; enable lens
+   lsp-lens-enable nil                    ;; disable lens
    lsp-auto-guess-root t                ;; auto guess root
    lsp-keep-workspace-alive nil         ;; auto kill lsp server
    lsp-eldoc-enable-hover t           ;; disable eldoc hover
    lsp-signature-auto-activate t        ;; show function signature
    lsp-signature-doc-lines 2            ;; but dont take up more lines
    lsp-restart 'auto-restart  ;; auto restart lsp
-   lsp-enable-completion-at-point nil    ;; Please note `company-lsp' is automatically enabled if installed
+   lsp-enable-completion-at-point t    ;; Please note `company-lsp' is automatically enabled if installed
    ;; lsp-completion-provider :capf
    lsp-prefer-capf t
    )
@@ -6063,7 +6088,7 @@
 
     :hook (
            (python-mode . nox-ensure)
-           (go-mode . nox-ensure)
+           ;; (go-mode . nox-ensure)
            ;; (nox-managed-mode-hook . ryo-modal-restart)
            )
     :bind (:map nox-mode-map
@@ -6071,6 +6096,9 @@
                 )
     :ryo
     (:mode 'python-mode)
+    ("u" nox-rename)
+    ("t" nox-show-doc)
+    (:mode 'go-mode)
     ("u" nox-rename)
     ("t" nox-show-doc)  
     :config
@@ -6486,7 +6514,127 @@
   (use-package php-mode)
   (use-package quickrun
     :config
-    (setq quickrun-timeout-seconds 100))
+    (setq quickrun-timeout-seconds 100)
+    (quickrun-add-command
+      "go/go"
+      '((:exec . ((lambda ()
+                    (cond
+                     ((string-match-p "_test\\.go\\'" (or (buffer-file-name)
+                                                          (buffer-name)))
+                      "%c test %o")
+                     ((string-match-p "main\\.go\\'" (or (buffer-file-name)
+                                                         (buffer-name)))
+                      "%c run %o %s %a")
+                     (t
+                      ;; if the current filename is not main.go, then find the main.go in this project and run it.
+                      (format "go run %smain.go" (projectile-acquire-root))
+                      )
+                     )
+                    ))))
+      :override t)
+    )
+#+end_src
+
+** go
+#+begin_src elisp
+  (use-package go-mode
+    :functions (go-packages-gopkgs go-update-tools)
+    :bind (:map go-mode-map
+                ("C-c R" . go-remove-unused-imports)
+                ("<f1>" . godoc-at-point))
+    :config
+    (ryo-modal-keys
+     (:mode 'go-mode)
+     ("8" weiss-excute-buffer)
+     )
+    (setq-mode-local go-mode completion-ignore-case t)
+
+    ;; Env vars
+    (with-eval-after-load 'exec-path-from-shell
+      (exec-path-from-shell-copy-envs '("GOPATH" "GO111MODULE" "GOPROXY")))
+
+    ;; Install or update tools
+    (defvar go--tools '("golang.org/x/tools/cmd/goimports"
+                        "github.com/go-delve/delve/cmd/dlv"
+                        "github.com/josharian/impl"
+                        "github.com/cweill/gotests/..."
+                        "github.com/fatih/gomodifytags"
+                        "github.com/davidrjenni/reftools/cmd/fillstruct")
+      "All necessary go tools.")
+
+    ;; Do not use the -u flag for gopls, as it will update the dependencies to incompatible versions
+    ;; https://github.com/golang/tools/blob/master/gopls/doc/user.md#installation
+    (defvar go--tools-no-update '("golang.org/x/tools/gopls@latest")
+      "All necessary go tools without update the dependencies.")
+
+    (defun go-update-tools ()
+      "Install or update go tools."
+      (interactive)
+      (unless (executable-find "go")
+        (user-error "Unable to find `go' in `exec-path'!"))
+
+      (message "Installing go tools...")
+      (let ((proc-name "go-tools")
+            (proc-buffer "*Go Tools*"))
+        (dolist (pkg go--tools-no-update)
+          (message ": %s" pkg)
+          (set-process-sentinel
+           (start-process proc-name proc-buffer "go" "get" "-v" pkg)
+           (lambda (proc _)
+             (let ((status (process-exit-status proc)))
+               (if (= 0 status)
+                   (message "Installed %s" pkg)
+                 (message "Failed to install %s: %d" pkg status))))))
+
+        (dolist (pkg go--tools)
+          (set-process-sentinel
+           (start-process proc-name proc-buffer "go" "get" "-u" "-v" pkg)
+           (lambda (proc _)
+             (let ((status (process-exit-status proc)))
+               (if (= 0 status)
+                   (message "Installed %s" pkg)
+                 (message "Failed to install %s: %d" pkg status))))))))
+
+    ;; Try to install go tools if `gopls' is not found
+    (unless (executable-find "gopls")
+      (go-update-tools))
+
+    ;; Misc
+    (use-package go-dlv)
+    (use-package go-fill-struct)
+    (use-package go-impl)
+
+    ;; Install: See https://github.com/golangci/golangci-lint#install
+    (use-package flycheck-golangci-lint
+      :if (executable-find "golangci-lint")
+      :after flycheck
+      :defines flycheck-disabled-checkers
+      :hook (go-mode . (lambda ()
+                         "Enable golangci-lint."
+                         (setq flycheck-disabled-checkers '(go-gofmt
+                                                            go-golint
+                                                            go-vet
+                                                            go-build
+                                                            go-test
+                                                            go-errcheck))
+                         (flycheck-golangci-lint-setup))))
+
+    (use-package go-tag
+      :bind (:map go-mode-map
+                  ("C-c t t" . go-tag-add)
+                  ("C-c t T" . go-tag-remove))
+      :init (setq go-tag-args (list "-transform" "camelcase")))
+
+    (use-package go-gen-test
+      :bind (:map go-mode-map
+                  ("C-c t g" . go-gen-test-dwim)))
+
+    (use-package gotest
+      :bind (:map go-mode-map
+                  ("C-c t a" . go-test-current-project)
+                  ("C-c t m" . go-test-current-file)
+                  ("C-c t ." . go-test-current-test)
+                  ("C-c t x" . go-run))))
 #+end_src
 
 ** out of use
@@ -6652,7 +6800,15 @@
     (with-eval-after-load 'ein-notebook
       (define-key ein:notebook-mode-map [remap save-buffer] 'ein:notebook-save-notebook-command)      
       (define-key ein:notebook-mode-map [remap weiss-excute-buffer] 'ein:worksheet-execute-all-cells-above)      
+      (define-key ein:notebook-mode-map (kbd "t e") 'weiss-ein-execute-all-cells-above-inclusively)      
       )
+    (defun weiss-ein-execute-all-cells-above-inclusively ()
+      "execute all cells above inclusive current cell"
+      (interactive)
+      (call-interactively 'ein:worksheet-execute-all-cells-above)
+      (call-interactively 'ein:worksheet-execute-cell)
+      )
+
     (defun xor-preview-md-cell-latex ()
       "Preview LaTeX from the current markdown cell in a separate buffer."
       ;; https://github.com/millejoh/emacs-ipython-notebook/issues/88
@@ -6680,7 +6836,7 @@
           (fit-window-to-buffer (window-in-direction 'below)))))
 
     ;; (ryo-modal-keys
-     ;; ("u" xor-preview-md-cell-latex :mode 'ein:markdown-mode))
+    ;; ("u" xor-preview-md-cell-latex :mode 'ein:markdown-mode))
     :ryo
     (:mode 'ein:markdown-mode)
     ("u" xor-preview-md-cell-latex)
@@ -7704,7 +7860,13 @@
      projectile-mode-map
      ("C-c C-p" . 'projectile-command-map))
     :init
-    (projectile-global-mode 1))
+    (projectile-global-mode 1)
+    :config
+    (projectile-register-project-type 'go '("go.mod")
+                                      :compile "go build"
+                                      :test "go test"
+                                      :run "go run")
+    )
 
   (provide 'weiss-project) 
 
@@ -10827,11 +10989,34 @@
             (< (- (region-end) (region-beginning)) 1)) 
         (progn
           (deactivate-mark)
-          (xah-beginning-of-line-or-block)
+          (beginning-of-line)
+          (push-mark nil t)
+          (back-to-indentation)
+          (setq mark-active t)
           )
       (exchange-point-and-mark)
       (weiss-select-mode-turn-on)  
       )
+    )
+
+  (defun weiss-mark-brackets ()
+    "DOCSTRING"
+    (interactive)
+    ;; (re-search-forward (regexp-opt xah-right-brackets) nil t)
+    (when (eq last-command this-command)
+      (when-let ((p1 (region-beginning))
+                 (p2 (region-end))
+                 (rb1 (save-excursion (re-search-backward (regexp-opt xah-left-brackets) nil t)))
+                 )
+
+        )
+      )
+    (right-char 1)
+    (re-search-forward (regexp-opt xah-right-brackets) nil t)
+    ;; (left-char 1)
+    (push-mark nil t)
+    (xah-goto-matching-bracket)
+    (setq mark-active t)
     )
 
 
@@ -10938,19 +11123,27 @@
     "Forward and select word, if in quote, then select all"
     (interactive)
     (deactivate-mark)
-    ;; (setq case-fold-search t)
-    (while (or (member (char-to-string (char-after)) (append
-                                                      weiss-non-stop-delimiters-list
-                                                      xah-right-brackets))
-               (weiss--check-two-char t xah-left-brackets))
-      (forward-char))
-    (when (member (char-to-string (char-after)) (append
-                                                 xah-left-brackets
-                                                 xah-right-brackets
-                                                 weiss-non-stop-delimiters-list
-                                                 weiss-stop-delimiters-list))
-      (forward-char))
-
+    (let ((l (line-number-at-pos))
+          (p (point))
+          )
+      (save-excursion
+        (while (or (member (char-to-string (char-after)) (append
+                                                          weiss-non-stop-delimiters-list
+                                                          xah-right-brackets))
+                   (weiss--check-two-char t xah-left-brackets))
+          (forward-char))
+        (when (member (char-to-string (char-after)) (append
+                                                     xah-left-brackets
+                                                     xah-right-brackets
+                                                     weiss-non-stop-delimiters-list
+                                                     weiss-stop-delimiters-list))
+          (forward-char))
+        (when (= l (line-number-at-pos))
+          (setq p (point))
+          )
+        )    
+      (goto-char p)
+      )
     ;; (call-interactively 'set-mark-command)
     (push-mark nil t)
     (while (member (char-to-string (char-after)) uppercase-alphabet) (forward-char))
@@ -10969,19 +11162,28 @@
     (interactive)
     (deactivate-mark)
     (setq case-fold-search t)
-    (while (or (member (char-to-string (char-before)) (append
-                                                       weiss-non-stop-delimiters-list
-                                                       xah-left-brackets))
-               (weiss--check-two-char nil xah-right-brackets)
-               )
-      (backward-char))
-    (when (member (char-to-string (char-before)) (append
-                                                  xah-left-brackets
-                                                  xah-right-brackets
-                                                  weiss-non-stop-delimiters-list
-                                                  weiss-stop-delimiters-list))
-      (backward-char))
-
+    (let ((l (line-number-at-pos))
+          (p (point))
+          )
+      (save-excursion
+        (while (or (member (char-to-string (char-before)) (append
+                                                           weiss-non-stop-delimiters-list
+                                                           xah-left-brackets))
+                   (weiss--check-two-char nil xah-right-brackets)
+                   )
+          (backward-char))
+        (when (member (char-to-string (char-before)) (append
+                                                      xah-left-brackets
+                                                      xah-right-brackets
+                                                      weiss-non-stop-delimiters-list
+                                                      weiss-stop-delimiters-list))
+          (backward-char))   
+        (when (= l (line-number-at-pos))
+          (setq p (point))
+          )
+        )
+      (goto-char p)
+      )
     (push-mark nil t)
 
     (while (member (char-to-string (char-before)) uppercase-alphabet) (backward-char))
@@ -11066,23 +11268,31 @@
     (backward-char)
     )
 
-  (defun xah-goto-matching-bracket ()
-    "Move cursor to the matching bracket.
-                If cursor is not on a bracket, call `backward-up-list'.
-                The list of brackets to jump to is defined by `xah-left-brackets' and `xah-right-brackets'.
-                URL `http://ergoemacs.org/emacs/emacs_navigating_keys_for_brackets.html'
-                Version 2016-11-22"
+  (defun weiss-mark-brackets ()
+    "mark the nearst brackets"
     (interactive)
-    (if (nth 3 (syntax-ppss))
-        (backward-up-list 1 'ESCAPE-STRINGS 'NO-SYNTAX-CROSSING)
-      (cond
-       ((eq (char-after) ?\") (forward-sexp))
-       ((eq (char-before) ?\") (backward-sexp ))
-       ((looking-at (regexp-opt xah-left-brackets))
-        (forward-sexp))
-       ((looking-back (regexp-opt xah-right-brackets) (max (- (point) 1) 1))
-        (backward-sexp))
-       (t (backward-up-list 1 'ESCAPE-STRINGS 'NO-SYNTAX-CROSSING)))))
+    (deactivate-mark)
+    (cond
+     ((eq last-command this-command)
+      (backward-up-list 1 'ESCAPE-STRINGS 'NO-SYNTAX-CROSSING)
+      (push-mark nil t)
+      (forward-sexp)    
+      )
+     ((looking-at (regexp-opt xah-left-brackets))
+      (push-mark nil t)
+      (forward-sexp))
+     ((looking-back (regexp-opt xah-right-brackets) (max (- (point) 1) 1))
+      (push-mark nil t)
+      (backward-sexp))
+     (t
+      (backward-up-list 1 'ESCAPE-STRINGS 'NO-SYNTAX-CROSSING)
+      (push-mark nil t)
+      (forward-sexp)
+      ))
+    (setq mark-active t)
+    )
+
+
 #+end_src
 **** buffer/frame switching
 #+begin_src elisp
@@ -12044,6 +12254,7 @@
                        magit-mode-hook
                        telega-chat-mode-hook
                        telega-root-mode-hook
+                       image-mode-hook
                        )))
       (dolist (x hook-list)
         (add-hook x 'weiss-origin-mode))
@@ -12152,7 +12363,8 @@
       (progn ; no text selection
         (let ($p1 $p2)
           (cond
-           ((or ; cursor is at end of word or buffer. i.e. xyz▮
+           ((or ; cursor is not around "word"
+             (not (looking-back "[w_\\-]"))
              (looking-at "[^-_[:alnum:]]")
              (eq (point) (point-max)))
             (progn
@@ -12308,7 +12520,7 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
    ("="  xah-cycle-hyphen-underscore-space)
    ("."  xah-forward-right-bracket)
    (";"  rotate-text)
-   ("/"  xah-goto-matching-bracket)
+   ("/"  weiss-mark-brackets)
    ("\\"  nil)
    ;; ("["  origami-recursively-toggle-node)
    ;; ("]"  weiss-other-frame)
@@ -12327,8 +12539,8 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
    ("4"  split-window-below)
    ("5"  weiss-test)
    ("6"  mark-defun :then '(weiss-select-mode-turn-on))
-   ("7"  weiss-select-sexp :then '(weiss-select-mode-turn-on))
-   ("8"  xah-select-text-in-quote)
+   ("7"  xah-select-text-in-quote)
+   ("8"  weiss-select-sexp :then '(weiss-select-mode-turn-on))
    ("9"  weiss-switch-to-otherside-top-frame)
    ("0"  weiss-switch-buffer-or-otherside-frame-without-top)
 

@@ -35,7 +35,9 @@ abbrev.")
         (xah-abbrev-position-cursor p1)
         )
       abrSymbol
-      )))  
+      )
+    )
+  )  
 
 (setq abbrev-expand-function 'weiss-check-or-expand-abbrev)
 
@@ -518,6 +520,28 @@ Version 2016-10-24"
     ("temp" "<!doctype html>\n<html lang=\"de\">\n\n<head>\n<meta charset=\"utf-8\">\n<title>▮</title>\n</head>\n\n<body>\n\n</body>" weiss--ahf-indent)
     ))
 ;; html:1 ends here
+
+;; go
+
+;; [[file:../emacs-config.org::*go][go:1]]
+(when (boundp 'go-mode-abbrev-table)
+  (clear-abbrev-table go-mode-abbrev-table))
+
+(define-abbrev-table 'go-mode-abbrev-table
+  '(
+    ("v" "var ▮" weiss--ahf)
+    ("sv" "%v" weiss--ahf)
+    ("i" "import (\n\"▮\"\n)" weiss--ahf-indent)
+    ("ie" "if err != nil {\n▮\n}" weiss--ahf-indent)
+    ("p" "package ▮" weiss--ahf)
+    ("e" ":= ▮" weiss--ahf)
+    ("st" "%T" weiss--ahf)
+    ("rt" "return ▮" weiss--ahf)
+    ("pr" "fmt.Printf(\"%v\", ▮)")
+    ("f" "func ▮(){\n\n}" weiss--ahf-indent)
+    ("fr" "for i, x := range ▮{\n\n}" weiss--ahf-indent)
+    ))
+;; go:1 ends here
 
 ;; elisp
 
