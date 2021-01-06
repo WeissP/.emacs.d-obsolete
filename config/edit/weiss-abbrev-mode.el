@@ -477,7 +477,7 @@ Version 2016-10-24"
 (define-abbrev-table 'java-mode-abbrev-table
   '(
     ("rt" "return ▮;")
-    ("pr" "System.out.println(String.format(\"▮\"));" weiss--ahf)
+    ("pr" "System.out.println(String.format(\"%s\", ▮));" weiss--ahf)
     ("for" "for (int i = 0; i < ▮; i++) {\n\n}" weiss--ahf-indent)
     ("forj" "for (int j = 0; j < ▮; j++) {\n\n}" weiss--ahf-indent)
     ("if" "if (▮) {\n\n}" weiss--ahf-indent)
@@ -529,17 +529,22 @@ Version 2016-10-24"
 
 (define-abbrev-table 'go-mode-abbrev-table
   '(
-    ("v" "var ▮" weiss--ahf)
-    ("sv" "%v" weiss--ahf)
-    ("i" "import (\n\"▮\"\n)" weiss--ahf-indent)
-    ("ie" "if err != nil {\n▮\n}" weiss--ahf-indent)
-    ("p" "package ▮" weiss--ahf)
+    ("d" "defer ▮" weiss--ahf)
+    ("de" "default:\n▮" weiss--ahf-indent)
+    ("ca" "case ▮:" weiss--ahf)
     ("e" ":= ▮" weiss--ahf)
-    ("st" "%T" weiss--ahf)
-    ("rt" "return ▮" weiss--ahf)
-    ("pr" "fmt.Printf(\"%v\", ▮)")
     ("f" "func ▮(){\n\n}" weiss--ahf-indent)
     ("fr" "for i, x := range ▮{\n\n}" weiss--ahf-indent)
+    ("im" "import (\n\"▮\"\n)" weiss--ahf-indent)
+    ("ie" "if err != nil {\n▮\n}" weiss--ahf-indent)
+    ("pa" "package ▮" weiss--ahf)
+    ("pr" "fmt.Printf(\"%v\", ▮)")
+    ("rt" "return ▮" weiss--ahf)
+    ("st" "%T" weiss--ahf)
+    ("sv" "%v" weiss--ahf)
+    ("ts" "type ▮ struct {\n\n}" weiss--ahf-indent)
+    ("ti" "type ▮ interface {\n\n}" weiss--ahf-indent)
+    ("v" "var ▮" weiss--ahf)
     ))
 ;; go:1 ends here
 

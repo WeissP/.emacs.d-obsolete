@@ -15,6 +15,10 @@
               ("M-p" . lsp-describe-thing-at-point)
               ([remap xref-find-definitions] . lsp-find-definition)
               ([remap xref-find-references] . lsp-find-references))
+  :ryo
+  (:mode 'go-mode)
+  ("t" lsp-describe-thing-at-point)
+  ("u" lsp-rename)
 ;; start, hook, bind:1 ends here
 
 ;; init
@@ -180,9 +184,9 @@
   (:mode 'python-mode)
   ("u" nox-rename)
   ("t" nox-show-doc)
-  (:mode 'go-mode)
-  ("u" nox-rename)
-  ("t" nox-show-doc)  
+  ;; (:mode 'go-mode)
+  ;; ("u" nox-rename)
+  ;; ("t" nox-show-doc)  
   :config
   (setq nox-doc-tooltip-font-size "12"
         nox-doc-tooltip-border-width 3)

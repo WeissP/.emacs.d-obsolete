@@ -3035,14 +3035,6 @@
   ;; ("g" telega-chat-with)
   ;; ("n" next-line)
   ;; ("p" previous-line)
-  :bind
-  (
-   :map telega-chat-mode-map
-   ("j" . 'telega-button-forward)
-   ("k" . 'telega-button-backward)
-   ("K" . 'telega-msg-delete-marked-or-at-point)
-   ("j" . telega-button-forward)
-   )
   )
 
 ;; (require 'telega)

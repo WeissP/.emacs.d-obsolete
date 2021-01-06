@@ -753,7 +753,7 @@
   (define-abbrev-table 'java-mode-abbrev-table
     '(
       ("rt" "return ▮;")
-      ("pr" "System.out.println(String.format(\"▮\"));" weiss--ahf)
+      ("pr" "System.out.println(String.format(\"%s\", ▮));" weiss--ahf)
       ("for" "for (int i = 0; i < ▮; i++) {\n\n}" weiss--ahf-indent)
       ("forj" "for (int j = 0; j < ▮; j++) {\n\n}" weiss--ahf-indent)
       ("if" "if (▮) {\n\n}" weiss--ahf-indent)
@@ -803,17 +803,22 @@
 
   (define-abbrev-table 'go-mode-abbrev-table
     '(
-      ("v" "var ▮" weiss--ahf)
-      ("sv" "%v" weiss--ahf)
-      ("i" "import (\n\"▮\"\n)" weiss--ahf-indent)
-      ("ie" "if err != nil {\n▮\n}" weiss--ahf-indent)
-      ("p" "package ▮" weiss--ahf)
+      ("d" "defer ▮" weiss--ahf)
+      ("de" "default:\n▮" weiss--ahf-indent)
+      ("ca" "case ▮:" weiss--ahf)
       ("e" ":= ▮" weiss--ahf)
-      ("st" "%T" weiss--ahf)
-      ("rt" "return ▮" weiss--ahf)
-      ("pr" "fmt.Printf(\"%v\", ▮)")
       ("f" "func ▮(){\n\n}" weiss--ahf-indent)
       ("fr" "for i, x := range ▮{\n\n}" weiss--ahf-indent)
+      ("im" "import (\n\"▮\"\n)" weiss--ahf-indent)
+      ("ie" "if err != nil {\n▮\n}" weiss--ahf-indent)
+      ("pa" "package ▮" weiss--ahf)
+      ("pr" "fmt.Printf(\"%v\", ▮)")
+      ("rt" "return ▮" weiss--ahf)
+      ("st" "%T" weiss--ahf)
+      ("sv" "%v" weiss--ahf)
+      ("ts" "type ▮ struct {\n\n}" weiss--ahf-indent)
+      ("ti" "type ▮ interface {\n\n}" weiss--ahf-indent)
+      ("v" "var ▮" weiss--ahf)
       ))
 
 #+end_src
@@ -5873,6 +5878,10 @@
                 ("M-p" . lsp-describe-thing-at-point)
                 ([remap xref-find-definitions] . lsp-find-definition)
                 ([remap xref-find-references] . lsp-find-references))
+    :ryo
+    (:mode 'go-mode)
+    ("t" lsp-describe-thing-at-point)
+    ("u" lsp-rename)
 #+end_src
 
 *** init
@@ -5925,28 +5934,28 @@
 
 **** lsp-ui
 #+begin_src elisp
-(use-package lsp-ui
-    ;; :disabled
-    :commands lsp-ui-mode
-    :bind (:map lsp-mode-map
-                ("M-d" . 'lsp-ui-doc-show))
-    :init (setq lsp-ui-doc-enable nil
-                lsp-ui-doc-use-webkit nil
-                lsp-ui-doc-delay 0.2
-                lsp-ui-doc-include-signature t
-                lsp-ui-doc-position 'at-point
-                lsp-ui-doc-border (face-foreground 'default)
-                lsp-eldoc-enable-hover nil ; Disable eldoc displays in minibuffer
+  (use-package lsp-ui
+      ;; :disabled
+      :commands lsp-ui-mode
+      :bind (:map lsp-mode-map
+                  ("M-d" . 'lsp-ui-doc-show))
+      :init (setq lsp-ui-doc-enable nil
+                  lsp-ui-doc-use-webkit nil
+                  lsp-ui-doc-delay 0.2
+                  lsp-ui-doc-include-signature t
+                  lsp-ui-doc-position 'at-point
+                  lsp-ui-doc-border (face-foreground 'default)
+                  lsp-eldoc-enable-hover nil ; Disable eldoc displays in minibuffer
 
-                lsp-ui-sideline-enable t
-                lsp-ui-sideline-show-hover nil
-                lsp-ui-sideline-show-diagnostics nil
-                lsp-ui-sideline-update-mode 'line
-                lsp-ui-sideline-delay 1
-                lsp-ui-sideline-show-code-actions nil
-                lsp-ui-sideline-ignore-duplicate nil
-                )
-    )
+                  lsp-ui-sideline-enable t
+                  lsp-ui-sideline-show-hover nil
+                  lsp-ui-sideline-show-diagnostics nil
+                  lsp-ui-sideline-update-mode 'line
+                  lsp-ui-sideline-delay 1
+                  lsp-ui-sideline-show-code-actions nil
+                  lsp-ui-sideline-ignore-duplicate nil
+                  )
+      )
 #+end_src
 
 **** lsp-java
@@ -6098,9 +6107,9 @@
     (:mode 'python-mode)
     ("u" nox-rename)
     ("t" nox-show-doc)
-    (:mode 'go-mode)
-    ("u" nox-rename)
-    ("t" nox-show-doc)  
+    ;; (:mode 'go-mode)
+    ;; ("u" nox-rename)
+    ;; ("t" nox-show-doc)  
     :config
     (setq nox-doc-tooltip-font-size "12"
           nox-doc-tooltip-border-width 3)
@@ -7833,14 +7842,6 @@
     ;; ("g" telega-chat-with)
     ;; ("n" next-line)
     ;; ("p" previous-line)
-    :bind
-    (
-     :map telega-chat-mode-map
-     ("j" . 'telega-button-forward)
-     ("k" . 'telega-button-backward)
-     ("K" . 'telega-msg-delete-marked-or-at-point)
-     ("j" . telega-button-forward)
-     )
     )
 
   ;; (require 'telega)
