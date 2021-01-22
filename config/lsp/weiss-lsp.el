@@ -9,16 +9,15 @@
   :hook (
          (java-mode . lsp-deferred)
          (go-mode . lsp-deferred)
-         ;; (c++-mode . lsp-deferred)
+         (python-mode . (lambda ()
+                          (require 'lsp-python-ms)
+                          (lsp-deferred)))
+         (c++-mode . lsp-deferred)
          )
   :bind (:map lsp-mode-map
               ("M-p" . lsp-describe-thing-at-point)
               ([remap xref-find-definitions] . lsp-find-definition)
               ([remap xref-find-references] . lsp-find-references))
-  :ryo
-  (:mode 'go-mode)
-  ("t" lsp-describe-thing-at-point)
-  ("u" lsp-rename)
 ;; start, hook, bind:1 ends here
 
 ;; init
@@ -32,6 +31,7 @@
 
 ;; [[file:../emacs-config.org::*variable][variable:1]]
 (setq
+ lsp-clients-python-library-directories '("/usr/local/" "/usr/")
  lsp-log-io nil                       ;; enable log only for debug
  lsp-headerline-breadcrumb-enable nil
  lsp-response-timeout 100
@@ -117,16 +117,18 @@
   ;; (add-hook 'java-mode-hook 'lsp-completion-mode)
   ;; (setq lsp-java-jdt-download-url  "https://download.eclipse.org/jdtls/milestones/0.57.0/jdt-language-server-0.57.0-202006172108.tar.gz")
   (setq
-   lsp-java-format-enabled nil
-   lsp-java-format-comments-enabled nil
-   lsp-java-format-settings-profile "GoogleStyle"
+   lsp-java-format-enabled t
+   ;; lsp-java-format-comments-enabled nil
+   ;; lsp-java-format-settings-profile "GoogleStyle"
    ;; java-format-settings-url "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml"
-   lsp-java-format-settings-url "/home/weiss/.emacs.d/local-package/eclipse-java-google-style.xml"
+   lsp-java-format-settings-url " https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml"
+   ;; lsp-java-format-settings-url "/home/weiss/Documents/Vorlesungen/Compiler-and-Language-Processing-Tools/bai-bozhou/rules.xml"
    )
   :ryo
   (:mode 'java-mode)
   ("u" lsp-rename)
   ("t" (
+        ("a" lsp-execute-code-action)
         ("t" lsp-java-generate-to-string)
         ("e" lsp-java-generate-equals-and-hash-code)
         ("o" lsp-java-generate-overrides)
@@ -134,6 +136,82 @@
         ))    
   )
 ;; lsp-java:1 ends here
+
+;; python
+
+;; [[file:../emacs-config.org::*python][python:1]]
+(use-package lsp-python-ms
+  :ensure t
+  :init (setq lsp-python-ms-auto-install-server t)
+  :hook (python-mode . yas-minor-mode)
+  )
+;; python:1 ends here
+
+;; C/C++/Objective-C
+
+;; [[file:../emacs-config.org::*C/C++/Objective-C][C/C++/Objective-C:1]]
+;; C/C++/Objective-C support
+(use-package ccls
+  :disabled
+  :defines projectile-project-root-files-top-down-recurring
+  :hook ((c-mode c++-mode objc-mode cuda-mode) . (lambda () (require 'ccls) (lsp)))
+  :init
+  ;; (setq ccls-executable "/home/weiss/c++/ccls")
+  (setq ccls-executable "/usr/bin/ccls")
+  ;; use  "bsd"  "java"  "k&r"  "stroustrup"  "whitesmith"  "banner"  "gnu"  "linux"   "horstmann"
+  (setq c-default-style "linux"
+        indent-tabs-mode nil
+        c-basic-offset 4)
+  ;; align a continued string under the one it continues
+  (c-set-offset 'statement-cont 'c-lineup-string-cont)
+  ;; align or indent after an assignment operator 
+  (c-set-offset 'statement-cont 'c-lineup-math)
+  ;; align closing brace/paren with opening brace/paren
+  (c-set-offset 'arglist-close 'c-lineup-close-paren)
+  (c-set-offset 'brace-list-close 'c-lineup-close-paren)
+  ;; align current argument line with opening argument line 
+  (c-set-offset 'arglist-cont-nonempty 'c-lineup-arglist)
+  ;; don't change indent of java 'throws' statement in method declaration
+  ;;     and other items after the function argument list
+  (c-set-offset 'func-decl-cont 'c-lineup-dont-change)  
+  ;; not Indent Namespaces
+  (c-set-offset  'namespace-open 0)
+  (c-set-offset  'namespace-close 0)
+  (c-set-offset  'innamespace 0)
+  ;; Indent Classes
+  (c-set-offset  'class-open 0)
+  (c-set-offset  'class-close 0)
+  (c-set-offset  'inclass 16)
+  :config
+  (with-eval-after-load 'projectile
+    (setq projectile-project-root-files-top-down-recurring
+          (append '("compile_commands.json" ".ccls")
+                  projectile-project-root-files-top-down-recurring)))
+
+  ;; compile_commands.json
+  ;; cmake -H. -BDebug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=YES
+  ;; ln -s Debug/compile_commands.json       
+  )
+;; C/C++/Objective-C:1 ends here
+
+;; config
+
+;; [[file:../emacs-config.org::*config][config:1]]
+:config
+(dolist (x '(go-mode python-mode java-mode)) 
+  (ryo-modal-keys
+   ("t i" lsp-organize-imports :mode x)
+   ("t d" lsp-describe-thing-at-point :mode x)
+   ("u" lsp-rename :mode x)            
+   )
+  )
+
+;; (:mode 'go-mode)
+;; ("u" lsp-rename)
+;; (:mode 'python-mode)
+;; ("t" lsp-describe-thing-at-point)
+;; ("u" lsp-rename)
+;; config:1 ends here
 
 ;; company-lsp
 
@@ -159,7 +237,7 @@
 
 ;; [[file:../emacs-config.org::*nox][nox:1]]
 (use-package nox
-  ;; :disabled
+  :disabled
   :quelpa (nox
            :fetcher github
            :repo manateelazycat/nox)
@@ -172,11 +250,11 @@
   ;; (setq nox-python-server "pyls")
   (setq nox-optimization-p nil)
 
-  :hook (
-         (python-mode . nox-ensure)
+  ;; :hook (
+         ;; (python-mode . nox-ensure)
          ;; (go-mode . nox-ensure)
          ;; (nox-managed-mode-hook . ryo-modal-restart)
-         )
+         ;; )
   :bind (:map nox-mode-map
               ("M-d" . nox-show-doc)
               )

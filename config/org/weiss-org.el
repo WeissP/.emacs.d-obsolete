@@ -108,6 +108,7 @@
  org-indent-mode-turns-on-hiding-stars nil
  org-list-description-max-indent 4
  org-startup-indented t
+ org-startup-folded 'fold
  org-log-done 'time
  org-fast-tag-selection-single-key t
  org-agenda-include-diary t
@@ -173,6 +174,7 @@
    ("\\.mm\\'" . default)
    ("\\.x?html?\\'" . default)
    ("\\.pdf\\'" . emacs)
+   ("\\.mp4\\'" . "vlc \"%s\"")
    ("\\.txt\\'" . emacs))
  )
 ;; variables:1 ends here
@@ -196,6 +198,7 @@
 ("<shifttab>" org-shifttab)
 ("5" +org/dwim-at-point)
 ("6" org-insert-heading-respect-content)
+("8" org-export-dispatch)
 ("C" org-copy-subtree)
 ("d" weiss-org-cut-line-or-delete-region)
 ("j" next-line :first '(deactivate-mark))
@@ -205,10 +208,10 @@
 ("x" weiss-org-sp-switch)
 ("X" org-refile)
 ("t" (
-      ("j" org-forward-heading-same-level)
-      ("k" org-backward-heading-same-level)
-      ("i" outline-up-heading)
-      ("l" org-down-element)
+      ;; ("j" org-forward-heading-same-level)
+      ;; ("k" org-backward-heading-same-level)
+      ;; ("i" outline-up-heading)
+      ;; ("l" org-down-element)
       ("a" weiss-org-screenshot)
       ;; ("n" weiss-flyspell-save-word)
       ("o" org-noter)
@@ -238,6 +241,10 @@
                 ignore
                 :then ((lambda () (interactive) (weiss-insert-bracket-pair "#+begin_src java" "#+end_src" t)))
                 :name "java babel")
+               ("g"
+                ignore
+                :then ((lambda () (interactive) (weiss-insert-bracket-pair "#+begin_src go" "#+end_src" t)))
+                :name "golang babel")
                ("s"
                 ignore
                 :then ((lambda () (interactive) (weiss-insert-bracket-pair "#+begin_src sh" "#+end_src" t)))

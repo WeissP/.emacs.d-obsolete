@@ -4,6 +4,11 @@
 
 ;; [[file:../emacs-config.org::*general][general:1]]
 (define-key prog-mode-map (kbd "<tab>") 'weiss-indent)
+(with-eval-after-load 'latex-mode
+  (define-key latex-mode-map (kbd "<tab>") 'weiss-indent)
+  (define-key LaTeX-mode-map (kbd "<tab>") 'weiss-indent)
+  )
+
 (with-eval-after-load 'sgml-mode
   (define-key sgml-mode-map (kbd "<tab>") 'weiss-indent)
   )
@@ -53,7 +58,7 @@
 (use-package weiss-overriding-ryo-mode)
 (use-package weiss-origin-mode
   :config
-  (push '(telega-chat-mode . ("<deletechar>" "9" "-" "0")) weiss-origin-keep-keys)
+  (push '(telega-chat-mode . ("<deletechar>")) weiss-origin-keep-keys)
   (let ((hook-list '(
                      magit-status-mode-hook
                      magit-mode-hook
@@ -64,6 +69,13 @@
     (dolist (x hook-list)
       (add-hook x 'weiss-origin-mode))
     )  
+  (defun weiss-enable-origin-mode-only-in-fundamental-mode ()
+    "only enable weiss-origin-mode when current major mode is plain fundamental-mode"
+    (when (and (not weiss-origin-mode) (eq major-mode 'fundamental-mode))
+      (weiss-origin-mode 1)
+      )
+    )
+  ;; (add-to-list 'weiss/after-buffer-change-function-list 'weiss-enable-origin-mode-only-in-fundamental-mode)
   )
 ;; general:1 ends here
 

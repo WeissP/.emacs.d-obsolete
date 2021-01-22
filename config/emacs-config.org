@@ -1,3 +1,4 @@
+#+STARTUP: nofold
 * init
 ** init for dump
 #+begin_src elisp :tangle init/weiss-init.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
@@ -214,7 +215,7 @@
   (require 'weiss-sql)
   (require 'weiss-rime)
   (require 'weiss-latex)
-  ;; (require 'weiss-telega)
+  (require 'weiss-cal)
   (require 'weiss-abbrev-mode)
   (require 'weiss-project)
   (require 'weiss-lsp)
@@ -360,12 +361,13 @@
       (define-key keymap (kbd ",") expand-abbrev-maybe)
       keymap
       )
+    (abbrev-mode -1)
     )
 
   (define-globalized-minor-mode
     weiss-abbrev-global-mode
     weiss-abbrev-mode
-    (lambda () (interactive) (weiss-abbrev-mode)))
+    (lambda () (interactive) (abbrev-mode -1) (weiss-abbrev-mode)))
 
   (weiss-abbrev-global-mode)
 #+end_src
@@ -496,6 +498,10 @@
     '(
       ("ta" ":tangle ")
       ("wa" "WhatsApp")
+  ;;;;; latex
+      ("ltxeq" "\\begin{equation*}\n▮\n\\end{equation*}" weiss--ahf-indent)    
+      ("ltxal" "\\begin{aligned}\n▮\n\\end{aligned}" weiss--ahf-indent)    
+      ("ltxtb" "#+ATTR_LaTeX: :align |r|r|r|r|r|" weiss--ahf-indent)    
   ;;;;; emoji
       ("zrl" ":relaxed:" weiss--ahf)
       ("zj" ":joy:" weiss--ahf)
@@ -514,6 +520,7 @@
       ("eb" "ein bisschen")
       ("ef" "einfach" weiss--ahf)
       ("en" "entweder")
+      ("edl" "endlich ")
       ("fm" "Familie" weiss--ahf)
       ("ft" "fertig" weiss--ahf)
       ("fun" "Funktion" weiss--ahf)
@@ -551,6 +558,19 @@
       ("zf" "Zusammenfassung" weiss--ahf)
       )
     )
+#+end_src
+
+** imaxima
+#+begin_src elisp
+  (when (boundp 'maxima-mode-abbrev-table)
+    (clear-abbrev-table maxima-mode-abbrev-table))
+  (define-abbrev-table 'maxima-mode-abbrev-table
+    '(
+      ("t" "apply (tex, [%i▮]);" weiss--ahf)
+      ("e" ":= " weiss--ahf)
+      )
+    )
+
 #+end_src
 
 ** latex
@@ -690,7 +710,7 @@
       ("od" "\\div " weiss--ahf)
       ("opm" "\\pm " weiss--ahf)
       ("os" "\\sqrt" weiss--ahf)
-      ("of" "\\frac" weiss--ahf)
+      ("of" "\\frac{▮}" weiss--ahf)
       ("oc" "\\circ " weiss--ahf)
       ("och" "\\choose " weiss--ahf)
 
@@ -742,6 +762,8 @@
       ("mbbb" "\\bigg" weiss--ahf)
       ("mbbbb" "\\Bigg" weiss--ahf)
       ("mnp" "\n\n\\newpage" weiss--ahf)    
+      ("meq" "\begin{equaltion}\n▮\n\end{equaltion}" weiss--ahf-indent)    
+      ("mal" "\begin{equaltion}\n\begin{aligned}\n▮\n\end{aligned}\n\end{equaltion}" weiss--ahf-indent)    
       ))
 #+end_src
 
@@ -753,7 +775,8 @@
   (define-abbrev-table 'java-mode-abbrev-table
     '(
       ("rt" "return ▮;")
-      ("pr" "System.out.println(String.format(\"%s\", ▮));" weiss--ahf)
+      ("pr" "System.out.println(▮);" weiss--ahf)
+      ("sf" "String.format(\"%s\", ▮)" weiss--ahf)
       ("for" "for (int i = 0; i < ▮; i++) {\n\n}" weiss--ahf-indent)
       ("forj" "for (int j = 0; j < ▮; j++) {\n\n}" weiss--ahf-indent)
       ("if" "if (▮) {\n\n}" weiss--ahf-indent)
@@ -772,27 +795,40 @@
 
   (define-abbrev-table 'html-mode-abbrev-table
     '(
-      ("h1" "<h1> ▮ </h1>")
-      ("li" "<li> ▮ </li>")
-      ("ol" "<ol start=1 type=a> \n▮ \n </ol>" weiss--ahf-indent)
-      ("ul" "<ul> \n▮ \n </ul>" weiss--ahf-indent)
       ("b" "<b> ▮ </b>")
       ("i" "<i> ▮ </i>")
       ("p" "<p> ▮ </p>")
       ("a" "<a href=\"▮\"> </a>" weiss--ahf)
-      ("esl" "&lt;" weiss--ahf)
-      ("esg" "&gt;" weiss--ahf)
-      ("eslg" "&lt;▮&gt;" weiss--ahf)
-      ("esa" "&amp" weiss--ahf)
-      ("esq" "&quot;" weiss--ahf)
+
+      ("h1" "<h1> ▮ </h1>")
+      ("h2" "<h2> ▮ </h2>")
+      ("h3" "<h3> ▮ </h3>")
+      ("h4" "<h4> ▮ </h4>")
+      ("li" "<li> ▮ </li>")
+      ("ol" "<ol start=1 type=a> \n▮ \n </ol>" weiss--ahf-indent)
+      ("ul" "<ul> \n▮ \n </ul>" weiss--ahf-indent)
+      ("hd" "<head>\n<meta charset=\"utf-8\">\n<title>▮</title>\n</head>" weiss--ahf-indent)
+      ("th" "<th>▮</th>" weiss--ahf)
       ("br" "<br>" weiss--ahf)
       ("tr" "<tr>\n▮\n</tr>" weiss--ahf-indent)
       ("td" "<td>▮</td>" weiss--ahf)
-      ("th" "<th>▮</th>" weiss--ahf)
-      ("s" "style" weiss--ahf-indent)
+      ("sp" "<span>▮</span>" weiss--ahf)
+      ("sb" "<span class=\"block\">▮</span>" weiss--ahf)    
+      ("ag" "Aufgabe" weiss--ahf)
+
+      ("el" "&lt;" weiss--ahf)
+      ("eg" "&gt;" weiss--ahf)
+      ("elg" "&lt;▮&gt;" weiss--ahf)
+      ("ea" "&amp" weiss--ahf)
+      ("eq" "&quot;" weiss--ahf)
+
+      ("pre" "<pre>\n▮\n</pre>" weiss--ahf-indent)    
+      ("div" "<div> ▮ </div>")
+
+      ("code" "<pre>\n<code>\n▮\n</code>\n</pre>" weiss--ahf-indent)
       ("style" "<style>\n▮\n</style>" weiss--ahf-indent)
-      ("hd" "<head>\n<meta charset=\"utf-8\">\n<title>▮</title>\n</head>" weiss--ahf-indent)
       ("temp" "<!doctype html>\n<html lang=\"de\">\n\n<head>\n<meta charset=\"utf-8\">\n<title>▮</title>\n</head>\n\n<body>\n\n</body>" weiss--ahf-indent)
+
       ))
 #+end_src
 
@@ -1383,13 +1419,7 @@
       )
     )
 
-  (when (boundp 'maxima-noweb-mode-abbrev-table)
-    (clear-abbrev-table maxima-noweb-mode-abbrev-table))
-  (define-abbrev-table 'maxima-noweb-mode-abbrev-table
-    '(
-      ("s" "std::" weiss--ahf)
-      )
-    )
+
 #+end_src
 ** end
 #+begin_src elisp
@@ -1408,6 +1438,8 @@
     :ensure nil
     ;; :defer nil
     :config
+    ;; (setq snails-show-with-frame t)
+    (setq snails-show-with-frame nil)
     ;; (setq snails-fuz-library-load-status "load")
     (setq snails-fame-width-proportion 0.8)
     (setq snails-default-show-prefix-tips nil)
@@ -1417,6 +1449,68 @@
     (require 'snails-backend-recentf-weiss)
     (require 'snails-backend-rg-curdir)
     (require 'snails-backend-filter-buffer)
+
+    (defvar snails-current-dir nil)
+    (defun weiss-snails-get-current-dir ()
+      "get the path of current file"
+      (interactive)
+      (ignore-errors (setq snails-current-dir (expand-file-name default-directory))))
+    ;; (advice-add 'snails :before 'weiss-snails-get-current-dir)
+
+    (setq weiss-reduce-file-path-alist
+          '(
+            ("🅲🅻🅿" . "Compiler-and-Language-Processing-Tools")
+            ("🆂🅲" . "scientififc computing")
+            ("🆅" . "Documents/Vorlesungen")
+            ("🅥" . "Nutstore Files/Vorlesungen")
+            ("🅹" . "src/main/java")
+            ("🅙🅣" . "src/test/java")
+            ("~" . "/home/weiss")
+            ))
+
+    (defun weiss-reduce-file-path (filename &optional r)
+      "replace long file paths with symbol, if `r' is non-nil, then replace symbol with path"
+      (interactive)
+      (let ((search-str)
+            (replace-str))
+        (dolist (x weiss-reduce-file-path-alist)
+          (if r
+              (setq search-str (car x) 
+                    replace-str (cdr x))
+            (setq search-str (cdr x) 
+                  replace-str (car x)))      
+          (setq filename (replace-regexp-in-string search-str replace-str filename t))
+          )
+        )  
+      (when (> (length filename) 80)
+        (setq filename (substring filename -80)))
+      filename
+      )
+
+    (defun weiss-snails-create-window ()
+      (setq snails-init-conf (current-window-configuration))
+
+      (delete-other-windows)
+
+      (split-window)
+      (ignore-errors (windmove-down))
+
+      ;; (ignore-errors
+      ;;   (dotimes (i 50)
+      ;;     (windmove-down)))
+
+      (switch-to-buffer snails-input-buffer)
+      (set-window-margins (selected-window) 1 1)
+
+      (split-window (selected-window) (line-pixel-height) nil t)
+      (windmove-down)
+      (switch-to-buffer snails-content-buffer)
+      (set-window-margins (selected-window) 1 1)
+      (other-window -1)
+
+      (add-hook 'after-change-functions 'snails-monitor-input nil t)
+      )
+    (advice-add 'snails-create-window :override 'weiss-snails-create-window)
 
     (with-no-warnings
       (defun weiss-snails-init-face-with-theme ()
@@ -1454,7 +1548,7 @@
       (all-the-icons-faicon "globe"))
 
     (setq snails-prefix-backends
-          '((";" '(snails-backend-rg-curdir snails-backend-projectile))
+          '((";" '(snails-backend-projectile snails-backend-rg-curdir))
             ("," '(snails-backend-imenu snails-backend-directory-files snails-backend-current-buffer))
             ("=" '(snails-backend-buffer))
             ("!" '(snails-backend-search-pdf))
@@ -1466,6 +1560,11 @@
             snails-backend-file-bookmark
             snails-backend-recentf-weiss
             ))
+
+    (defun weiss-test ()
+      "DOCSTRING"
+      (interactive)
+      (snails '(snails-backend-projectile)))
 
     (define-key snails-mode-map (kbd "C-j") #'snails-select-next-item)
     (define-key snails-mode-map (kbd "C-k") #'snails-select-prev-item)
@@ -1495,34 +1594,6 @@
 
   (recentf-mode 1)
 
-  (setq weiss-reduce-recentf-file-path-alist
-        '(
-          ("🅲🅻🅿" . "Compiler-and-Language-Processing-Tools")
-          ("🆂🅲" . "scientififc computing")
-          ("🆅" . "Documents/Vorlesungen")
-          ("🅥" . "Nutstore Files/Vorlesungen")
-          ("🅹" . "src/main/java")
-          ("🅙🅣" . "src/test/java")
-          ("~" . "/home/weiss")
-          ))
-
-  (defun weiss-reduce-file-path (filename &optional r)
-    "replace long file paths with symbol, if `r' is non-nil, then replace symbol with path"
-    (interactive)
-    (let ((search-str)
-          (replace-str))
-      (dolist (x weiss-reduce-recentf-file-path-alist)
-        (if r
-            (setq search-str (car x) 
-                  replace-str (cdr x))
-          (setq search-str (cdr x) 
-                replace-str (car x)))      
-        (setq filename (replace-regexp-in-string search-str replace-str filename t))
-        )
-      )  
-    filename
-    )
-
   (snails-create-sync-backend
    :name
    "RECENTF-WEISS"
@@ -1536,7 +1607,6 @@
                 (snails-match-input-p input file)
                 )
            (snails-add-candiate 'candidates (weiss-reduce-file-path file) file))
-           ;; (snails-add-candiate 'candidates "123" file))
          )
        (snails-sort-candidates input candidates 1 1)
        ))
@@ -1819,9 +1889,10 @@
    (lambda (input)
      (when (and (executable-find "rg")
                 (> (length input) 1))
-       (let ((search-dir snails-project-root-dir)
+       (let ((search-dir snails-start-buffer-dir-path)
              (search-input input)
              (search-info (snails-pick-search-info-from-input input)))
+         ;; (message "search-dir %s" search-dir)
          ;; If the user input character includes the path separator @, replace the current directory with the entered directory.
          (when search-info
            (setq search-dir (first search-info))
@@ -1840,7 +1911,7 @@
    (lambda (candidate-list)
      (let (candidates)
        (dolist (candidate candidate-list)
-         (snails-add-candiate 'candidates candidate candidate))
+         (snails-add-candiate 'candidates (weiss-reduce-file-path candidate) candidate))
        candidates))
 
    :candidate-icon
@@ -2048,136 +2119,136 @@
 #+end_src
 ** projectile
 #+begin_src elisp
-;;; snails-backend-projectile.el --- Projectile backend for snails
+  ;;; snails-backend-projectile.el --- Projectile backend for snails
 
-;; Filename: snails-backend-projectile.el
-;; Description: Projectile backend for snails
-;; Author: Cosven <http://cosven.me>
-;; Maintainer: Cosven <http://cosven.me>
-;; Copyright (C) 2019, Andy Stewart, all rights reserved.
-;; Created: 2019-08-07 05:50:41
-;; Version: 0.1
-;; Last-Updated: 2019-08-07 05:50:41
-;;           By: Cosven
-;; URL: http://www.emacswiki.org/emacs/download/snails-backend-projectile.el
-;; Keywords:
-;; Compatibility: GNU Emacs 26.2
-;;
-;; Features that might be required by this library:
-;;
-;;
-;;
+  ;; Filename: snails-backend-projectile.el
+  ;; Description: Projectile backend for snails
+  ;; Author: Cosven <http://cosven.me>
+  ;; Maintainer: Cosven <http://cosven.me>
+  ;; Copyright (C) 2019, Andy Stewart, all rights reserved.
+  ;; Created: 2019-08-07 05:50:41
+  ;; Version: 0.1
+  ;; Last-Updated: 2019-08-07 05:50:41
+  ;;           By: Cosven
+  ;; URL: http://www.emacswiki.org/emacs/download/snails-backend-projectile.el
+  ;; Keywords:
+  ;; Compatibility: GNU Emacs 26.2
+  ;;
+  ;; Features that might be required by this library:
+  ;;
+  ;;
+  ;;
 
-;;; This file is NOT part of GNU Emacs
+  ;;; This file is NOT part of GNU Emacs
 
-;;; License
-;;
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation; either version 3, or (at your option)
-;; any later version.
+  ;;; License
+  ;;
+  ;; This program is free software; you can redistribute it and/or modify
+  ;; it under the terms of the GNU General Public License as published by
+  ;; the Free Software Foundation; either version 3, or (at your option)
+  ;; any later version.
 
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
+  ;; This program is distributed in the hope that it will be useful,
+  ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ;; GNU General Public License for more details.
 
-;; You should have received a copy of the GNU General Public License
-;; along with this program; see the file COPYING.  If not, write to
-;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth
-;; Floor, Boston, MA 02110-1301, USA.
+  ;; You should have received a copy of the GNU General Public License
+  ;; along with this program; see the file COPYING.  If not, write to
+  ;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth
+  ;; Floor, Boston, MA 02110-1301, USA.
 
-;;; Commentary:
-;;
-;; Projectile backend for snails
-;;
+  ;;; Commentary:
+  ;;
+  ;; Projectile backend for snails
+  ;;
 
-;;; Installation:
-;;
-;; Put snails-backend-projectile.el to your load-path.
-;; The load-path is usually ~/elisp/.
-;; It's set in your ~/.emacs like this:
-;; (add-to-list 'load-path (expand-file-name "~/elisp"))
-;;
-;; And the following to your ~/.emacs startup file.
-;;
-;; (require 'snails-backend-projectile)
-;;
-;; No need more.
+  ;;; Installation:
+  ;;
+  ;; Put snails-backend-projectile.el to your load-path.
+  ;; The load-path is usually ~/elisp/.
+  ;; It's set in your ~/.emacs like this:
+  ;; (add-to-list 'load-path (expand-file-name "~/elisp"))
+  ;;
+  ;; And the following to your ~/.emacs startup file.
+  ;;
+  ;; (require 'snails-backend-projectile)
+  ;;
+  ;; No need more.
 
-;;; Customize:
-;;
-;;
-;;
-;; All of the above can customize by:
-;;      M-x customize-group RET snails-backend-projectile RET
-;;
+  ;;; Customize:
+  ;;
+  ;;
+  ;;
+  ;; All of the above can customize by:
+  ;;      M-x customize-group RET snails-backend-projectile RET
+  ;;
 
-;;; Change log:
-;;
-;; 2019/08/07
-;;      * First released.
-;;
+  ;;; Change log:
+  ;;
+  ;; 2019/08/07
+  ;;      * First released.
+  ;;
 
-;;; Acknowledgements:
-;;
-;;
-;;
+  ;;; Acknowledgements:
+  ;;
+  ;;
+  ;;
 
-;;; TODO
-;;
-;;
-;;
+  ;;; TODO
+  ;;
+  ;;
+  ;;
 
-;;; Require
-(require 'snails-core)
+  ;;; Require
+  (require 'snails-core)
 
 
-;;; Code:
+  ;;; Code:
 
-(defun snails-backend-projectile-project-root ()
-  "Find projectile root."
-  (projectile-project-root (snails-start-buffer-dir)))
+  (defun snails-backend-projectile-project-root ()
+    "Find projectile root."
+    (projectile-project-root (snails-start-buffer-dir)))
 
-(defun snails-backend-projectile-candidates ()
-  "List project files."
-  (when (featurep 'projectile)
-    (let ((project-root (snails-backend-projectile-project-root)))
-      (when project-root
-        (projectile-project-files project-root)))))
+  (defun snails-backend-projectile-candidates ()
+    "List project files."
+    (when (featurep 'projectile)
+      (let ((project-root (snails-backend-projectile-project-root)))
+        (when project-root
+          (projectile-project-files project-root)))))
 
-(snails-create-sync-backend
- :name
- "PROJECTILE"
+  (snails-create-sync-backend
+   :name
+   "PROJECTILE"
 
- :candidate-filter
- (lambda (input)
-   (ignore-errors
-     (when (> (length input) 1)
-       (let ((candidates)
-             (project-root (snails-backend-projectile-project-root))
-             (project-files (snails-backend-projectile-candidates)))
-         (when project-files
-           (dolist (file project-files)
-             (when (or
-                    (string-equal input "")
-                    (snails-match-input-p input file))
-               (setq file-path (expand-file-name file project-root))
-               (snails-add-candiate 'candidates file file-path))))
-         (snails-sort-candidates input candidates 1 1))))
-   )
+   :candidate-filter
+   (lambda (input)
+     (ignore-errors
+       (when (> (length input) 1)
+         (let ((candidates)
+               (project-root (snails-backend-projectile-project-root))
+               (project-files (snails-backend-projectile-candidates)))
+           (when project-files
+             (dolist (file project-files)
+               (when (or
+                      (string-equal input "")
+                      (snails-match-input-p input file))
+                 (setq file-path (expand-file-name file project-root))
+                 (snails-add-candiate 'candidates file file-path))))
+           (snails-sort-candidates input candidates 1 1))))
+     )
 
- :candidate-icon
- (lambda (candidate)
-   (snails-render-file-icon candidate))
+   :candidate-icon
+   (lambda (candidate)
+     (snails-render-file-icon candidate))
 
- :candidate-do
- (lambda (candidate)
-   (snails-find-file candidate)))
+   :candidate-do
+   (lambda (candidate)
+     (snails-find-file candidate)))
 
-(provide 'snails-backend-projectile)
+  (provide 'snails-backend-projectile)
 
-;;; snails-backend-projectile.el ends here
+  ;;; snails-backend-projectile.el ends here
 #+end_src
 
 ** directory
@@ -2537,19 +2608,16 @@
     (interactive)
     (if current-prefix-arg
         (preview-clearout-buffer)
-      (message "%s" "preview-buffer")
-      (preview-buffer))
-    ;; (let ((text (buffer-substring-no-properties 1 (min 100 (point-max)))))    
-    ;;   (if t
-    ;;       ;; (or (string-match "begin{tikzpicture}" text)
-    ;;           ;; (string-match "begin{forest}" text))
-    ;;       (let ((buffer-file-name nil))
-    ;;         (if current-prefix-arg
-    ;;             (preview-clearout-buffer)
-    ;;           (message "%s" "preview-buffer")
-    ;;           (preview-buffer)))
-    ;;     (weiss-org-preview-latex-and-image)
-    ;;     ))  
+      (let ((text (buffer-substring-no-properties 1 (min 100 (point-max)))))    
+        (if (or (string-match "begin{tikzpicture}" text)
+                (string-match "begin{forest}" text))
+            (let ((buffer-file-name nil))
+              (if current-prefix-arg
+                  (preview-clearout-buffer)
+                (message "%s" "preview-buffer")
+                (preview-buffer)))
+          (weiss-org-preview-latex-and-image)
+          )))
     )
 
   (defun weiss-quick-add-latex-style-sout ()
@@ -2669,7 +2737,7 @@
 
 ** export
 #+begin_src elisp 
-  (setq LaTeX-command-style '(("" "%(PDF)%(latex) -shell-escape %S%(PDFout)")))
+  ;; (setq LaTeX-command-style '(("" "%(PDF)%(latex) -shell-escape %S%(PDFout)")))
 
   (setq
    org-export-headline-levels 1
@@ -2682,34 +2750,34 @@
 
   (add-to-list 'org-latex-packages-alist '("" "minted" t))
   (add-to-list 'org-latex-packages-alist '("" "tikz" t))
-  ;; \\usepackage{arev}
+  ;; ;; \\usepackage{arev}
 
-  (add-to-list 'org-latex-classes
-               '("weiss-abgabe"
-                 "\\documentclass{article}
+  ;; (add-to-list 'org-latex-classes
+  ;;              '("weiss-abgabe"
+  ;;                "\\documentclass{article}
 
-  [PACKAGES]
-  \\usepackage[table]{xcolor}
-  \\usepackage{ifsym}
-  \\setminted[]{tabsize=2, breaklines=true, linenos=true}
-  \\setlength\\parindent{0pt}
-  \\usepackage{fontawesome}
-  \\usepackage{enumitem}
-  \\usepackage{forest}
-  \\usepackage{tikz}
-  \\usetikzlibrary{automata,arrows}
-  \\setlist[itemize,2]{label=$\\circ$}
-  \\setlist[itemize,3]{label=$\\diamond$}
-  \\setenumerate[1]{label=\\alph*)}
-  \\setenumerate[2]{label=\\roman*)}
-  [EXTRA]
-  "
-                 ("\\section{%s}" . "\\section*{%s}")
-                 ("\\subsection{%s}" . "\\subsection*{%s}")
-                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")
-                 ))
+  ;; [PACKAGES]
+  ;; \\usepackage[table]{xcolor}
+  ;; \\usepackage{ifsym}
+  ;; \\setminted[]{tabsize=2, breaklines=true, linenos=true}
+  ;; \\setlength\\parindent{0pt}
+  ;; \\usepackage{fontawesome}
+  ;; \\usepackage{enumitem}
+  ;; \\usepackage{forest}
+  ;; \\usepackage{tikz}
+  ;; \\usetikzlibrary{automata,arrows}
+  ;; \\setlist[itemize,2]{label=$\\circ$}
+  ;; \\setlist[itemize,3]{label=$\\diamond$}
+  ;; \\setenumerate[1]{label=\\alph*)}
+  ;; \\setenumerate[2]{label=\\roman*)}
+  ;; [EXTRA]
+  ;; "
+  ;;                ("\\section{%s}" . "\\section*{%s}")
+  ;;                ("\\subsection{%s}" . "\\subsection*{%s}")
+  ;;                ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+  ;;                ("\\paragraph{%s}" . "\\paragraph*{%s}")
+  ;;                ("\\subparagraph{%s}" . "\\subparagraph*{%s}")
+  ;;                ))
 
 
 
@@ -2732,7 +2800,7 @@
 #+begin_src elisp
   (ryo-modal-keys
    (:mode 'latex-mode)
-   ("u" weiss-latex-buffer-preview)
+   ("u" weiss-org-preview-latex-and-image)
    ("<escape> <escape>" (
                          ("i" ignore
                           :name "mathit"
@@ -2769,6 +2837,10 @@
                          ("c" ignore
                           :name "mathcal"
                           :then ((lambda()(weiss--quick-add-latex-style "mathcal")))
+                          )
+                         ("RET" ignore
+                          :name "new line"
+                          :then ((lambda()(weiss-insert-bracket-pair "&" "\\\\")))
                           )
                          ("-" weiss-quick-add-latex-style-sout
                           :name "sout")
@@ -2833,8 +2905,7 @@
           doom-modeline-window-width-limit 110
           )
     ;; (setq doom-modeline-minor-modes t)
-    (diminish 'abbrev-mode)
-    :hook (after-init . doom-modeline-mode)
+      :hook (after-init . doom-modeline-mode)
     )
 
   (if weiss-dumped-p 
@@ -2974,17 +3045,17 @@
     (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
     ;; Enable all Cascadia Code ligatures in programming modes
     (let ((ligatures '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
-                       ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
-                       "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+                       ":::" "::=" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+                       "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "-<<"
                        "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
                        "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
-                       "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+                       "..." "+++" "/==" "_|_" "www" "&&" "^=" "~~" "~="
                        "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
                        "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
                        ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
                        "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
                        "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
-                       "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+                       "?=" "?." "??" ";;" "/*" "/=" "/>" "__" "~~" "(*" "*)"
                        "://"))
           )
       (ligature-set-ligatures 'prog-mode ligatures)    
@@ -5626,10 +5697,10 @@
 *** snails
 #+begin_src elisp
   (when (featurep 'snails)
-    (set-face-attribute 'snails-header-line-face nil :inherit 'variable-pitch :foreground "#a626a4" :underline t :weight 'normal :slant 'italic :height 1.3)
+    (set-face-attribute 'snails-header-line-face nil :inherit 'variable-pitch :foreground "#a626a4" :underline t :weight 'normal :slant 'italic :height 1.2)
     (set-face-attribute 'snails-header-index-face nil :inherit 'snails-header-line-face :height 0.7 :slant 'italic)
     (set-face-attribute 'snails-candiate-content-face nil :inherit 'variable-pitch :weight 'light :slant 'normal)
-    (set-face-attribute 'snails-input-buffer-face nil :inherit 'variable-pitch :font (font-spec :name "lato") :height 260)
+    (set-face-attribute 'snails-input-buffer-face nil :inherit 'variable-pitch :font (font-spec :name "lato") :height 200)
     (set-face-attribute 'snails-content-buffer-face nil :inherit 'variable-pitch :font (font-spec :name "lato") :height 150)
     )
 #+end_src
@@ -5694,10 +5765,20 @@
                         :underline 'nil
                         :foreground "#999999"
                         :background "#FAFAFA")
+    (set-face-attribute 'org-checkbox nil
+                        :font "JetBrainsMono"
+                        :extend nil
+                        )
+    (set-face-attribute 'org-table nil
+                        :font "JetBrainsMono"
+                        :extend nil
+                        )
+
     (set-face-attribute 'org-block nil
                         :font "JetBrainsMono"
                         :extend nil
                         :background "#FAFAFA")
+
     (set-face-attribute 'org-drawer nil
                         :foreground "#999999"
                         :slant 'normal
@@ -5716,6 +5797,7 @@
     (set-face-attribute 'org-headline-done nil
                         :strike-through t
                         :weight 'normal)
+
     (set-face-attribute 'org-level-1 nil
                         :height 1.35
                         :foreground "#ff5a19"
@@ -5872,16 +5954,15 @@
     :hook (
            (java-mode . lsp-deferred)
            (go-mode . lsp-deferred)
-           ;; (c++-mode . lsp-deferred)
+           (python-mode . (lambda ()
+                            (require 'lsp-python-ms)
+                            (lsp-deferred)))
+           (c++-mode . lsp-deferred)
            )
     :bind (:map lsp-mode-map
                 ("M-p" . lsp-describe-thing-at-point)
                 ([remap xref-find-definitions] . lsp-find-definition)
                 ([remap xref-find-references] . lsp-find-references))
-    :ryo
-    (:mode 'go-mode)
-    ("t" lsp-describe-thing-at-point)
-    ("u" lsp-rename)
 #+end_src
 
 *** init
@@ -5893,6 +5974,7 @@
 
 #+begin_src elisp
   (setq
+   lsp-clients-python-library-directories '("/usr/local/" "/usr/")
    lsp-log-io nil                       ;; enable log only for debug
    lsp-headerline-breadcrumb-enable nil
    lsp-response-timeout 100
@@ -5976,22 +6058,98 @@
     ;; (add-hook 'java-mode-hook 'lsp-completion-mode)
     ;; (setq lsp-java-jdt-download-url  "https://download.eclipse.org/jdtls/milestones/0.57.0/jdt-language-server-0.57.0-202006172108.tar.gz")
     (setq
-     lsp-java-format-enabled nil
-     lsp-java-format-comments-enabled nil
-     lsp-java-format-settings-profile "GoogleStyle"
+     lsp-java-format-enabled t
+     ;; lsp-java-format-comments-enabled nil
+     ;; lsp-java-format-settings-profile "GoogleStyle"
      ;; java-format-settings-url "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml"
-     lsp-java-format-settings-url "/home/weiss/.emacs.d/local-package/eclipse-java-google-style.xml"
+     lsp-java-format-settings-url " https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml"
+     ;; lsp-java-format-settings-url "/home/weiss/Documents/Vorlesungen/Compiler-and-Language-Processing-Tools/bai-bozhou/rules.xml"
      )
     :ryo
     (:mode 'java-mode)
     ("u" lsp-rename)
     ("t" (
+          ("a" lsp-execute-code-action)
           ("t" lsp-java-generate-to-string)
           ("e" lsp-java-generate-equals-and-hash-code)
           ("o" lsp-java-generate-overrides)
           ("g" lsp-java-generate-getters-and-setters)             
           ))    
     )
+#+end_src
+
+**** python
+#+begin_src elisp
+  (use-package lsp-python-ms
+    :ensure t
+    :init (setq lsp-python-ms-auto-install-server t)
+    :hook (python-mode . yas-minor-mode)
+    ) 
+#+end_src
+
+**** C/C++/Objective-C
+#+begin_src elisp
+  ;; C/C++/Objective-C support
+  (use-package ccls
+    :disabled
+    :defines projectile-project-root-files-top-down-recurring
+    :hook ((c-mode c++-mode objc-mode cuda-mode) . (lambda () (require 'ccls) (lsp)))
+    :init
+    ;; (setq ccls-executable "/home/weiss/c++/ccls")
+    (setq ccls-executable "/usr/bin/ccls")
+    ;; use  "bsd"  "java"  "k&r"  "stroustrup"  "whitesmith"  "banner"  "gnu"  "linux"   "horstmann"
+    (setq c-default-style "linux"
+          indent-tabs-mode nil
+          c-basic-offset 4)
+    ;; align a continued string under the one it continues
+    (c-set-offset 'statement-cont 'c-lineup-string-cont)
+    ;; align or indent after an assignment operator 
+    (c-set-offset 'statement-cont 'c-lineup-math)
+    ;; align closing brace/paren with opening brace/paren
+    (c-set-offset 'arglist-close 'c-lineup-close-paren)
+    (c-set-offset 'brace-list-close 'c-lineup-close-paren)
+    ;; align current argument line with opening argument line 
+    (c-set-offset 'arglist-cont-nonempty 'c-lineup-arglist)
+    ;; don't change indent of java 'throws' statement in method declaration
+    ;;     and other items after the function argument list
+    (c-set-offset 'func-decl-cont 'c-lineup-dont-change)  
+    ;; not Indent Namespaces
+    (c-set-offset  'namespace-open 0)
+    (c-set-offset  'namespace-close 0)
+    (c-set-offset  'innamespace 0)
+    ;; Indent Classes
+    (c-set-offset  'class-open 0)
+    (c-set-offset  'class-close 0)
+    (c-set-offset  'inclass 16)
+    :config
+    (with-eval-after-load 'projectile
+      (setq projectile-project-root-files-top-down-recurring
+            (append '("compile_commands.json" ".ccls")
+                    projectile-project-root-files-top-down-recurring)))
+
+    ;; compile_commands.json
+    ;; cmake -H. -BDebug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=YES
+    ;; ln -s Debug/compile_commands.json       
+    )
+#+end_src
+
+*** config
+#+begin_src elisp
+  :config
+  (dolist (x '(go-mode python-mode java-mode)) 
+    (ryo-modal-keys
+     ("t i" lsp-organize-imports :mode x)
+     ("t d" lsp-describe-thing-at-point :mode x)
+     ("u" lsp-rename :mode x)            
+     )
+    )
+
+  ;; (:mode 'go-mode)
+  ;; ("u" lsp-rename)
+  ;; (:mode 'python-mode)
+  ;; ("t" lsp-describe-thing-at-point)
+  ;; ("u" lsp-rename)
+
 #+end_src
 
 *** out of use
@@ -6082,7 +6240,7 @@
 ** nox
 #+begin_src elisp
   (use-package nox
-    ;; :disabled
+    :disabled
     :quelpa (nox
              :fetcher github
              :repo manateelazycat/nox)
@@ -6095,11 +6253,11 @@
     ;; (setq nox-python-server "pyls")
     (setq nox-optimization-p nil)
 
-    :hook (
-           (python-mode . nox-ensure)
+    ;; :hook (
+           ;; (python-mode . nox-ensure)
            ;; (go-mode . nox-ensure)
            ;; (nox-managed-mode-hook . ryo-modal-restart)
-           )
+           ;; )
     :bind (:map nox-mode-map
                 ("M-d" . nox-show-doc)
                 )
@@ -6140,7 +6298,7 @@
                                       '(
                                         ("n" mc/mark-more-like-this-extended)
 
-                                        ("0" mc/insert-numbers-default)
+                                        ("-" mc/insert-numbers)
                                         ("A" mc/insert-letters)
                                         ("1" mc/cycle-backward)
                                         ("2" mc/cycle-forward)
@@ -6180,7 +6338,7 @@
         (delete-char -1)
         )
       )
-  
+
     (global-unset-key (kbd "S-<down-mouse-1>"))
     (global-set-key (kbd "S-<mouse-1>") 'mc/add-cursor-on-click)
     (global-set-key (kbd "C-c n") 'mc/mark-more-like-this-extended)
@@ -6241,24 +6399,26 @@
 
 ** misc
 #+begin_src elisp
-(use-package shiftless 
-  :diminish
-  :load-path "/home/weiss/.emacs.d/local-package/shiftless.el"
-  :ensure nil
-  :config
-  (shiftless-programming)
-  (setq shiftless-delay 0.6)
-  (setq shiftless-interval 0.08)
-  ;; (advice-add 'sp--post-self-insert-hook-handler :around #'shiftless--prevent-advice)
-  (shiftless-mode 1)
-  )
+  (use-package rg)
 
-(use-package pcre2el
-  :disabled
-  :config
-  )
+  (use-package shiftless 
+    :diminish
+    :load-path "/home/weiss/.emacs.d/local-package/shiftless.el"
+    :ensure nil
+    :config
+    (shiftless-programming)
+    (setq shiftless-delay 0.6)
+    (setq shiftless-interval 0.08)
+    ;; (advice-add 'sp--post-self-insert-hook-handler :around #'shiftless--prevent-advice)
+    (shiftless-mode 1)
+    )
 
-(use-package expand-region)
+  (use-package pcre2el
+    :disabled
+    :config
+    )
+
+  (use-package expand-region)
 #+end_src
 
 ** end
@@ -6379,17 +6539,34 @@
     :hook ((inferior-python-mode . (lambda ()
                                      (process-query-on-exit-flag
                                       (get-process "Python"))))
-           (python-mode . (lambda ()
-                            (setq flycheck-checker 'python-pylint
-                                  ;; python-mode-skeleton-abbrev-table nil
-                                  ;; python-skeleton-autoinsert t
-                                  )
-                            )))
+           ;; (python-mode . (lambda ()
+           ;; (setq flycheck-checker 'python-pylint
+           ;; python-mode-skeleton-abbrev-table nil
+           ;; python-skeleton-autoinsert t
+           ;; )
+           )
+    :ryo
+    (:mode 'python-mode)
+    ("8" weiss-execute-buffer)
+    ("t e" weiss-ein-execute-all-cells-above-inclusively)
     :init
     ;; Disable readline based native completion
     (setq python-shell-completion-native-enable nil)
     ;; (setq python-skeleton-autoinsert t)
     :config
+    (defun weiss-ein-execute-all-cells-above-inclusively ()
+      "execute all cells above inclusive current cell"
+      (interactive)
+      (call-interactively 'ein:worksheet-execute-all-cells-above)
+      (call-interactively 'ein:worksheet-execute-cell)
+      )
+    (defun weiss-execute-buffer-python ()
+      "execute cell if in jupyter otherwise execute buffer"
+      (interactive)
+      (if ein:notebook-mode
+          (ein:worksheet-execute-cell)
+        (weiss-execute-buffer))
+      )
     ;; Default to Python 3. Prefer the versioned Python binaries since some
     ;; systems stupidly make the unversioned one point at Python 2.
     (when (and (executable-find "python3")
@@ -6520,27 +6697,30 @@
     :mode (("\\.cup\\'" . cup-java-mode))
     )
 
+  (use-package jastadd-ast-mode
+    :mode "\\.ast\\'")
+
   (use-package php-mode)
   (use-package quickrun
     :config
     (setq quickrun-timeout-seconds 100)
-    (quickrun-add-command
-      "go/go"
-      '((:exec . ((lambda ()
-                    (cond
-                     ((string-match-p "_test\\.go\\'" (or (buffer-file-name)
-                                                          (buffer-name)))
-                      "%c test %o")
-                     ((string-match-p "main\\.go\\'" (or (buffer-file-name)
-                                                         (buffer-name)))
-                      "%c run %o %s %a")
-                     (t
-                      ;; if the current filename is not main.go, then find the main.go in this project and run it.
-                      (format "go run %smain.go" (projectile-acquire-root))
-                      )
-                     )
-                    ))))
-      :override t)
+    ;; (quickrun-add-command
+    ;;   "go/go"
+    ;;   '((:exec . ((lambda ()
+    ;;                 (cond
+    ;;                  ((string-match-p "_test\\.go\\'" (or (buffer-file-name)
+    ;;                                                       (buffer-name)))
+    ;;                   "%c test %o")
+    ;;                  ((string-match-p "main\\.go\\'" (or (buffer-file-name)
+    ;;                                                      (buffer-name)))
+    ;;                   "%c run %o %s %a")
+    ;;                  (t
+    ;;                   ;; if the current filename is not main.go, then find the main.go in this project and run it.
+    ;;                   (format "go run %smain.go" (projectile-acquire-root))
+    ;;                   )
+    ;;                  )
+    ;;                 ))))
+    ;;   :override t)
     )
 #+end_src
 
@@ -6554,7 +6734,7 @@
     :config
     (ryo-modal-keys
      (:mode 'go-mode)
-     ("8" weiss-excute-buffer)
+     ("8" weiss-execute-buffer)
      )
     (setq-mode-local go-mode completion-ignore-case t)
 
@@ -6646,6 +6826,14 @@
                   ("C-c t x" . go-run))))
 #+end_src
 
+** dockerfile
+#+begin_src elisp
+  (use-package dockerfile-mode
+    :config
+    (setq-mode-local dockerfile-mode completion-ignore-case t)
+    (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
+    )
+#+end_src
 ** out of use
 #+begin_src elisp :tangle no
   ;;;; Java
@@ -6792,6 +6980,7 @@
 #+begin_src elisp
   (provide 'weiss-lang)
 #+end_src
+
 * jupyter
 :PROPERTIES:
 :header-args: :tangle jupyter/weiss-jupyter.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
@@ -6808,17 +6997,9 @@
     (setq ein:output-area-inlined-images t)
     (with-eval-after-load 'ein-notebook
       (define-key ein:notebook-mode-map [remap save-buffer] 'ein:notebook-save-notebook-command)      
-      (define-key ein:notebook-mode-map [remap weiss-excute-buffer] 'ein:worksheet-execute-all-cells-above)      
-      (define-key ein:notebook-mode-map (kbd "t e") 'weiss-ein-execute-all-cells-above-inclusively)      
+      (define-key ein:notebook-mode-map [remap weiss-execute-buffer] 'ein:worksheet-execute-all-cells-above)      
       )
-    (defun weiss-ein-execute-all-cells-above-inclusively ()
-      "execute all cells above inclusive current cell"
-      (interactive)
-      (call-interactively 'ein:worksheet-execute-all-cells-above)
-      (call-interactively 'ein:worksheet-execute-cell)
-      )
-
-    (defun xor-preview-md-cell-latex ()
+      (defun xor-preview-md-cell-latex ()
       "Preview LaTeX from the current markdown cell in a separate buffer."
       ;; https://github.com/millejoh/emacs-ipython-notebook/issues/88
       (interactive)
@@ -6978,7 +7159,7 @@
     :config
     (setq sql-postgres-login-params
           '((user :default "weiss")
-            (database :default "tpch")
+            (database :default "quizzes")
             (server :default "localhost")
             ))
 
@@ -7685,6 +7866,7 @@
 :header-args: :tangle cal/weiss-cal.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
 :END:
 #+begin_src elisp
+  ;; use maxima-git to avoid latex-error
   (add-to-list 'load-path "/usr/share/emacs/site-lisp/maxima/")
   (autoload 'maxima-mode "maxima" "Maxima mode" t)
   (autoload 'imaxima "imaxima" "Frontend for maxima with Image support" t)
@@ -7692,7 +7874,6 @@
   (autoload 'imath-mode "imath" "Imath mode for math formula input" t)
   (setq imaxima-use-maxima-mode-flag t)
   (add-to-list 'auto-mode-alist '("\\.ma[cx]\\'" . maxima-mode))
-
   (provide 'weiss-cal)
 
 #+end_src
@@ -7835,6 +8016,7 @@
                            ))
 
     :config
+    (setq telega-open-file-function 'org-open-file)
     ;; (setq telega-server-libs-prefix "/usr/lib")
     (telega-notifications-mode 1)
     ;; :ryo
@@ -9127,6 +9309,7 @@
    org-indent-mode-turns-on-hiding-stars nil
    org-list-description-max-indent 4
    org-startup-indented t
+   org-startup-folded 'fold
    org-log-done 'time
    org-fast-tag-selection-single-key t
    org-agenda-include-diary t
@@ -9192,6 +9375,7 @@
      ("\\.mm\\'" . default)
      ("\\.x?html?\\'" . default)
      ("\\.pdf\\'" . emacs)
+     ("\\.mp4\\'" . "vlc \"%s\"")
      ("\\.txt\\'" . emacs))
    )
 #+end_src
@@ -9213,6 +9397,7 @@
   ("<shifttab>" org-shifttab)
   ("5" +org/dwim-at-point)
   ("6" org-insert-heading-respect-content)
+  ("8" org-export-dispatch)
   ("C" org-copy-subtree)
   ("d" weiss-org-cut-line-or-delete-region)
   ("j" next-line :first '(deactivate-mark))
@@ -9222,10 +9407,10 @@
   ("x" weiss-org-sp-switch)
   ("X" org-refile)
   ("t" (
-        ("j" org-forward-heading-same-level)
-        ("k" org-backward-heading-same-level)
-        ("i" outline-up-heading)
-        ("l" org-down-element)
+        ;; ("j" org-forward-heading-same-level)
+        ;; ("k" org-backward-heading-same-level)
+        ;; ("i" outline-up-heading)
+        ;; ("l" org-down-element)
         ("a" weiss-org-screenshot)
         ;; ("n" weiss-flyspell-save-word)
         ("o" org-noter)
@@ -9255,6 +9440,10 @@
                   ignore
                   :then ((lambda () (interactive) (weiss-insert-bracket-pair "#+begin_src java" "#+end_src" t)))
                   :name "java babel")
+                 ("g"
+                  ignore
+                  :then ((lambda () (interactive) (weiss-insert-bracket-pair "#+begin_src go" "#+end_src" t)))
+                  :name "golang babel")
                  ("s"
                   ignore
                   :then ((lambda () (interactive) (weiss-insert-bracket-pair "#+begin_src sh" "#+end_src" t)))
@@ -9703,6 +9892,8 @@
 #+begin_src elisp
   ;; Enable markdown backend
   (add-to-list 'org-export-backends 'md)
+
+
 #+end_src
 *** misc packages
 #+begin_src elisp
@@ -10727,7 +10918,9 @@
           (insert " ")
           (left-char)
           )
-      (when (eq (point) (line-beginning-position)) (indent-according-to-mode))    
+      (when (and (eq (point) (line-beginning-position))
+                 (derived-mode-p 'prog-mode))
+        (indent-according-to-mode))    
       )
     )
 
@@ -11534,6 +11727,7 @@
                          next-buffer
                          switch-to-buffer
                          other-window
+                         find-file
                          )))
     (dolist (x function-list)
       (advice-add x :after #'weiss-after-change-frame-or-window)
@@ -12170,7 +12364,7 @@
       ))
 
 
-  (defun weiss-excute-buffer ()
+  (defun weiss-execute-buffer ()
     "If the current buffer is elisp mode, then eval-buffer, else quickrun"
     (interactive)
     (save-buffer)
@@ -12179,6 +12373,10 @@
      ((string= (file-name-directory (buffer-file-name)) "/home/weiss/KaRat/datenbank/")
       (message "compile: %s" (shell-command-to-string "javac -Werror -cp '.:commons-io-2.8.0.jar' QuizzesSearch.java"))
       (message "output: %s" (shell-command-to-string "java -cp postgresql-42.2.18.jar:commons-io-2.8.0.jar:. QuizzesSearch"))
+      )
+     ((string-prefix-p "/home/weiss/KaRat/datenbank/KaRat-Quizzes/" (file-name-directory (buffer-file-name)))
+      ;; (message ": %s" 123)
+      (message "%s" (shell-command-to-string "go run /home/weiss/KaRat/datenbank/KaRat-Quizzes/main.go -tomlPath=/home/weiss/KaRat/datenbank/KaRat-Quizzes/input.toml"))
       )
      (t (quickrun))
      )
@@ -12200,6 +12398,11 @@
 
 #+begin_src elisp
   (define-key prog-mode-map (kbd "<tab>") 'weiss-indent)
+  (with-eval-after-load 'latex-mode
+    (define-key latex-mode-map (kbd "<tab>") 'weiss-indent)
+    (define-key LaTeX-mode-map (kbd "<tab>") 'weiss-indent)
+    )
+
   (with-eval-after-load 'sgml-mode
     (define-key sgml-mode-map (kbd "<tab>") 'weiss-indent)
     )
@@ -12249,7 +12452,7 @@
   (use-package weiss-overriding-ryo-mode)
   (use-package weiss-origin-mode
     :config
-    (push '(telega-chat-mode . ("<deletechar>" "9" "-" "0")) weiss-origin-keep-keys)
+    (push '(telega-chat-mode . ("<deletechar>")) weiss-origin-keep-keys)
     (let ((hook-list '(
                        magit-status-mode-hook
                        magit-mode-hook
@@ -12260,6 +12463,13 @@
       (dolist (x hook-list)
         (add-hook x 'weiss-origin-mode))
       )  
+    (defun weiss-enable-origin-mode-only-in-fundamental-mode ()
+      "only enable weiss-origin-mode when current major mode is plain fundamental-mode"
+      (when (and (not weiss-origin-mode) (eq major-mode 'fundamental-mode))
+        (weiss-origin-mode 1)
+        )
+      )
+    ;; (add-to-list 'weiss/after-buffer-change-function-list 'weiss-enable-origin-mode-only-in-fundamental-mode)
     )
 
 
@@ -12582,7 +12792,10 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
           :then ((lambda () (interactive) (weiss--execute-kbd-macro "C-c C-o")))
           :name "C-c C-o"
           )
-
+         ("l" ignore
+          :then ((lambda () (interactive) (weiss--execute-kbd-macro "C-c C-l")))
+          :name "C-c C-l"
+          )
          ))
    ("u"  weiss-delete-or-add-parent-sexp)
    ("v"  xah-paste-or-paste-previous)
@@ -12609,7 +12822,7 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
   (let ((leader-keymap
          '(
            (","  (
-                  ("e"  weiss-excute-buffer)
+                  ("e"  weiss-execute-buffer)
                   ("c"  quickrun-compile-only)
                   ("d"  eval-defun)
                   ("m"  weiss-eval-last-sexp-this-line)
@@ -12660,7 +12873,7 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
                  ("o"  xah-open-file-at-cursor)
                  ("s" yasdcv-translate-at-point)
                  ("t"  telega)
-                 ("w"  xah-open-in-external-app)
+                 ("w"  xah-open-in-external-app :before save-buffer)
                  ))
            ("e" (
                  ("b"  org-babel-tangle)

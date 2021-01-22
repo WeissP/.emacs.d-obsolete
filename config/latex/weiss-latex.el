@@ -66,19 +66,16 @@
   (interactive)
   (if current-prefix-arg
       (preview-clearout-buffer)
-    (message "%s" "preview-buffer")
-    (preview-buffer))
-  ;; (let ((text (buffer-substring-no-properties 1 (min 100 (point-max)))))    
-  ;;   (if t
-  ;;       ;; (or (string-match "begin{tikzpicture}" text)
-  ;;           ;; (string-match "begin{forest}" text))
-  ;;       (let ((buffer-file-name nil))
-  ;;         (if current-prefix-arg
-  ;;             (preview-clearout-buffer)
-  ;;           (message "%s" "preview-buffer")
-  ;;           (preview-buffer)))
-  ;;     (weiss-org-preview-latex-and-image)
-  ;;     ))  
+    (let ((text (buffer-substring-no-properties 1 (min 100 (point-max)))))    
+      (if (or (string-match "begin{tikzpicture}" text)
+              (string-match "begin{forest}" text))
+          (let ((buffer-file-name nil))
+            (if current-prefix-arg
+                (preview-clearout-buffer)
+              (message "%s" "preview-buffer")
+              (preview-buffer)))
+        (weiss-org-preview-latex-and-image)
+        )))
   )
 
 (defun weiss-quick-add-latex-style-sout ()
@@ -199,7 +196,7 @@
 ;; export
 
 ;; [[file:../emacs-config.org::*export][export:1]]
-(setq LaTeX-command-style '(("" "%(PDF)%(latex) -shell-escape %S%(PDFout)")))
+;; (setq LaTeX-command-style '(("" "%(PDF)%(latex) -shell-escape %S%(PDFout)")))
 
 (setq
  org-export-headline-levels 1
@@ -212,34 +209,34 @@
 
 (add-to-list 'org-latex-packages-alist '("" "minted" t))
 (add-to-list 'org-latex-packages-alist '("" "tikz" t))
-;; \\usepackage{arev}
+;; ;; \\usepackage{arev}
 
-(add-to-list 'org-latex-classes
-             '("weiss-abgabe"
-               "\\documentclass{article}
+;; (add-to-list 'org-latex-classes
+;;              '("weiss-abgabe"
+;;                "\\documentclass{article}
 
-[PACKAGES]
-\\usepackage[table]{xcolor}
-\\usepackage{ifsym}
-\\setminted[]{tabsize=2, breaklines=true, linenos=true}
-\\setlength\\parindent{0pt}
-\\usepackage{fontawesome}
-\\usepackage{enumitem}
-\\usepackage{forest}
-\\usepackage{tikz}
-\\usetikzlibrary{automata,arrows}
-\\setlist[itemize,2]{label=$\\circ$}
-\\setlist[itemize,3]{label=$\\diamond$}
-\\setenumerate[1]{label=\\alph*)}
-\\setenumerate[2]{label=\\roman*)}
-[EXTRA]
-"
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")
-               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-               ("\\paragraph{%s}" . "\\paragraph*{%s}")
-               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")
-               ))
+;; [PACKAGES]
+;; \\usepackage[table]{xcolor}
+;; \\usepackage{ifsym}
+;; \\setminted[]{tabsize=2, breaklines=true, linenos=true}
+;; \\setlength\\parindent{0pt}
+;; \\usepackage{fontawesome}
+;; \\usepackage{enumitem}
+;; \\usepackage{forest}
+;; \\usepackage{tikz}
+;; \\usetikzlibrary{automata,arrows}
+;; \\setlist[itemize,2]{label=$\\circ$}
+;; \\setlist[itemize,3]{label=$\\diamond$}
+;; \\setenumerate[1]{label=\\alph*)}
+;; \\setenumerate[2]{label=\\roman*)}
+;; [EXTRA]
+;; "
+;;                ("\\section{%s}" . "\\section*{%s}")
+;;                ("\\subsection{%s}" . "\\subsection*{%s}")
+;;                ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+;;                ("\\paragraph{%s}" . "\\paragraph*{%s}")
+;;                ("\\subparagraph{%s}" . "\\subparagraph*{%s}")
+;;                ))
 
 
 
@@ -264,7 +261,7 @@
 ;; [[file:../emacs-config.org::*keybinding][keybinding:1]]
 (ryo-modal-keys
  (:mode 'latex-mode)
- ("u" weiss-latex-buffer-preview)
+ ("u" weiss-org-preview-latex-and-image)
  ("<escape> <escape>" (
                        ("i" ignore
                         :name "mathit"
@@ -301,6 +298,10 @@
                        ("c" ignore
                         :name "mathcal"
                         :then ((lambda()(weiss--quick-add-latex-style "mathcal")))
+                        )
+                       ("RET" ignore
+                        :name "new line"
+                        :then ((lambda()(weiss-insert-bracket-pair "&" "\\\\")))
                         )
                        ("-" weiss-quick-add-latex-style-sout
                         :name "sout")

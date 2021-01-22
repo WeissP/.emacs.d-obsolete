@@ -15,7 +15,7 @@
                                     '(
                                       ("n" mc/mark-more-like-this-extended)
 
-                                      ("0" mc/insert-numbers-default)
+                                      ("-" mc/insert-numbers)
                                       ("A" mc/insert-letters)
                                       ("1" mc/cycle-backward)
                                       ("2" mc/cycle-forward)
@@ -116,6 +116,8 @@
 ;; misc
 
 ;; [[file:../emacs-config.org::*misc][misc:1]]
+(use-package rg)
+
 (use-package shiftless 
   :diminish
   :load-path "/home/weiss/.emacs.d/local-package/shiftless.el"

@@ -9,17 +9,34 @@
   :hook ((inferior-python-mode . (lambda ()
                                    (process-query-on-exit-flag
                                     (get-process "Python"))))
-         (python-mode . (lambda ()
-                          (setq flycheck-checker 'python-pylint
-                                ;; python-mode-skeleton-abbrev-table nil
-                                ;; python-skeleton-autoinsert t
-                                )
-                          )))
+         ;; (python-mode . (lambda ()
+         ;; (setq flycheck-checker 'python-pylint
+         ;; python-mode-skeleton-abbrev-table nil
+         ;; python-skeleton-autoinsert t
+         ;; )
+         )
+  :ryo
+  (:mode 'python-mode)
+  ("8" weiss-execute-buffer)
+  ("t e" weiss-ein-execute-all-cells-above-inclusively)
   :init
   ;; Disable readline based native completion
   (setq python-shell-completion-native-enable nil)
   ;; (setq python-skeleton-autoinsert t)
   :config
+  (defun weiss-ein-execute-all-cells-above-inclusively ()
+    "execute all cells above inclusive current cell"
+    (interactive)
+    (call-interactively 'ein:worksheet-execute-all-cells-above)
+    (call-interactively 'ein:worksheet-execute-cell)
+    )
+  (defun weiss-execute-buffer-python ()
+    "execute cell if in jupyter otherwise execute buffer"
+    (interactive)
+    (if ein:notebook-mode
+        (ein:worksheet-execute-cell)
+      (weiss-execute-buffer))
+    )
   ;; Default to Python 3. Prefer the versioned Python binaries since some
   ;; systems stupidly make the unversioned one point at Python 2.
   (when (and (executable-find "python3")
@@ -153,27 +170,30 @@
   :mode (("\\.cup\\'" . cup-java-mode))
   )
 
+(use-package jastadd-ast-mode
+  :mode "\\.ast\\'")
+
 (use-package php-mode)
 (use-package quickrun
   :config
   (setq quickrun-timeout-seconds 100)
-  (quickrun-add-command
-    "go/go"
-    '((:exec . ((lambda ()
-                  (cond
-                   ((string-match-p "_test\\.go\\'" (or (buffer-file-name)
-                                                        (buffer-name)))
-                    "%c test %o")
-                   ((string-match-p "main\\.go\\'" (or (buffer-file-name)
-                                                       (buffer-name)))
-                    "%c run %o %s %a")
-                   (t
-                    ;; if the current filename is not main.go, then find the main.go in this project and run it.
-                    (format "go run %smain.go" (projectile-acquire-root))
-                    )
-                   )
-                  ))))
-    :override t)
+  ;; (quickrun-add-command
+  ;;   "go/go"
+  ;;   '((:exec . ((lambda ()
+  ;;                 (cond
+  ;;                  ((string-match-p "_test\\.go\\'" (or (buffer-file-name)
+  ;;                                                       (buffer-name)))
+  ;;                   "%c test %o")
+  ;;                  ((string-match-p "main\\.go\\'" (or (buffer-file-name)
+  ;;                                                      (buffer-name)))
+  ;;                   "%c run %o %s %a")
+  ;;                  (t
+  ;;                   ;; if the current filename is not main.go, then find the main.go in this project and run it.
+  ;;                   (format "go run %smain.go" (projectile-acquire-root))
+  ;;                   )
+  ;;                  )
+  ;;                 ))))
+  ;;   :override t)
   )
 ;; misc:1 ends here
 
@@ -188,7 +208,7 @@
   :config
   (ryo-modal-keys
    (:mode 'go-mode)
-   ("8" weiss-excute-buffer)
+   ("8" weiss-execute-buffer)
    )
   (setq-mode-local go-mode completion-ignore-case t)
 
@@ -279,6 +299,16 @@
                 ("C-c t ." . go-test-current-test)
                 ("C-c t x" . go-run))))
 ;; go:1 ends here
+
+;; dockerfile
+
+;; [[file:../emacs-config.org::*dockerfile][dockerfile:1]]
+(use-package dockerfile-mode
+  :config
+  (setq-mode-local dockerfile-mode completion-ignore-case t)
+  (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
+  )
+;; dockerfile:1 ends here
 
 ;; end
 

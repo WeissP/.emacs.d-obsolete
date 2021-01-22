@@ -24,7 +24,7 @@
   :config
   (setq sql-postgres-login-params
         '((user :default "weiss")
-          (database :default "tpch")
+          (database :default "quizzes")
           (server :default "localhost")
           ))
 

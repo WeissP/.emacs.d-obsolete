@@ -630,7 +630,9 @@
         (insert " ")
         (left-char)
         )
-    (when (eq (point) (line-beginning-position)) (indent-according-to-mode))    
+    (when (and (eq (point) (line-beginning-position))
+               (derived-mode-p 'prog-mode))
+      (indent-according-to-mode))    
     )
   )
 
@@ -1438,6 +1440,7 @@ Version 2018-06-04"
                        next-buffer
                        switch-to-buffer
                        other-window
+                       find-file
                        )))
   (dolist (x function-list)
     (advice-add x :after #'weiss-after-change-frame-or-window)
@@ -2080,7 +2083,7 @@ Version 2019-12-02"
     ))
 
 
-(defun weiss-excute-buffer ()
+(defun weiss-execute-buffer ()
   "If the current buffer is elisp mode, then eval-buffer, else quickrun"
   (interactive)
   (save-buffer)
@@ -2089,6 +2092,10 @@ Version 2019-12-02"
    ((string= (file-name-directory (buffer-file-name)) "/home/weiss/KaRat/datenbank/")
     (message "compile: %s" (shell-command-to-string "javac -Werror -cp '.:commons-io-2.8.0.jar' QuizzesSearch.java"))
     (message "output: %s" (shell-command-to-string "java -cp postgresql-42.2.18.jar:commons-io-2.8.0.jar:. QuizzesSearch"))
+    )
+   ((string-prefix-p "/home/weiss/KaRat/datenbank/KaRat-Quizzes/" (file-name-directory (buffer-file-name)))
+    ;; (message ": %s" 123)
+    (message "%s" (shell-command-to-string "go run /home/weiss/KaRat/datenbank/KaRat-Quizzes/main.go -tomlPath=/home/weiss/KaRat/datenbank/KaRat-Quizzes/input.toml"))
     )
    (t (quickrun))
    )

@@ -16,17 +16,9 @@
   (setq ein:output-area-inlined-images t)
   (with-eval-after-load 'ein-notebook
     (define-key ein:notebook-mode-map [remap save-buffer] 'ein:notebook-save-notebook-command)      
-    (define-key ein:notebook-mode-map [remap weiss-excute-buffer] 'ein:worksheet-execute-all-cells-above)      
-    (define-key ein:notebook-mode-map (kbd "t e") 'weiss-ein-execute-all-cells-above-inclusively)      
+    (define-key ein:notebook-mode-map [remap weiss-execute-buffer] 'ein:worksheet-execute-all-cells-above)      
     )
-  (defun weiss-ein-execute-all-cells-above-inclusively ()
-    "execute all cells above inclusive current cell"
-    (interactive)
-    (call-interactively 'ein:worksheet-execute-all-cells-above)
-    (call-interactively 'ein:worksheet-execute-cell)
-    )
-
-  (defun xor-preview-md-cell-latex ()
+    (defun xor-preview-md-cell-latex ()
     "Preview LaTeX from the current markdown cell in a separate buffer."
     ;; https://github.com/millejoh/emacs-ipython-notebook/issues/88
     (interactive)

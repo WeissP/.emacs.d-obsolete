@@ -46,8 +46,7 @@
         doom-modeline-window-width-limit 110
         )
   ;; (setq doom-modeline-minor-modes t)
-  (diminish 'abbrev-mode)
-  :hook (after-init . doom-modeline-mode)
+    :hook (after-init . doom-modeline-mode)
   )
 
 (if weiss-dumped-p 
@@ -180,17 +179,17 @@
   (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
   ;; Enable all Cascadia Code ligatures in programming modes
   (let ((ligatures '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
-                     ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
-                     "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+                     ":::" "::=" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+                     "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "-<<"
                      "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
                      "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
-                     "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+                     "..." "+++" "/==" "_|_" "www" "&&" "^=" "~~" "~="
                      "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
                      "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
                      ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
                      "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
                      "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
-                     "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+                     "?=" "?." "??" ";;" "/*" "/=" "/>" "__" "~~" "(*" "*)"
                      "://"))
         )
     (ligature-set-ligatures 'prog-mode ligatures)    
@@ -2832,10 +2831,10 @@
 
 ;; [[file:../emacs-config.org::*snails][snails:1]]
 (when (featurep 'snails)
-  (set-face-attribute 'snails-header-line-face nil :inherit 'variable-pitch :foreground "#a626a4" :underline t :weight 'normal :slant 'italic :height 1.3)
+  (set-face-attribute 'snails-header-line-face nil :inherit 'variable-pitch :foreground "#a626a4" :underline t :weight 'normal :slant 'italic :height 1.2)
   (set-face-attribute 'snails-header-index-face nil :inherit 'snails-header-line-face :height 0.7 :slant 'italic)
   (set-face-attribute 'snails-candiate-content-face nil :inherit 'variable-pitch :weight 'light :slant 'normal)
-  (set-face-attribute 'snails-input-buffer-face nil :inherit 'variable-pitch :font (font-spec :name "lato") :height 260)
+  (set-face-attribute 'snails-input-buffer-face nil :inherit 'variable-pitch :font (font-spec :name "lato") :height 200)
   (set-face-attribute 'snails-content-buffer-face nil :inherit 'variable-pitch :font (font-spec :name "lato") :height 150)
   )
 ;; snails:1 ends here
@@ -2904,10 +2903,20 @@
                       :underline 'nil
                       :foreground "#999999"
                       :background "#FAFAFA")
+  (set-face-attribute 'org-checkbox nil
+                      :font "JetBrainsMono"
+                      :extend nil
+                      )
+  (set-face-attribute 'org-table nil
+                      :font "JetBrainsMono"
+                      :extend nil
+                      )
+
   (set-face-attribute 'org-block nil
                       :font "JetBrainsMono"
                       :extend nil
                       :background "#FAFAFA")
+
   (set-face-attribute 'org-drawer nil
                       :foreground "#999999"
                       :slant 'normal
@@ -2926,6 +2935,7 @@
   (set-face-attribute 'org-headline-done nil
                       :strike-through t
                       :weight 'normal)
+
   (set-face-attribute 'org-level-1 nil
                       :height 1.35
                       :foreground "#ff5a19"
@@ -3028,6 +3038,7 @@
                          ))
 
   :config
+  (setq telega-open-file-function 'org-open-file)
   ;; (setq telega-server-libs-prefix "/usr/lib")
   (telega-notifications-mode 1)
   ;; :ryo
@@ -3117,7 +3128,10 @@
         :then ((lambda () (interactive) (weiss--execute-kbd-macro "C-c C-o")))
         :name "C-c C-o"
         )
-
+       ("l" ignore
+        :then ((lambda () (interactive) (weiss--execute-kbd-macro "C-c C-l")))
+        :name "C-c C-l"
+        )
        ))
  ("u"  weiss-delete-or-add-parent-sexp)
  ("v"  xah-paste-or-paste-previous)
@@ -3144,7 +3158,7 @@
 (let ((leader-keymap
        '(
          (","  (
-                ("e"  weiss-excute-buffer)
+                ("e"  weiss-execute-buffer)
                 ("c"  quickrun-compile-only)
                 ("d"  eval-defun)
                 ("m"  weiss-eval-last-sexp-this-line)
@@ -3195,7 +3209,7 @@
                ("o"  xah-open-file-at-cursor)
                ("s" yasdcv-translate-at-point)
                ("t"  telega)
-               ("w"  xah-open-in-external-app)
+               ("w"  xah-open-in-external-app :before save-buffer)
                ))
          ("e" (
                ("b"  org-babel-tangle)

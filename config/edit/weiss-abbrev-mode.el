@@ -79,12 +79,13 @@ Version 2016-10-24"
     (define-key keymap (kbd ",") expand-abbrev-maybe)
     keymap
     )
+  (abbrev-mode -1)
   )
 
 (define-globalized-minor-mode
   weiss-abbrev-global-mode
   weiss-abbrev-mode
-  (lambda () (interactive) (weiss-abbrev-mode)))
+  (lambda () (interactive) (abbrev-mode -1) (weiss-abbrev-mode)))
 
 (weiss-abbrev-global-mode)
 ;; functions and init:1 ends here
@@ -218,6 +219,10 @@ Version 2016-10-24"
   '(
     ("ta" ":tangle ")
     ("wa" "WhatsApp")
+;;;;; latex
+    ("ltxeq" "\\begin{equation*}\n▮\n\\end{equation*}" weiss--ahf-indent)    
+    ("ltxal" "\\begin{aligned}\n▮\n\\end{aligned}" weiss--ahf-indent)    
+    ("ltxtb" "#+ATTR_LaTeX: :align |r|r|r|r|r|" weiss--ahf-indent)    
 ;;;;; emoji
     ("zrl" ":relaxed:" weiss--ahf)
     ("zj" ":joy:" weiss--ahf)
@@ -236,6 +241,7 @@ Version 2016-10-24"
     ("eb" "ein bisschen")
     ("ef" "einfach" weiss--ahf)
     ("en" "entweder")
+    ("edl" "endlich ")
     ("fm" "Familie" weiss--ahf)
     ("ft" "fertig" weiss--ahf)
     ("fun" "Funktion" weiss--ahf)
@@ -274,6 +280,19 @@ Version 2016-10-24"
     )
   )
 ;; org:1 ends here
+
+;; imaxima
+
+;; [[file:../emacs-config.org::*imaxima][imaxima:1]]
+(when (boundp 'maxima-mode-abbrev-table)
+  (clear-abbrev-table maxima-mode-abbrev-table))
+(define-abbrev-table 'maxima-mode-abbrev-table
+  '(
+    ("t" "apply (tex, [%i▮]);" weiss--ahf)
+    ("e" ":= " weiss--ahf)
+    )
+  )
+;; imaxima:1 ends here
 
 ;; latex
 
@@ -413,7 +432,7 @@ Version 2016-10-24"
     ("od" "\\div " weiss--ahf)
     ("opm" "\\pm " weiss--ahf)
     ("os" "\\sqrt" weiss--ahf)
-    ("of" "\\frac" weiss--ahf)
+    ("of" "\\frac{▮}" weiss--ahf)
     ("oc" "\\circ " weiss--ahf)
     ("och" "\\choose " weiss--ahf)
 
@@ -465,6 +484,8 @@ Version 2016-10-24"
     ("mbbb" "\\bigg" weiss--ahf)
     ("mbbbb" "\\Bigg" weiss--ahf)
     ("mnp" "\n\n\\newpage" weiss--ahf)    
+    ("meq" "\begin{equaltion}\n▮\n\end{equaltion}" weiss--ahf-indent)    
+    ("mal" "\begin{equaltion}\n\begin{aligned}\n▮\n\end{aligned}\n\end{equaltion}" weiss--ahf-indent)    
     ))
 ;; latex:1 ends here
 
@@ -477,7 +498,8 @@ Version 2016-10-24"
 (define-abbrev-table 'java-mode-abbrev-table
   '(
     ("rt" "return ▮;")
-    ("pr" "System.out.println(String.format(\"%s\", ▮));" weiss--ahf)
+    ("pr" "System.out.println(▮);" weiss--ahf)
+    ("sf" "String.format(\"%s\", ▮)" weiss--ahf)
     ("for" "for (int i = 0; i < ▮; i++) {\n\n}" weiss--ahf-indent)
     ("forj" "for (int j = 0; j < ▮; j++) {\n\n}" weiss--ahf-indent)
     ("if" "if (▮) {\n\n}" weiss--ahf-indent)
@@ -497,27 +519,40 @@ Version 2016-10-24"
 
 (define-abbrev-table 'html-mode-abbrev-table
   '(
-    ("h1" "<h1> ▮ </h1>")
-    ("li" "<li> ▮ </li>")
-    ("ol" "<ol start=1 type=a> \n▮ \n </ol>" weiss--ahf-indent)
-    ("ul" "<ul> \n▮ \n </ul>" weiss--ahf-indent)
     ("b" "<b> ▮ </b>")
     ("i" "<i> ▮ </i>")
     ("p" "<p> ▮ </p>")
     ("a" "<a href=\"▮\"> </a>" weiss--ahf)
-    ("esl" "&lt;" weiss--ahf)
-    ("esg" "&gt;" weiss--ahf)
-    ("eslg" "&lt;▮&gt;" weiss--ahf)
-    ("esa" "&amp" weiss--ahf)
-    ("esq" "&quot;" weiss--ahf)
+
+    ("h1" "<h1> ▮ </h1>")
+    ("h2" "<h2> ▮ </h2>")
+    ("h3" "<h3> ▮ </h3>")
+    ("h4" "<h4> ▮ </h4>")
+    ("li" "<li> ▮ </li>")
+    ("ol" "<ol start=1 type=a> \n▮ \n </ol>" weiss--ahf-indent)
+    ("ul" "<ul> \n▮ \n </ul>" weiss--ahf-indent)
+    ("hd" "<head>\n<meta charset=\"utf-8\">\n<title>▮</title>\n</head>" weiss--ahf-indent)
+    ("th" "<th>▮</th>" weiss--ahf)
     ("br" "<br>" weiss--ahf)
     ("tr" "<tr>\n▮\n</tr>" weiss--ahf-indent)
     ("td" "<td>▮</td>" weiss--ahf)
-    ("th" "<th>▮</th>" weiss--ahf)
-    ("s" "style" weiss--ahf-indent)
+    ("sp" "<span>▮</span>" weiss--ahf)
+    ("sb" "<span class=\"block\">▮</span>" weiss--ahf)    
+    ("ag" "Aufgabe" weiss--ahf)
+
+    ("el" "&lt;" weiss--ahf)
+    ("eg" "&gt;" weiss--ahf)
+    ("elg" "&lt;▮&gt;" weiss--ahf)
+    ("ea" "&amp" weiss--ahf)
+    ("eq" "&quot;" weiss--ahf)
+
+    ("pre" "<pre>\n▮\n</pre>" weiss--ahf-indent)    
+    ("div" "<div> ▮ </div>")
+
+    ("code" "<pre>\n<code>\n▮\n</code>\n</pre>" weiss--ahf-indent)
     ("style" "<style>\n▮\n</style>" weiss--ahf-indent)
-    ("hd" "<head>\n<meta charset=\"utf-8\">\n<title>▮</title>\n</head>" weiss--ahf-indent)
     ("temp" "<!doctype html>\n<html lang=\"de\">\n\n<head>\n<meta charset=\"utf-8\">\n<title>▮</title>\n</head>\n\n<body>\n\n</body>" weiss--ahf-indent)
+
     ))
 ;; html:1 ends here
 
@@ -1107,14 +1142,6 @@ Version 2016-10-24"
 (when (boundp 'c++-mode-abbrev-table)
   (clear-abbrev-table c++-mode-abbrev-table))
 (define-abbrev-table 'c++-mode-abbrev-table
-  '(
-    ("s" "std::" weiss--ahf)
-    )
-  )
-
-(when (boundp 'maxima-noweb-mode-abbrev-table)
-  (clear-abbrev-table maxima-noweb-mode-abbrev-table))
-(define-abbrev-table 'maxima-noweb-mode-abbrev-table
   '(
     ("s" "std::" weiss--ahf)
     )
