@@ -17,7 +17,7 @@
          )
   :ryo
   (:mode 'python-mode)
-  ("8" weiss-execute-buffer)
+  ("8" weiss-execute-buffer-python)
   ("t e" weiss-ein-execute-all-cells-above-inclusively)
   :init
   ;; Disable readline based native completion
@@ -34,7 +34,7 @@
     "execute cell if in jupyter otherwise execute buffer"
     (interactive)
     (if ein:notebook-mode
-        (ein:worksheet-execute-cell)
+        (call-interactively 'ein:worksheet-execute-cell) 
       (weiss-execute-buffer))
     )
   ;; Default to Python 3. Prefer the versioned Python binaries since some

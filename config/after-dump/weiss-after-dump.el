@@ -2,6 +2,8 @@
 ;; window/frame
 
 ;; [[file:../emacs-config.org::*window/frame][window/frame:1]]
+;; (add-to-list 'display-buffer-alist
+  ;; (cons "\\*Async Shell Command\\*.*" (cons #'display-buffer-no-window nil)))
 (winner-mode)
 (if (display-graphic-p)
     (progn

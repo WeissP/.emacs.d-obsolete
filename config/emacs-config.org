@@ -1482,8 +1482,11 @@
           (setq filename (replace-regexp-in-string search-str replace-str filename t))
           )
         )  
-      (when (> (length filename) 80)
-        (setq filename (substring filename -80)))
+      (let ((limit 110)
+            )
+        (when (> (length filename) limit)
+          (setq filename (substring filename -limit)))      
+        )    
       filename
       )
 
@@ -1561,10 +1564,10 @@
             snails-backend-recentf-weiss
             ))
 
-    (defun weiss-test ()
-      "DOCSTRING"
-      (interactive)
-      (snails '(snails-backend-projectile)))
+    ;; (defun weiss-test ()
+    ;;   "DOCSTRING"
+    ;;   (interactive)
+    ;;   (snails '(snails-backend-projectile)))
 
     (define-key snails-mode-map (kbd "C-j") #'snails-select-next-item)
     (define-key snails-mode-map (kbd "C-k") #'snails-select-prev-item)
@@ -2861,6 +2864,8 @@
 :END:
 ** window/frame
 #+begin_src elisp :tangle after-dump/weiss-after-dump.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
+  ;; (add-to-list 'display-buffer-alist
+    ;; (cons "\\*Async Shell Command\\*.*" (cons #'display-buffer-no-window nil)))
   (winner-mode)
   (if (display-graphic-p)
       (progn
@@ -6071,10 +6076,48 @@
     ("t" (
           ("a" lsp-execute-code-action)
           ("t" lsp-java-generate-to-string)
+          ("f" weiss-format-current-java-file)
+          ("F" weiss-format-current-java-dir)
           ("e" lsp-java-generate-equals-and-hash-code)
           ("o" lsp-java-generate-overrides)
           ("g" lsp-java-generate-getters-and-setters)             
           ))    
+    :config
+    (defun async-shell-command-no-window
+        (command)
+      (interactive)
+      (let
+          ((display-buffer-alist
+            (list
+             (cons
+              "\\*Async Shell Command\\*.*"
+              (cons #'display-buffer-no-window nil)))))
+        (async-shell-command
+         command)))
+    (defun weiss--format-java (dir)
+      "DOCSTRING"
+      (save-buffer)
+      (message "start format file")
+      (let ((display-buffer-alist (list (cons "\\*Async Shell Command\\*.*"
+                                              (cons #'display-buffer-no-window nil))))
+            )
+        (async-shell-command
+         (concat
+          "/home/weiss/idea/idea-IU-201.6668.121/bin/idea.sh format -s /home/weiss/weiss/Bai-JavaCodeStyle.xml "
+          (if dir 
+              (concat "-r " default-directory)
+            (buffer-file-name)))))
+
+      )
+    (defun weiss-format-current-java-file ()
+      "format current java file using idea"
+      (interactive)
+      (weiss--format-java nil))
+    (defun weiss-format-current-java-dir ()
+      "format current directory using idea"
+      (interactive)
+      (weiss--format-java t))
+
     )
 #+end_src
 
@@ -6547,7 +6590,7 @@
            )
     :ryo
     (:mode 'python-mode)
-    ("8" weiss-execute-buffer)
+    ("8" weiss-execute-buffer-python)
     ("t e" weiss-ein-execute-all-cells-above-inclusively)
     :init
     ;; Disable readline based native completion
@@ -6564,7 +6607,7 @@
       "execute cell if in jupyter otherwise execute buffer"
       (interactive)
       (if ein:notebook-mode
-          (ein:worksheet-execute-cell)
+          (call-interactively 'ein:worksheet-execute-cell) 
         (weiss-execute-buffer))
       )
     ;; Default to Python 3. Prefer the versioned Python binaries since some
@@ -7057,18 +7100,48 @@
 
   ;; (defun vterm--rename-buffer-as-title (title)
   ;; (rename-buffer (format "vterm @ %s" title) t))
-  
+
+  (defun weiss--goto-failed-test (forward)
+    "DOCSTRING"
+    (let ((search-string "^.* > .+\\[.+\\] FAILED$")
+          (pulse-iterations 1)
+          (pulse-delay 0.3)
+          )
+      (if forward
+          (re-search-forward search-string nil t)
+        (re-search-backward search-string nil t)        
+        )
+      (pulse-momentary-highlight-one-line (point) 'region)
+      )
+    (recenter nil t)
+    )
+
+  (defun weiss-goto-backward-failed-test ()
+    "DOCSTRING"
+    (interactive)
+    (weiss--goto-failed-test nil)
+    )
+
+  (defun weiss-goto-forward-failed-test ()
+    "DOCSTRING"
+    (interactive)
+    (weiss--goto-failed-test t)
+    )
+
   (defun weiss-send-last-command ()
     "DOCSTRING"
     (interactive)
-    (eshell-kill-output)
+    (aweshell-clear-buffer)
     (eshell-previous-matching-input-from-input 1)
     (eshell-send-input)
     )
 
   (ryo-modal-keys
    (:mode 'eshell-mode)
-   ("u" weiss-send-last-command))
+   ("8" weiss-send-last-command)
+   ("u" weiss-goto-backward-failed-test)
+   ("t" weiss-goto-forward-failed-test)
+   )
 
   (provide 'weiss-shell-or-terminal)
 
@@ -7874,6 +7947,18 @@
   (autoload 'imath-mode "imath" "Imath mode for math formula input" t)
   (setq imaxima-use-maxima-mode-flag t)
   (add-to-list 'auto-mode-alist '("\\.ma[cx]\\'" . maxima-mode))
+
+  (advice-add 'inferior-maxima-check-and-send-line :before 'weiss-add-semicolon)
+  (defun weiss-add-semicolon ()
+    "insert semicolon at the end of line then send line"
+    (interactive)
+    (beginning-of-line)
+    (unless (string-match-p ";" (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+      (end-of-line)
+      (insert ";")
+      )
+    )
+
   (provide 'weiss-cal)
 
 #+end_src

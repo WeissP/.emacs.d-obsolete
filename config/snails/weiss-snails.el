@@ -54,8 +54,11 @@
         (setq filename (replace-regexp-in-string search-str replace-str filename t))
         )
       )  
-    (when (> (length filename) 80)
-      (setq filename (substring filename -80)))
+    (let ((limit 110)
+          )
+      (when (> (length filename) limit)
+        (setq filename (substring filename -limit)))      
+      )    
     filename
     )
 
@@ -133,10 +136,10 @@
           snails-backend-recentf-weiss
           ))
 
-  (defun weiss-test ()
-    "DOCSTRING"
-    (interactive)
-    (snails '(snails-backend-projectile)))
+  ;; (defun weiss-test ()
+  ;;   "DOCSTRING"
+  ;;   (interactive)
+  ;;   (snails '(snails-backend-projectile)))
 
   (define-key snails-mode-map (kbd "C-j") #'snails-select-next-item)
   (define-key snails-mode-map (kbd "C-k") #'snails-select-prev-item)

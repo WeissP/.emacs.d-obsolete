@@ -20,17 +20,47 @@
 ;; (defun vterm--rename-buffer-as-title (title)
 ;; (rename-buffer (format "vterm @ %s" title) t))
 
+(defun weiss--goto-failed-test (forward)
+  "DOCSTRING"
+  (let ((search-string "^.* > .+\\[.+\\] FAILED$")
+        (pulse-iterations 1)
+        (pulse-delay 0.3)
+        )
+    (if forward
+        (re-search-forward search-string nil t)
+      (re-search-backward search-string nil t)        
+      )
+    (pulse-momentary-highlight-one-line (point) 'region)
+    )
+  (recenter nil t)
+  )
+
+(defun weiss-goto-backward-failed-test ()
+  "DOCSTRING"
+  (interactive)
+  (weiss--goto-failed-test nil)
+  )
+
+(defun weiss-goto-forward-failed-test ()
+  "DOCSTRING"
+  (interactive)
+  (weiss--goto-failed-test t)
+  )
+
 (defun weiss-send-last-command ()
   "DOCSTRING"
   (interactive)
-  (eshell-kill-output)
+  (aweshell-clear-buffer)
   (eshell-previous-matching-input-from-input 1)
   (eshell-send-input)
   )
 
 (ryo-modal-keys
  (:mode 'eshell-mode)
- ("u" weiss-send-last-command))
+ ("8" weiss-send-last-command)
+ ("u" weiss-goto-backward-failed-test)
+ ("t" weiss-goto-forward-failed-test)
+ )
 
 (provide 'weiss-shell-or-terminal)
 ;; shell or terminal:1 ends here

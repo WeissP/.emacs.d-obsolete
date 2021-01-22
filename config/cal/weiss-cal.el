@@ -13,5 +13,17 @@
 (autoload 'imath-mode "imath" "Imath mode for math formula input" t)
 (setq imaxima-use-maxima-mode-flag t)
 (add-to-list 'auto-mode-alist '("\\.ma[cx]\\'" . maxima-mode))
+
+(advice-add 'inferior-maxima-check-and-send-line :before 'weiss-add-semicolon)
+(defun weiss-add-semicolon ()
+  "insert semicolon at the end of line then send line"
+  (interactive)
+  (beginning-of-line)
+  (unless (string-match-p ";" (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+    (end-of-line)
+    (insert ";")
+    )
+  )
+
 (provide 'weiss-cal)
 ;; cal:1 ends here
