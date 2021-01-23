@@ -6,6 +6,7 @@
 
 ;; [[file:../emacs-config.org::*org][org:1]]
 (defvar weiss/org-file-path "/home/weiss/Documents/OrgFiles/")
+(defvar weiss/org-img-path "/home/weiss/Documents/OrgFiles/Bilder/")
 (defun weiss--get-org-file-path (path)
   "get org-file path according to weiss/org-file-path"
   (interactive)
@@ -157,7 +158,7 @@
  org-catch-invisible-edits 'smart
  org-fontify-done-headline t
  org-agenda-compact-blocks t
- org-image-actual-width '(600)
+ org-image-actual-width nil
  org-capture-templates   '(("o" "org-noter" entry (file "~/Documents/OrgFiles/Vorlesungen.org")
                             "* %f \n :PROPERTIES: \n :NOTER_DOCUMENT: %F \n :END: \n [[%F][Filepath]]")
                            ("a" "Abgabe" entry (file "~/Documents/OrgFiles/Vorlesungen.org")
@@ -175,7 +176,8 @@
    ("\\.x?html?\\'" . default)
    ("\\.pdf\\'" . emacs)
    ("\\.mp4\\'" . "vlc \"%s\"")
-   ("\\.txt\\'" . emacs))
+   ("\\.txt\\'" . emacs)
+   )
  )
 ;; variables:1 ends here
 
@@ -208,17 +210,13 @@
 ("x" weiss-org-sp-switch)
 ("X" org-refile)
 ("t" (
-      ;; ("j" org-forward-heading-same-level)
-      ;; ("k" org-backward-heading-same-level)
-      ;; ("i" outline-up-heading)
-      ;; ("l" org-down-element)
       ("a" weiss-org-screenshot)
-      ;; ("n" weiss-flyspell-save-word)
       ("o" org-noter)
-      ;; ("p" weiss-export-pdf-dwim)
+      ("d" weiss-org-download-img)
       ("q" org-set-tags-command)
       ("s" org-noter-sync-current-note)
       ("t" org-todo)
+      ("b" org-mark-ring-goto)
       ))
 ("<escape> o" (
                ("e"
@@ -454,24 +452,42 @@ Return non-nil if the window was shrunk, nil otherwise."
   )
 
 (defun weiss-org-screenshot ()
-  "Take a screenshot into a time stamped unique-named file in the
- same directory as the org-buffer and insert a link to this file."
+  "call flameshot to capture screen shot"
   (interactive)
-  ;; (setq filename
-  ;;       (concat
-  ;;        (make-temp-name
-  ;;         (concat (buffer-file-name)
-  ;;                 "_"
-  ;;                 (format-time-string "%Y%m%d_%H%M%S_")) ) ".png"))
-  (setq pathFileName
-        (concat "/home/weiss/Documents/OrgFiles/Bilder/"
-                (concat
-                 (make-temp-name
-                  (concat (buffer-name)
-                          "_"
-                          (format-time-string "%Y%m%d_%H%M%S_"))) ".png")))
-  (call-process "import" nil nil nil pathFileName)
-  (insert (concat "[[" pathFileName "]]"))
+  (weiss-org-insert-image "flameshot-caputre.png" (concat "flameshot gui -p " weiss/org-img-path))
+  )
+
+(defun weiss-org-download-img ()
+  "download the img link from clipboard"
+  (interactive)
+  (weiss-org-insert-image
+   "wget-img.png"
+   (format "wget -O %swget-img.png %s" weiss/org-img-path (substring-no-properties (gui-get-selection 'CLIPBOARD (or x-select-request-type 'UTF8_STRING))))
+   t)    
+  )
+
+;; flameshot-caputre.png
+(defun weiss-org-insert-image (pic-name command &optional img-attr)
+  "insert image to org"
+  (interactive)
+  (let* ((path weiss/org-img-path)
+         (name (format "%s.png" (format-time-string "%Y-%m-%d_%H-%M-%S")))
+         (old-name (concat path pic-name))
+         (new-name (concat path name))
+         )
+    (when (file-exists-p old-name)
+      (delete-file old-name)
+      )
+    (shell-command-to-string command)
+    (while (not (file-exists-p old-name))
+      (sit-for 0.1)
+      )
+    (rename-file old-name new-name)
+    (when img-attr
+      (insert "#+ATTR_org: :width 600\n")
+      )
+    (insert (concat "[[" new-name  "]]"))
+    )  
   (org-display-inline-images))
 
 ;;https://stackoverflow.com/questions/17435995/paste-an-image-on-clipboard-to-emacs-org-mode-file-without-saving-it
@@ -696,6 +712,128 @@ Return non-nil if the window was shrunk, nil otherwise."
 ;; Enable markdown backend
 (add-to-list 'org-export-backends 'md)
 ;; export:1 ends here
+
+;; org-roam
+
+;; [[file:../emacs-config.org::*org-roam][org-roam:1]]
+(use-package org-roam
+  :init
+  (add-hook 'after-init-hook 'org-roam-mode)
+  (setq
+   org-roam-directory "~/Documents/Org-roam")
+  :ryo
+  (:mode 'org-mode)
+  ("t i" org-roam-insert)
+  ("t r" org-roam)
+  :config
+  ;; open link from roam direkt in browser
+  (with-no-warnings
+    (defun weiss-org-link-open-as-file (path arg)
+      "Pretend PATH is a file name and open it.
+
+According to \"file\"-link syntax, PATH may include additional
+search options, separated from the file name with \"::\".
+
+This function is meant to be used as a possible tool for
+`:follow' property in `org-link-parameters'."
+      (let* ((option (and (string-match "::\\(.*\\)\\'" path)
+                          (match-string 1 path)))
+             (file-name (if (not option) path
+                          (substring path 0 (match-beginning 0)))))
+        (if (string-match "[*?{]" (file-name-nondirectory file-name))
+            (dired file-name)
+          (if (string-prefix-p "Ʀlink:" (file-name-nondirectory file-name))
+              (with-temp-buffer
+                (insert-file-contents file-name)
+                (goto-line 3)
+                (browse-url (buffer-substring-no-properties (+ (line-beginning-position) 12) (line-end-position)))
+                )
+            (apply #'org-open-file
+                   file-name
+                   arg
+                   (cond ((not option) nil)
+                         ((string-match-p "\\`[0-9]+\\'" option)
+                          (list (string-to-number option)))
+                         (t (list nil option))))
+            )
+          )))
+
+    (advice-add 'org-link-open-as-file :override 'weiss-org-link-open-as-file)
+    )
+
+
+  (add-to-list 'ivy-initial-inputs-alist '(org-roam-find-file . "^"))
+  (defun weiss-org-roam--prepend-tag-string (str tags)
+    "Prepend TAGS to STR."
+    (concat
+     str
+     (when tags
+       (propertize (format "(%s) " (s-join org-roam-tag-separator tags))
+                   'face 'org-roam-tag))
+     ))
+  (advice-add 'org-roam--prepend-tag-string :override 'weiss-org-roam--prepend-tag-string)
+
+  (defun weiss-roam-find-file (filename &optional wildcards)
+    "DOCSTRING"
+    (interactive
+     (find-file-read-args "Find file: "
+                          (confirm-nonexistent-file-or-buffer)))
+    (if (string-prefix-p "Ʀlink:" (file-name-nondirectory filename))
+        (with-temp-buffer
+          (insert-file-contents filename)
+          (goto-line 3)
+          (browse-url (buffer-substring-no-properties (+ (line-beginning-position) 12) (line-end-position)))
+          )
+      (find-file filename wildcards)
+      )
+    )
+
+  (setq
+   org-roam-db-update-idle-seconds 0
+   org-roam-db-update-method 'immediate
+   org-roam-find-file-function 'weiss-roam-find-file
+   )
+  (setq org-roam-capture-templates
+        '(
+          ("d" "default" plain (function org-roam-capture--get-point)
+           "* ${title}\n\n** %?"
+           :file-name "Ʀ${slug}_%<%Y%m%d%H>"
+           :head "#+title: ${title}\n#+roam_alias:\n#+roam_tags:\n\n")
+          ("p" "project" plain (function org-roam-capture--get-point)
+           "* ${title}\n\n** link:\n\n*** \n\n** %?"
+           :file-name "ƦProjecct-${slug}_%<%Y%m%d%H>"
+           :head "#+title: Project-${title}\n#+roam_alias: p-${title}\n#+roam_tags: project \n\n")
+          ("n" "note" plain (function org-roam-capture--get-point)
+           "* ${title}\n\n %?"
+           :file-name "ƦNote-${slug}_%<%Y%m%d%H>"
+           :head "#+title: note-${title}\n#+roam_alias: n-${title}\n#+roam_tags: note \n\n")
+          ("t" "tutorial" plain (function org-roam-capture--get-point)
+           "* [[file:ƦUseful-commands-${title}_%<%Y%m%d%H>.org][useful commands]]\n* link\n** \n\n%?"
+           :file-name "ƦTutorial-${slug}_%<%Y%m%d%H>"
+           :head "#+title: Tutorial-${title}\n#+roam_alias: t-${title}\n#+roam_tags: tutorial f-${title}\n\n")
+          ("c" "useful commands" plain (function org-roam-capture--get-point)
+           "%?"
+           :file-name "ƦUseful-commands-${slug}_%<%Y%m%d%H>"
+           :head "#+title: Useful-commands-${title}\n#+roam_alias: uc-${title}\n#+roam_tags: useful-commands f-${title}\n\n")
+
+          ("l" "link" plain (function org-roam-capture--get-point)
+           "%?"
+           :file-name "Ʀlink:${slug}"
+           :head "#+title: ${title}\n#+roam_alias: l-${title}\n#+roam_key: %c\n\n"
+           )
+          )
+        )
+  (use-package org-roam-server
+    :config
+    (setq org-roam-server-host "127.0.0.1"
+          org-roam-server-port 9090
+          org-roam-server-export-inline-images t
+          org-roam-server-authenticate nil
+          org-roam-server-network-label-truncate t
+          org-roam-server-network-label-truncate-length 60
+          org-roam-server-network-label-wrap-length 20))
+  )
+;; org-roam:1 ends here
 
 ;; misc packages
 

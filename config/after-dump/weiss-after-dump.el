@@ -2894,10 +2894,10 @@
                       :foreground "medium sea green"
                       :background nil)
   (set-face-attribute 'org-link nil
-                      :weight 'normal
-                      :underline 'nil
-                      :foreground "#20B2AA"
-                      :background nil)
+                      :height 1.1
+                      :inherit nil
+                      :underline t
+                      )
   (set-face-attribute 'org-block-begin-line nil
                       :weight 'normal
                       :slant 'normal
@@ -2925,7 +2925,8 @@
                       :weight 'light
                       :background nil)
   (set-face-attribute 'org-special-keyword nil
-                      :height 1.1
+                      :height 'unspecified
+                      :foreground 'unspecified
                       :weight 'bold
                       :slant 'normal
                       :inherit 'org-drawer)
@@ -2984,6 +2985,12 @@
   (add-to-list 'org-tag-faces '("Frage" . (:foreground "red"  :weight 'bold)))
   )
 ;; org:1 ends here
+
+;; org-roam
+
+;; [[file:../emacs-config.org::*org-roam][org-roam:1]]
+(set-face-attribute 'org-roam-tag nil :italic t :foreground "#808080" :weight 'light)
+;; org-roam:1 ends here
 
 ;; python
 
@@ -3202,8 +3209,9 @@
          ("d" (
                ;; ("a"  weiss-custom-daily-agenda)
                ("b"  weiss-save-current-content)
-               ("c"  calendar)
+               ("c"  org-roam-capture)
                ("d"  weiss-switch-and-bookmarks-search)
+               ("f"  org-roam-find-file)
                ("j" yasdcv-translate-input)
                ("l"  list-buffers)
                ("m"  magit-status)

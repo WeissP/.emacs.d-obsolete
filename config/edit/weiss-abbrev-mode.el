@@ -219,6 +219,10 @@ Version 2016-10-24"
   '(
     ("ta" ":tangle ")
     ("wa" "WhatsApp")
+;;;;; roam
+    ("ro" "#+roam_▮: ")
+;;;;; org config
+    ("attr" "#+ATTR_org: :")
 ;;;;; latex
     ("ltxeq" "\\begin{equation*}\n▮\n\\end{equation*}" weiss--ahf-indent)    
     ("ltxal" "\\begin{aligned}\n▮\n\\end{aligned}" weiss--ahf-indent)    
@@ -1082,11 +1086,11 @@ Version 2016-10-24"
     ("while" "(while (▮)\n  (setq ))" weiss--ahf-indent)
     ("widen" "(widen)" weiss--ahf)
     ("widget-get" "(widget-get ▮)" weiss--ahf)
-    ("with-current-buffer" "(with-current-buffer ▮)" weiss--ahf)
-    ("with-output-to-string" "(with-output-to-string ▮)" weiss--ahf)
-    ("with-output-to-temp-buffer" "(with-output-to-temp-buffer ▮)" weiss--ahf)
-    ("with-temp-buffer" "(with-temp-buffer ▮)" weiss--ahf)
-    ("with-temp-file" "(with-temp-file ▮)" weiss--ahf)
+    ("with-current-buffer" "(with-current-buffer\n▮\n)" weiss--ahf-indent)
+    ("with-output-to-string" "(with-output-to-string\n▮\n)" weiss--ahf-indent)
+    ("with-output-to-temp-buffer" "(with-output-to-temp-buffer\n▮\n)" weiss--ahf-indent)
+    ("with-temp-buffer" "(with-temp-buffer\n▮\n)" weiss--ahf-indent)
+    ("with-temp-file" "(with-temp-file\n▮\n)" weiss--ahf-indent)
     ("with-eval-after-load" "(with-eval-after-load '▮\n\n)" weiss--ahf-indent)
     ("write-char" "(write-char ▮)" weiss--ahf)
     ("write-file" "(write-file ▮)" weiss--ahf)

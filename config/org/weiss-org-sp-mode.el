@@ -220,24 +220,24 @@ calling `self-insert-command'."
     )  
   )
 
-(defun weiss-org-sp-right ()
-  "Move right. If cursor is at the begin of #+ block, edit it"
-  (interactive)
-  (if (looking-at-p weiss-org-sp-sharp-begin)
-      (org-edit-special)  
-    (let ((pt (point))
-          result)
-      (save-restriction
-        (org-narrow-to-subtree)
-        (forward-char)
-        (if (re-search-forward weiss-org-sp-regex nil t)
-            (progn
-              (goto-char (match-beginning 0))
-              (setq result t))
-          (goto-char pt)))
-      (weiss-org-sp--ensure-visible)
-      result))
-  )
+;; (defun weiss-org-sp-right ()
+;;   "Move right. If cursor is at the begin of #+ block, edit it"
+;;   (interactive)
+;;   (if (looking-at-p weiss-org-sp-sharp-begin)
+;;       (org-edit-special)  
+;;     (let ((pt (point))
+;;           result)
+;;       (save-restriction
+;;         (org-narrow-to-subtree)
+;;         (forward-char)
+;;         (if (re-search-forward weiss-org-sp-regex nil t)
+;;             (progn
+;;               (goto-char (match-beginning 0))
+;;               (setq result t))
+;;           (goto-char pt)))
+;;       (weiss-org-sp--ensure-visible)
+;;       result))
+;;   )
 (defun weiss-org-sp-right ()
   "If cursor is at the begin of #+ block, edit it, otherwise go to the child element, if there is no more child:
 if on a: 

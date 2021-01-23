@@ -137,8 +137,7 @@
         ("g" lsp-java-generate-getters-and-setters)             
         ))    
   :config
-  (defun async-shell-command-no-window
-      (command)
+  (defun async-shell-command-no-window (command)
     (interactive)
     (let
         ((display-buffer-alist
@@ -155,7 +154,7 @@
     (let ((display-buffer-alist (list (cons "\\*Async Shell Command\\*.*"
                                             (cons #'display-buffer-no-window nil))))
           )
-      (async-shell-command
+      (async-shell-command-no-window
        (concat
         "/home/weiss/idea/idea-IU-201.6668.121/bin/idea.sh format -s /home/weiss/weiss/Bai-JavaCodeStyle.xml "
         (if dir 
