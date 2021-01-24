@@ -239,6 +239,7 @@
 
 (set-face-attribute 'font-lock-keyword-face nil :foreground "#5b5e6b" :weight 'extrabold :slant 'italic)
 (set-face-attribute 'font-lock-comment-face nil :foreground "#9ca0a4" :weight 'light :slant 'normal)
+
 (set-face-attribute 'font-lock-doc-face nil :font (font-spec :name "Route159") :weight 'normal :slant 'normal)
 (set-face-attribute 'region nil :background "#cfe4ff")
 (set-face-attribute 'font-lock-builtin-face nil :foreground "#a0522d" :slant 'italic)
@@ -3219,7 +3220,7 @@
                ("o"  xah-open-file-at-cursor)
                ("s" yasdcv-translate-at-point)
                ("t"  telega)
-               ("w"  xah-open-in-external-app :before save-buffer)
+               ("w"  xah-open-in-external-app)
                ))
          ("e" (
                ("b"  org-babel-tangle)

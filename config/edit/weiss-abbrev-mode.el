@@ -12,31 +12,43 @@
   "A conditional key definition for `expand-abbrev'.
 When  this was bound, it will expand abbrev at point if there're any possible
 abbrev.")
-
+(defun weiss-test ()
+  "DOCSTRING"
+  (interactive) 
+  (skip-syntax-backward "\\w"))
 (defun weiss-check-or-expand-abbrev (&optional check)
   "Check the string between the cursor and the last space"
   (interactive)
   (when (xah-abbrev-enable-function)
-    (let (p1 p2 abrStr abrSymbol)
+    (let ((local-abbrev-table local-abbrev-table)
+          p1 p2 abrStr abrSymbol current-table)
       (save-excursion
         (setq p2 (point))
         ;; (setq p1 (if (re-search-backward "[[:space:]]" (line-beginning-position) t)
         ;; (1+ (point))            
         ;; (line-beginning-position)))
         (skip-syntax-backward "\\w\\_")
+        ;; (skip-syntax-backward "\\w")
         (setq p1 (point))
         )
-
       (setq abrStr (buffer-substring-no-properties p1 p2))
       ;; (message "matched string: %s" abrStr)
+      (when (and
+             (eq major-mode 'org-mode)
+             (eq 'latex-fragment (org-element-type (org-element-context (org-element-at-point)))))          
+        (setq local-abbrev-table latex-mode-abbrev-table)
+        (when (string-prefix-p "$" abrStr)
+          (setq abrStr (string-remove-prefix "$" abrStr)
+                p1 (+ p1 1))          
+          )
+        )
       (setq abrSymbol (abbrev-symbol abrStr))
       (when (and (not check) abrSymbol)            
         (abbrev-insert abrSymbol abrStr p1 p2)
         (xah-abbrev-position-cursor p1)
         )
       abrSymbol
-      )
-    )
+      ))
   )  
 
 (setq abbrev-expand-function 'weiss-check-or-expand-abbrev)
@@ -223,6 +235,7 @@ Version 2016-10-24"
     ("ro" "#+roam_▮: ")
 ;;;;; org config
     ("attr" "#+ATTR_org: :")
+    ("img" "#+ATTR_org: :width 600")
 ;;;;; latex
     ("ltxeq" "\\begin{equation*}\n▮\n\\end{equation*}" weiss--ahf-indent)    
     ("ltxal" "\\begin{aligned}\n▮\n\\end{aligned}" weiss--ahf-indent)    
@@ -281,6 +294,12 @@ Version 2016-10-24"
     ("wr" "während" weiss--ahf)
     ("zm" "zusammen" weiss--ahf)
     ("zf" "Zusammenfassung" weiss--ahf)
+;;;;; cycle number
+    ("cn1" "①")
+    ("cn2" "②")
+    ("cn3" "③")
+    ("cn4" "④")
+    ("cn5" "⑤")
     )
   )
 ;; org:1 ends here
@@ -488,8 +507,8 @@ Version 2016-10-24"
     ("mbbb" "\\bigg" weiss--ahf)
     ("mbbbb" "\\Bigg" weiss--ahf)
     ("mnp" "\n\n\\newpage" weiss--ahf)    
-    ("meq" "\begin{equaltion}\n▮\n\end{equaltion}" weiss--ahf-indent)    
-    ("mal" "\begin{equaltion}\n\begin{aligned}\n▮\n\end{aligned}\n\end{equaltion}" weiss--ahf-indent)    
+    ("meq" "\\begin{equation*}\n▮\n\\end{equation}" weiss--ahf-indent)    
+    ("mal" "\\begin{aligned}\n▮\n\\end{aligned}" weiss--ahf-indent)    
     ))
 ;; latex:1 ends here
 
@@ -805,7 +824,7 @@ Version 2016-10-24"
     ("compare-strings" "(compare-strings ▮)" weiss--ahf)
     ("concat" "(concat \"▮\" \"\")" weiss--ahf)
     ("cond" "(cond\n(▮ )\n\n)" weiss--ahf-indent)
-    ("condition-case" "(condition-case ▮)" weiss--ahf)
+    ("condition-case" "(condition-case \n▮\n)" weiss--ahf-indent)
     ("cons" "(cons ▮)" weiss--ahf)
     ("consp" "(consp ▮)" weiss--ahf)
     ("constrain-to-field" "(constrain-to-field ▮)" weiss--ahf)
