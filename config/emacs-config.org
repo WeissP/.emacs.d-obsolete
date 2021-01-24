@@ -294,31 +294,43 @@
     "A conditional key definition for `expand-abbrev'.
   When  this was bound, it will expand abbrev at point if there're any possible
   abbrev.")
-
+  (defun weiss-test ()
+    "DOCSTRING"
+    (interactive) 
+    (skip-syntax-backward "\\w"))
   (defun weiss-check-or-expand-abbrev (&optional check)
     "Check the string between the cursor and the last space"
     (interactive)
     (when (xah-abbrev-enable-function)
-      (let (p1 p2 abrStr abrSymbol)
+      (let ((local-abbrev-table local-abbrev-table)
+            p1 p2 abrStr abrSymbol current-table)
         (save-excursion
           (setq p2 (point))
           ;; (setq p1 (if (re-search-backward "[[:space:]]" (line-beginning-position) t)
           ;; (1+ (point))            
           ;; (line-beginning-position)))
           (skip-syntax-backward "\\w\\_")
+          ;; (skip-syntax-backward "\\w")
           (setq p1 (point))
           )
-
         (setq abrStr (buffer-substring-no-properties p1 p2))
         ;; (message "matched string: %s" abrStr)
+        (when (and
+               (eq major-mode 'org-mode)
+               (eq 'latex-fragment (org-element-type (org-element-context (org-element-at-point)))))          
+          (setq local-abbrev-table latex-mode-abbrev-table)
+          (when (string-prefix-p "$" abrStr)
+            (setq abrStr (string-remove-prefix "$" abrStr)
+                  p1 (+ p1 1))          
+            )
+          )
         (setq abrSymbol (abbrev-symbol abrStr))
         (when (and (not check) abrSymbol)            
           (abbrev-insert abrSymbol abrStr p1 p2)
           (xah-abbrev-position-cursor p1)
           )
         abrSymbol
-        )
-      )
+        ))
     )  
 
   (setq abbrev-expand-function 'weiss-check-or-expand-abbrev)
@@ -502,6 +514,7 @@
       ("ro" "#+roam_▮: ")
   ;;;;; org config
       ("attr" "#+ATTR_org: :")
+      ("img" "#+ATTR_org: :width 600")
   ;;;;; latex
       ("ltxeq" "\\begin{equation*}\n▮\n\\end{equation*}" weiss--ahf-indent)    
       ("ltxal" "\\begin{aligned}\n▮\n\\end{aligned}" weiss--ahf-indent)    
@@ -560,6 +573,12 @@
       ("wr" "während" weiss--ahf)
       ("zm" "zusammen" weiss--ahf)
       ("zf" "Zusammenfassung" weiss--ahf)
+  ;;;;; cycle number
+      ("cn1" "①")
+      ("cn2" "②")
+      ("cn3" "③")
+      ("cn4" "④")
+      ("cn5" "⑤")
       )
     )
 #+end_src
@@ -766,8 +785,8 @@
       ("mbbb" "\\bigg" weiss--ahf)
       ("mbbbb" "\\Bigg" weiss--ahf)
       ("mnp" "\n\n\\newpage" weiss--ahf)    
-      ("meq" "\begin{equaltion}\n▮\n\end{equaltion}" weiss--ahf-indent)    
-      ("mal" "\begin{equaltion}\n\begin{aligned}\n▮\n\end{aligned}\n\end{equaltion}" weiss--ahf-indent)    
+      ("meq" "\\begin{equation*}\n▮\n\\end{equation}" weiss--ahf-indent)    
+      ("mal" "\\begin{aligned}\n▮\n\\end{aligned}" weiss--ahf-indent)    
       ))
 #+end_src
 
@@ -1080,7 +1099,7 @@
       ("compare-strings" "(compare-strings ▮)" weiss--ahf)
       ("concat" "(concat \"▮\" \"\")" weiss--ahf)
       ("cond" "(cond\n(▮ )\n\n)" weiss--ahf-indent)
-      ("condition-case" "(condition-case ▮)" weiss--ahf)
+      ("condition-case" "(condition-case \n▮\n)" weiss--ahf-indent)
       ("cons" "(cons ▮)" weiss--ahf)
       ("consp" "(consp ▮)" weiss--ahf)
       ("constrain-to-field" "(constrain-to-field ▮)" weiss--ahf)
@@ -1571,7 +1590,8 @@
     ;; (defun weiss-test ()
     ;;   "DOCSTRING"
     ;;   (interactive)
-    ;;   (snails '(snails-backend-projectile)))
+    ;;   (snails '(snails-backend-rg-curdir)))
+      ;; (snails '(snails-backend-rg)))
 
     (define-key snails-mode-map (kbd "C-j") #'snails-select-next-item)
     (define-key snails-mode-map (kbd "C-k") #'snails-select-prev-item)
@@ -1914,11 +1934,30 @@
            (list "rg" "--no-heading" "--column" "--color" "never" "--max-columns" "300" search-input search-dir)
            ))))
 
+   ;; :candidate-filter
+   ;; (lambda (candidate-list)
+   ;;   (let (candidates)
+   ;;     (catch 'search-end
+   ;;       (dolist (candidate candidate-list)
+   ;;         (let ((candidate-items (split-string candidate ":")))
+   ;;           (snails-add-candiate
+   ;;            'candidates
+   ;;            ;; Truncate search file path to make sure search content in visible area.
+   ;;            (format "%s:%s"
+   ;;                    (string-truncate-left (nth 0 candidate-items) snails-backend-rg-candidate-truncate-length)
+   ;;                    (string-join (rest candidate-items) ":"))
+   ;;            candidate))
+
+   ;;         (when (> (length candidates) snails-backend-rg-filter-number)
+   ;;           (throw 'search-end nil))))
+   ;;     candidates))
+
    :candidate-filter
    (lambda (candidate-list)
      (let (candidates)
        (dolist (candidate candidate-list)
-         (snails-add-candiate 'candidates (weiss-reduce-file-path candidate) candidate))
+         ;; (snails-add-candiate 'candidates (weiss-reduce-file-path candidate) candidate))
+         (snails-add-candiate 'candidates candidate candidate))
        candidates))
 
    :candidate-icon
@@ -3114,6 +3153,7 @@
 
   (set-face-attribute 'font-lock-keyword-face nil :foreground "#5b5e6b" :weight 'extrabold :slant 'italic)
   (set-face-attribute 'font-lock-comment-face nil :foreground "#9ca0a4" :weight 'light :slant 'normal)
+
   (set-face-attribute 'font-lock-doc-face nil :font (font-spec :name "Route159") :weight 'normal :slant 'normal)
   (set-face-attribute 'region nil :background "#cfe4ff")
   (set-face-attribute 'font-lock-builtin-face nil :foreground "#a0522d" :slant 'italic)
@@ -6642,40 +6682,46 @@
 #+begin_src elisp
   (use-package http
     :config
+    (use-package auto-rename-tag)
+  
     (ryo-modal-keys
      (:mode 'sgml-mode)
      ("<escape> <escape>" (
-                    ("b" ignore
-                     :name "<b>"
-                     :then ((lambda () (interactive) (weiss-insert-bracket-pair "<b>" "</b>" quick-insert-new-line)))
-                     )
-                    ("i" ignore
-                     :name "<i>"
-                     :then ((lambda () (interactive) (weiss-insert-bracket-pair "<i>" "</i>" quick-insert-new-line)))
-                     )
-                    ("u" ignore
-                     :name "<u>"
-                     :then ((lambda () (interactive) (weiss-insert-bracket-pair "<u>" "</u>" quick-insert-new-line)))
-                     )
+                           ("b" ignore
+                            :name "<b>"
+                            :then ((lambda () (interactive) (weiss-insert-bracket-pair "<b>" "</b>" quick-insert-new-line)))
+                            )
+                           ("i" ignore
+                            :name "<i>"
+                            :then ((lambda () (interactive) (weiss-insert-bracket-pair "<i>" "</i>" quick-insert-new-line)))
+                            )
+                           ("u" ignore
+                            :name "<u>"
+                            :then ((lambda () (interactive) (weiss-insert-bracket-pair "<u>" "</u>" quick-insert-new-line)))
+                            )
 
-                    ("p" ignore
-                     :name "<p>"
-                     :then ((lambda () (interactive) (weiss-insert-bracket-pair "<p>" "</p>" quick-insert-new-line)))
-                     )
-                    ("l" ignore
-                     :name "<li>"
-                     :then ((lambda () (interactive) (weiss-insert-bracket-pair "<li>" "</li>" quick-insert-new-line)))
-                     )
-                    ("s" ignore
-                     :name "<span>"
-                     :then ((lambda () (interactive) (weiss-insert-bracket-pair "<span >" "</span>" quick-insert-new-line)))
-                     )
+                           ("p" ignore
+                            :name "<p>"
+                            :then ((lambda () (interactive) (weiss-insert-bracket-pair "<p>" "</p>" quick-insert-new-line)))
+                            )
+                           ("l" ignore
+                            :name "<li>"
+                            :then ((lambda () (interactive) (weiss-insert-bracket-pair "<li>" "</li>" quick-insert-new-line)))
+                            )
+                           ("m" ignore
+                            :name "<span block>"
+                            :then ((lambda () (interactive) (weiss-insert-bracket-pair "<span class=\"block\">" "</span>" quick-insert-new-line)))
+                            )
+                           ("s" ignore
+                            :name "<span>"
+                            :then ((lambda () (interactive) (weiss-insert-bracket-pair "<span >" "</span>" quick-insert-new-line)))
+                            )
 
-                    ("d" ignore
-                     :name "<div>"
-                     :then ((lambda () (interactive) (weiss-insert-bracket-pair "<div >" "</div>" quick-insert-new-line)))
-                     )
-                    )
+                           ("d" ignore
+                            :name "<div>"
+                            :then ((lambda () (interactive) (weiss-insert-bracket-pair "<div >" "</div>" quick-insert-new-line)))
+                            )
+                           )
       )
      )
     )
@@ -8458,6 +8504,8 @@
             '((counsel-ag . ivy-prescient-non-fuzzy)
               (counsel-rg . ivy-prescient-non-fuzzy)
               (org-refile . ivy-prescient-non-fuzzy)
+              (org-roam-find-file . ivy-prescient-non-fuzzy)
+              (org-roam-insert . ivy-prescient-non-fuzzy)
               (counsel-recentf . ivy-prescient-non-fuzzy)
               (counsel-bookmark . ivy-prescient-non-fuzzy)
               (counsel-pt . ivy-prescient-non-fuzzy)
@@ -9202,12 +9250,28 @@
                 (`link
                  (let* ((lineage (org-element-lineage context '(link) t))
                         (path (org-element-property :path lineage)))
-                   (if (or (equal (org-element-property :type lineage) "img")
-                           (and path (image-type-from-file-name path)))
-                       (+org--toggle-inline-images-in-subtree
-                        (org-element-property :begin lineage)
-                        (org-element-property :end lineage))
-                     (org-open-at-point))))
+                   (cond
+                    ((or (equal (org-element-property :type lineage) "img")
+                         (and path (image-type-from-file-name path)))
+                     (+org--toggle-inline-images-in-subtree
+                      (org-element-property :begin lineage)
+                      (org-element-property :end lineage))
+                     )
+                    ((and
+                      (ignore-errors (string-prefix-p "Ʀ" (file-name-nondirectory (buffer-file-name))))
+                      (not (one-window-p)))
+                     (delete-other-windows)
+                     (org-open-at-point)
+                     (split-window-below)
+                     (org-mark-ring-goto)
+                     (beginning-of-line)
+                     (recenter nil t)
+                     )
+                    (t
+                     (org-open-at-point)                   
+                     )
+                    )
+                   ))
                 (_ ignore)
                 )
               (goto-char pt)
@@ -9755,7 +9819,6 @@
      (format "wget -O %swget-img.png %s" weiss/org-img-path (substring-no-properties (gui-get-selection 'CLIPBOARD (or x-select-request-type 'UTF8_STRING))))
      t)    
     )
-
   ;; flameshot-caputre.png
   (defun weiss-org-insert-image (pic-name command &optional img-attr)
     "insert image to org"
@@ -9773,6 +9836,8 @@
         (sit-for 0.1)
         )
       (rename-file old-name new-name)
+      (end-of-line)
+      (insert "\n")
       (when img-attr
         (insert "#+ATTR_org: :width 600\n")
         )
@@ -10015,7 +10080,41 @@
     (:mode 'org-mode)
     ("t i" org-roam-insert)
     ("t r" org-roam)
+    ("t j"
+     (
+      ("t" org-roam-tag-add)
+      ("n" org-roam-capture)
+      ("s" weiss-org-roam-copy-heading-link)    
+      ))
+  
     :config
+    (defun weiss-org-roam--title-to-slug (title)
+      "add Umlaut convert"
+      (let ((l '(
+                 ("ä" . "ae")
+                 ("ö" . "oe")
+                 ("ü" . "ue")
+                 ("ß" . "ss")
+                 )
+               )
+            )
+        (dolist (x l title) 
+          (setq title (replace-regexp-in-string (car x) (cdr x) title))
+          )      
+        )
+      (org-roam--title-to-slug title)
+      )
+    (setq org-roam-title-to-slug-function 'weiss-org-roam--title-to-slug)
+    (defun weiss-org-roam-copy-heading-link ()
+      "copy the current heading link in roam format"
+      (interactive)
+      (let ((id (org-id-get-create))
+            (title (read-string "Description: " (substring-no-properties (org-get-heading t t t t)) ))
+            )
+        (kill-new (format " [[id:%s][%s]]" id title))
+        )
+      )
+
     ;; open link from roam direkt in browser
     (with-no-warnings
       (defun weiss-org-link-open-as-file (path arg)
@@ -10053,6 +10152,7 @@
 
 
     (add-to-list 'ivy-initial-inputs-alist '(org-roam-find-file . "^"))
+    (add-to-list 'ivy-initial-inputs-alist '(org-roam-insert . "^"))
     (defun weiss-org-roam--prepend-tag-string (str tags)
       "Prepend TAGS to STR."
       (concat
@@ -10086,30 +10186,30 @@
     (setq org-roam-capture-templates
           '(
             ("d" "default" plain (function org-roam-capture--get-point)
-             "* ${title}\n\n** %?"
+             "* ${title}\n** %?"
              :file-name "Ʀ${slug}_%<%Y%m%d%H>"
-             :head "#+title: ${title}\n#+roam_alias:\n#+roam_tags:\n\n")
+             :head "#+title: ${title}\n#+roam_alias:\n#+roam_tags:\n")
             ("p" "project" plain (function org-roam-capture--get-point)
-             "* ${title}\n\n** link:\n\n*** \n\n** %?"
+             "* ${title}\n** link:\n*** \n** %?"
              :file-name "ƦProjecct-${slug}_%<%Y%m%d%H>"
-             :head "#+title: Project-${title}\n#+roam_alias: p-${title}\n#+roam_tags: project \n\n")
+             :head "#+title: Project-${title}\n#+roam_alias: p-${slug}\n#+roam_tags: project \n")
             ("n" "note" plain (function org-roam-capture--get-point)
-             "* ${title}\n\n %?"
+             "* ${title}\n %?"
              :file-name "ƦNote-${slug}_%<%Y%m%d%H>"
-             :head "#+title: note-${title}\n#+roam_alias: n-${title}\n#+roam_tags: note \n\n")
+             :head "#+title: note-${title}\n#+roam_alias: n-${slug}\n#+roam_tags: note \n")
             ("t" "tutorial" plain (function org-roam-capture--get-point)
-             "* [[file:ƦUseful-commands-${title}_%<%Y%m%d%H>.org][useful commands]]\n* link\n** \n\n%?"
+             "* [[file:ƦUseful-commands-${title}_%<%Y%m%d%H>.org][useful commands]]\n* link\n** \n%?"
              :file-name "ƦTutorial-${slug}_%<%Y%m%d%H>"
-             :head "#+title: Tutorial-${title}\n#+roam_alias: t-${title}\n#+roam_tags: tutorial f-${title}\n\n")
+             :head "#+title: Tutorial-${title}\n#+roam_alias: t-${slug}\n#+roam_tags: tutorial f-${slug}\n")
             ("c" "useful commands" plain (function org-roam-capture--get-point)
              "%?"
              :file-name "ƦUseful-commands-${slug}_%<%Y%m%d%H>"
-             :head "#+title: Useful-commands-${title}\n#+roam_alias: uc-${title}\n#+roam_tags: useful-commands f-${title}\n\n")
+             :head "#+title: Useful-commands-${title}\n#+roam_alias: uc-${slug}\n#+roam_tags: useful-commands f-${slug}\n")
 
             ("l" "link" plain (function org-roam-capture--get-point)
              "%?"
              :file-name "Ʀlink:${slug}"
-             :head "#+title: ${title}\n#+roam_alias: l-${title}\n#+roam_key: %c\n\n"
+             :head "#+title: ${title}\n#+roam_alias: l-${slug}\n#+roam_key: %c\n"
              )
             )
           )
@@ -10122,6 +10222,12 @@
             org-roam-server-network-label-truncate t
             org-roam-server-network-label-truncate-length 60
             org-roam-server-network-label-wrap-length 20))
+    (use-package org-transclusion
+      ;; :quelpa (org-transclusion 
+      ;;          :fetcher github 
+      ;;          :repo nobiot/org-transclusion)
+      :ensure nil
+      )
     )
 #+end_src
 *** misc packages
@@ -10324,6 +10430,77 @@
 
 
 #+end_src 
+*** weiss-variable-mode
+#+begin_src elisp
+  (defvar weiss-variable-mode-map (make-sparse-keymap) "Keybinding for weiss-temp-insert minor mode.")
+  (defvar weiss-variable-mode-start-point nil)
+  (defvar weiss-variable-snake-case-list '(python-mode))
+  (defvar weiss-variable-dash-case-list '(emacs-lisp-mode))
+
+  (defun weiss-variable-mode-enable ()
+    "enable temp insert mode"
+    (interactive)
+    (setq weiss-variable-mode-start-point (point))
+    )
+
+  (defun weiss-variable--process-string (s)
+    "DOCSTRING"
+    (interactive)
+    (let ((l (split-string s " "))
+          )
+      (cond
+       ((member major-mode weiss-variable-snake-case-list)
+        (s-join "_" l)
+        )     
+       ((member major-mode weiss-variable-dash-case-list)
+        (s-join "-" l)
+        )     
+       (t
+        (concat (pop l) (mapconcat 'capitalize l "")))
+       )
+      )
+    )
+
+  (defun weiss-variable-mode-disable ()
+    "disable temp insert mode"
+    (when (> (- (point) weiss-variable-mode-start-point) 3)
+      (insert (weiss-variable--process-string (delete-and-extract-region weiss-variable-mode-start-point (point))))
+      )
+    (setq weiss-variable-mode-p nil)
+    )
+
+  (defun weiss-variable-mode-start ()
+    "DOCSTRING"
+    (interactive)
+    (unless ryo-modal-mode
+      (weiss-variable-mode 1)
+      (setq-local cursor-type 'hbar)
+      )  
+    )
+  (defun weiss-variable-mode-stop ()
+    "DOCSTRING"
+    (interactive)
+    (weiss-variable-mode -1)
+    (setq-local cursor-type 'box)
+    (ryo-modal-mode)
+    )
+  ;; (define-key weiss-variable-mode-map (kbd "RET") 'weiss-temp-insert-exit-and-keep-content)
+  (define-key weiss-variable-mode-map [remap ryo-modal-mode] 'weiss-variable-mode-stop)
+  (advice-add 'keyboard-quit :before 'weiss-variable-mode-start)
+  ;;;###autoload
+  (define-minor-mode weiss-variable-mode
+    "Save selected text and activate insert mode, press enter to exit and keep the selected text. When direct go back to Command mode, the selected text will be deleted."
+    :lighter " variable" ; set a simple mode name in the minor-mode-alist
+    (if weiss-variable-mode
+        (weiss-variable-mode-enable)
+      (weiss-variable-mode-disable)
+      )
+    )
+
+
+  (provide 'weiss-variable-mode)
+
+#+end_src
 *** weiss-temp-insert-mode
 #+begin_src elisp :tangle keybinding/weiss-temp-insert-mode.el :mkdirp yes
   (defvar weiss-temp-insert-mode-map (make-sparse-keymap) "Keybinding for weiss-temp-insert minor mode.")
@@ -12333,6 +12510,7 @@
       URL `http://ergoemacs.org/emacs/emacs_dired_open_file_in_ext_apps.html'
       Version 2019-11-04"
     (interactive)
+    (save-buffer)
     (let* (
            ($file-list
             (if @fname
@@ -13103,7 +13281,7 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
                  ("o"  xah-open-file-at-cursor)
                  ("s" yasdcv-translate-at-point)
                  ("t"  telega)
-                 ("w"  xah-open-in-external-app :before save-buffer)
+                 ("w"  xah-open-in-external-app)
                  ))
            ("e" (
                  ("b"  org-babel-tangle)

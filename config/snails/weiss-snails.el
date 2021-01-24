@@ -139,7 +139,8 @@
   ;; (defun weiss-test ()
   ;;   "DOCSTRING"
   ;;   (interactive)
-  ;;   (snails '(snails-backend-projectile)))
+  ;;   (snails '(snails-backend-rg-curdir)))
+    ;; (snails '(snails-backend-rg)))
 
   (define-key snails-mode-map (kbd "C-j") #'snails-select-next-item)
   (define-key snails-mode-map (kbd "C-k") #'snails-select-prev-item)

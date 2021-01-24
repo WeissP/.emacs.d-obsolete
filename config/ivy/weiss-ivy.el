@@ -217,6 +217,8 @@ This is for use in `ivy-re-builders-alist'."
           '((counsel-ag . ivy-prescient-non-fuzzy)
             (counsel-rg . ivy-prescient-non-fuzzy)
             (org-refile . ivy-prescient-non-fuzzy)
+            (org-roam-find-file . ivy-prescient-non-fuzzy)
+            (org-roam-insert . ivy-prescient-non-fuzzy)
             (counsel-recentf . ivy-prescient-non-fuzzy)
             (counsel-bookmark . ivy-prescient-non-fuzzy)
             (counsel-pt . ivy-prescient-non-fuzzy)

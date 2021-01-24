@@ -1819,6 +1819,7 @@ Version 2015-10-14"
     URL `http://ergoemacs.org/emacs/emacs_dired_open_file_in_ext_apps.html'
     Version 2019-11-04"
   (interactive)
+  (save-buffer)
   (let* (
          ($file-list
           (if @fname

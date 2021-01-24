@@ -465,7 +465,6 @@ Return non-nil if the window was shrunk, nil otherwise."
    (format "wget -O %swget-img.png %s" weiss/org-img-path (substring-no-properties (gui-get-selection 'CLIPBOARD (or x-select-request-type 'UTF8_STRING))))
    t)    
   )
-
 ;; flameshot-caputre.png
 (defun weiss-org-insert-image (pic-name command &optional img-attr)
   "insert image to org"
@@ -483,6 +482,8 @@ Return non-nil if the window was shrunk, nil otherwise."
       (sit-for 0.1)
       )
     (rename-file old-name new-name)
+    (end-of-line)
+    (insert "\n")
     (when img-attr
       (insert "#+ATTR_org: :width 600\n")
       )
@@ -725,7 +726,41 @@ Return non-nil if the window was shrunk, nil otherwise."
   (:mode 'org-mode)
   ("t i" org-roam-insert)
   ("t r" org-roam)
+  ("t j"
+   (
+    ("t" org-roam-tag-add)
+    ("n" org-roam-capture)
+    ("s" weiss-org-roam-copy-heading-link)    
+    ))
+
   :config
+  (defun weiss-org-roam--title-to-slug (title)
+    "add Umlaut convert"
+    (let ((l '(
+               ("ä" . "ae")
+               ("ö" . "oe")
+               ("ü" . "ue")
+               ("ß" . "ss")
+               )
+             )
+          )
+      (dolist (x l title) 
+        (setq title (replace-regexp-in-string (car x) (cdr x) title))
+        )      
+      )
+    (org-roam--title-to-slug title)
+    )
+  (setq org-roam-title-to-slug-function 'weiss-org-roam--title-to-slug)
+  (defun weiss-org-roam-copy-heading-link ()
+    "copy the current heading link in roam format"
+    (interactive)
+    (let ((id (org-id-get-create))
+          (title (read-string "Description: " (substring-no-properties (org-get-heading t t t t)) ))
+          )
+      (kill-new (format " [[id:%s][%s]]" id title))
+      )
+    )
+
   ;; open link from roam direkt in browser
   (with-no-warnings
     (defun weiss-org-link-open-as-file (path arg)
@@ -763,6 +798,7 @@ This function is meant to be used as a possible tool for
 
 
   (add-to-list 'ivy-initial-inputs-alist '(org-roam-find-file . "^"))
+  (add-to-list 'ivy-initial-inputs-alist '(org-roam-insert . "^"))
   (defun weiss-org-roam--prepend-tag-string (str tags)
     "Prepend TAGS to STR."
     (concat
@@ -796,30 +832,30 @@ This function is meant to be used as a possible tool for
   (setq org-roam-capture-templates
         '(
           ("d" "default" plain (function org-roam-capture--get-point)
-           "* ${title}\n\n** %?"
+           "* ${title}\n** %?"
            :file-name "Ʀ${slug}_%<%Y%m%d%H>"
-           :head "#+title: ${title}\n#+roam_alias:\n#+roam_tags:\n\n")
+           :head "#+title: ${title}\n#+roam_alias:\n#+roam_tags:\n")
           ("p" "project" plain (function org-roam-capture--get-point)
-           "* ${title}\n\n** link:\n\n*** \n\n** %?"
+           "* ${title}\n** link:\n*** \n** %?"
            :file-name "ƦProjecct-${slug}_%<%Y%m%d%H>"
-           :head "#+title: Project-${title}\n#+roam_alias: p-${title}\n#+roam_tags: project \n\n")
+           :head "#+title: Project-${title}\n#+roam_alias: p-${slug}\n#+roam_tags: project \n")
           ("n" "note" plain (function org-roam-capture--get-point)
-           "* ${title}\n\n %?"
+           "* ${title}\n %?"
            :file-name "ƦNote-${slug}_%<%Y%m%d%H>"
-           :head "#+title: note-${title}\n#+roam_alias: n-${title}\n#+roam_tags: note \n\n")
+           :head "#+title: note-${title}\n#+roam_alias: n-${slug}\n#+roam_tags: note \n")
           ("t" "tutorial" plain (function org-roam-capture--get-point)
-           "* [[file:ƦUseful-commands-${title}_%<%Y%m%d%H>.org][useful commands]]\n* link\n** \n\n%?"
+           "* [[file:ƦUseful-commands-${title}_%<%Y%m%d%H>.org][useful commands]]\n* link\n** \n%?"
            :file-name "ƦTutorial-${slug}_%<%Y%m%d%H>"
-           :head "#+title: Tutorial-${title}\n#+roam_alias: t-${title}\n#+roam_tags: tutorial f-${title}\n\n")
+           :head "#+title: Tutorial-${title}\n#+roam_alias: t-${slug}\n#+roam_tags: tutorial f-${slug}\n")
           ("c" "useful commands" plain (function org-roam-capture--get-point)
            "%?"
            :file-name "ƦUseful-commands-${slug}_%<%Y%m%d%H>"
-           :head "#+title: Useful-commands-${title}\n#+roam_alias: uc-${title}\n#+roam_tags: useful-commands f-${title}\n\n")
+           :head "#+title: Useful-commands-${title}\n#+roam_alias: uc-${slug}\n#+roam_tags: useful-commands f-${slug}\n")
 
           ("l" "link" plain (function org-roam-capture--get-point)
            "%?"
            :file-name "Ʀlink:${slug}"
-           :head "#+title: ${title}\n#+roam_alias: l-${title}\n#+roam_key: %c\n\n"
+           :head "#+title: ${title}\n#+roam_alias: l-${slug}\n#+roam_key: %c\n"
            )
           )
         )
@@ -832,6 +868,12 @@ This function is meant to be used as a possible tool for
           org-roam-server-network-label-truncate t
           org-roam-server-network-label-truncate-length 60
           org-roam-server-network-label-wrap-length 20))
+  (use-package org-transclusion
+    ;; :quelpa (org-transclusion 
+    ;;          :fetcher github 
+    ;;          :repo nobiot/org-transclusion)
+    :ensure nil
+    )
   )
 ;; org-roam:1 ends here
 

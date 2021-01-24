@@ -275,12 +275,28 @@ otherwise, go to next special position
               (`link
                (let* ((lineage (org-element-lineage context '(link) t))
                       (path (org-element-property :path lineage)))
-                 (if (or (equal (org-element-property :type lineage) "img")
-                         (and path (image-type-from-file-name path)))
-                     (+org--toggle-inline-images-in-subtree
-                      (org-element-property :begin lineage)
-                      (org-element-property :end lineage))
-                   (org-open-at-point))))
+                 (cond
+                  ((or (equal (org-element-property :type lineage) "img")
+                       (and path (image-type-from-file-name path)))
+                   (+org--toggle-inline-images-in-subtree
+                    (org-element-property :begin lineage)
+                    (org-element-property :end lineage))
+                   )
+                  ((and
+                    (ignore-errors (string-prefix-p "Ʀ" (file-name-nondirectory (buffer-file-name))))
+                    (not (one-window-p)))
+                   (delete-other-windows)
+                   (org-open-at-point)
+                   (split-window-below)
+                   (org-mark-ring-goto)
+                   (beginning-of-line)
+                   (recenter nil t)
+                   )
+                  (t
+                   (org-open-at-point)                   
+                   )
+                  )
+                 ))
               (_ ignore)
               )
             (goto-char pt)
