@@ -460,7 +460,7 @@
 (defun weiss-insert-date()
   "When the time now is 0-4 AM, insert yesterday's date"
   (interactive)
-  (if (< (string-to-number (format-time-string "%H")) 4)
+  (if (weiss-is-today)
       (let ((date (format "%s%s" (- (string-to-number (format-time-string "%d")) 1) (format-time-string ".%m.%Y"))))
         (if (< (length date) 10)
             (insert (concat "0" date))
@@ -1952,6 +1952,11 @@ Version 2015-10-14"
 ;; misc
 
 ;; [[file:../emacs-config.org::*misc][misc:1]]
+(defun weiss-is-today ()
+  "return `t' if now is before 4AM"
+  (< (string-to-number (format-time-string "%H")) 4)
+  )
+
 ;; comes from https://stackoverflow.com/questions/14489848/emacs-name-of-current-local-keymap
 (defun keymap-symbol (keymap)
   "Return the symbol to which KEYMAP is bound, or nil if no such symbol exists."

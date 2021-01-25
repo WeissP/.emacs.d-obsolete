@@ -103,6 +103,7 @@
  org-agenda-prefix-format "%t %s " ;hide files name
  org-todo-keywords '((sequence "INPROGRESS(i)" "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c@)"))
  ;; (sequence "⚑(T)" "🏴(I)" "❓(H)" "|" "✔(D)" "✘(C)"))
+ org-extend-today-until 4
  org-cycle-max-level 15
  org-agenda-skip-scheduled-if-done t
  org-hide-leading-stars nil
@@ -751,7 +752,11 @@ Return non-nil if the window was shrunk, nil otherwise."
                       org-roam-directory
                       "/"
                       org-roam-dailies-directory
-                      (format-time-string "d-%Y-%m-%d") ".org"))
+                      (if (< (string-to-number (format-time-string "%H")) 4)
+                          (format-time-string "d-%Y-%m-%d" (time-subtract (current-time) (* 24 3600)))                          
+                        (format-time-string "d-%Y-%m-%d")
+                        )
+                      ".org"))
            (org-capture-templates
             `(("d" "done" entry (file+headline ,filename ,state)
                ,content))
@@ -917,7 +922,7 @@ This function is meant to be used as a possible tool for
            :head "#+title: Daily-%<%Y-%m-%d>\n#+roam_tags: Daily\n"
            :olp ("Fleeting notes")
            )
-          ("Journey" "Journey" entry #'org-roam-capture--get-point
+          ("j" "Journey" entry #'org-roam-capture--get-point
            "* %?"
            :file-name "daily/d-%<%Y-%m-%d>"
            :head "#+title: Daily-%<%Y-%m-%d>\n#+roam_tags: Daily\n"
