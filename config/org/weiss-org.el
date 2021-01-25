@@ -99,7 +99,7 @@
 (setq
  org-directory "~/Documents/OrgFiles/"
  ;; org-agenda-files '("/home/weiss/Documents/OrgFiles/calendar.org" "/home/weiss/Documents/OrgFiles/todo.org")
- org-agenda-files '("/home/weiss/Documents/OrgFiles/todo.org")
+ org-agenda-files '("/home/weiss/Documents/OrgFiles/todo.org" "/home/weiss/Documents/Org-roam/daily/")
  org-agenda-prefix-format "%t %s " ;hide files name
  org-todo-keywords '((sequence "INPROGRESS(i)" "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c@)"))
  ;; (sequence "⚑(T)" "🏴(I)" "❓(H)" "|" "✔(D)" "✘(C)"))
@@ -859,6 +859,28 @@ This function is meant to be used as a possible tool for
            )
           )
         )
+  (setq org-roam-dailies-capture-templates
+        '(
+          ("t" "Todo" entry #'org-roam-capture--get-point
+           "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (current-time))"
+           :file-name "daily/d-%<%Y-%m-%d>"
+           :head "#+title: Daily-%<%Y-%m-%d>\n#+roam_tags: Daily\n"
+           :olp ("Todo")
+           )
+          ("f" "Fleeting notes" entry #'org-roam-capture--get-point
+           "* TODO %?"
+           :file-name "daily/d-%<%Y-%m-%d>"
+           :head "#+title: Daily-%<%Y-%m-%d>\n#+roam_tags: Daily\n"
+           :olp ("Fleeting notes")
+           )
+          ("Journey" "Journey" entry #'org-roam-capture--get-point
+           "* %?"
+           :file-name "daily/d-%<%Y-%m-%d>"
+           :head "#+title: Daily-%<%Y-%m-%d>\n#+roam_tags: Daily\n"
+           :olp ("Journey")
+           )
+          ))
+
   (use-package org-roam-server
     :config
     (setq org-roam-server-host "127.0.0.1"

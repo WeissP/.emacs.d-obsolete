@@ -3048,6 +3048,37 @@
                          ))
 
   :config
+  (defun weiss-get-telega-marked-text ()
+    "Delete marked messages in chatbuf.
+If `\\[universal-argument]' is specified, then kill
+messages (delete for me only), otherwise revoke message (delete
+for everyone).
+If chatbuf is supergroups, channels or secret chat, then always revoke."
+    (interactive)
+    (when-let ((marked-messages (or (reverse telega-chatbuf--marked-messages)
+                                    (when-let ((msg-at-point (telega-msg-at (point))))
+                                      (list msg-at-point)))))
+      ;; (message ": %s" (length marked-messages))
+      (mapconcat (lambda (msg) (telega-tl-str (plist-get msg :content) :text)) marked-messages "\n\n")    
+      ))
+
+  (defun weiss-roam-telega-capture ()
+    "DOCSTRING"
+    (interactive)
+    (let* ((content (format "* TODO %%?\n%s" (weiss-get-telega-marked-text)))
+           (org-roam-dailies-capture-templates
+            `(
+              ("f" "Fleeting notes" entry #'org-roam-capture--get-point
+               ,content
+               :file-name "daily/d-%<%Y-%m-%d>"
+               :head "#+title: Daily-%<%Y-%m-%d>\n#+roam_tags: Daily\n"
+               :olp ("Fleeting notes")
+               )             
+              )
+            ))
+      (org-roam-dailies-capture-today)
+      ))
+  (define-key telega-chat-mode-map [remap org-roam-dailies-capture-today] #'weiss-roam-telega-capture)
   (setq telega-open-file-function 'org-open-file)
   ;; (setq telega-server-libs-prefix "/usr/lib")
   (telega-notifications-mode 1)
@@ -3208,7 +3239,7 @@
                 )
           )
          ("d" (
-               ;; ("a"  weiss-custom-daily-agenda)
+               ("a"  weiss-custom-daily-agenda)
                ("b"  weiss-save-current-content)
                ("c"  org-roam-capture)
                ("d"  weiss-switch-and-bookmarks-search)
@@ -3219,7 +3250,13 @@
                ("n"  xah-new-empty-buffer)
                ("o"  xah-open-file-at-cursor)
                ("s" yasdcv-translate-at-point)
-               ("t"  telega)
+               ("1"  org-roam-dailies-capture-today)
+               ("2"  org-roam-dailies-capture-tomorrow)
+               ("3"  org-roam-dailies-capture-date)
+               ("8"  org-roam-dailies-find-date)
+               ("9"  org-roam-dailies-find-yesterday)
+               ("0"  org-roam-dailies-find-today)
+               ("-"  org-roam-dailies-find-tomorrow)
                ("w"  xah-open-in-external-app)
                ))
          ("e" (
@@ -3322,6 +3359,7 @@
          ("m"  dired-jump)
          ("n"  end-of-buffer)
          ("o" (
+               ("t"  telega)
                ("v" yank-rectangle)
                ("n" mc/mark-next-like-this)
                ("a" mc/mark-all-like-this)

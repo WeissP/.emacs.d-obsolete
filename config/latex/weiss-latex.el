@@ -26,7 +26,7 @@
   ;; :load-path "/home/weiss/.emacs.d/local-package/"
   ;; :quelpa (org-edit-latex :fetcher github
   ;; :repo "et2010/org-edit-latex")
-  :hook (org-mode . org-edit-latex-mode)
+  ;; :hook (org-mode . org-edit-latex-mode)
   ;; :config
   ;; (setq org-edit-latex-inline-beg-regexp ".* $^")
   )

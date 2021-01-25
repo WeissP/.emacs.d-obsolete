@@ -42,7 +42,7 @@
 (defun weiss-variable-mode-start ()
   "DOCSTRING"
   (interactive)
-  (unless ryo-modal-mode
+  (when (and (derived-mode-p 'prog-mode) (not ryo-modal-mode)) 
     (weiss-variable-mode 1)
     (setq-local cursor-type 'hbar)
     )  
