@@ -1097,7 +1097,7 @@
       ("clone-indirect-buffer" "(clone-indirect-buffer ▮)" weiss--ahf)
       ("clrhash" "(clrhash ▮)" weiss--ahf)
       ("compare-strings" "(compare-strings ▮)" weiss--ahf)
-      ("concat" "(concat \"▮\" \"\")" weiss--ahf)
+      ("concat" "(concat ▮)" weiss--ahf)
       ("cond" "(cond\n(▮ )\n\n)" weiss--ahf-indent)
       ("condition-case" "(condition-case \n▮\n)" weiss--ahf-indent)
       ("cons" "(cons ▮)" weiss--ahf)
@@ -1916,7 +1916,7 @@
    (lambda (input)
      (when (and (executable-find "rg")
                 (> (length input) 1))
-       (let ((search-dir snails-start-buffer-dir-path)
+       (let ((search-dir (expand-file-name snails-start-buffer-dir-path))
              (search-input input)
              (search-info (snails-pick-search-info-from-input input)))
          ;; (message "search-dir %s" search-dir)
@@ -1931,34 +1931,43 @@
 
          ;; Search.
          (when search-dir
-           (list "rg" "--no-heading" "--column" "--color" "never" "--max-columns" "300" search-input search-dir)
+           (list "rg" "--no-heading" "--column" "--color" "never" "--max-columns" "300" "--smart-case" search-input search-dir)
            ))))
-
-   ;; :candidate-filter
-   ;; (lambda (candidate-list)
-   ;;   (let (candidates)
-   ;;     (catch 'search-end
-   ;;       (dolist (candidate candidate-list)
-   ;;         (let ((candidate-items (split-string candidate ":")))
-   ;;           (snails-add-candiate
-   ;;            'candidates
-   ;;            ;; Truncate search file path to make sure search content in visible area.
-   ;;            (format "%s:%s"
-   ;;                    (string-truncate-left (nth 0 candidate-items) snails-backend-rg-candidate-truncate-length)
-   ;;                    (string-join (rest candidate-items) ":"))
-   ;;            candidate))
-
-   ;;         (when (> (length candidates) snails-backend-rg-filter-number)
-   ;;           (throw 'search-end nil))))
-   ;;     candidates))
 
    :candidate-filter
    (lambda (candidate-list)
      (let (candidates)
-       (dolist (candidate candidate-list)
-         ;; (snails-add-candiate 'candidates (weiss-reduce-file-path candidate) candidate))
-         (snails-add-candiate 'candidates candidate candidate))
+       (catch 'search-end
+         (dolist (candidate candidate-list)
+           ;; (message "before: %s" candidate)
+         
+           (let ((candidate-items (split-string candidate ":")))
+             (snails-add-candiate
+              'candidates
+              ;; Truncate search file path to make sure search content in visible area.
+              (format "%s:%s"
+                      (string-truncate-left
+                       (weiss-reduce-file-path (string-remove-prefix (or (expand-file-name snails-start-buffer-dir-path) "") (nth 0 candidate-items)))
+                       snails-backend-rg-candidate-truncate-length)
+                      (string-join (rest candidate-items) ":"))
+              candidate))
+
+           (when (> (length candidates) snails-backend-rg-filter-number)
+             (throw 'search-end nil))))
        candidates))
+
+   ;; :candidate-filter
+   ;; (lambda (candidate-list)
+   ;;   (let (candidates)
+   ;;     (dolist (candidate candidate-list)
+   ;;       (snails-add-candiate
+   ;;        'candidates
+ 
+   ;;        candidate
+   ;;        ;; (string-remove-prefix "/home/weiss" candidate)
+   ;;        candidate)))
+   ;;   ;; (snails-add-candiate 'candidates candidate candidate))
+   ;;   candidates)
 
    :candidate-icon
    (lambda (candidate)
@@ -9058,7 +9067,6 @@
                           (or (org-at-heading-p) (looking-at-p weiss-org-sp-sharp-begin))) cmd))))
     (weiss-overriding-ryo-define-key weiss-org-sp-mode-map key-cmd-list fun)  
     )
-
 #+end_src
 *** predicate
 
@@ -9129,7 +9137,6 @@
           (weiss-org-sp-backward)
         ))  
     )
-
 
   (defun weiss-org-sp--prev-property ()
     "Move to the previous property line."
@@ -9226,24 +9233,6 @@
       )  
     )
 
-  ;; (defun weiss-org-sp-right ()
-  ;;   "Move right. If cursor is at the begin of #+ block, edit it"
-  ;;   (interactive)
-  ;;   (if (looking-at-p weiss-org-sp-sharp-begin)
-  ;;       (org-edit-special)  
-  ;;     (let ((pt (point))
-  ;;           result)
-  ;;       (save-restriction
-  ;;         (org-narrow-to-subtree)
-  ;;         (forward-char)
-  ;;         (if (re-search-forward weiss-org-sp-regex nil t)
-  ;;             (progn
-  ;;               (goto-char (match-beginning 0))
-  ;;               (setq result t))
-  ;;           (goto-char pt)))
-  ;;       (weiss-org-sp--ensure-visible)
-  ;;       result))
-  ;;   )
   (defun weiss-org-sp-right ()
     "If cursor is at the begin of #+ block, edit it, otherwise go to the child element, if there is no more child:
   if on a: 
@@ -9263,6 +9252,7 @@
               (progn
                 (goto-char (match-beginning 0))
                 (setq result t))
+            (widen)
             (re-search-forward " ")
             (let* ((context (org-element-context))
                    (type (org-element-type context)))
@@ -9308,7 +9298,8 @@
               (goto-char pt)
               )))
         (weiss-org-sp--ensure-visible)
-        result))
+        result
+        ))
     )
 
 
@@ -9392,6 +9383,10 @@
                          (point-max)))
              (signal (car e) (cdr e))))))))
 #+end_src
+
+#+RESULTS:
+: weiss-org-sp--bounds-subtree
+
 *** addvices
 #+begin_src elisp
   (advice-add 'xah-open-file-at-cursor
@@ -9594,7 +9589,7 @@
   ("k" previous-line :first '(deactivate-mark))
   ("u" weiss-org-preview-latex-and-image)
   ("n" weiss-org-search)
-  ("x" weiss-org-sp-switch)
+  ("x" weiss-org-exchange-point-or-switch-to-sp)
   ("X" org-refile)
   ("t" (
         ("a" weiss-org-screenshot)
@@ -9668,6 +9663,15 @@
 #+end_src
 *** functions
 #+begin_src elisp
+  (defun weiss-org-exchange-point-or-switch-to-sp ()
+    "exchange point if region is aktiv otherwise switch to `weiss-org-sp-mode'"
+    (interactive)
+    (if (use-region-p)
+        (exchange-point-and-mark)      
+      (weiss-org-sp-switch)
+      )
+    )
+
   (defun weiss-org-refile (arg)
     "normally only refile current file, refile all files in org-refile-targets with current-prefix-arg"
     (interactive "p")
@@ -9829,10 +9833,12 @@
         (let ((current-prefix-arg '(64)))
           (call-interactively 'org-latex-preview) 
           (org-remove-inline-images)
+          (when org-xournal-mode (org-xournal-hide-all))
           )
       (let ((current-prefix-arg '(16)))
         (call-interactively 'org-latex-preview)
         (org-display-inline-images))
+          (when org-xournal-mode (org-xournal-show-current-link))
       )
     )
 
@@ -10119,6 +10125,34 @@
       ))
 
     :config
+    (defun weiss-roam--add-to-today-daily (content state)
+      "add `content'  to the `state' heading in today daily file"
+      (let* ((filename (concat
+                        org-roam-directory
+                        "/"
+                        org-roam-dailies-directory
+                        (format-time-string "d-%Y-%m-%d") ".org"))
+             (org-capture-templates
+              `(("d" "done" entry (file+headline ,filename ,state)
+                 ,content))
+              ))
+        (org-capture nil (kbd "d"))
+        ))
+
+    (defun weiss-roam-copy-done-item-to-daily (change-plist)
+      "add current the link of Done or Cancelled item to daily file"
+      (interactive)
+      (let ((state (plist-get change-plist :to))
+            )
+        (when (or (string= state "DONE") (string= state "CANCELLED"))
+          (weiss-roam--add-to-today-daily
+           (concat "* " (weiss-org-roam-copy-heading-link t))
+           (capitalize state))
+          )      
+        )
+      )
+    (add-hook 'org-trigger-hook 'weiss-roam-copy-done-item-to-daily)
+
     (defun weiss-org-roam--title-to-slug (title)
       "add Umlaut convert"
       (let ((l '(
@@ -10136,11 +10170,16 @@
       (org-roam--title-to-slug title)
       )
     (setq org-roam-title-to-slug-function 'weiss-org-roam--title-to-slug)
-    (defun weiss-org-roam-copy-heading-link ()
+    (defun weiss-org-roam-copy-heading-link (&optional without-asking)
       "copy the current heading link in roam format"
       (interactive)
       (let ((id (org-id-get-create))
-            (title (read-string "Description: " (substring-no-properties (org-get-heading t t t t)) ))
+            (title
+             (if without-asking
+                 (substring-no-properties (org-get-heading t t t t))
+               (read-string "Description: " (substring-no-properties (org-get-heading t t t t)))               
+               )
+             )
             )
         (kill-new (format " [[id:%s][%s]]" id title))
         )
@@ -10247,7 +10286,7 @@
     (setq org-roam-dailies-capture-templates
           '(
             ("t" "Todo" entry #'org-roam-capture--get-point
-             "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (current-time))"
+             "* TODO %?\nSCHEDULED: <%<%Y-%m-%d %a>>"
              :file-name "daily/d-%<%Y-%m-%d>"
              :head "#+title: Daily-%<%Y-%m-%d>\n#+roam_tags: Daily\n"
              :olp ("Todo")
@@ -10280,6 +10319,40 @@
       ;;          :fetcher github 
       ;;          :repo nobiot/org-transclusion)
       :ensure nil
+      )
+    )
+#+end_src
+*** org-xournal
+#+begin_src elisp
+  (use-package org-xournal
+    :quelpa (org-xournal 
+             :fetcher github 
+             :repo yuchen-lea/org-xournal)
+    :hook (org-mode . org-xournal-mode)
+    :config
+    (use-package org-link-edit
+      :quelpa (org-link-edit 
+               :fetcher github 
+               :repo kyleam/org-link-edit)
+      )
+    (setq
+     org-xournal-use-relative-filename nil
+     org-xournal-note-dir "/home/weiss/Documents/OrgFiles/Bilder/xournal/xopp/"  ;; xopp 笔记存储目录
+     org-xournal-template-dir "/home/weiss/Documents/OrgFiles/Bilder/xournal/" ;; xournal 目标文件存储目录
+     org-xournal-default-template-name "Template.xopp" ;; 默认笔记模版名称，应该位于 org-xournal-template-dir
+     org-xournal-bin "/usr/bin/xournalpp" ;; xournal 执行文件
+     org-xournal-process-picture-functon #'weiss-org-xournal-process-picture-functon
+     )
+    (defun weiss-org-xournal-process-picture-functon (png-path)
+      "add resize"
+      (interactive)
+      ;; (let ((scale 22)
+      ;;       )
+      ;;   (message "%sx%s" (* 29.7 scale) (* 21 scale))
+      ;;   (kill-new (format "%sx%s" (round (* 29.7 scale)) (* 21 scale)))
+      ;;   )
+      (call-process-shell-command (format "convert %s -resize 653x462 -quality 5%%  -trim +repage %s" png-path png-path))
+      ;; (async-shell-command (format "convert %s -resize 653x462 -quality 1%%  -trim +repage %s" png-path png-path))
       )
     )
 #+end_src
@@ -10368,7 +10441,6 @@
 ** dependencies
 *** weiss-select-mode
 #+begin_src elisp :tangle keybinding/weiss-select-mode.el :mkdirp yes
-
   (defvar weiss-select-mode-p nil "nil")
 
   (setq mark-select-mode-color "#ffcfe4")
@@ -10382,13 +10454,13 @@
       )
     )
 
-  (defun weiss-select-mode-turn-off ()
+  (defun weiss-select-mode-turn-off (&optional o)
     "turn off weiss select mode"
     (interactive)
     (when weiss-select-mode (weiss-select-mode -1))  
     )
 
-  (defun weiss-select-mode-turn-on ()
+  (defun weiss-select-mode-turn-on (&optional o)
     "turn on weiss select mode"
     (interactive)
     (unless weiss-select-mode (weiss-select-mode 1))  
@@ -10403,6 +10475,7 @@
   (advice-add 'xah-backward-left-bracket :after #'weiss-select-mode-turn-on)
   (advice-add 'xah-select-block :after #'weiss-select-mode-turn-on)
   (advice-add 'weiss-select-sexp :after #'weiss-select-mode-turn-on)
+  (advice-add 'exchange-point-and-mark :after #'weiss-select-mode-turn-on)
 
   (defun weiss-deactivate-mark-unless-in-select-mode (&optional a b c)
     "deactivate mark unless in select mode"
@@ -10478,10 +10551,6 @@
 
   (provide 'weiss-select-mode)
       ;;; weiss-select-mode.el ends here
-
-
-
-
 #+end_src 
 *** weiss-variable-mode
 #+begin_src elisp
@@ -11646,9 +11715,9 @@
           (push-mark nil t)
           (back-to-indentation)
           (setq mark-active t)
+          (weiss-select-mode-turn-on)
           )
-      (exchange-point-and-mark)
-      (weiss-select-mode-turn-on)  
+      (exchange-point-and-mark)  
       )
     )
 
@@ -11701,23 +11770,23 @@
 
 
   (defvar weiss-non-stop-delimiters-list '(";" "	" " " "\n" "'" "\\"))
-  (defvar weiss-stop-delimiters-list '("." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
+  (defvar weiss-stop-delimiters-list '(":" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
 
   ;; need mode-local.el
   (setq-mode-local
    python-mode
    weiss-non-stop-delimiters-list '(";" "	" " " "\n" "'" "\\")
-   weiss-stop-delimiters-list '(":" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
+   weiss-stop-delimiters-list '(":" ":" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
 
   (setq-mode-local
    org-mode
    weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
-   weiss-stop-delimiters-list '("&" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "|"))
+   weiss-stop-delimiters-list '(":" "&" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "|"))
 
   (setq-mode-local
    latex-mode
    weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
-   weiss-stop-delimiters-list '("&" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
+   weiss-stop-delimiters-list '(":" "&" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
 
   (setq-mode-local
    sgml-mode
@@ -11727,7 +11796,7 @@
   (setq-mode-local
    java-mode
    weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
-   weiss-stop-delimiters-list '(";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
+   weiss-stop-delimiters-list '(":" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
 
   (defun weiss--check-two-char (isForward firstList &optional secondList)
     "Check two char"

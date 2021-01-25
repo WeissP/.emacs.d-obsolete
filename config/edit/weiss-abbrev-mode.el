@@ -822,7 +822,7 @@ Version 2016-10-24"
     ("clone-indirect-buffer" "(clone-indirect-buffer ▮)" weiss--ahf)
     ("clrhash" "(clrhash ▮)" weiss--ahf)
     ("compare-strings" "(compare-strings ▮)" weiss--ahf)
-    ("concat" "(concat \"▮\" \"\")" weiss--ahf)
+    ("concat" "(concat ▮)" weiss--ahf)
     ("cond" "(cond\n(▮ )\n\n)" weiss--ahf-indent)
     ("condition-case" "(condition-case \n▮\n)" weiss--ahf-indent)
     ("cons" "(cons ▮)" weiss--ahf)

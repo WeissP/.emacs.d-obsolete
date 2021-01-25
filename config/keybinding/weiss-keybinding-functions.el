@@ -901,9 +901,9 @@ Version 2018-06-04"
         (push-mark nil t)
         (back-to-indentation)
         (setq mark-active t)
+        (weiss-select-mode-turn-on)
         )
-    (exchange-point-and-mark)
-    (weiss-select-mode-turn-on)  
+    (exchange-point-and-mark)  
     )
   )
 
@@ -956,23 +956,23 @@ Version 2018-06-04"
 
 
 (defvar weiss-non-stop-delimiters-list '(";" "	" " " "\n" "'" "\\"))
-(defvar weiss-stop-delimiters-list '("." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
+(defvar weiss-stop-delimiters-list '(":" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
 
 ;; need mode-local.el
 (setq-mode-local
  python-mode
  weiss-non-stop-delimiters-list '(";" "	" " " "\n" "'" "\\")
- weiss-stop-delimiters-list '(":" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
+ weiss-stop-delimiters-list '(":" ":" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
 
 (setq-mode-local
  org-mode
  weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
- weiss-stop-delimiters-list '("&" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "|"))
+ weiss-stop-delimiters-list '(":" "&" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "|"))
 
 (setq-mode-local
  latex-mode
  weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
- weiss-stop-delimiters-list '("&" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
+ weiss-stop-delimiters-list '(":" "&" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
 
 (setq-mode-local
  sgml-mode
@@ -982,7 +982,7 @@ Version 2018-06-04"
 (setq-mode-local
  java-mode
  weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
- weiss-stop-delimiters-list '(";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
+ weiss-stop-delimiters-list '(":" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
 
 (defun weiss--check-two-char (isForward firstList &optional secondList)
   "Check two char"

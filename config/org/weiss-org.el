@@ -109,7 +109,7 @@
  org-indent-mode-turns-on-hiding-stars nil
  org-list-description-max-indent 4
  org-startup-indented t
- org-startup-folded 'fold
+ org-startup-folded t
  org-log-done 'time
  org-fast-tag-selection-single-key t
  org-agenda-include-diary t
@@ -207,7 +207,7 @@
 ("k" previous-line :first '(deactivate-mark))
 ("u" weiss-org-preview-latex-and-image)
 ("n" weiss-org-search)
-("x" weiss-org-sp-switch)
+("x" weiss-org-exchange-point-or-switch-to-sp)
 ("X" org-refile)
 ("t" (
       ("a" weiss-org-screenshot)
@@ -283,6 +283,15 @@
 ;; functions
 
 ;; [[file:../emacs-config.org::*functions][functions:1]]
+(defun weiss-org-exchange-point-or-switch-to-sp ()
+  "exchange point if region is aktiv otherwise switch to `weiss-org-sp-mode'"
+  (interactive)
+  (if (use-region-p)
+      (exchange-point-and-mark)      
+    (weiss-org-sp-switch)
+    )
+  )
+
 (defun weiss-org-refile (arg)
   "normally only refile current file, refile all files in org-refile-targets with current-prefix-arg"
   (interactive "p")
@@ -444,10 +453,12 @@ Return non-nil if the window was shrunk, nil otherwise."
       (let ((current-prefix-arg '(64)))
         (call-interactively 'org-latex-preview) 
         (org-remove-inline-images)
+        (when org-xournal-mode (org-xournal-hide-all))
         )
     (let ((current-prefix-arg '(16)))
       (call-interactively 'org-latex-preview)
       (org-display-inline-images))
+        (when org-xournal-mode (org-xournal-show-current-link))
     )
   )
 
@@ -734,6 +745,34 @@ Return non-nil if the window was shrunk, nil otherwise."
     ))
 
   :config
+  (defun weiss-roam--add-to-today-daily (content state)
+    "add `content'  to the `state' heading in today daily file"
+    (let* ((filename (concat
+                      org-roam-directory
+                      "/"
+                      org-roam-dailies-directory
+                      (format-time-string "d-%Y-%m-%d") ".org"))
+           (org-capture-templates
+            `(("d" "done" entry (file+headline ,filename ,state)
+               ,content))
+            ))
+      (org-capture nil (kbd "d"))
+      ))
+
+  (defun weiss-roam-copy-done-item-to-daily (change-plist)
+    "add current the link of Done or Cancelled item to daily file"
+    (interactive)
+    (let ((state (plist-get change-plist :to))
+          )
+      (when (or (string= state "DONE") (string= state "CANCELLED"))
+        (weiss-roam--add-to-today-daily
+         (concat "* " (weiss-org-roam-copy-heading-link t))
+         (capitalize state))
+        )      
+      )
+    )
+  (add-hook 'org-trigger-hook 'weiss-roam-copy-done-item-to-daily)
+
   (defun weiss-org-roam--title-to-slug (title)
     "add Umlaut convert"
     (let ((l '(
@@ -751,11 +790,16 @@ Return non-nil if the window was shrunk, nil otherwise."
     (org-roam--title-to-slug title)
     )
   (setq org-roam-title-to-slug-function 'weiss-org-roam--title-to-slug)
-  (defun weiss-org-roam-copy-heading-link ()
+  (defun weiss-org-roam-copy-heading-link (&optional without-asking)
     "copy the current heading link in roam format"
     (interactive)
     (let ((id (org-id-get-create))
-          (title (read-string "Description: " (substring-no-properties (org-get-heading t t t t)) ))
+          (title
+           (if without-asking
+               (substring-no-properties (org-get-heading t t t t))
+             (read-string "Description: " (substring-no-properties (org-get-heading t t t t)))               
+             )
+           )
           )
       (kill-new (format " [[id:%s][%s]]" id title))
       )
@@ -862,7 +906,7 @@ This function is meant to be used as a possible tool for
   (setq org-roam-dailies-capture-templates
         '(
           ("t" "Todo" entry #'org-roam-capture--get-point
-           "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (current-time))"
+           "* TODO %?\nSCHEDULED: <%<%Y-%m-%d %a>>"
            :file-name "daily/d-%<%Y-%m-%d>"
            :head "#+title: Daily-%<%Y-%m-%d>\n#+roam_tags: Daily\n"
            :olp ("Todo")
@@ -898,6 +942,42 @@ This function is meant to be used as a possible tool for
     )
   )
 ;; org-roam:1 ends here
+
+;; org-xournal
+
+;; [[file:../emacs-config.org::*org-xournal][org-xournal:1]]
+(use-package org-xournal
+  :quelpa (org-xournal 
+           :fetcher github 
+           :repo yuchen-lea/org-xournal)
+  :hook (org-mode . org-xournal-mode)
+  :config
+  (use-package org-link-edit
+    :quelpa (org-link-edit 
+             :fetcher github 
+             :repo kyleam/org-link-edit)
+    )
+  (setq
+   org-xournal-use-relative-filename nil
+   org-xournal-note-dir "/home/weiss/Documents/OrgFiles/Bilder/xournal/xopp/"  ;; xopp 笔记存储目录
+   org-xournal-template-dir "/home/weiss/Documents/OrgFiles/Bilder/xournal/" ;; xournal 目标文件存储目录
+   org-xournal-default-template-name "Template.xopp" ;; 默认笔记模版名称，应该位于 org-xournal-template-dir
+   org-xournal-bin "/usr/bin/xournalpp" ;; xournal 执行文件
+   org-xournal-process-picture-functon #'weiss-org-xournal-process-picture-functon
+   )
+  (defun weiss-org-xournal-process-picture-functon (png-path)
+    "add resize"
+    (interactive)
+    ;; (let ((scale 22)
+    ;;       )
+    ;;   (message "%sx%s" (* 29.7 scale) (* 21 scale))
+    ;;   (kill-new (format "%sx%s" (round (* 29.7 scale)) (* 21 scale)))
+    ;;   )
+    (call-process-shell-command (format "convert %s -resize 653x462 -quality 5%%  -trim +repage %s" png-path png-path))
+    ;; (async-shell-command (format "convert %s -resize 653x462 -quality 1%%  -trim +repage %s" png-path png-path))
+    )
+  )
+;; org-xournal:1 ends here
 
 ;; misc packages
 

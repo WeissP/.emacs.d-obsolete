@@ -15,13 +15,13 @@
     )
   )
 
-(defun weiss-select-mode-turn-off ()
+(defun weiss-select-mode-turn-off (&optional o)
   "turn off weiss select mode"
   (interactive)
   (when weiss-select-mode (weiss-select-mode -1))  
   )
 
-(defun weiss-select-mode-turn-on ()
+(defun weiss-select-mode-turn-on (&optional o)
   "turn on weiss select mode"
   (interactive)
   (unless weiss-select-mode (weiss-select-mode 1))  
@@ -36,6 +36,7 @@
 (advice-add 'xah-backward-left-bracket :after #'weiss-select-mode-turn-on)
 (advice-add 'xah-select-block :after #'weiss-select-mode-turn-on)
 (advice-add 'weiss-select-sexp :after #'weiss-select-mode-turn-on)
+(advice-add 'exchange-point-and-mark :after #'weiss-select-mode-turn-on)
 
 (defun weiss-deactivate-mark-unless-in-select-mode (&optional a b c)
   "deactivate mark unless in select mode"
