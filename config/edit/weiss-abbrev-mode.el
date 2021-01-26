@@ -811,6 +811,7 @@ Version 2016-10-24"
     ("call-interactively" "(call-interactively '▮)" weiss--ahf)
     ("called-interactively-p" "(called-interactively-p '▮)" weiss--ahf)
     ("car" "(car ▮)" weiss--ahf)
+    ("cadr" "(cadr ▮)" weiss--ahf)
     ("catch" "(catch '▮)" weiss--ahf)
     ("cdr" "(cdr ▮)" weiss--ahf)
     ("char-after" "(char-after ▮)" weiss--ahf)

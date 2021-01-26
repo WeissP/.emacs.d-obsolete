@@ -19,7 +19,8 @@
                 (dired-utils-format-information-line-mode)
                 ;; (all-the-icons-dired-mode)
                 (dired-omit-mode)
-                (setq dired-auto-revert-buffer 't)))
+                (setq dired-auto-revert-buffer 't)
+                ))
 ;; hook:1 ends here
 
 ;; keybinding 
@@ -132,6 +133,15 @@
 ;; functions
 
 ;; [[file:../emacs-config.org::*functions][functions:1]]
+(defun weiss-check-cursor-type ()
+  "DOCSTRING"
+  (interactive)
+  (if (eq major-mode 'dired-mode)
+      (setq cursor-type nil)
+    (setq cursor-type t)    
+    )
+  )
+
 (defun ora-ediff-files ()
   (interactive)
   (let ((files (dired-get-marked-files))
@@ -272,6 +282,8 @@
 ;; ui
 
 ;; [[file:../emacs-config.org::*ui][ui:1]]
+(add-to-list 'weiss/after-major-mode-function-list 'weiss-check-cursor-type)
+
 ;; Colourful dired
 (use-package diredfl
   ;; :disabled
@@ -312,8 +324,8 @@
               (forward-line 1)))
         (message "Not display icons because of too many items.")))
     (advice-add #'all-the-icons-dired--refresh :override #'my-all-the-icons-dired--refresh))
-;; :hook (dired-mode . (lambda () (interactive) (message "path: %s" (string-match "x" dired-directory))))
-)
+  ;; :hook (dired-mode . (lambda () (interactive) (message "path: %s" (string-match "x" dired-directory))))
+  )
 ;; ui:1 ends here
 
 ;; misc packages

@@ -96,7 +96,7 @@
   :init 
   (defvar weiss/disable-ryo-list)
   (setq weiss/disable-ryo-list
-        '(magit-mode magit-status-mode magit-revision-mode snails-mode ediff-mode telega-chat-mode telega-root-mode))
+        '(magit-mode magit-status-mode magit-revision-mode snails-mode ediff-mode telega-chat-mode telega-root-mode org-agenda-mode))
 
   (defun weiss-check-ryo ()
     "enable or disable ryo by disable-ryo-list"
@@ -108,7 +108,12 @@
     )
 
   (add-to-list 'weiss/after-buffer-change-function-list 'weiss-check-ryo)
+  (add-to-list 'weiss/after-buffer-change-function-list 'weiss-enable-hl-line)
+  (add-to-list 'weiss/after-buffer-change-function-list 'weiss-check-cursor-type)
+
   (add-to-list 'weiss/after-major-mode-function-list 'weiss-check-ryo)
+  (add-to-list 'weiss/after-major-mode-function-list 'weiss-enable-hl-line)
+  (add-to-list 'weiss/after-major-mode-function-list 'weiss-check-cursor-type)
 
   (setq ryo-modal-cursor-color weiss/cursor-color)
   :config
@@ -130,8 +135,11 @@
 (use-package weiss-overriding-ryo-mode)
 (use-package weiss-origin-mode
   :config
-  (push '(telega-chat-mode . ("<deletechar>")) weiss-origin-keep-keys)
+  (add-to-list 'weiss-origin-keep-keys '(telega-chat-mode . ("<deletechar>")))
+  (add-to-list 'weiss-origin-keep-keys '(org-agenda-mode . ("<deletechar>" "9" "-" "s")))
+
   (let ((hook-list '(
+                     org-agenda-mode-hook
                      magit-status-mode-hook
                      magit-mode-hook
                      telega-chat-mode-hook
@@ -139,8 +147,10 @@
                      image-mode-hook
                      )))
     (dolist (x hook-list)
-      (add-hook x 'weiss-origin-mode))
+      (add-hook x 'weiss-origin-mode-enable))
     )  
+
+
   (defun weiss-enable-origin-mode-only-in-fundamental-mode ()
     "only enable weiss-origin-mode when current major mode is plain fundamental-mode"
     (when (and (not weiss-origin-mode) (eq major-mode 'fundamental-mode))

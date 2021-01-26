@@ -163,6 +163,8 @@
   :config
   (global-anzu-mode +1)
   )
+
+(use-package hl-line)
 ;; highlight:1 ends here
 
 ;; font
@@ -3007,6 +3009,61 @@
                                 )))
 ;; python:1 ends here
 
+;; face
+;; :PROPERTIES:
+;; :header-args: :tangle after-dump/weiss-after-dump.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
+;; :END:
+
+
+;; [[file:../emacs-config.org::*face][face:1]]
+(defface box-hl-line
+  '((t (:inherit nil :extend nil :box (:line-width (-1 . -2) :color "#ededed" :style nil))))
+  "highlight the current line with box"
+  )
+
+;; (set-face-attribute 'box-hl-line nil :inherit nil :box '(:line-width (-1 . -2) :color "#ededed" :style nil) :background nil :extend nil)
+
+(defface normal-hl-line
+  '((t :box nil :background "#f1f1f1" :extend nil))
+  "highlight the current line with background"
+  )
+
+(defface emphasis-hl-line
+  '((t :box nil :background "#ff8d1a" :extend nil))
+  "highlight the current line with background"
+  )
+
+
+(set-face-attribute 'hl-line nil :inherit nil :box nil :background nil :extend nil)
+
+(defun weiss-toggle-hl-line ()
+  "toggle hl line using weiss-enable-hl-line"
+  (interactive)
+  (if hl-line-mode
+      (hl-line-mode -1)
+    (weiss-enable-hl-line)
+    )
+  )
+
+(defun weiss-enable-hl-line ()
+  "change hl line face by major-mode"
+  (interactive)
+  (unless (eq major-mode 'snails-mode)
+    (hl-line-mode -1)
+    (cond
+     (weiss-dired-single-handed-mode
+      (set (make-local-variable 'hl-line-face) 'emphasis-hl-line)
+      )
+     ((eq major-mode 'dired-mode)
+      (set (make-local-variable 'hl-line-face) 'normal-hl-line)
+      )
+     (t (set (make-local-variable 'hl-line-face) 'box-hl-line))
+     )
+    (hl-line-mode 1)
+    )
+  )
+;; face:1 ends here
+
 ;; misc
 
 ;; [[file:../emacs-config.org::*misc][misc:1]]
@@ -3070,7 +3127,7 @@ If chatbuf is supergroups, channels or secret chat, then always revoke."
             `(
               ("f" "Fleeting notes" entry #'org-roam-capture--get-point
                ,content
-               :file-name "daily/d-%<%Y-%m-%d>"
+               :file-name "daily/Ʀd-%<%Y-%m-%d>"
                :head "#+title: Daily-%<%Y-%m-%d>\n#+roam_tags: Daily\n"
                :olp ("Fleeting notes")
                )             
@@ -3247,6 +3304,7 @@ If chatbuf is supergroups, channels or secret chat, then always revoke."
                ("j" yasdcv-translate-input)
                ("l"  list-buffers)
                ("m"  magit-status)
+               ("t"  org-todo-list)
                ("n"  xah-new-empty-buffer)
                ("o"  xah-open-file-at-cursor)
                ("s" yasdcv-translate-at-point)
@@ -3346,7 +3404,7 @@ If chatbuf is supergroups, channels or secret chat, then always revoke."
                ("c"  dired-collapse-mode)
                ;; ("e"  ignore :then ((lambda () (interactive) (unless (featurep 'aweshell) (require 'aweshell))(eshell))) :name "eshell")
                ("e"  eshell)
-               ("h"  global-hl-line-mode)
+               ("h"  weiss-toggle-hl-line)
                ;; ("l"  visual-line-mode)             ;wrap-line
                ("l"  highlight-symbol)             ;wrap-line
                ("m"  shell-command)

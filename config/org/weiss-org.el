@@ -24,6 +24,10 @@
                          (weiss-org-sp-mode 1)
                        (weiss-org-sp-mode -1)                           
                        )
+                     (when ryo-modal-mode
+                       (ryo-modal-mode -1)
+                       (ryo-modal-mode 1)
+                       )
                      (make-local-variable 'company-minimum-prefix-length)
                      (setq company-minimum-prefix-length 5)
                      (linum-mode -1)
@@ -99,8 +103,10 @@
 (setq
  org-directory "~/Documents/OrgFiles/"
  ;; org-agenda-files '("/home/weiss/Documents/OrgFiles/calendar.org" "/home/weiss/Documents/OrgFiles/todo.org")
- org-agenda-files '("/home/weiss/Documents/OrgFiles/todo.org" "/home/weiss/Documents/Org-roam/daily/")
+ org-agenda-todo-ignore-scheduled t
  org-agenda-prefix-format "%t %s " ;hide files name
+ org-tag-alist '(("China" . ?c)("shopping-list" . ?s)("board-game" . ?b)("emacs" . ?e) ("video" . ?v)("misc" . ?m)("article" . ?a) ("eaf") ("snails") ("dired")("roam"))
+
  org-todo-keywords '((sequence "INPROGRESS(i)" "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c@)"))
  ;; (sequence "⚑(T)" "🏴(I)" "❓(H)" "|" "✔(D)" "✘(C)"))
  org-extend-today-until 4
@@ -214,7 +220,7 @@
       ("a" weiss-org-screenshot)
       ("o" org-noter)
       ("d" weiss-org-download-img)
-      ("q" org-set-tags-command)
+      ("q" weiss-set-org-tags)
       ("s" org-noter-sync-current-note)
       ("t" org-todo)
       ("b" org-mark-ring-goto)
@@ -284,6 +290,24 @@
 ;; functions
 
 ;; [[file:../emacs-config.org::*functions][functions:1]]
+(defun weiss-set-org-tags (&optional arg)
+  "set tags with counsel, using org-use-fast-tag-selection if `arg' =4, align tags if `arg' = 16"
+  (interactive "P")
+  ;; deactivate mark for org-set-tags-command
+  (deactivate-mark)
+  (pcase arg
+    ('(4) (counsel-org-tag))
+    ('(16) (org-align-tags t))
+    (_ (let ((current-prefix-arg 4))
+         (call-interactively 'org-set-tags-command)       
+         ))
+    )  
+  )
+(defun weiss-test ()
+  "DOCSTRING"
+  (interactive)
+  (call-interactively 'org-set-tags-command))
+
 (defun weiss-org-exchange-point-or-switch-to-sp ()
   "exchange point if region is aktiv otherwise switch to `weiss-org-sp-mode'"
   (interactive)
@@ -459,7 +483,7 @@ Return non-nil if the window was shrunk, nil otherwise."
     (let ((current-prefix-arg '(16)))
       (call-interactively 'org-latex-preview)
       (org-display-inline-images))
-        (when org-xournal-mode (org-xournal-show-current-link))
+    (when org-xournal-mode (org-xournal-show-current-link))
     )
   )
 
@@ -733,7 +757,10 @@ Return non-nil if the window was shrunk, nil otherwise."
   :init
   (add-hook 'after-init-hook 'org-roam-mode)
   (setq
-   org-roam-directory "~/Documents/Org-roam")
+   org-roam-directory "~/Dropbox/Org-roam/"
+   org-roam-dailies-directory "daily/"
+   org-agenda-files `(,(concat org-roam-directory org-roam-dailies-directory))
+   )
   :ryo
   (:mode 'org-mode)
   ("t i" org-roam-insert)
@@ -750,7 +777,6 @@ Return non-nil if the window was shrunk, nil otherwise."
     "add `content'  to the `state' heading in today daily file"
     (let* ((filename (concat
                       org-roam-directory
-                      "/"
                       org-roam-dailies-directory
                       (if (< (string-to-number (format-time-string "%H")) 4)
                           (format-time-string "d-%Y-%m-%d" (time-subtract (current-time) (* 24 3600)))                          
@@ -910,21 +936,27 @@ This function is meant to be used as a possible tool for
         )
   (setq org-roam-dailies-capture-templates
         '(
+          ("s" "Scheduled" entry #'org-roam-capture--get-point
+           "* TODO %i%?\nSCHEDULED: <%<%Y-%m-%d %a>>"
+           :file-name "daily/Ʀd-%<%Y-%m-%d>"
+           :head "#+title: Daily-%<%Y-%m-%d>\n#+roam_tags: Daily\n"
+           :olp ("Scheduled")
+           )
           ("t" "Todo" entry #'org-roam-capture--get-point
-           "* TODO %?\nSCHEDULED: <%<%Y-%m-%d %a>>"
-           :file-name "daily/d-%<%Y-%m-%d>"
+           "* TODO %i%?\nSCHEDULED: [%<%Y-%m-%d %a>]"
+           :file-name "daily/Ʀd-%<%Y-%m-%d>"
            :head "#+title: Daily-%<%Y-%m-%d>\n#+roam_tags: Daily\n"
            :olp ("Todo")
            )
           ("f" "Fleeting notes" entry #'org-roam-capture--get-point
-           "* TODO %?"
-           :file-name "daily/d-%<%Y-%m-%d>"
+           "* TODO %i%?"
+           :file-name "daily/Ʀd-%<%Y-%m-%d>"
            :head "#+title: Daily-%<%Y-%m-%d>\n#+roam_tags: Daily\n"
            :olp ("Fleeting notes")
            )
           ("j" "Journey" entry #'org-roam-capture--get-point
            "* %?"
-           :file-name "daily/d-%<%Y-%m-%d>"
+           :file-name "daily/Ʀd-%<%Y-%m-%d>"
            :head "#+title: Daily-%<%Y-%m-%d>\n#+roam_tags: Daily\n"
            :olp ("Journey")
            )

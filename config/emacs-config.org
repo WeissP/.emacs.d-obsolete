@@ -1086,6 +1086,7 @@
       ("call-interactively" "(call-interactively '▮)" weiss--ahf)
       ("called-interactively-p" "(called-interactively-p '▮)" weiss--ahf)
       ("car" "(car ▮)" weiss--ahf)
+      ("cadr" "(cadr ▮)" weiss--ahf)
       ("catch" "(catch '▮)" weiss--ahf)
       ("cdr" "(cdr ▮)" weiss--ahf)
       ("char-after" "(char-after ▮)" weiss--ahf)
@@ -1655,167 +1656,167 @@
 
 ** imenu
 #+begin_src elisp
-;;; snails-backend-imenu.el --- IMenu backend for snails
+  ;;; snails-backend-imenu.el --- IMenu backend for snails
 
-;; Filename: snails-backend-imenu.el
-;; Description: IMenu backend for snails
-;; Author: Andy Stewart <lazycat.manatee@gmail.com>
-;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
-;; Copyright (C) 2019, Andy Stewart, all rights reserved.
-;; Created: 2019-07-26 08:03:06
-;; Version: 0.1
-;; Last-Updated: 2019-07-26 08:03:06
-;;           By: Andy Stewart
-;; URL: http://www.emacswiki.org/emacs/download/snails-backend-imenu.el
-;; Keywords:
-;; Compatibility: GNU Emacs 26.2
-;;
-;; Features that might be required by this library:
-;;
-;;
-;;
+  ;; Filename: snails-backend-imenu.el
+  ;; Description: IMenu backend for snails
+  ;; Author: Andy Stewart <lazycat.manatee@gmail.com>
+  ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
+  ;; Copyright (C) 2019, Andy Stewart, all rights reserved.
+  ;; Created: 2019-07-26 08:03:06
+  ;; Version: 0.1
+  ;; Last-Updated: 2019-07-26 08:03:06
+  ;;           By: Andy Stewart
+  ;; URL: http://www.emacswiki.org/emacs/download/snails-backend-imenu.el
+  ;; Keywords:
+  ;; Compatibility: GNU Emacs 26.2
+  ;;
+  ;; Features that might be required by this library:
+  ;;
+  ;;
+  ;;
 
-;;; This file is NOT part of GNU Emacs
+  ;;; This file is NOT part of GNU Emacs
 
-;;; License
-;;
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation; either version 3, or (at your option)
-;; any later version.
+  ;;; License
+  ;;
+  ;; This program is free software; you can redistribute it and/or modify
+  ;; it under the terms of the GNU General Public License as published by
+  ;; the Free Software Foundation; either version 3, or (at your option)
+  ;; any later version.
 
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
+  ;; This program is distributed in the hope that it will be useful,
+  ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ;; GNU General Public License for more details.
 
-;; You should have received a copy of the GNU General Public License
-;; along with this program; see the file COPYING.  If not, write to
-;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth
-;; Floor, Boston, MA 02110-1301, USA.
+  ;; You should have received a copy of the GNU General Public License
+  ;; along with this program; see the file COPYING.  If not, write to
+  ;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth
+  ;; Floor, Boston, MA 02110-1301, USA.
 
-;;; Commentary:
-;;
-;; IMenu backend for snails
-;;
+  ;;; Commentary:
+  ;;
+  ;; IMenu backend for snails
+  ;;
 
-;;; Installation:
-;;
-;; Put snails-backend-imenu.el to your load-path.
-;; The load-path is usually ~/elisp/.
-;; It's set in your ~/.emacs like this:
-;; (add-to-list 'load-path (expand-file-name "~/elisp"))
-;;
-;; And the following to your ~/.emacs startup file.
-;;
-;; (require 'snails-backend-imenu)
-;;
-;; No need more.
+  ;;; Installation:
+  ;;
+  ;; Put snails-backend-imenu.el to your load-path.
+  ;; The load-path is usually ~/elisp/.
+  ;; It's set in your ~/.emacs like this:
+  ;; (add-to-list 'load-path (expand-file-name "~/elisp"))
+  ;;
+  ;; And the following to your ~/.emacs startup file.
+  ;;
+  ;; (require 'snails-backend-imenu)
+  ;;
+  ;; No need more.
 
-;;; Customize:
-;;
-;;
-;;
-;; All of the above can customize by:
-;;      M-x customize-group RET snails-backend-imenu RET
-;;
+  ;;; Customize:
+  ;;
+  ;;
+  ;;
+  ;; All of the above can customize by:
+  ;;      M-x customize-group RET snails-backend-imenu RET
+  ;;
 
-;;; Change log:
-;;
-;; 2019/07/26
-;;      * First released.
-;;
+  ;;; Change log:
+  ;;
+  ;; 2019/07/26
+  ;;      * First released.
+  ;;
 
-;;; Acknowledgements:
-;;
-;;
-;;
+  ;;; Acknowledgements:
+  ;;
+  ;;
+  ;;
 
-;;; TODO
-;;
-;;
-;;
+  ;;; TODO
+  ;;
+  ;;
+  ;;
 
-;;; Require
-(require 'imenu)
+  ;;; Require
+  (require 'imenu)
 
-;;; Code:
+  ;;; Code:
 
-(defvar snails-backend-imenu-cached-candidates nil)
-(defvar snails-backend-imenu-cached-buffer nil)
+  (defvar snails-backend-imenu-cached-candidates nil)
+  (defvar snails-backend-imenu-cached-buffer nil)
 
-(defun snails-backend-imenu-candidates (buffer)
-  (with-current-buffer buffer
-    (prog1
-        (if
-            ;; Use cache candidates when `snails-backend-imenu-cached-candidates' is non-nil.
-            ;; Need re-generate cache when user switch different buffer.
-            (and snails-backend-imenu-cached-candidates
-                 (or
-                  (not snails-backend-imenu-cached-buffer)
-                  (equal snails-backend-imenu-cached-buffer buffer)))
-            snails-backend-imenu-cached-candidates
-          (setq snails-backend-imenu-cached-candidates
-                (let ((index (ignore-errors (imenu--make-index-alist t))))
-                  (when index
-                    (snails-backend-imenu-build-candidates
-                     (delete (assoc "*Rescan*" index) index))))))
-      (setq snails-backend-imenu-cached-buffer buffer))))
+  (defun snails-backend-imenu-candidates (buffer)
+    (with-current-buffer buffer
+      (prog1
+          (if
+              ;; Use cache candidates when `snails-backend-imenu-cached-candidates' is non-nil.
+              ;; Need re-generate cache when user switch different buffer.
+              (and snails-backend-imenu-cached-candidates
+                   (or
+                    (not snails-backend-imenu-cached-buffer)
+                    (equal snails-backend-imenu-cached-buffer buffer)))
+              snails-backend-imenu-cached-candidates
+            (setq snails-backend-imenu-cached-candidates
+                  (let ((index (ignore-errors (imenu--make-index-alist t))))
+                    (when index
+                      (snails-backend-imenu-build-candidates
+                       (delete (assoc "*Rescan*" index) index))))))
+        (setq snails-backend-imenu-cached-buffer buffer))))
 
-(defun snails-backend-imenu-build-candidates (alist)
-  (cl-remove-if
-   (lambda (c)
-     (or (string-equal (car c) "Types")
-         (string-equal (car c) "Variables")
-         ))
-   (cl-loop for elm in alist
-            nconc (cond
-                   ((imenu--subalist-p elm)
-                    (snails-backend-imenu-build-candidates
-                     (cl-loop for (e . v) in (cdr elm) collect
-                              (cons
-                               e
-                               (if (integerp v) (copy-marker v) v)))))
-                   ((listp (cdr elm))
-                    (and elm (list elm)))
-                   (t
-                    (and (cdr elm)
-                         (setcdr elm (pcase (cdr elm)
-                                       ((and ov (pred overlayp))
-                                        (copy-overlay ov))
-                                       ((and mk (or (pred markerp)
-                                                    (pred integerp)))
-                                        (copy-marker mk))))
-                         (list elm)))))))
+  (defun snails-backend-imenu-build-candidates (alist)
+    (cl-remove-if
+     (lambda (c)
+       (or (string-equal (car c) "Types")
+           (string-equal (car c) "Variables")
+           ))
+     (cl-loop for elm in alist
+              nconc (cond
+                     ((imenu--subalist-p elm)
+                      (snails-backend-imenu-build-candidates
+                       (cl-loop for (e . v) in (cdr elm) collect
+                                (cons
+                                 e
+                                 (if (integerp v) (copy-marker v) v)))))
+                     ((listp (cdr elm))
+                      (and elm (list elm)))
+                     (t
+                      (and (cdr elm)
+                           (setcdr elm (pcase (cdr elm)
+                                         ((and ov (pred overlayp))
+                                          (copy-overlay ov))
+                                         ((and mk (or (pred markerp)
+                                                      (pred integerp)))
+                                          (copy-marker mk))))
+                           (list elm)))))))
 
-(snails-create-sync-backend
- :name
- "IMENU"
+  (snails-create-sync-backend
+   :name
+   "IMENU"
 
- :candidate-filter
- (lambda (input)
-   (let ((imenu-items (snails-backend-imenu-candidates snails-start-buffer))
-         candidates)
-     (dolist (imenu-item imenu-items)
-       (when (or
-              (string-equal input "")
-              (snails-match-input-p input (car imenu-item)))
+   :candidate-filter
+   (lambda (input)
+     (let ((imenu-items (snails-backend-imenu-candidates snails-start-buffer))
+           candidates)
+       (dolist (imenu-item imenu-items)
+         (when (or
+                (string-equal input "")
+                (snails-match-input-p input (car imenu-item)))
 
-         (snails-add-candiate 'candidates
-                              (car imenu-item)
-                              (number-to-string (marker-position (cdr imenu-item))))))
+           (snails-add-candiate 'candidates
+                                (car imenu-item)
+                                (number-to-string (marker-position (cdr imenu-item))))))
 
-     (snails-sort-candidates input candidates 0 0)))
+       (snails-sort-candidates input candidates 0 0)))
 
- :candidate-do
- (lambda (candidate)
-   (goto-char (string-to-number candidate))
+   :candidate-do
+   (lambda (candidate)
+     (goto-char (string-to-number candidate))
 
-   (snails-flash-line)))
+     (snails-flash-line)))
 
-(provide 'snails-backend-imenu)
+  (provide 'snails-backend-imenu)
 
-;;; snails-backend-imenu.el ends here
+  ;;; snails-backend-imenu.el ends here
 
 #+end_src
 
@@ -3080,6 +3081,8 @@
     :config
     (global-anzu-mode +1)
     )
+
+  (use-package hl-line)
 #+end_src
 
 ** format/indent
@@ -5920,6 +5923,62 @@
                                   )))
 
 #+end_src
+
+** face
+:PROPERTIES:
+:header-args: :tangle after-dump/weiss-after-dump.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
+:END:
+
+#+begin_src elisp
+  (set-face-attribute 'hl-line nil :inherit nil :box nil :background "#ffe8e8" :extend nil)
+  (defface box-hl-line
+    '((t (:inherit nil :extend nil :box (:line-width (-1 . -2) :color "#ededed" :style nil))))
+    "highlight the current line with box"
+    )
+  ;; (set (make-local-variable 'hl-line-face) 'box-hl-line)
+
+  (defface normal-hl-line
+    '((t :box nil :extend nil :background "#ffe8e8"))
+    "highlight the current line with background"
+    )
+
+  (defface emphasis-hl-line
+    '((t :box nil :extend nil :background "#ffb5ff"))
+    "highlight the current line with background"
+    )
+
+  (defun weiss-toggle-hl-line ()
+    "toggle hl line using weiss-enable-hl-line"
+    (interactive)
+    (if hl-line-mode
+        (hl-line-mode -1)
+      (weiss-enable-hl-line)
+      )
+    )
+
+  (defun weiss-enable-hl-line ()
+    "change hl line face by major-mode"
+    (interactive)
+    (unless (eq major-mode 'snails-mode)
+      (hl-line-mode -1)
+      (cond
+       (weiss-dired-single-handed-mode
+        (set (make-local-variable 'hl-line-face) 'emphasis-hl-line)
+        )
+       ((eq major-mode 'dired-mode)
+        (set (make-local-variable 'hl-line-face) 'normal-hl-line)
+        )
+       (t (set (make-local-variable 'hl-line-face) 'box-hl-line))
+       )
+      (hl-line-mode 1)
+      )
+    )
+#+end_src
+
+#+RESULTS:
+
+** Functions
+
 ** icons
 #+begin_src elisp
   ;; NOTE: Must run `M-x all-the-icons-install-fonts', and install fonts manually 
@@ -6136,6 +6195,7 @@
           ("t" lsp-java-generate-to-string)
           ("f" weiss-format-current-java-file)
           ("F" weiss-format-current-java-dir)
+          ("j" weiss-add-javadoc)
           ("e" lsp-java-generate-equals-and-hash-code)
           ("o" lsp-java-generate-overrides)
           ("g" lsp-java-generate-getters-and-setters)             
@@ -6166,6 +6226,7 @@
             (buffer-file-name)))))
 
       )
+
     (defun weiss-format-current-java-file ()
       "format current java file using idea"
       (interactive)
@@ -6175,6 +6236,63 @@
       (interactive)
       (weiss--format-java t))
 
+    (defun weiss-javadoc--get-param (line)
+      "get the param in the `line', for `weiss-add-javadoc'"
+      (interactive)
+      (when (string-match ".*(\\(.+\\)).*" line)
+        (setq params (split-string (match-string 1 line) ","))
+        (mapcar (lambda (x)
+                   (setq x (s-trim x))
+                   (when-let ((i (string-match " " x)))
+                     (substring x (1+ i)) 
+                     )
+                   )
+                params
+                )
+        )                
+      )
+
+    (defun weiss-add-javadoc ()
+      "add java doc using imenu"
+      (interactive)
+      (let* ((imenu-auto-rescan t)
+             (index (imenu--make-index-alist t))
+             (l (snails-backend-imenu-build-candidates (delete (assoc "*Rescan*" index) index)))
+             )
+        (dolist (x l) 
+          (let* ((info (split-string (car x) ":"))
+                 (f (s-trim (car info)))
+                 (p (cdr x))
+                 (i (string-match "\(" f))
+                 (doc)
+                 )
+            (goto-char p)
+            (ignore-errors (previous-line))
+            (when (string= "" (s-trim (buffer-substring-no-properties (line-beginning-position) (line-end-position))))
+              (goto-char p)
+              (beginning-of-line)
+              (setq doc "/**\n* ")
+              (when i
+                (setq doc (concat doc (substring f 0 i) "."))
+                (when-let
+                    ((params (weiss-javadoc--get-param (buffer-substring-no-properties
+                                                        (line-beginning-position)
+                                                        (line-end-position)))))
+                  (dolist (x params) 
+                    (setq doc (concat doc "\n* @param " x "  "))
+                    )
+                  )
+                (when (not (string= (s-trim (cadr info))  "void"))
+                  (setq doc (concat doc "\n* @return  "))
+                  )              
+                )
+              (insert (concat doc "\n*/\n"))
+              )
+            )
+          )
+        (indent-region (point-min) (point-max))
+        )  
+      )
     )
 #+end_src
 
@@ -7599,7 +7717,9 @@
                   (dired-utils-format-information-line-mode)
                   ;; (all-the-icons-dired-mode)
                   (dired-omit-mode)
-                  (setq dired-auto-revert-buffer 't)))
+                  (setq dired-auto-revert-buffer 't)
+                  ))
+
 #+end_src
 
 *** keybinding 
@@ -7708,6 +7828,17 @@
 #+end_src
 **** functions
 #+begin_src elisp
+  (defun weiss-check-cursor-type ()
+    "DOCSTRING"
+    (interactive)
+    (unless (eq major-mode 'snails-mode) 
+      (if (eq major-mode 'dired-mode)
+          (setq cursor-type nil)
+        (setq cursor-type t)    
+        )      
+      )
+    )
+
   (defun ora-ediff-files ()
     (interactive)
     (let ((files (dired-get-marked-files))
@@ -7844,6 +7975,8 @@
 #+end_src
 **** ui
 #+begin_src elisp
+  (add-to-list 'weiss/after-major-mode-function-list 'weiss-check-cursor-type)
+
   ;; Colourful dired
   (use-package diredfl
     ;; :disabled
@@ -7884,8 +8017,8 @@
                 (forward-line 1)))
           (message "Not display icons because of too many items.")))
       (advice-add #'all-the-icons-dired--refresh :override #'my-all-the-icons-dired--refresh))
-  ;; :hook (dired-mode . (lambda () (interactive) (message "path: %s" (string-match "x" dired-directory))))
-  )
+    ;; :hook (dired-mode . (lambda () (interactive) (message "path: %s" (string-match "x" dired-directory))))
+    )
 
 #+end_src
 **** misc packages
@@ -7944,12 +8077,18 @@
              )
            )
           ;; (make-local-variable cursor-type)
-          (setq cursor-type nil)
-          (hl-line-mode t)
+          ;; (setq cursor-type nil)
+          ;; (hl-line-mode nil)
+          ;; (set (make-local-variable 'hl-line-face) 'emphasis-hl-line)
+          ;; (hl-line-mode t)
+          (set-face-background 'hl-line "#ffb5ff")
+          (set-face-background 'normal-hl-line "#ffb5ff")
           (weiss-overriding-ryo-mode 1)
           )
-      (setq cursor-type t)
-      (hl-line-mode -1)
+      ;; (setq cursor-type t)
+      ;; (hl-line-mode -1)
+      (set-face-background 'hl-line "#ffe8e8")
+      (set-face-background 'normal-hl-line "#ffe8e8")
       (weiss-overriding-ryo-mode -1)    
       )
     )
@@ -8186,7 +8325,7 @@
               `(
                 ("f" "Fleeting notes" entry #'org-roam-capture--get-point
                  ,content
-                 :file-name "daily/d-%<%Y-%m-%d>"
+                 :file-name "daily/Ʀd-%<%Y-%m-%d>"
                  :head "#+title: Daily-%<%Y-%m-%d>\n#+roam_tags: Daily\n"
                  :olp ("Fleeting notes")
                  )             
@@ -9411,6 +9550,10 @@
                            (weiss-org-sp-mode 1)
                          (weiss-org-sp-mode -1)                           
                          )
+                       (when ryo-modal-mode
+                         (ryo-modal-mode -1)
+                         (ryo-modal-mode 1)
+                         )
                        (make-local-variable 'company-minimum-prefix-length)
                        (setq company-minimum-prefix-length 5)
                        (linum-mode -1)
@@ -9483,8 +9626,10 @@
   (setq
    org-directory "~/Documents/OrgFiles/"
    ;; org-agenda-files '("/home/weiss/Documents/OrgFiles/calendar.org" "/home/weiss/Documents/OrgFiles/todo.org")
-   org-agenda-files '("/home/weiss/Documents/OrgFiles/todo.org" "/home/weiss/Documents/Org-roam/daily/")
+   org-agenda-todo-ignore-scheduled t
    org-agenda-prefix-format "%t %s " ;hide files name
+   org-tag-alist '(("China" . ?c)("shopping-list" . ?s)("board-game" . ?b)("emacs" . ?e) ("video" . ?v)("misc" . ?m)("article" . ?a) ("eaf") ("snails") ("dired")("roam"))
+
    org-todo-keywords '((sequence "INPROGRESS(i)" "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c@)"))
    ;; (sequence "⚑(T)" "🏴(I)" "❓(H)" "|" "✔(D)" "✘(C)"))
    org-extend-today-until 4
@@ -9596,7 +9741,7 @@
         ("a" weiss-org-screenshot)
         ("o" org-noter)
         ("d" weiss-org-download-img)
-        ("q" org-set-tags-command)
+        ("q" weiss-set-org-tags)
         ("s" org-noter-sync-current-note)
         ("t" org-todo)
         ("b" org-mark-ring-goto)
@@ -9664,6 +9809,24 @@
 #+end_src
 *** functions
 #+begin_src elisp
+  (defun weiss-set-org-tags (&optional arg)
+    "set tags with counsel, using org-use-fast-tag-selection if `arg' =4, align tags if `arg' = 16"
+    (interactive "P")
+    ;; deactivate mark for org-set-tags-command
+    (deactivate-mark)
+    (pcase arg
+      ('(4) (counsel-org-tag))
+      ('(16) (org-align-tags t))
+      (_ (let ((current-prefix-arg 4))
+           (call-interactively 'org-set-tags-command)       
+           ))
+      )  
+    )
+  (defun weiss-test ()
+    "DOCSTRING"
+    (interactive)
+    (call-interactively 'org-set-tags-command))
+
   (defun weiss-org-exchange-point-or-switch-to-sp ()
     "exchange point if region is aktiv otherwise switch to `weiss-org-sp-mode'"
     (interactive)
@@ -9839,7 +10002,7 @@
       (let ((current-prefix-arg '(16)))
         (call-interactively 'org-latex-preview)
         (org-display-inline-images))
-          (when org-xournal-mode (org-xournal-show-current-link))
+      (when org-xournal-mode (org-xournal-show-current-link))
       )
     )
 
@@ -10113,7 +10276,9 @@
     :init
     (add-hook 'after-init-hook 'org-roam-mode)
     (setq
-     org-roam-directory "~/Documents/Org-roam")
+     org-roam-directory "~/Dropbox/Org-roam/"
+     org-roam-dailies-directory "daily/"
+     )
     :ryo
     (:mode 'org-mode)
     ("t i" org-roam-insert)
@@ -10126,11 +10291,11 @@
       ))
 
     :config
+    (setq org-agenda-files `(,(concat org-roam-directory org-roam-dailies-directory)))
     (defun weiss-roam--add-to-today-daily (content state)
       "add `content'  to the `state' heading in today daily file"
       (let* ((filename (concat
                         org-roam-directory
-                        "/"
                         org-roam-dailies-directory
                         (if (< (string-to-number (format-time-string "%H")) 4)
                             (format-time-string "d-%Y-%m-%d" (time-subtract (current-time) (* 24 3600)))                          
@@ -10290,21 +10455,27 @@
           )
     (setq org-roam-dailies-capture-templates
           '(
+            ("s" "Scheduled" entry #'org-roam-capture--get-point
+             "* TODO %i%?\nSCHEDULED: <%<%Y-%m-%d %a>>"
+             :file-name "daily/Ʀd-%<%Y-%m-%d>"
+             :head "#+title: Daily-%<%Y-%m-%d>\n#+roam_tags: Daily\n"
+             :olp ("Scheduled")
+             )
             ("t" "Todo" entry #'org-roam-capture--get-point
-             "* TODO %?\nSCHEDULED: <%<%Y-%m-%d %a>>"
-             :file-name "daily/d-%<%Y-%m-%d>"
+             "* TODO %i%?\nSCHEDULED: [%<%Y-%m-%d %a>]"
+             :file-name "daily/Ʀd-%<%Y-%m-%d>"
              :head "#+title: Daily-%<%Y-%m-%d>\n#+roam_tags: Daily\n"
              :olp ("Todo")
              )
             ("f" "Fleeting notes" entry #'org-roam-capture--get-point
-             "* TODO %?"
-             :file-name "daily/d-%<%Y-%m-%d>"
+             "* TODO %i%?"
+             :file-name "daily/Ʀd-%<%Y-%m-%d>"
              :head "#+title: Daily-%<%Y-%m-%d>\n#+roam_tags: Daily\n"
              :olp ("Fleeting notes")
              )
             ("j" "Journey" entry #'org-roam-capture--get-point
              "* %?"
-             :file-name "daily/d-%<%Y-%m-%d>"
+             :file-name "daily/Ʀd-%<%Y-%m-%d>"
              :head "#+title: Daily-%<%Y-%m-%d>\n#+roam_tags: Daily\n"
              :olp ("Journey")
              )
@@ -10499,6 +10670,7 @@
   ;; (advice-add 'xah-paste-or-paste-previous :before #'weiss-deactivate-mark-unless-in-select-mode)
   (advice-add 'xah-open-file-at-cursor :before #'weiss-deactivate-mark-unless-in-select-mode)
   (advice-add 'weiss-delete-or-add-parent-sexp :before #'weiss-deactivate-mark-unless-in-select-mode)
+  (advice-add 'org-roam-dailies--capture :before #'weiss-deactivate-mark-unless-in-select-mode)
   ;; (advice-add 'newline :before #'weiss-deactivate-mark-unless-in-select-mode)
 
   (defun anzu-query-replace (arg)
@@ -10801,6 +10973,13 @@
       (setq minor-mode-overriding-map-alist (assoc-delete-all 'weiss-origin-mode minor-mode-overriding-map-alist))
       (push `(weiss-origin-mode . ,weiss-origin-mode-map) minor-mode-overriding-map-alist)
       ))
+
+
+  (defun weiss-origin-mode-enable ()
+    "enable origin mode"
+    (interactive)
+    (unless weiss-origin-mode (weiss-origin-mode 1))
+    )
 
   (define-minor-mode weiss-origin-mode
     "keep origin keybindings and only change few keys (like leader key)"
@@ -12957,7 +13136,7 @@
     :init 
     (defvar weiss/disable-ryo-list)
     (setq weiss/disable-ryo-list
-          '(magit-mode magit-status-mode magit-revision-mode snails-mode ediff-mode telega-chat-mode telega-root-mode))
+          '(magit-mode magit-status-mode magit-revision-mode snails-mode ediff-mode telega-chat-mode telega-root-mode org-agenda-mode))
 
     (defun weiss-check-ryo ()
       "enable or disable ryo by disable-ryo-list"
@@ -12969,7 +13148,12 @@
       )
 
     (add-to-list 'weiss/after-buffer-change-function-list 'weiss-check-ryo)
+    (add-to-list 'weiss/after-buffer-change-function-list 'weiss-enable-hl-line)
+    (add-to-list 'weiss/after-buffer-change-function-list 'weiss-check-cursor-type)
+
     (add-to-list 'weiss/after-major-mode-function-list 'weiss-check-ryo)
+    (add-to-list 'weiss/after-major-mode-function-list 'weiss-enable-hl-line)
+    (add-to-list 'weiss/after-major-mode-function-list 'weiss-check-cursor-type)
 
     (setq ryo-modal-cursor-color weiss/cursor-color)
     :config
@@ -12991,8 +13175,11 @@
   (use-package weiss-overriding-ryo-mode)
   (use-package weiss-origin-mode
     :config
-    (push '(telega-chat-mode . ("<deletechar>")) weiss-origin-keep-keys)
+    (add-to-list 'weiss-origin-keep-keys '(telega-chat-mode . ("<deletechar>")))
+    (add-to-list 'weiss-origin-keep-keys '(org-agenda-mode . ("<deletechar>" "9" "-" "s")))
+
     (let ((hook-list '(
+                       org-agenda-mode-hook
                        magit-status-mode-hook
                        magit-mode-hook
                        telega-chat-mode-hook
@@ -13000,8 +13187,10 @@
                        image-mode-hook
                        )))
       (dolist (x hook-list)
-        (add-hook x 'weiss-origin-mode))
+        (add-hook x 'weiss-origin-mode-enable))
       )  
+
+
     (defun weiss-enable-origin-mode-only-in-fundamental-mode ()
       "only enable weiss-origin-mode when current major mode is plain fundamental-mode"
       (when (and (not weiss-origin-mode) (eq major-mode 'fundamental-mode))
@@ -13409,6 +13598,7 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
                  ("j" yasdcv-translate-input)
                  ("l"  list-buffers)
                  ("m"  magit-status)
+                 ("t"  org-todo-list)
                  ("n"  xah-new-empty-buffer)
                  ("o"  xah-open-file-at-cursor)
                  ("s" yasdcv-translate-at-point)
@@ -13508,7 +13698,7 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
                  ("c"  dired-collapse-mode)
                  ;; ("e"  ignore :then ((lambda () (interactive) (unless (featurep 'aweshell) (require 'aweshell))(eshell))) :name "eshell")
                  ("e"  eshell)
-                 ("h"  global-hl-line-mode)
+                 ("h"  weiss-toggle-hl-line)
                  ;; ("l"  visual-line-mode)             ;wrap-line
                  ("l"  highlight-symbol)             ;wrap-line
                  ("m"  shell-command)

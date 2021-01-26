@@ -35,6 +35,13 @@
     (push `(weiss-origin-mode . ,weiss-origin-mode-map) minor-mode-overriding-map-alist)
     ))
 
+
+(defun weiss-origin-mode-enable ()
+  "enable origin mode"
+  (interactive)
+  (unless weiss-origin-mode (weiss-origin-mode 1))
+  )
+
 (define-minor-mode weiss-origin-mode
   "keep origin keybindings and only change few keys (like leader key)"
   :keymap weiss-origin-mode-map

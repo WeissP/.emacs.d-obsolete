@@ -55,6 +55,7 @@
 ;; (advice-add 'xah-paste-or-paste-previous :before #'weiss-deactivate-mark-unless-in-select-mode)
 (advice-add 'xah-open-file-at-cursor :before #'weiss-deactivate-mark-unless-in-select-mode)
 (advice-add 'weiss-delete-or-add-parent-sexp :before #'weiss-deactivate-mark-unless-in-select-mode)
+(advice-add 'org-roam-dailies--capture :before #'weiss-deactivate-mark-unless-in-select-mode)
 ;; (advice-add 'newline :before #'weiss-deactivate-mark-unless-in-select-mode)
 
 (defun anzu-query-replace (arg)
