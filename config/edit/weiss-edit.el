@@ -113,6 +113,41 @@
                             )))
 ;; rotate-text:1 ends here
 
+;; casease
+
+
+;; [[file:../emacs-config.org::*casease][casease:1]]
+(use-package casease
+  :quelpa (casease 
+           :fetcher github 
+           :repo DogLooksGood/casease)
+  :config
+  (casease-setup
+   :hook java-mode-hook
+   :separator ?-
+   :entries
+   ((pascal "\\(=\\)[a-z]" "[A-Z]")
+    (camel "[a-z]")))
+  (casease-setup
+   :hook c++-mode-hook
+   :separator ?-
+   :entries
+   ((camel "[a-z]")))
+  (casease-setup
+   :hook go-mode-hook
+   :separator ?-
+   :entries
+   ((pascal "\\(=\\)[a-z]" "[A-Z]")
+    (camel "[a-z]")))
+  (casease-setup
+   :hook python-mode-hook
+   :separator ?-
+   :entries
+   ((pascal "\\(=\\)[a-z]" "[A-Z]")
+    (snake "[a-z]")))
+  )
+;; casease:1 ends here
+
 ;; misc
 
 ;; [[file:../emacs-config.org::*misc][misc:1]]

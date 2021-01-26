@@ -136,10 +136,15 @@
 (defun weiss-check-cursor-type ()
   "DOCSTRING"
   (interactive)
-  (if (eq major-mode 'dired-mode)
-      (setq cursor-type nil)
-    (setq cursor-type t)    
+  (when (eq major-mode 'dired-mode)
+    (setq cursor-type nil)
     )
+  ;; (unless (eq major-mode 'snails-mode) 
+  ;;   (if (eq major-mode 'dired-mode)
+  ;;       (setq cursor-type nil)
+  ;;     (setq cursor-type t)    
+  ;;     )      
+  ;;   )
   )
 
 (defun ora-ediff-files ()

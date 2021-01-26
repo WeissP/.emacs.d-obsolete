@@ -5947,38 +5947,39 @@
     "highlight the current line with background"
     )
 
-  (defun weiss-toggle-hl-line ()
-    "toggle hl line using weiss-enable-hl-line"
-    (interactive)
-    (if hl-line-mode
-        (hl-line-mode -1)
-      (weiss-enable-hl-line)
-      )
-    )
-
-  (defun weiss-enable-hl-line ()
-    "change hl line face by major-mode"
-    (interactive)
-    (unless (eq major-mode 'snails-mode)
-      (hl-line-mode -1)
-      (cond
-       (weiss-dired-single-handed-mode
-        (set (make-local-variable 'hl-line-face) 'emphasis-hl-line)
-        )
-       ((eq major-mode 'dired-mode)
-        (set (make-local-variable 'hl-line-face) 'normal-hl-line)
-        )
-       (t (set (make-local-variable 'hl-line-face) 'box-hl-line))
-       )
-      (hl-line-mode 1)
-      )
-    )
 #+end_src
 
 #+RESULTS:
 
 ** Functions
+#+begin_src elisp
+(defun weiss-toggle-hl-line ()
+  "toggle hl line using weiss-enable-hl-line"
+  (interactive)
+  (if hl-line-mode
+      (hl-line-mode -1)
+    (weiss-enable-hl-line)
+    )
+  )
 
+(defun weiss-enable-hl-line ()
+  "change hl line face by major-mode"
+  (interactive)
+  (unless (eq major-mode 'snails-mode)
+    (hl-line-mode -1)
+    (cond
+     (weiss-dired-single-handed-mode
+      (set (make-local-variable 'hl-line-face) 'emphasis-hl-line)
+      )
+     ((eq major-mode 'dired-mode)
+      (set (make-local-variable 'hl-line-face) 'normal-hl-line)
+      )
+     (t (set (make-local-variable 'hl-line-face) 'box-hl-line))
+     )
+    (hl-line-mode 1)
+    )
+  )
+#+end_src
 ** icons
 #+begin_src elisp
   ;; NOTE: Must run `M-x all-the-icons-install-fonts', and install fonts manually 
@@ -6614,6 +6615,41 @@
                             ("der" "das" "die")
                             )))
 #+end_src
+** casease
+
+#+begin_src elisp
+  (use-package casease
+    :quelpa (casease 
+             :fetcher github 
+             :repo DogLooksGood/casease)
+    :config
+    (casease-setup
+     :hook java-mode-hook
+     :separator ?-
+     :entries
+     ((pascal "\\(=\\)[a-z]" "[A-Z]")
+      (camel "[a-z]")))
+    (casease-setup
+     :hook c++-mode-hook
+     :separator ?-
+     :entries
+     ((camel "[a-z]")))
+    (casease-setup
+     :hook go-mode-hook
+     :separator ?-
+     :entries
+     ((pascal "\\(=\\)[a-z]" "[A-Z]")
+      (camel "[a-z]")))
+    (casease-setup
+     :hook python-mode-hook
+     :separator ?-
+     :entries
+     ((pascal "\\(=\\)[a-z]" "[A-Z]")
+      (snake "[a-z]")))
+    )
+#+end_src
+
+#+RESULTS:
 
 ** misc
 #+begin_src elisp
@@ -7831,12 +7867,15 @@
   (defun weiss-check-cursor-type ()
     "DOCSTRING"
     (interactive)
-    (unless (eq major-mode 'snails-mode) 
-      (if (eq major-mode 'dired-mode)
-          (setq cursor-type nil)
-        (setq cursor-type t)    
-        )      
+    (when (eq major-mode 'dired-mode)
+      (setq cursor-type nil)
       )
+    ;; (unless (eq major-mode 'snails-mode) 
+    ;;   (if (eq major-mode 'dired-mode)
+    ;;       (setq cursor-type nil)
+    ;;     (setq cursor-type t)    
+    ;;     )      
+    ;;   )
     )
 
   (defun ora-ediff-files ()
@@ -9625,7 +9664,7 @@
 #+begin_src elisp
   (setq
    org-directory "~/Documents/OrgFiles/"
-   ;; org-agenda-files '("/home/weiss/Documents/OrgFiles/calendar.org" "/home/weiss/Documents/OrgFiles/todo.org")
+   org-agenda-files '("~/Dropbox/Org-roam/daily/")
    org-agenda-todo-ignore-scheduled t
    org-agenda-prefix-format "%t %s " ;hide files name
    org-tag-alist '(("China" . ?c)("shopping-list" . ?s)("board-game" . ?b)("emacs" . ?e) ("video" . ?v)("misc" . ?m)("article" . ?a) ("eaf") ("snails") ("dired")("roam"))
@@ -10271,13 +10310,14 @@
 
 #+end_src
 *** org-roam
-#+begin_src elisp
+#+begin_src elisp 
   (use-package org-roam
     :init
     (add-hook 'after-init-hook 'org-roam-mode)
     (setq
      org-roam-directory "~/Dropbox/Org-roam/"
      org-roam-dailies-directory "daily/"
+     org-agenda-files `(,(concat org-roam-directory org-roam-dailies-directory))
      )
     :ryo
     (:mode 'org-mode)
@@ -10291,7 +10331,6 @@
       ))
 
     :config
-    (setq org-agenda-files `(,(concat org-roam-directory org-roam-dailies-directory)))
     (defun weiss-roam--add-to-today-daily (content state)
       "add `content'  to the `state' heading in today daily file"
       (let* ((filename (concat

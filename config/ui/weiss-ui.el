@@ -12,6 +12,37 @@
 (use-package origami)
 ;; format/indent:1 ends here
 
+;; Functions
+
+;; [[file:../emacs-config.org::*Functions][Functions:1]]
+(defun weiss-toggle-hl-line ()
+  "toggle hl line using weiss-enable-hl-line"
+  (interactive)
+  (if hl-line-mode
+      (hl-line-mode -1)
+    (weiss-enable-hl-line)
+    )
+  )
+
+(defun weiss-enable-hl-line ()
+  "change hl line face by major-mode"
+  (interactive)
+  (unless (eq major-mode 'snails-mode)
+    (hl-line-mode -1)
+    (cond
+     (weiss-dired-single-handed-mode
+      (set (make-local-variable 'hl-line-face) 'emphasis-hl-line)
+      )
+     ((eq major-mode 'dired-mode)
+      (set (make-local-variable 'hl-line-face) 'normal-hl-line)
+      )
+     (t (set (make-local-variable 'hl-line-face) 'box-hl-line))
+     )
+    (hl-line-mode 1)
+    )
+  )
+;; Functions:1 ends here
+
 ;; icons
 
 ;; [[file:../emacs-config.org::*icons][icons:1]]

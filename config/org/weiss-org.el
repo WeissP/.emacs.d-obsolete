@@ -102,7 +102,7 @@
 ;; [[file:../emacs-config.org::*variables][variables:1]]
 (setq
  org-directory "~/Documents/OrgFiles/"
- ;; org-agenda-files '("/home/weiss/Documents/OrgFiles/calendar.org" "/home/weiss/Documents/OrgFiles/todo.org")
+ org-agenda-files '("~/Dropbox/Org-roam/daily/")
  org-agenda-todo-ignore-scheduled t
  org-agenda-prefix-format "%t %s " ;hide files name
  org-tag-alist '(("China" . ?c)("shopping-list" . ?s)("board-game" . ?b)("emacs" . ?e) ("video" . ?v)("misc" . ?m)("article" . ?a) ("eaf") ("snails") ("dired")("roam"))

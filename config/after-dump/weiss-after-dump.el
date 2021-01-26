@@ -3016,51 +3016,21 @@
 
 
 ;; [[file:../emacs-config.org::*face][face:1]]
+(set-face-attribute 'hl-line nil :inherit nil :box nil :background "#ffe8e8" :extend nil)
 (defface box-hl-line
   '((t (:inherit nil :extend nil :box (:line-width (-1 . -2) :color "#ededed" :style nil))))
   "highlight the current line with box"
   )
-
-;; (set-face-attribute 'box-hl-line nil :inherit nil :box '(:line-width (-1 . -2) :color "#ededed" :style nil) :background nil :extend nil)
+;; (set (make-local-variable 'hl-line-face) 'box-hl-line)
 
 (defface normal-hl-line
-  '((t :box nil :background "#f1f1f1" :extend nil))
+  '((t :box nil :extend nil :background "#ffe8e8"))
   "highlight the current line with background"
   )
 
 (defface emphasis-hl-line
-  '((t :box nil :background "#ff8d1a" :extend nil))
+  '((t :box nil :extend nil :background "#ffb5ff"))
   "highlight the current line with background"
-  )
-
-
-(set-face-attribute 'hl-line nil :inherit nil :box nil :background nil :extend nil)
-
-(defun weiss-toggle-hl-line ()
-  "toggle hl line using weiss-enable-hl-line"
-  (interactive)
-  (if hl-line-mode
-      (hl-line-mode -1)
-    (weiss-enable-hl-line)
-    )
-  )
-
-(defun weiss-enable-hl-line ()
-  "change hl line face by major-mode"
-  (interactive)
-  (unless (eq major-mode 'snails-mode)
-    (hl-line-mode -1)
-    (cond
-     (weiss-dired-single-handed-mode
-      (set (make-local-variable 'hl-line-face) 'emphasis-hl-line)
-      )
-     ((eq major-mode 'dired-mode)
-      (set (make-local-variable 'hl-line-face) 'normal-hl-line)
-      )
-     (t (set (make-local-variable 'hl-line-face) 'box-hl-line))
-     )
-    (hl-line-mode 1)
-    )
   )
 ;; face:1 ends here
 
