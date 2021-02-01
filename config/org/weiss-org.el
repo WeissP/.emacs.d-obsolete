@@ -1057,7 +1057,7 @@ This function is meant to be used as a possible tool for
            :olp ("Todo")
            )
           ("f" "Fleeting notes" entry #'org-roam-capture--get-point
-           "* TODO %i%?"
+           "* TODO %i%? :fleeting:"
            :file-name "daily/Ʀd-%<%Y-%m-%d>"
            :head "#+title: Daily-%<%Y-%m-%d>\n#+roam_tags: Daily\n"
            :olp ("Fleeting notes")

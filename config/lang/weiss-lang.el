@@ -154,6 +154,7 @@
 ;; misc
 
 ;; [[file:../emacs-config.org::*misc][misc:1]]
+(use-package llvm-mode)
 (use-package markdown-mode
   :ensure t
   :ryo

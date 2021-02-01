@@ -541,6 +541,9 @@ Version 2016-10-24"
     ("pb" "public " weiss--ahf)
     ("pri" "private " weiss--ahf)
     ("wh" "while (▮) {\n\n}" weiss--ahf-indent)
+;;;;; for clp
+    ("tv" "TemporaryVar ▮ = TemporaryVar(\"\");" weiss--ahf)
+    ("ai" "addInstruction(▮);" weiss--ahf)
     ))
 ;; java:1 ends here
 

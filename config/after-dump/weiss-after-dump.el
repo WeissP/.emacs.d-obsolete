@@ -2857,7 +2857,8 @@
 (defun weiss-java-face ()
   (interactive)
   (face-remap-add-relative
-   'font-lock-function-name-face '((:foreground "#383a42" :box '(:line-width 1))) font-lock-function-name-face)
+   ;; 'font-lock-function-name-face '((:foreground "#383a42" :box '(:line-width 1))) font-lock-function-name-face)
+   'font-lock-function-name-face '((:foreground "#383a42" :background "#f8eed4")) font-lock-function-name-face)
   (face-remap-add-relative
    'font-lock-variable-name-face '((:foreground "#383a42" :underline t)) font-lock-variable-name-face)
   (face-remap-add-relative
@@ -3094,7 +3095,7 @@ If chatbuf is supergroups, channels or secret chat, then always revoke."
   (defun weiss-roam-telega-capture ()
     "DOCSTRING"
     (interactive)
-    (let* ((content (format "* TODO %%?\n%s" (weiss-get-telega-marked-text)))
+    (let* ((content (format "* TODO %%?\n%s :fleeting:" (weiss-get-telega-marked-text)))
            (org-roam-dailies-capture-templates
             `(
               ("f" "Fleeting notes" entry #'org-roam-capture--get-point

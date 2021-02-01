@@ -95,7 +95,7 @@
 
 (apply #'eldoc-add-command weiss--eldoc-commands)
 
-(global-set-key (kbd "M-e") 'weiss-display-eldoc)
+(global-set-key (kbd "M-e") 'eldoc)
 
 (defun weiss-show-eldoc (docs _interactive)
   "just the main part of eldoc-display-in-echo-area"
