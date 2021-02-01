@@ -2,6 +2,89 @@
 ;; editing
 
 ;; [[file:../emacs-config.org::*editing][editing:1]]
+(defun xah-reformat-whitespaces-to-one-space (@begin @end)
+  "Replace whitespaces by one space.
+
+  URL `http://ergoemacs.org/emacs/emacs_reformat_lines.html'
+  Version 2017-01-11"
+  (interactive "r")
+  (save-excursion
+    (save-restriction
+      (narrow-to-region @begin @end)
+      (goto-char (point-min))
+      (while
+          (search-forward "\n" nil "move")
+        (replace-match " "))
+      (goto-char (point-min))
+      (while
+          (search-forward "\t" nil "move")
+        (replace-match " "))
+      (goto-char (point-min))
+      (while
+          (re-search-forward "  +" nil "move")
+        (replace-match " ")))))
+
+(defun xah-reformat-to-multi-lines ( &optional @begin @end @min-length)
+  "Replace spaces by a newline at places so lines are not long.
+  When there is a text selection, act on the selection, else, act on a text block separated by blank lines.
+
+  If `universal-argument' is called first, use the number value for min length of line. By default, it's 70.
+
+  URL `http://ergoemacs.org/emacs/emacs_reformat_lines.html'
+  Version 2018-12-16"
+  (interactive)
+  (let (
+        $p1 $p2
+        ($blanks-regex "\n[ \t]*\n")
+        ($minlen (if @min-length
+                     @min-length
+                   (if current-prefix-arg (prefix-numeric-value current-prefix-arg) fill-column))))
+    (if (and  @begin @end)
+        (setq $p1 @begin $p2 @end)
+      (if (region-active-p)
+          (progn (setq $p1 (region-beginning) $p2 (region-end)))
+        (save-excursion
+          (if (re-search-backward $blanks-regex nil "move")
+              (progn (re-search-forward $blanks-regex)
+                     (setq $p1 (point)))
+            (setq $p1 (point)))
+          (if (re-search-forward $blanks-regex nil "move")
+              (progn (re-search-backward $blanks-regex)
+                     (setq $p2 (point)))
+            (setq $p2 (point))))))
+    (save-excursion
+      (save-restriction
+        (narrow-to-region $p1 $p2)
+        (goto-char (point-min))
+        (while
+            (re-search-forward " +" nil "move")
+          (when (> (- (point) (line-beginning-position)) $minlen)
+            (replace-match "\n" )))))))
+(defun xah-space-to-newline ()
+  "Replace space sequence to a newline char.
+Works on current block or selection.
+
+URL `http://ergoemacs.org/emacs/emacs_space_to_newline.html'
+Version 2017-08-19"
+  (interactive)
+  (let* ( $p1 $p2 )
+    (if (use-region-p)
+        (setq $p1 (region-beginning) $p2 (region-end))
+      (save-excursion
+        (if (re-search-backward "\n[ \t]*\n" nil "move")
+            (progn (re-search-forward "\n[ \t]*\n")
+                   (setq $p1 (point)))
+          (setq $p1 (point)))
+        (re-search-forward "\n[ \t]*\n" nil "move")
+        (skip-chars-backward " \t\n" )
+        (setq $p2 (point))))
+    (save-excursion
+      (save-restriction
+        (narrow-to-region $p1 $p2)
+        (goto-char (point-min))
+        (while (re-search-forward " +" nil t)
+          (replace-match "\n" ))))))
+
 (defun move-line-up ()
   "Move up the current line."
   (interactive)
@@ -77,8 +160,8 @@
 (defun xah-delete-blank-lines ()
   "Delete all newline around cursor.
 
-      URL `http://ergoemacs.org/emacs/emacs_shrink_whitespace.html'
-      Version 2018-04-02"
+        URL `http://ergoemacs.org/emacs/emacs_shrink_whitespace.html'
+        Version 2018-04-02"
   (interactive)
   (let ($p3 $p4)
     (skip-chars-backward "\n")
@@ -89,7 +172,7 @@
 
 (defun xah-fly-delete-spaces ()
   "Delete space, tab, IDEOGRAPHIC SPACE (U+3000) around cursor.
-        Version 2019-06-13"
+          Version 2019-06-13"
   (interactive)
   (let (p1 p2)
     (skip-chars-forward " \t　")
@@ -100,10 +183,10 @@
 
 (defun xah-cut-line-or-region ()
   "Cut current line, or text selection.
-          When `universal-argument' is called first, cut whole buffer (respects `narrow-to-region').
+            When `universal-argument' is called first, cut whole buffer (respects `narrow-to-region').
 
-          URL `http://ergoemacs.org/emacs/emacs_copy_cut_current_line.html'
-          Version 2015-06-10"
+            URL `http://ergoemacs.org/emacs/emacs_copy_cut_current_line.html'
+            Version 2015-06-10"
   (interactive)
   (if current-prefix-arg
       (progn ; not using kill-region because we don't want to include previous kill
@@ -116,12 +199,12 @@
 (defun xah-delete-backward-char-or-bracket-text ()
   "Delete backward 1 character, but if it's a \"quote\" or bracket ()[]{}【】「」 etc, delete bracket and the inner text, push the deleted text to `kill-ring'.
 
-            What char is considered bracket or quote is determined by current syntax table.
+              What char is considered bracket or quote is determined by current syntax table.
 
-            If `universal-argument' is called first, do not delete inner text.
+              If `universal-argument' is called first, do not delete inner text.
 
-            URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
-            Version 2017-07-02"
+              URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
+              Version 2017-07-02"
   (interactive)
   (if (and delete-selection-mode (region-active-p))
       (kill-region (region-beginning) (region-end))
@@ -151,12 +234,12 @@
 (defun xah-delete-backward-bracket-text ()
   "Delete the matching brackets/quotes to the left of cursor, including the inner text.
 
-            This command assumes the left of cursor is a right bracket, and there's a matching one before it.
+              This command assumes the left of cursor is a right bracket, and there's a matching one before it.
 
-            What char is considered bracket or quote is determined by current syntax table.
+              What char is considered bracket or quote is determined by current syntax table.
 
-            URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
-            Version 2017-09-21"
+              URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
+              Version 2017-09-21"
   (interactive)
   (progn
     (forward-sexp -1)
@@ -165,14 +248,14 @@
 
 (defun xah-delete-forward-bracket-text ()
   "weiss: backward to forward.
-            Delete the matching brackets/quotes to the left of cursor, including the inner text.
+              Delete the matching brackets/quotes to the left of cursor, including the inner text.
 
-            This command assumes the left of cursor is a right bracket, and there's a matching one before it.
+              This command assumes the left of cursor is a right bracket, and there's a matching one before it.
 
-            What char is considered bracket or quote is determined by current syntax table.
+              What char is considered bracket or quote is determined by current syntax table.
 
-            URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
-            Version 2017-09-21"
+              URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
+              Version 2017-09-21"
   (interactive)
   (progn
     (backward-char)
@@ -182,14 +265,14 @@
 (defun xah-delete-backward-bracket-pairs ()
   "Delete the matching brackets/quotes to the left of cursor.
 
-            After the command, mark is set at the left matching bracket position, so you can `exchange-point-and-mark' to select it.
+              After the command, mark is set at the left matching bracket position, so you can `exchange-point-and-mark' to select it.
 
-            This command assumes the left of point is a right bracket, and there's a matching one before it.
+              This command assumes the left of point is a right bracket, and there's a matching one before it.
 
-            What char is considered bracket or quote is determined by current syntax table.
+              What char is considered bracket or quote is determined by current syntax table.
 
-            URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
-            Version 2017-07-02"
+              URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
+              Version 2017-07-02"
   (interactive)
   (let (( $p0 (point)) $p1)
     (forward-sexp -1)
@@ -205,16 +288,16 @@
 
 (defun xah-delete-forward-bracket-pairs ( &optional @delete-inner-text-p)
   "Delete the matching brackets/quotes to the right of cursor.
-            If @delete-inner-text-p is true, also delete the inner text.
+              If @delete-inner-text-p is true, also delete the inner text.
 
-            After the command, mark is set at the left matching bracket position, so you can `exchange-point-and-mark' to select it.
+              After the command, mark is set at the left matching bracket position, so you can `exchange-point-and-mark' to select it.
 
-            This command assumes the char to the right of point is a left bracket or quote, and have a matching one after.
+              This command assumes the char to the right of point is a left bracket or quote, and have a matching one after.
 
-            What char is considered bracket or quote is determined by current syntax table.
+              What char is considered bracket or quote is determined by current syntax table.
 
-            URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
-            Version 2017-07-02"
+              URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
+              Version 2017-07-02"
   (interactive)
   (if @delete-inner-text-p
       (progn
@@ -231,14 +314,14 @@
 
 (defun xah-delete-forward-char-or-bracket-text ()
   "weiss: change backward to forward. 
-            Delete backward 1 character, but if it's a \"quote\" or bracket ()[]{}【】「」 etc, delete bracket and the inner text, push the deleted text to `kill-ring'.
+              Delete backward 1 character, but if it's a \"quote\" or bracket ()[]{}【】「」 etc, delete bracket and the inner text, push the deleted text to `kill-ring'.
 
-            What char is considered bracket or quote is determined by current syntax table.
+              What char is considered bracket or quote is determined by current syntax table.
 
-            If `universal-argument' is called first, do not delete inner text.
+              If `universal-argument' is called first, do not delete inner text.
 
-            URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
-            Version 2017-07-02"
+              URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
+              Version 2017-07-02"
   (interactive)
   (if (and delete-selection-mode (region-active-p))
       (kill-region (region-beginning) (region-end))
@@ -272,9 +355,9 @@
 
 (defun xah-fill-or-unfill ()
   "Reformat current paragraph or region to `fill-column', like `fill-paragraph' or “unfill”.
-              When there is a text selection, act on the selection, else, act on a text block separated by blank lines.
-              URL `http://ergoemacs.org/emacs/modernization_fill-paragraph.html'
-              Version 2017-01-08"
+                When there is a text selection, act on the selection, else, act on a text block separated by blank lines.
+                URL `http://ergoemacs.org/emacs/modernization_fill-paragraph.html'
+                Version 2017-01-08"
   (interactive)
   ;; This command symbol has a property “'compact-p”, the possible values are t and nil. This property is used to easily determine whether to compact or uncompact, when this command is called again
   (let ( ($compact-p
@@ -304,8 +387,8 @@
 
 (defun xah-toggle-previous-letter-case ()
   "Toggle the letter case of the letter to the left of cursor.
-                URL `http://ergoemacs.org/emacs/modernization_upcase-word.html'
-                Version 2015-12-22"
+                  URL `http://ergoemacs.org/emacs/modernization_upcase-word.html'
+                  Version 2015-12-22"
   (interactive)
   (let ((case-fold-search nil))
     (left-char 1)
@@ -368,16 +451,16 @@
 
 (defun xah-reformat-lines (&optional @length)
   "Reformat current text block into 1 long line or multiple short lines.
-                  When there is a text selection, act on the selection, else, act on a text block separated by blank lines.
+                    When there is a text selection, act on the selection, else, act on a text block separated by blank lines.
 
-                  When the command is called for the first time, it checks the current line's length to decide to go into 1 line or multiple lines. If current line is short, it'll reformat to 1 long lines. And vice versa.
+                    When the command is called for the first time, it checks the current line's length to decide to go into 1 line or multiple lines. If current line is short, it'll reformat to 1 long lines. And vice versa.
 
-                  Repeated call toggles between formatting to 1 long line and multiple lines.
+                    Repeated call toggles between formatting to 1 long line and multiple lines.
 
-                  If `universal-argument' is called first, use the number value for min length of line. By default, it's 70.
+                    If `universal-argument' is called first, use the number value for min length of line. By default, it's 70.
 
-                  URL `http://ergoemacs.org/emacs/emacs_reformat_lines.html'
-                  Version 2019-06-09"
+                    URL `http://ergoemacs.org/emacs/emacs_reformat_lines.html'
+                    Version 2019-06-09"
   (interactive)
   ;; This command symbol has a property “'is-longline-p”, the possible values are t and nil. This property is used to easily determine whether to compact or uncompact, when this command is called again
   (let* (
@@ -412,10 +495,10 @@
 
 (defun xah-escape-quotes (@begin @end)
   "Replace 「\"」 by 「\\\"」 in current line or text selection.
-                    See also: `xah-unescape-quotes'
+                      See also: `xah-unescape-quotes'
 
-                    URL `http://ergoemacs.org/emacs/elisp_escape_quotes.html'
-                    Version 2017-01-11"
+                      URL `http://ergoemacs.org/emacs/elisp_escape_quotes.html'
+                      Version 2017-01-11"
   (interactive
    (if (use-region-p)
        (list (region-beginning) (region-end))
@@ -430,11 +513,11 @@
 
 (defun xah-clean-whitespace ()
   "Delete trailing whitespace, and replace repeated blank lines to just 1.
-                      Only space and tab is considered whitespace here.
-                      Works on whole buffer or text selection, respects `narrow-to-region'.
+                        Only space and tab is considered whitespace here.
+                        Works on whole buffer or text selection, respects `narrow-to-region'.
 
-                      URL `http://ergoemacs.org/emacs/elisp_compact_empty_lines.html'
-                      Version 2017-09-22"
+                        URL `http://ergoemacs.org/emacs/elisp_compact_empty_lines.html'
+                        Version 2017-09-22"
   (interactive)
   (let ($begin $end)
     (if (region-active-p)
@@ -470,8 +553,8 @@
 
 (defun weiss-comment-dwim ()
   "in weiss-select-mode  -> comment region
-                          with prefix-arg  -> add comment at end of line and activate insert mode
-                          t -> comment current line"
+                            with prefix-arg  -> add comment at end of line and activate insert mode
+                            t -> comment current line"
   (interactive)
   (if current-prefix-arg
       (progn
@@ -495,13 +578,13 @@
 (defun xah-shrink-whitespaces ()
   "Remove whitespaces around cursor to just one, or none.
 
-                            Shrink any neighboring space tab newline characters to 1 or none.
-                            If cursor neighbor has space/tab, toggle between 1 or 0 space.
-                            If cursor neighbor are newline, shrink them to just 1.
-                            If already has just 1 whitespace, delete it.
+                              Shrink any neighboring space tab newline characters to 1 or none.
+                              If cursor neighbor has space/tab, toggle between 1 or 0 space.
+                              If cursor neighbor are newline, shrink them to just 1.
+                              If already has just 1 whitespace, delete it.
 
-                            URL `http://ergoemacs.org/emacs/emacs_shrink_whitespace.html'
-                            Version 2019-06-13"
+                              URL `http://ergoemacs.org/emacs/emacs_shrink_whitespace.html'
+                              Version 2019-06-13"
   (interactive)
   (let* (
          ($eol-count 0)
@@ -553,12 +636,12 @@
 
 (defun xah-paste-or-paste-previous ()
   "Paste. When called repeatedly, paste previous.
-                            This command calls `yank', and if repeated, call `yank-pop'.
+                              This command calls `yank', and if repeated, call `yank-pop'.
 
-                            When `universal-argument' is called first with a number arg, paste that many times.
+                              When `universal-argument' is called first with a number arg, paste that many times.
 
-                            URL `http://ergoemacs.org/emacs/emacs_paste_or_paste_previous.html'
-                            Version 2017-07-25"
+                              URL `http://ergoemacs.org/emacs/emacs_paste_or_paste_previous.html'
+                              Version 2017-07-25"
   (interactive)
   (progn
     (when (and delete-selection-mode (region-active-p))
@@ -617,7 +700,7 @@
   (interactive)
   (end-of-line)
   (insert "
-                                  ")
+                                    ")
   (indent-according-to-mode)
   )
 
@@ -657,10 +740,10 @@
 
 (defun xah-toggle-letter-case ()
   "Toggle the letter case of current word or text selection.
-                                    Always cycle in this order: Init Caps, ALL CAPS, all lower.
+                                      Always cycle in this order: Init Caps, ALL CAPS, all lower.
 
-                                    URL `http://ergoemacs.org/emacs/modernization_upcase-word.html'
-                                    Version 2019-11-24"
+                                      URL `http://ergoemacs.org/emacs/modernization_upcase-word.html'
+                                      Version 2019-11-24"
   (interactive)
   (let (
         (deactivate-mark nil)
@@ -713,6 +796,8 @@
       )
      ((eq major-mode 'go-mode)
       (gofmt))
+     ((eq major-mode 'python-mode)
+      (yapfify-buffer))
      (t
       (deactivate-mark)
       (indent-region (point-min) (point-max)))
@@ -742,15 +827,15 @@
 
 (defun xah-cycle-hyphen-underscore-space ( &optional @begin @end )
   "Cycle {underscore, space, hyphen} chars in selection or inside quote/bracket or line.
-                                        When called repeatedly, this command cycles the {“_”, “-”, “ ”} characters, in that order.
+                                          When called repeatedly, this command cycles the {“_”, “-”, “ ”} characters, in that order.
 
-                                        The region to work on is by this order:
-                                         ① if there's active region (text selection), use that.
-                                         ② If cursor is string quote or any type of bracket, and is within current line, work on that region.
-                                         ③ else, work on current line.
+                                          The region to work on is by this order:
+                                           ① if there's active region (text selection), use that.
+                                           ② If cursor is string quote or any type of bracket, and is within current line, work on that region.
+                                           ③ else, work on current line.
 
-                                        URL `http://ergoemacs.org/emacs/elisp_change_space-hyphen_underscore.html'
-                                        Version 2019-02-12"
+                                          URL `http://ergoemacs.org/emacs/elisp_change_space-hyphen_underscore.html'
+                                          Version 2019-02-12"
   (interactive)
   ;; this function sets a property 「'state」. Possible values are 0 to length of $charArray.
   (let ($p1 $p2)
@@ -803,6 +888,150 @@
         (setq deactivate-mark nil))
       (put 'xah-cycle-hyphen-underscore-space 'state (% (+ $nowState 1) $length)))))
 ;; editing:1 ends here
+
+;; kmacro
+
+;; [[file:../emacs-config.org::*kmacro][kmacro:1]]
+(defvar weiss/kmacro-info nil)
+
+(defun weiss-call-kmacro ()
+  "call kmacro once"
+  (interactive)
+  (weiss-before-kmacro)
+  (call-interactively 'call-last-kbd-macro)
+  )
+
+(defun weiss-call-kmacro-infinite ()
+  "call kmacro up to error"
+  (interactive)
+  (undo-collapse-begin)
+  (call-last-kbd-macro 0 #'weiss-before-kmacro)
+  (undo-collapse-end)
+  )
+
+(defun weiss-call-kmacro-dwim ()
+  "DOCSTRING"
+  (interactive)
+  (undo-collapse-begin)
+  (ignore-errors (shiftless-mode -1))
+  (let ((echo-keystrokes nil)
+        (single-line (eq
+                      (line-number-at-pos (region-beginning))
+                      (line-number-at-pos (region-end))))
+        )
+    (if single-line
+        (call-last-kbd-macro 1 #'weiss-before-kmacro)
+      (save-restriction
+        (narrow-to-region (region-beginning) (region-end))
+        (goto-char (point-min))
+        (call-last-kbd-macro 999 #'weiss-before-kmacro)
+        )
+      )
+    (ignore-errors (shiftless-mode 1))
+    ))
+
+(defun weiss-before-kmacro ()
+  "go next line or search word according to weiss/kmacro-info"
+  (interactive)
+  (cond
+   ((stringp (car weiss/kmacro-info))
+    (let ((p (search-forward (car weiss/kmacro-info) nil t))
+          )
+      (when p
+        (goto-char (- p (cdr weiss/kmacro-info)))
+        )
+      p)
+    )
+   ((numberp (cdr weiss/kmacro-info))
+    (forward-line 1)
+    (goto-char (+ (line-beginning-position) (cdr weiss/kmacro-info)))
+    (not (eq (line-end-position) (point-max)))
+    )
+   (t t)
+   )
+  )
+
+(defun weiss-start-kmacro ()
+  "DOCSTRING"
+  (interactive)
+  (unless (or executing-kbd-macro defining-kbd-macro)
+    (let ((current-prefix-arg)
+          )
+      (setq
+       weiss/kmacro-info
+       (if (use-region-p)
+           (let ((b (region-beginning))
+                 (e (region-end))
+                 )
+             (deactivate-mark)
+             `(,(buffer-substring-no-properties b e)
+               . ,(- e (point)))
+             )
+         `(nil . ,(- (point) (line-beginning-position)))
+         ))))
+  (call-interactively 'kmacro-start-macro-or-insert-counter)
+  )
+
+(defun weiss-end-kmacro ()
+  "end kmacro and call hydra"
+  (interactive)
+  (when defining-kbd-macro
+    (call-interactively 'kmacro-end-macro)
+    )
+  (hydra-kmacro/body)
+  )
+
+(defun weiss-apply-macro-1 ()
+  "apply kmacro 1 times"
+  (interactive)
+  (call-last-kbd-macro 1 #'weiss-before-kmacro)
+  )
+(defun weiss-apply-macro-2 ()
+  "apply kmacro 2 times"
+  (interactive)
+  (call-last-kbd-macro 2 #'weiss-before-kmacro)
+  )
+(defun weiss-apply-macro-3 ()
+  "apply kmacro 3 times"
+  (interactive)
+  (call-last-kbd-macro 3 #'weiss-before-kmacro)
+  )
+(defun weiss-apply-macro-4 ()
+  "apply kmacro 4 times"
+  (interactive)
+  (call-last-kbd-macro 4 #'weiss-before-kmacro)
+  )
+(defun weiss-apply-macro-5 ()
+  "apply kmacro 5 times"
+  (interactive)
+  (call-last-kbd-macro 5 #'weiss-before-kmacro)
+  )
+(defun weiss-apply-macro-6 ()
+  "apply kmacro 6 times"
+  (interactive)
+  (call-last-kbd-macro 6 #'weiss-before-kmacro)
+  )
+(defun weiss-apply-macro-7 ()
+  "apply kmacro 7 times"
+  (interactive)
+  (call-last-kbd-macro 7 #'weiss-before-kmacro)
+  )
+(defun weiss-apply-macro-8 ()
+  "apply kmacro 8 times"
+  (interactive)
+  (call-last-kbd-macro 8 #'weiss-before-kmacro)
+  )
+(defun weiss-apply-macro-9 ()
+  "apply kmacro 9 times"
+  (interactive)
+  (call-last-kbd-macro 9 #'weiss-before-kmacro)
+  )
+(defun weiss-apply-macro-0 ()
+  "apply kmacro 10 times"
+  (interactive)
+  (call-last-kbd-macro 10 #'weiss-before-kmacro)
+  )
+;; kmacro:1 ends here
 
 ;; cursor movement
 
@@ -956,33 +1185,33 @@ Version 2018-06-04"
 
 
 (defvar weiss-non-stop-delimiters-list '(";" "	" " " "\n" "'" "\\"))
-(defvar weiss-stop-delimiters-list '(":" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
+(defvar weiss-stop-delimiters-list '("|" "`" ":" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
 
 ;; need mode-local.el
 (setq-mode-local
  python-mode
  weiss-non-stop-delimiters-list '(";" "	" " " "\n" "'" "\\")
- weiss-stop-delimiters-list '(":" ":" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
+ weiss-stop-delimiters-list '("|" "`" ":" ":" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
 
 (setq-mode-local
  org-mode
  weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
- weiss-stop-delimiters-list '(":" "&" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "|"))
+ weiss-stop-delimiters-list '("|" "`" ":" "&" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "|"))
 
 (setq-mode-local
  latex-mode
  weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
- weiss-stop-delimiters-list '(":" "&" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
+ weiss-stop-delimiters-list '("|" "`" ":" "&" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
 
 (setq-mode-local
  sgml-mode
  weiss-non-stop-delimiters-list '(";" "	" " " "\n" "'" "\\")
- weiss-stop-delimiters-list '(":" "<" ">" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
+ weiss-stop-delimiters-list '("|" "`" ":" "<" ">" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
 
 (setq-mode-local
  java-mode
  weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
- weiss-stop-delimiters-list '(":" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
+ weiss-stop-delimiters-list '("|" "`" ":" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
 
 (defun weiss--check-two-char (isForward firstList &optional secondList)
   "Check two char"
@@ -1441,6 +1670,10 @@ Version 2018-06-04"
                        switch-to-buffer
                        other-window
                        find-file
+                       org-open-file
+                       dired-goto-file
+                       org-agenda-finalize
+                       wdired-finish-edit
                        )))
   (dolist (x function-list)
     (advice-add x :after #'weiss-after-change-frame-or-window)
@@ -1460,6 +1693,7 @@ Version 2018-06-04"
                    text-mode-hook
                    fundamental-mode-hook
                    dired-mode-hook
+                   wdired-mode-hook
                    special-mode-hook
                    conf-mode-hook
                    quickrun-after-run-hook
@@ -1473,6 +1707,13 @@ Version 2018-06-04"
 ;; select
 
 ;; [[file:../emacs-config.org::*select][select:1]]
+(defun weiss-deactivate-mark ()
+  "DOCSTRING"
+  (interactive)
+  (setq saved-region-selection nil)
+  (let (select-active-regions)
+    (deactivate-mark)))
+
 (defun weiss-expand-region-by-word ()
   "expand region word by word on the same side of cursor"
   (interactive)
@@ -1819,7 +2060,8 @@ Version 2015-10-14"
     URL `http://ergoemacs.org/emacs/emacs_dired_open_file_in_ext_apps.html'
     Version 2019-11-04"
   (interactive)
-  (save-buffer)
+  (unless (eq major-mode 'dired-mode)
+    (save-buffer))  
   (let* (
          ($file-list
           (if @fname

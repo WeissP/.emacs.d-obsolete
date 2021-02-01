@@ -37,6 +37,7 @@
 (advice-add 'xah-select-block :after #'weiss-select-mode-turn-on)
 (advice-add 'weiss-select-sexp :after #'weiss-select-mode-turn-on)
 (advice-add 'exchange-point-and-mark :after #'weiss-select-mode-turn-on)
+(advice-add 'weiss-mark-brackets :after #'weiss-select-mode-turn-on)
 
 (defun weiss-deactivate-mark-unless-in-select-mode (&optional a b c)
   "deactivate mark unless in select mode"

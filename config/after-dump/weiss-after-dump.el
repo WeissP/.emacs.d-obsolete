@@ -3039,6 +3039,8 @@
 ;; [[file:../emacs-config.org::*misc][misc:1]]
 (setq inhibit-startup-screen t)
 
+(use-package command-log-mode)
+
 ;; there are some problems to set face attribute before dump
 (set-face-attribute 'cursor '((nil (:background weiss/cursor-color))))
 (set-face-attribute 'mc/cursor-bar-face nil :background weiss/cursor-color)
@@ -3391,6 +3393,11 @@ If chatbuf is supergroups, channels or secret chat, then always revoke."
                ("v" yank-rectangle)
                ("n" mc/mark-next-like-this)
                ("a" mc/mark-all-like-this)
+               ("s" weiss-start-kmacro)
+               ;; ("l" weiss-kmacro-insert-letters)
+               ("k" weiss-deactivate-mark)
+               ("e" weiss-end-kmacro)
+               ("c" kmacro-call-macro)
                ("SPC" hydra-multiple-cursors-weiss/body)
                ))
          ("p"  recenter-top-bottom)

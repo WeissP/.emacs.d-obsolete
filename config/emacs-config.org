@@ -210,6 +210,7 @@
   (require 'weiss-org)
   (require 'weiss-pdf)
   (require 'weiss-flycheck)
+  (require 'weiss-flyspell)
   (require 'weiss-translation)
   (require 'weiss-snails)
   (require 'weiss-sql)
@@ -294,10 +295,7 @@
     "A conditional key definition for `expand-abbrev'.
   When  this was bound, it will expand abbrev at point if there're any possible
   abbrev.")
-  (defun weiss-test ()
-    "DOCSTRING"
-    (interactive) 
-    (skip-syntax-backward "\\w"))
+
   (defun weiss-check-or-expand-abbrev (&optional check)
     "Check the string between the cursor and the last space"
     (interactive)
@@ -353,6 +351,11 @@
       (when $found-p (delete-char 1))
       $found-p
       ))
+
+  (defun weiss--ahf-avoid-casease ()
+    "indent after abbrev expand"
+    (casease--end)
+    t)
 
   (defun weiss--ahf-indent ()
     "indent after abbrev expand"
@@ -519,9 +522,17 @@
       ("ltxeq" "\\begin{equation*}\n▮\n\\end{equation*}" weiss--ahf-indent)    
       ("ltxal" "\\begin{aligned}\n▮\n\\end{aligned}" weiss--ahf-indent)    
       ("ltxtb" "#+ATTR_LaTeX: :align |r|r|r|r|r|" weiss--ahf-indent)    
+      ("ltxmg" "#+ATTR_Latex: :options [leftmargin=▮8ex]" weiss--ahf-indent)    
+      ("ltximg" "#+ATTR_LATEX:  :width 0.9\\textwidth :center nil" weiss--ahf-indent)    
+      ("ltxmt" "#+ATTR_LATEX: :options xleftmargin=8ex" weiss--ahf-indent)    
+      ("orgimg" "#+ATTR_ORG: :width 600" weiss--ahf-indent)    
+      ("cc" "$\\color{code}\\texttt{▮}$" weiss--ahf-indent)    
   ;;;;; emoji
       ("zrl" ":relaxed:" weiss--ahf)
       ("zj" ":joy:" weiss--ahf)
+  ;;;;; for English language
+      ("intr" "introduction" weiss--ahf)    
+      ("ex" "example" weiss--ahf)    
   ;;;;; for Germany language
       ("algo" "Algorithmus" weiss--ahf)
       ("ht" "heute" weiss--ahf)
@@ -862,27 +873,33 @@
 
   (define-abbrev-table 'go-mode-abbrev-table
     '(
+      ("ca" "case ▮:" weiss--ahf)
       ("d" "defer ▮" weiss--ahf)
       ("de" "default:\n▮" weiss--ahf-indent)
-      ("ca" "case ▮:" weiss--ahf)
       ("e" ":= ▮" weiss--ahf)
+      ("en" "errors.New(\"▮\")" weiss--ahf)
       ("f" "func ▮(){\n\n}" weiss--ahf-indent)
       ("fr" "for i, x := range ▮{\n\n}" weiss--ahf-indent)
-      ("im" "import (\n\"▮\"\n)" weiss--ahf-indent)
       ("ie" "if err != nil {\n▮\n}" weiss--ahf-indent)
+      ("im" "import (\n\"▮\"\n)" weiss--ahf-indent)
+      ("la" "<-" weiss--ahf)
       ("pa" "package ▮" weiss--ahf)
       ("pr" "fmt.Printf(\"%v\", ▮)")
+      ("prn" "fmt.Println(\"▮\")")
       ("rt" "return ▮" weiss--ahf)
+      ("rc" "regexp.MustCompile(`▮`)" weiss--ahf)
       ("st" "%T" weiss--ahf)
       ("sv" "%v" weiss--ahf)
-      ("ts" "type ▮ struct {\n\n}" weiss--ahf-indent)
+      ("sf" "fmt.Sprintf(\"%v\",▮)" weiss--ahf)
       ("ti" "type ▮ interface {\n\n}" weiss--ahf-indent)
+      ("ts" "type ▮ struct {\n\n}" weiss--ahf-indent)
       ("v" "var ▮" weiss--ahf)
       ))
 
 #+end_src
 
 ** elisp
+
 #+begin_src elisp
   (when (boundp 'emacs-lisp-mode-abbrev-table)
     (clear-abbrev-table emacs-lisp-mode-abbrev-table))
@@ -1027,6 +1044,7 @@
       ("sqa" "shell-quote-argument" weiss--ahf)
       ("stb" "switch-to-buffer" weiss--ahf)
       ("ste" "(string-equal ▮)" weiss--ahf)
+      ("stm" "set-transient-map" weiss--ahf)
       ("stn" "string-to-number" weiss--ahf)
       ("tap" "thing-at-point" weiss--ahf)
       ("urp" "use-region-p" weiss--ahf)
@@ -1117,7 +1135,7 @@
       ("defcustom" "(defcustom ▮)" weiss--ahf)
       ("defface" "(defface ▮)" weiss--ahf)
       ("defimage" "(defimage ▮)" weiss--ahf)
-      ("define-key" "(define-key ▮ (kbd \"M-b\"))" weiss--ahf)
+      ("define-key" "(define-key ▮ (kbd \"\") #')" weiss--ahf)
       ("define-minor-mode" "(define-minor-mode ▮)" weiss--ahf)
       ("defsubst" "(defsubst ▮)" weiss--ahf)
       ("defun" "(defun ▮ ()\n  \"DOCSTRING\"\n  (interactive)\n  (let (())\n\n ))" weiss--ahf-indent)
@@ -1333,6 +1351,7 @@
       ("set-text-properties" "(set-text-properties ▮)" weiss--ahf)
       ("set-visited-file-modtime" "(set-visited-file-modtime ▮)" weiss--ahf)
       ("set-visited-file-name" "(set-visited-file-name ▮)" weiss--ahf)
+      ("set-transient-map" "(set-transient-map\n(let ((map (make-sparse-keymap))\n)\n(define-key map (kbd \"▮\") #')\nmap)\nt)" weiss--ahf-indent)
       ("setq" "(setq ▮)" weiss--ahf)
       ("setf" "(setf ▮)" weiss--ahf)
       ("max" "(max ▮)" weiss--ahf)
@@ -1443,7 +1462,11 @@
       )
     )
 
-
+  (define-abbrev-table 'text-mode-abbrev-table
+    '(
+      ("i" "&&&[IMG]pictures/▮.png" weiss--ahf)
+      )
+    )
 #+end_src
 ** end
 #+begin_src elisp
@@ -2796,45 +2819,78 @@
   ;; (setq LaTeX-command-style '(("" "%(PDF)%(latex) -shell-escape %S%(PDFout)")))
 
   (setq
-   org-export-headline-levels 1
+   org-export-headline-levels 5
    org-export-with-tags nil
    org-latex-listings 'minted
    org-latex-pdf-process
    '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
      "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")
    )
-
+    ;; \\setlength\\parindent{0pt}
+  ;; \usepackage{xcolor}
+  ;; \definecolor{code}{HTML}{986801}
   (add-to-list 'org-latex-packages-alist '("" "minted" t))
-  (add-to-list 'org-latex-packages-alist '("" "tikz" t))
+
+  ;; (add-to-list 'org-latex-packages-alist '("" "tikz" t))
   ;; ;; \\usepackage{arev}
 
-  ;; (add-to-list 'org-latex-classes
-  ;;              '("weiss-abgabe"
-  ;;                "\\documentclass{article}
+  (add-to-list 'org-latex-classes
+               '("weiss-Paper"
+                 "\\documentclass[11pt]{report}
 
-  ;; [PACKAGES]
-  ;; \\usepackage[table]{xcolor}
-  ;; \\usepackage{ifsym}
-  ;; \\setminted[]{tabsize=2, breaklines=true, linenos=true}
-  ;; \\setlength\\parindent{0pt}
-  ;; \\usepackage{fontawesome}
-  ;; \\usepackage{enumitem}
-  ;; \\usepackage{forest}
-  ;; \\usepackage{tikz}
-  ;; \\usetikzlibrary{automata,arrows}
-  ;; \\setlist[itemize,2]{label=$\\circ$}
-  ;; \\setlist[itemize,3]{label=$\\diamond$}
-  ;; \\setenumerate[1]{label=\\alph*)}
-  ;; \\setenumerate[2]{label=\\roman*)}
-  ;; [EXTRA]
-  ;; "
-  ;;                ("\\section{%s}" . "\\section*{%s}")
-  ;;                ("\\subsection{%s}" . "\\subsection*{%s}")
-  ;;                ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-  ;;                ("\\paragraph{%s}" . "\\paragraph*{%s}")
-  ;;                ("\\subparagraph{%s}" . "\\subparagraph*{%s}")
-  ;;                ))
+  [PACKAGES]
+  \\makeatletter
+  \\setlength\\parindent{0pt}
+  \\usepackage[table]{xcolor}
+  \\usepackage{lipsum}
+  \\usepackage{ifsym}
+  \\usepackage{fontawesome}
+  \\usepackage{enumitem}
+  \\usepackage{changepage}
+  \\usepackage{inconsolata}
+  \\usepackage{xcolor}
+  \\definecolor{code}{HTML}{986801}
+  \\setminted[]{tabsize=2, breaklines=true, linenos=true}
+  \\newenvironment{right_indent}
+    {\\begin{adjustwidth}{0.5cm}{0em}\\ }
+    {\\end{adjustwidth}}
+  \\usepackage{titlesec}
+  \\titleformat{\\chapter}[display]   
+  {\\normalfont\\huge\\bfseries}{\\chaptertitlename\\ \\thechapter}{20pt}{\\Huge}   
+  \\titlespacing*{\\chapter}{0pt}{-15pt}{40pt}
+  \\renewcommand\\section{\\leftskip 0pt\\@startsection {section}{1}{\\z@}%
+                                     {-3.5ex \\@plus -1ex \\@minus -.2ex}%
+                                     {2.3ex \\@plus.2ex}%
+                                     {\\normalfont\\Large\\bfseries}}%
+  \\renewcommand\\subsection{\\leftskip 0pt\\@startsection{subsection}{2}{\\z@}%
+                                       {-3.25ex\\@plus -1ex \\@minus -.2ex}%
+                                       {1.5ex \\@plus .2ex}%
+                                       {\\normalfont\\large\\bfseries}}%
 
+  \\newcommand\\Xsubsection{\\@startsection{subsection}{8}{\\z@}%
+                                       {-3.25ex\\@plus -1ex \\@minus -.2ex}%
+                                       {1.5ex \\@plus .2ex}%
+                                       {\\normalfont\\normalsize\\bfseries\\leftskip 3ex}}%
+  \\newcommand\\Xsubsubsection{\\@startsection{subsubsection}{8}{\\z@}%
+                                       {-3.25ex\\@plus -1ex \\@minus -.2ex}%
+                                       {1.5ex \\@plus .2ex}%
+                                       {\\normalfont\\normalsize\\bfseries\\leftskip 6ex}}%
+
+  \\newcommand\\Mysubsection[1]{\\Xsubsection{#1}\\leftskip 4ex}
+  \\newcommand\\Mysubsubsection[1]{\\Xsubsubsection{#1}\\leftskip 7ex}
+  \\renewcommand{\\labelitemi}{$\\bullet$}
+  \\renewcommand{\\labelitemii}{$\\circ$}
+  \\renewcommand{\\labelitemiii}{$\\circ$}
+  \\renewcommand{\\labelitemiv}{$\\circ$}
+  [EXTRA]
+  "
+                 ;; ("\\part{%s}" . "\\part*{%s}")
+                 ("\\chapter{%s}" . "\\chapter*{%s}")
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\Mysubsection{%s}")
+                 ("\\subsubsection{%s}" . "\\Mysubsubsection{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph{%s}")
+                 ))
 
 
   ;; (setq org-latex-default-class "weiss-abgabe")
@@ -5953,32 +6009,37 @@
 
 ** Functions
 #+begin_src elisp
-(defun weiss-toggle-hl-line ()
-  "toggle hl line using weiss-enable-hl-line"
-  (interactive)
-  (if hl-line-mode
-      (hl-line-mode -1)
-    (weiss-enable-hl-line)
-    )
-  )
+  (defvar weiss/disable-hl-mode-list '(snails-mode pdf-view-mode))
 
-(defun weiss-enable-hl-line ()
-  "change hl line face by major-mode"
-  (interactive)
-  (unless (eq major-mode 'snails-mode)
-    (hl-line-mode -1)
-    (cond
-     (weiss-dired-single-handed-mode
-      (set (make-local-variable 'hl-line-face) 'emphasis-hl-line)
+  (defun weiss-toggle-hl-line ()
+    "toggle hl line using weiss-enable-hl-line"
+    (interactive)
+    (if hl-line-mode
+        (hl-line-mode -1)
+      (weiss-enable-hl-line)
       )
-     ((eq major-mode 'dired-mode)
-      (set (make-local-variable 'hl-line-face) 'normal-hl-line)
-      )
-     (t (set (make-local-variable 'hl-line-face) 'box-hl-line))
-     )
-    (hl-line-mode 1)
     )
-  )
+
+  (defun weiss-enable-hl-line ()
+    "change hl line face by major-mode"
+    (interactive)
+    (unless (member major-mode weiss/disable-hl-mode-list)
+      (hl-line-mode -1)
+      (cond
+       (weiss-dired-single-handed-mode
+        (set (make-local-variable 'hl-line-face) 'emphasis-hl-line)
+        )
+       ((eq major-mode 'dired-mode)
+        (set (make-local-variable 'hl-line-face) 'normal-hl-line)
+        )
+       ((eq major-mode 'org-agenda-mode)
+        (set (make-local-variable 'hl-line-face) 'normal-hl-line)
+        )
+       (t (set (make-local-variable 'hl-line-face) 'box-hl-line))
+       )
+      (hl-line-mode 1)
+      )
+    )
 #+end_src
 ** icons
 #+begin_src elisp
@@ -6007,9 +6068,81 @@
             (memoize f)))
         (message "Reset all-the-icons"))))
 #+end_src
+** eldoc
+#+begin_src elisp
+  (defconst weiss--eldoc-commands
+    '(
+      weiss-right-key
+      weiss-up-key
+      weiss-down-key
+      weiss-left-key
+      xah-backward-left-bracket
+      xah-forward-right-bracket
+      )
+    "A list commands trigger eldoc.")
+
+  (setq eldoc-display-functions '(eldoc-display-in-echo-area weiss-show-eldoc))
+
+  (apply #'eldoc-add-command weiss--eldoc-commands)
+
+  (global-set-key (kbd "M-e") 'eldoc)
+
+  (defun weiss-show-eldoc (docs _interactive)
+    "just the main part of eldoc-display-in-echo-area"
+    (interactive)
+    (let*
+          ((width (1- (window-width (minibuffer-window))))
+           (val (if (and (symbolp eldoc-echo-area-use-multiline-p)
+                         eldoc-echo-area-use-multiline-p)
+                    max-mini-window-height
+                  eldoc-echo-area-use-multiline-p))
+           (available (cl-typecase val
+                        (float (truncate (* (frame-height) val)))
+                        (integer val)
+                        (t 'just-one-line)))
+           single-doc single-doc-sym)
+        (let ((echo-area-message
+               (cond
+                (;; To output to the echo area, we handle the
+                 ;; `truncate-sym-name-if-fit' special case first, by
+                 ;; checking for a lot of special conditions.
+                 (and
+                  (eq 'truncate-sym-name-if-fit eldoc-echo-area-use-multiline-p)
+                  (null (cdr docs))
+                  (setq single-doc (caar docs))
+                  (setq single-doc-sym
+                        (format "%s" (plist-get (cdar docs) :thing)))
+                  (< (length single-doc) width)
+                  (not (string-match "\n" single-doc))
+                  (> (+ (length single-doc) (length single-doc-sym) 2) width))
+                 single-doc)
+                ((and (numberp available)
+                      (cl-plusp available))
+                 ;; Else, given a positive number of logical lines, we
+                 ;; format the *eldoc* buffer, using as most of its
+                 ;; contents as we know will fit.
+                 (with-current-buffer (eldoc--format-doc-buffer docs)
+                   (save-excursion
+                     (eldoc--echo-area-substring available))))
+                (t ;; this is the "truncate brutally" situation
+                 (let ((string
+                        (with-current-buffer (eldoc--format-doc-buffer docs)
+                          (buffer-substring (goto-char (point-min))
+                                            (line-end-position 1)))))
+                   (if (> (length string) width)  ; truncation to happen
+                       (unless (eldoc--echo-area-prefer-doc-buffer-p t)
+                         (truncate-string-to-width string width))
+                     (unless (eldoc--echo-area-prefer-doc-buffer-p nil)
+                       string)))))))
+          (when echo-area-message
+            (eldoc--message echo-area-message))))
+    )
+#+end_src
 ** misc
 #+begin_src elisp :tangle after-dump/weiss-after-dump.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
   (setq inhibit-startup-screen t)
+
+  (use-package command-log-mode)
 
   ;; there are some problems to set face attribute before dump
   (set-face-attribute 'cursor '((nil (:background weiss/cursor-color))))
@@ -6616,13 +6749,14 @@
                             )))
 #+end_src
 ** casease
-
 #+begin_src elisp
   (use-package casease
     :quelpa (casease 
              :fetcher github 
              :repo DogLooksGood/casease)
     :config
+    (advice-add 'weiss--ahf-indent :after #'casease--end)
+    (advice-add 'weiss--ahf :after #'casease--end)
     (casease-setup
      :hook java-mode-hook
      :separator ?-
@@ -6708,7 +6842,8 @@
     :hook
     ((prog-mode . company-mode)
      (conf-mode . company-mode)
-     (eshell-mode . company-mode))
+     (eshell-mode . company-mode)
+     (org-mode . company-mode))
     :custom
     (company-tng-auto-configure nil)
     (company-frontends '(company-tng-frontend
@@ -6740,6 +6875,12 @@
     (company-global-modes '(not dired-mode dired-sidebar-mode))
     (company-tooltip-margin 1)
     :config
+    (setq-mode-local
+     org-mode
+     company-backends
+     '(company-bbdb company-semantic company-cmake company-clang company-files
+                    (company-dabbrev-code company-gtags company-etags company-keywords)
+                    company-oddmuse company-dabbrev))
     (defun weiss-company-select-next-or-toggle-main-frame ()
       "DOCSTRING"
       (interactive)
@@ -6754,6 +6895,11 @@
           (weiss-switch-buffer-or-otherside-frame-without-top)
         (company-select-previous)
         ))
+    (use-package company-box
+      :hook (company-mode . company-box-mode)
+      :config
+      (setq company-box-enable-icon nil)
+      )
     )
 
   (use-package yasnippet
@@ -6835,7 +6981,6 @@
     ;; Format using YAPF
     ;; Install: pip install yapf
     (use-package yapfify
-      :disabled
       :diminish yapf-mode
       :hook (python-mode . yapf-mode))
     )
@@ -7734,6 +7879,43 @@
 
 #+end_src
 
+* flyspell
+:PROPERTIES:
+:header-args: :tangle flycheck/weiss-flyspell.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
+:END:
+
+#+begin_src elisp
+  (use-package wucuo
+    :init
+    (add-hook 'text-mode-hook #'wucuo-start)
+    )
+  (use-package flyspell
+    ;; :disabled
+    :ensure nil
+    ;; :hook (((text-mode outline-mode org-mode) . flyspell-mode))
+    :init
+    (setq flyspell-issue-message-flag nil
+          ispell-program-name "hunspell"
+          ispell-extra-args '("--sug-mode=ultra" "--run-together"))
+    (setq ispell-dictionary "de_DE,en_US")
+    :config
+    ;; ispell-set-spellchecker-params has to be called
+    ;; before ispell-hunspell-add-multi-dic will work
+    (ispell-set-spellchecker-params)
+    (ispell-hunspell-add-multi-dic "de_DE,en_US")
+    (defun weiss-flyspell-save-word ()
+      "From https://stackoverflow.com/questions/22107182/in-emacs-flyspell-mode-how-to-add-new-word-to-dictionary"
+      (interactive)
+      (let ((current-location (point))
+            (word (flyspell-get-word)))
+        (when (consp word)    
+          (flyspell-do-correct 'save nil (car word) current-location (cadr word) (caddr word) current-location))))
+    )
+
+
+  (provide 'weiss-flyspell)
+#+end_src
+
 * dired
 ** dired
 :PROPERTIES:
@@ -7758,106 +7940,6 @@
 
 #+end_src
 
-*** keybinding 
-#+begin_src elisp
-  :ryo
-  (:mode 'dired-mode)
-  ("SPC" (
-          ("l" (
-                ("r" dired-toggle-read-only
-                 :first (revert-buffer)
-                 :then (ryo-modal-restart)  
-                 )
-                ("v" weiss-dired-single-handed-mode)
-                )))
-   )
-  ("e" ora-ediff-files)
-  ("g" (
-        ("d" ignore
-         :then ((lambda()(interactive)(find-file "/home/weiss/Downloads")))
-         :name "Downloads"
-         )
-        ("v"  ignore
-         :then ((lambda()(interactive)(find-file "/home/weiss/Documents/Vorlesungen")))
-         :name "Vorlesungen"
-         )
-        ("m"  ignore
-         :then ((lambda()(interactive)(find-file "/run/media/weiss")))
-         :name "usb"
-         )
-        ("p"  ignore
-         :then ((lambda()(interactive)(find-file "/run/media/weiss/Seagate_Backup/porn/")))
-         :name "Seagate_Backup"
-         )
-        ("c"  ignore
-         :then ((lambda()(interactive)(find-file "/home/weiss/.config")))
-         :name "config"
-         )
-        ("h"  ignore
-         :then ((lambda()(interactive)(find-file "/home/weiss/")))
-         :name "home"
-         )
-        ("t"  ignore
-         :then ((lambda()(interactive)(find-file "/home/weiss/.telega/cache/")))
-         :name "telega"
-         )
-        ("s"  ignore
-         :then ((lambda()(interactive)(find-file "/ssh:root@95.179.243.76:/usr/config/.aria2c/downloads/")))
-         :name "vultr"
-         )
-        ("k"  ignore
-         :then ((lambda()(interactive)(find-file "/docker:14a4442774f8:/home/ubuntu/catkin_ws/src/")))
-         :name "catkin_ws"
-         )
-        ("e"  ignore
-         :then ((lambda()(interactive)(find-file "/home/weiss/.emacs.d")))       
-         :name ".emacs.d"        
-         )))
-  ("RET" dired-find-file)
-  (","  beginning-of-buffer)
-  ("."  end-of-buffer)
-  (";"  dired-maybe-insert-subdir)
-  ("5"  revert-buffer)
-  ("8"  dired-hide-details-mode)
-  ("a"  dired-sort-toggle-or-edit)
-  ("A"  hydra-dired-filter-actress/body)
-  ("c"  dired-do-copy)
-  ("C"  weiss-dired-rsync)
-  ("d"  dired-do-delete)
-  ("f"  dired-toggle-read-only :exit t :first '(revert-buffer))
-  ("j"  dired-next-line)
-  ("h"  dired-omit-mode)
-  ("k"  dired-previous-line)
-  ("i"  ignore
-   :then '((lambda()(interactive)(find-alternate-file "..")))
-   :name "up directory")
-  ("l"  dired-find-alternate-file)
-  ("L"  dired-do-symlink)
-  ("m"  dired-mark)
-  ("o"  xah-open-in-external-app)
-  ;; ("O"  eaf-open-this-from-dired)
-  ("p"  peep-dired)
-  ("q"  quit-window)
-  ("r"  dired-do-rename)
-  ("S"  hydra-dired-quick-sort/body)
-  ("t"  dired-toggle-marks)
-  ("u"  dired-unmark)
-  ("U"  dired-unmark-all-marks :then '(revert-buffer))
-  ("v"  weiss-dired-git-clone)
-  ("w"  weiss-dired-copy-file-name)
-  ;; ("w" ignore
-  ;;  :then '((lambda()(interactive)(dired-copy-filename-as-kill 0)))
-  ;;  :name "copy filename with path")
-  ("x"  dired-do-flagged-delete)
-  ("z"  dired-do-compress)
-  ("Z"  dired-do-compress-to)
-  (:mode 'wdired-mode)
-  ("C-q" weiss-exit-wdired-mode)
-
-  (with-eval-after-load 'wdired
-    (define-key wdired-mode-map (kbd "C-q") 'weiss-exit-wdired-mode))
-#+end_src
-
 *** config
 #+begin_src elisp
   :config
@@ -7865,7 +7947,7 @@
 **** functions
 #+begin_src elisp
   (defun weiss-check-cursor-type ()
-    "DOCSTRING"
+    "disable cursor in dired-mode"
     (interactive)
     (when (eq major-mode 'dired-mode)
       (setq cursor-type nil)
@@ -8086,6 +8168,101 @@
   (require 'weiss-dired-single-handed-mode)
 
 #+end_src
+**** keybinding 
+#+begin_src elisp
+  (ryo-modal-keys
+   (:mode 'dired-mode)
+   ("SPC" (
+           ("l" (
+                 ("r" dired-toggle-read-only
+                  :first (revert-buffer)
+                  :then (ryo-modal-restart)  
+                  )
+                 ("v" weiss-dired-single-handed-mode)
+                 )))
+    )
+   ("e" ora-ediff-files)
+   ("g" (
+         ("d" ignore
+          :then ((lambda()(interactive)(find-file "/home/weiss/Downloads")))
+          :name "Downloads"
+          )
+         ("v"  ignore
+          :then ((lambda()(interactive)(find-file "/home/weiss/Documents/Vorlesungen")))
+          :name "Vorlesungen"
+          )
+         ("m"  ignore
+          :then ((lambda()(interactive)(find-file "/run/media/weiss")))
+          :name "usb"
+          )
+         ("p"  ignore
+          :then ((lambda()(interactive)(find-file "/run/media/weiss/Seagate_Backup/porn/")))
+          :name "Seagate_Backup"
+          )
+         ("c"  ignore
+          :then ((lambda()(interactive)(find-file "/home/weiss/.config")))
+          :name "config"
+          )
+         ("h"  ignore
+          :then ((lambda()(interactive)(find-file "/home/weiss/")))
+          :name "home"
+          )
+         ("t"  ignore
+          :then ((lambda()(interactive)(find-file "/home/weiss/.telega/cache/")))
+          :name "telega"
+          )
+         ("s"  ignore
+          :then ((lambda()(interactive)(find-file "/ssh:root@95.179.243.76:/usr/config/.aria2c/downloads/")))
+          :name "vultr"
+          )
+         ("k"  ignore
+          :then ((lambda()(interactive)(find-file "/docker:14a4442774f8:/home/ubuntu/catkin_ws/src/")))
+          :name "catkin_ws"
+          )
+         ("e"  ignore
+          :then ((lambda()(interactive)(find-file "/home/weiss/.emacs.d")))       
+          :name ".emacs.d"        
+          )))
+   ("RET" dired-find-file)
+   (","  beginning-of-buffer)
+   ("."  end-of-buffer)
+   (";"  dired-maybe-insert-subdir)
+   ("5"  revert-buffer)
+   ("8"  dired-hide-details-mode)
+   ("a"  dired-sort-toggle-or-edit)
+   ("A"  hydra-dired-filter-actress/body)
+   ("c"  dired-do-copy)
+   ("C"  weiss-dired-rsync)
+   ("d"  dired-do-delete)
+   ("f"  dired-toggle-read-only :exit t :first '(revert-buffer))
+   ("j"  dired-next-line)
+   ("h"  dired-omit-mode)
+   ("k"  dired-previous-line)
+   ("i"  ignore
+    :then '((lambda()(interactive)(find-alternate-file "..")))
+    :name "up directory")
+   ("l"  dired-find-alternate-file)
+   ("L"  dired-do-symlink)
+   ("m"  dired-mark)
+   ("o"  xah-open-in-external-app)
+   ;; ("O"  eaf-open-this-from-dired)
+   ("p"  peep-dired)
+   ("q"  quit-window)
+   ("r"  dired-do-rename)
+   ("S"  hydra-dired-quick-sort/body)
+   ("t"  dired-toggle-marks)
+   ("u"  dired-unmark)
+   ("U"  dired-unmark-all-marks :then '(revert-buffer))
+   ("v"  weiss-dired-git-clone)
+   ("w"  weiss-dired-copy-file-name)
+   ("x"  dired-do-flagged-delete)
+   ("z"  dired-do-compress)
+   ("Z"  dired-do-compress-to)
+   )
+  (with-eval-after-load 'wdired
+    (define-key wdired-mode-map (kbd "C-q") 'weiss-exit-wdired-mode))
+#+end_src
+
 *** end
 #+begin_src elisp
   )
@@ -9249,19 +9426,21 @@
 *** predicate
 
 #+begin_src elisp
-  (defvar weiss-org-sp-sharp "^#\\+"
+  (defvar weiss-org-sp-sharp "^\\(?:#\\+\\(?:\\(?:begin\\|end\\)_src\\)\\)"
     "Shortcut for the org's #+ regex.")
 
-  (defvar weiss-org-sp-sharp-begin "^#\\+begin"
+  (defvar weiss-org-sp-sharp-begin "^#\\+begin_src"
     "Shortcut for the org's #+ regex.")
 
-  (defvar weiss-org-sp-sharp-end "^#\\+end"
+  (defvar weiss-org-sp-sharp-end "^#\\+end_src"
     "Shortcut for the org's #+ regex.")
 
-  (defvar weiss-org-sp-regex "^\\(?:\\*\\|#\\+\\)"
+  (defvar weiss-org-sp-regex "^\\(?:\\*\\)"
     "Shortcut for weiss-org-sp's special regex.")
+  (setq weiss-org-sp-regex "^\\(?:#\\+\\(?:\\(?:begin\\|end\\)_src\\)\\|\\*\\)" )
 
-  (defvar weiss-org-sp-regex-full "^\\(?:\\*+ \\|#\\+\\|:\\)"
+
+  (defvar weiss-org-sp-regex-full "^\\(?:\\*+ \\|:\\)"
     "Shortcut for weiss-org-sp's special regex.")
 
   (defun weiss-org-sp--special-p ()
@@ -9271,6 +9450,7 @@
     (and (bolp)
          (or
           (looking-at weiss-org-sp-regex)
+          (looking-at weiss-org-sp-sharp)
           (weiss-org-sp--at-property-p)
           (looking-back "^\\*+" (line-beginning-position))
           (looking-at "CLOCK:"))))
@@ -9667,7 +9847,7 @@
    org-agenda-files '("~/Dropbox/Org-roam/daily/")
    org-agenda-todo-ignore-scheduled t
    org-agenda-prefix-format "%t %s " ;hide files name
-   org-tag-alist '(("China" . ?c)("shopping-list" . ?s)("board-game" . ?b)("emacs" . ?e) ("video" . ?v)("misc" . ?m)("article" . ?a) ("eaf") ("snails") ("dired")("roam"))
+   org-tag-alist '(("China" . ?c)("shoppingList" . ?s)("board-game" . ?b)("emacs" . ?e) ("video" . ?v)("misc" . ?m)("article" . ?a) ("eaf") ("snails") ("dired")("roam"))
 
    org-todo-keywords '((sequence "INPROGRESS(i)" "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c@)"))
    ;; (sequence "⚑(T)" "🏴(I)" "❓(H)" "|" "✔(D)" "✘(C)"))
@@ -9675,6 +9855,7 @@
    org-cycle-max-level 15
    org-agenda-skip-scheduled-if-done t
    org-hide-leading-stars nil
+   org-export-allow-bind-keywords t
    org-indent-mode-turns-on-hiding-stars nil
    org-list-description-max-indent 4
    org-startup-indented t
@@ -9746,6 +9927,7 @@
      ("\\.pdf\\'" . emacs)
      ("\\.mp4\\'" . "vlc \"%s\"")
      ("\\.txt\\'" . emacs)
+     ("\\.xopp\\'" . "xournalpp \"%s\"")
      )
    )
 #+end_src
@@ -9784,6 +9966,7 @@
         ("s" org-noter-sync-current-note)
         ("t" org-todo)
         ("b" org-mark-ring-goto)
+        ("j s" weiss-org-copy-heading-link)
         ))
   ("<escape> o" (
                  ("e"
@@ -9832,6 +10015,21 @@
                   :name "sql babel")
                  )
    )
+  ("<escape> <escape>" (
+                        ("RET"
+                         ignore
+                         :then ((lambda () (insert "$\\\\$\n")))
+                         :name "latex new line")
+                        ("s"
+                         ignore
+                         :then ((lambda ()(weiss-insert-bracket-pair "\\begin{right_indent}" "\\end{right_indent}" t)))
+                         :name "add subs")
+                        ("c"
+                         ignore
+                         :then ((lambda ()(weiss-insert-bracket-pair "$\\color{code}\\texttt{" "}$" nil)))
+                         :name "add color")
+
+                        ))
   (:mode 'org-agenda-mode)
   ("-" xah-backward-punct)
   ("=" xah-forward-punct)
@@ -9848,6 +10046,75 @@
 #+end_src
 *** functions
 #+begin_src elisp
+  (setq
+   weiss-org-xournal-note-dir "/home/weiss/Documents/OrgFiles/Bilder/xournal/xopp/"  ;; xopp 笔记存储目录
+   weiss-org-xournal-template-dir "/home/weiss/Documents/OrgFiles/Bilder/xournal/" ;; xournal 目标文件存储目录
+   weiss-org-xournal-default-template-name "Template.xopp" ;; 默认笔记模版名称，应该位于 org-xournal-template-dir
+   weiss-org-xournal-bin "/usr/bin/xournalpp" ;; xournal 执行文件
+   weiss-org-xournal-png-path "/home/weiss/Documents/OrgFiles/Bilder/xournal/png/"
+   weiss-org-xournal-process-picture-functon #'weiss-org-xournal-process-picture-functon
+   )
+
+  (defun org-xournal-save-image (xournal-path png-path)
+    "Convert XOURNAL-PATH to PNG and write it to PNG-PATH."
+    (call-process-shell-command (format "%s %s -i %s" weiss-org-xournal-bin xournal-path png-path))
+    )
+
+  (defun weiss-xournal--refresh-img (path png-path)
+    "refresh xournal image"
+    (interactive)
+    (org-xournal-save-image path png-path)
+    (call-process-shell-command (format "convert %s -resize 326x231 -quality 5%%  -trim +repage %s"   png-path png-path)))
+
+  (defun weiss-xournal-refresh-img-manually ()
+    "DOCSTRING"
+    (interactive)
+    (let* ((context (org-element-context))
+           (type (org-element-type context))
+           (lineage (org-element-lineage context '(link) t))
+           (path (org-element-property :path lineage))
+           (png-path (concat
+                      weiss-org-xournal-png-path
+                      (file-name-sans-extension (file-name-nondirectory path)) ".png") )
+           )
+      ;; (message "path: %s\npng-path: %s" path png-path)
+      (weiss-xournal-refresh-img path png-path)
+      ))
+
+  (defun weiss-insert-xournal-link ()
+    "DOCSTRING"
+    (interactive)
+    (let* ((name (read-string "xournal name:"))
+           (file-name (concat name ".xopp"))
+           (path (concat weiss-org-xournal-note-dir file-name))
+           (png-path (concat weiss-org-xournal-png-path name ".png"))
+           )
+      (unless (file-exists-p path)
+        (f-copy
+         (concat
+          weiss-org-xournal-template-dir
+          weiss-org-xournal-default-template-name)
+         path)
+        )
+      (insert (format "[[%s][%s]]" path file-name))
+      (let ((process-connection-type nil))
+        (start-process "" nil "xdg-open" path)
+        ) 
+      (weiss-xournal-refresh-img path png-path)
+      (insert (format "\n[[%s]]" png-path))
+      ))
+
+
+
+  (defun weiss-org-copy-heading-link ()
+    "copy the current heading link in org format"
+    (interactive)
+    (let* ((title (substring-no-properties (org-get-heading t t t t)))
+           (des (read-string "Description: " title))
+           )
+      (kill-new (format "[[*%s][%s]]" title des))
+      ))
+
   (defun weiss-set-org-tags (&optional arg)
     "set tags with counsel, using org-use-fast-tag-selection if `arg' =4, align tags if `arg' = 16"
     (interactive "P")
@@ -9869,7 +10136,7 @@
   (defun weiss-org-exchange-point-or-switch-to-sp ()
     "exchange point if region is aktiv otherwise switch to `weiss-org-sp-mode'"
     (interactive)
-    (if (use-region-p)
+    (if (and (use-region-p) (> (- (region-end) (region-beginning)) 1)) 
         (exchange-point-and-mark)      
       (weiss-org-sp-switch)
       )
@@ -10036,12 +10303,12 @@
         (let ((current-prefix-arg '(64)))
           (call-interactively 'org-latex-preview) 
           (org-remove-inline-images)
-          (when org-xournal-mode (org-xournal-hide-all))
+          (when (ignore-errors org-xournal-mode) (org-xournal-hide-all))
           )
       (let ((current-prefix-arg '(16)))
         (call-interactively 'org-latex-preview)
         (org-display-inline-images))
-      (when org-xournal-mode (org-xournal-show-current-link))
+      (when (ignore-errors org-xournal-mode) (org-xournal-show-current-link))
       )
     )
 
@@ -10315,6 +10582,7 @@
     :init
     (add-hook 'after-init-hook 'org-roam-mode)
     (setq
+     org-roam-tag-separator ";"
      org-roam-directory "~/Dropbox/Org-roam/"
      org-roam-dailies-directory "daily/"
      org-agenda-files `(,(concat org-roam-directory org-roam-dailies-directory))
@@ -10327,15 +10595,25 @@
      (
       ("t" org-roam-tag-add)
       ("n" org-roam-capture)
+      ("f" weiss-roam-add-focusing-tag)
       ("s" weiss-org-roam-copy-heading-link)    
       ))
 
     :config
+    (defun weiss-roam-add-focusing-tag ()
+      "add focusing tag with quote"
+      (interactive)
+      (goto-char (point-min))
+      (re-search-forward "#\\+roam_tags:")
+      (insert " \",focusing\" ")
+      )
+
     (defun weiss-roam--add-to-today-daily (content state)
       "add `content'  to the `state' heading in today daily file"
       (let* ((filename (concat
                         org-roam-directory
                         org-roam-dailies-directory
+                        "Ʀ"
                         (if (< (string-to-number (format-time-string "%H")) 4)
                             (format-time-string "d-%Y-%m-%d" (time-subtract (current-time) (* 24 3600)))                          
                           (format-time-string "d-%Y-%m-%d")
@@ -10379,19 +10657,29 @@
       (org-roam--title-to-slug title)
       )
     (setq org-roam-title-to-slug-function 'weiss-org-roam--title-to-slug)
+
     (defun weiss-org-roam-copy-heading-link (&optional without-asking)
       "copy the current heading link in roam format"
       (interactive)
-      (let ((id (org-id-get-create))
-            (title
-             (if without-asking
-                 (substring-no-properties (org-get-heading t t t t))
-               (read-string "Description: " (substring-no-properties (org-get-heading t t t t)))               
-               )
-             )
+      (if (string-prefix-p "Ʀ" (file-name-nondirectory (buffer-file-name))) 
+          (let ((id (org-id-get-create))
+                (title
+                 (if without-asking
+                     (substring-no-properties (org-get-heading t t t t))
+                   (read-string "Description: " (substring-no-properties (org-get-heading t t t t)))               
+                   )
+                 )
+                )
+            (kill-new (format " [[id:%s][%s]]" id title))
             )
-        (kill-new (format " [[id:%s][%s]]" id title))
+        (let* ((title (substring-no-properties (org-get-heading t t t t)))
+               (des (read-string "Description: " title))
+               )
+          (kill-new (format "[[*%s][%s]]" title des))
+          )
         )
+
+
       )
 
     ;; open link from roam direkt in browser
@@ -10517,6 +10805,7 @@
              :file-name "daily/Ʀd-%<%Y-%m-%d>"
              :head "#+title: Daily-%<%Y-%m-%d>\n#+roam_tags: Daily\n"
              :olp ("Journey")
+             :unnarrowed t
              )
             ))
 
@@ -10537,9 +10826,60 @@
       )
     )
 #+end_src
+*** org-alert
+#+begin_src elisp
+  (use-package org-alert
+    :disabled
+    :config
+    (setq alert-default-style 'libnotify)
+    (org-alert-enable)
+    )
+#+end_src
+*** appt
+#+begin_src elisp
+
+  (require 'appt)
+  (appt-activate t)
+
+  (setq appt-message-warning-time 5) ; Show notification 5 minutes before event
+  (setq appt-display-interval appt-message-warning-time) ; Disable multiple reminders
+  (setq appt-display-mode-line nil)
+
+  ; Use appointment data from org-mode
+  (defun my-org-agenda-to-appt ()
+    (interactive)
+    (setq appt-time-msg-list nil)
+    (org-agenda-to-appt))
+
+  ; Update alarms when...
+  ; (1) ... Starting Emacs
+  (my-org-agenda-to-appt)
+
+  ; (2) ... Everyday at 12:05am (useful in case you keep Emacs always on)
+  (run-at-time "12:05am" (* 24 3600) 'my-org-agenda-to-appt)
+
+  ; (3) ... When TODO.txt is saved
+  (add-hook 'after-save-hook
+            '(lambda ()
+               (if (string= (buffer-file-name) (concat (getenv "HOME") "/ideas/TODO.txt"))
+                   (my-org-agenda-to-appt))))
+
+  ; Display appointments as a window manager notification
+  (setq appt-disp-window-function 'my-appt-display)
+  (setq appt-delete-window-function (lambda () t))
+
+  (setq my-appt-notification-app (concat (getenv "HOME") "/bin/appt-notification"))
+
+  (defun my-appt-display (min-to-app new-time msg)
+    (if (atom min-to-app)
+      (start-process "my-appt-notification-app" nil my-appt-notification-app min-to-app msg)
+    (dolist (i (number-sequence 0 (1- (length min-to-app))))
+      (start-process "my-appt-notification-app" nil my-appt-notification-app (nth i min-to-app) (nth i msg)))))
+#+end_src
 *** org-xournal
 #+begin_src elisp
   (use-package org-xournal
+    :disabled
     :quelpa (org-xournal 
              :fetcher github 
              :repo yuchen-lea/org-xournal)
@@ -10566,7 +10906,8 @@
       ;;   (message "%sx%s" (* 29.7 scale) (* 21 scale))
       ;;   (kill-new (format "%sx%s" (round (* 29.7 scale)) (* 21 scale)))
       ;;   )
-      (call-process-shell-command (format "convert %s -resize 653x462 -quality 5%%  -trim +repage %s" png-path png-path))
+      ;; (call-process-shell-command (format "convert %s -resize 653x462 -quality 5%%  -trim +repage %s" png-path png-path))
+      (call-process-shell-command (format "convert %s -resize 326x231 -quality 5%%  -trim +repage %s" png-path png-path))
       ;; (async-shell-command (format "convert %s -resize 653x462 -quality 1%%  -trim +repage %s" png-path png-path))
       )
     )
@@ -10691,6 +11032,7 @@
   (advice-add 'xah-select-block :after #'weiss-select-mode-turn-on)
   (advice-add 'weiss-select-sexp :after #'weiss-select-mode-turn-on)
   (advice-add 'exchange-point-and-mark :after #'weiss-select-mode-turn-on)
+  (advice-add 'weiss-mark-brackets :after #'weiss-select-mode-turn-on)
 
   (defun weiss-deactivate-mark-unless-in-select-mode (&optional a b c)
     "deactivate mark unless in select mode"
@@ -10769,7 +11111,7 @@
       ;;; weiss-select-mode.el ends here
 #+end_src 
 *** weiss-variable-mode
-#+begin_src elisp
+#+begin_src elisp :tangle no
   (defvar weiss-variable-mode-map (make-sparse-keymap) "Keybinding for weiss-temp-insert minor mode.")
   (defvar weiss-variable-mode-start-point nil)
   (defvar weiss-variable-snake-case-list '(python-mode))
@@ -11041,6 +11383,89 @@
 :END:
 **** editing
 #+begin_src elisp
+  (defun xah-reformat-whitespaces-to-one-space (@begin @end)
+    "Replace whitespaces by one space.
+
+    URL `http://ergoemacs.org/emacs/emacs_reformat_lines.html'
+    Version 2017-01-11"
+    (interactive "r")
+    (save-excursion
+      (save-restriction
+        (narrow-to-region @begin @end)
+        (goto-char (point-min))
+        (while
+            (search-forward "\n" nil "move")
+          (replace-match " "))
+        (goto-char (point-min))
+        (while
+            (search-forward "\t" nil "move")
+          (replace-match " "))
+        (goto-char (point-min))
+        (while
+            (re-search-forward "  +" nil "move")
+          (replace-match " ")))))
+
+  (defun xah-reformat-to-multi-lines ( &optional @begin @end @min-length)
+    "Replace spaces by a newline at places so lines are not long.
+    When there is a text selection, act on the selection, else, act on a text block separated by blank lines.
+
+    If `universal-argument' is called first, use the number value for min length of line. By default, it's 70.
+
+    URL `http://ergoemacs.org/emacs/emacs_reformat_lines.html'
+    Version 2018-12-16"
+    (interactive)
+    (let (
+          $p1 $p2
+          ($blanks-regex "\n[ \t]*\n")
+          ($minlen (if @min-length
+                       @min-length
+                     (if current-prefix-arg (prefix-numeric-value current-prefix-arg) fill-column))))
+      (if (and  @begin @end)
+          (setq $p1 @begin $p2 @end)
+        (if (region-active-p)
+            (progn (setq $p1 (region-beginning) $p2 (region-end)))
+          (save-excursion
+            (if (re-search-backward $blanks-regex nil "move")
+                (progn (re-search-forward $blanks-regex)
+                       (setq $p1 (point)))
+              (setq $p1 (point)))
+            (if (re-search-forward $blanks-regex nil "move")
+                (progn (re-search-backward $blanks-regex)
+                       (setq $p2 (point)))
+              (setq $p2 (point))))))
+      (save-excursion
+        (save-restriction
+          (narrow-to-region $p1 $p2)
+          (goto-char (point-min))
+          (while
+              (re-search-forward " +" nil "move")
+            (when (> (- (point) (line-beginning-position)) $minlen)
+              (replace-match "\n" )))))))
+  (defun xah-space-to-newline ()
+    "Replace space sequence to a newline char.
+  Works on current block or selection.
+
+  URL `http://ergoemacs.org/emacs/emacs_space_to_newline.html'
+  Version 2017-08-19"
+    (interactive)
+    (let* ( $p1 $p2 )
+      (if (use-region-p)
+          (setq $p1 (region-beginning) $p2 (region-end))
+        (save-excursion
+          (if (re-search-backward "\n[ \t]*\n" nil "move")
+              (progn (re-search-forward "\n[ \t]*\n")
+                     (setq $p1 (point)))
+            (setq $p1 (point)))
+          (re-search-forward "\n[ \t]*\n" nil "move")
+          (skip-chars-backward " \t\n" )
+          (setq $p2 (point))))
+      (save-excursion
+        (save-restriction
+          (narrow-to-region $p1 $p2)
+          (goto-char (point-min))
+          (while (re-search-forward " +" nil t)
+            (replace-match "\n" ))))))
+
   (defun move-line-up ()
     "Move up the current line."
     (interactive)
@@ -11116,8 +11541,8 @@
   (defun xah-delete-blank-lines ()
     "Delete all newline around cursor.
 
-        URL `http://ergoemacs.org/emacs/emacs_shrink_whitespace.html'
-        Version 2018-04-02"
+          URL `http://ergoemacs.org/emacs/emacs_shrink_whitespace.html'
+          Version 2018-04-02"
     (interactive)
     (let ($p3 $p4)
       (skip-chars-backward "\n")
@@ -11128,7 +11553,7 @@
 
   (defun xah-fly-delete-spaces ()
     "Delete space, tab, IDEOGRAPHIC SPACE (U+3000) around cursor.
-          Version 2019-06-13"
+            Version 2019-06-13"
     (interactive)
     (let (p1 p2)
       (skip-chars-forward " \t　")
@@ -11139,10 +11564,10 @@
 
   (defun xah-cut-line-or-region ()
     "Cut current line, or text selection.
-            When `universal-argument' is called first, cut whole buffer (respects `narrow-to-region').
+              When `universal-argument' is called first, cut whole buffer (respects `narrow-to-region').
 
-            URL `http://ergoemacs.org/emacs/emacs_copy_cut_current_line.html'
-            Version 2015-06-10"
+              URL `http://ergoemacs.org/emacs/emacs_copy_cut_current_line.html'
+              Version 2015-06-10"
     (interactive)
     (if current-prefix-arg
         (progn ; not using kill-region because we don't want to include previous kill
@@ -11155,12 +11580,12 @@
   (defun xah-delete-backward-char-or-bracket-text ()
     "Delete backward 1 character, but if it's a \"quote\" or bracket ()[]{}【】「」 etc, delete bracket and the inner text, push the deleted text to `kill-ring'.
 
-              What char is considered bracket or quote is determined by current syntax table.
+                What char is considered bracket or quote is determined by current syntax table.
 
-              If `universal-argument' is called first, do not delete inner text.
+                If `universal-argument' is called first, do not delete inner text.
 
-              URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
-              Version 2017-07-02"
+                URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
+                Version 2017-07-02"
     (interactive)
     (if (and delete-selection-mode (region-active-p))
         (kill-region (region-beginning) (region-end))
@@ -11190,12 +11615,12 @@
   (defun xah-delete-backward-bracket-text ()
     "Delete the matching brackets/quotes to the left of cursor, including the inner text.
 
-              This command assumes the left of cursor is a right bracket, and there's a matching one before it.
+                This command assumes the left of cursor is a right bracket, and there's a matching one before it.
 
-              What char is considered bracket or quote is determined by current syntax table.
+                What char is considered bracket or quote is determined by current syntax table.
 
-              URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
-              Version 2017-09-21"
+                URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
+                Version 2017-09-21"
     (interactive)
     (progn
       (forward-sexp -1)
@@ -11204,14 +11629,14 @@
 
   (defun xah-delete-forward-bracket-text ()
     "weiss: backward to forward.
-              Delete the matching brackets/quotes to the left of cursor, including the inner text.
+                Delete the matching brackets/quotes to the left of cursor, including the inner text.
 
-              This command assumes the left of cursor is a right bracket, and there's a matching one before it.
+                This command assumes the left of cursor is a right bracket, and there's a matching one before it.
 
-              What char is considered bracket or quote is determined by current syntax table.
+                What char is considered bracket or quote is determined by current syntax table.
 
-              URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
-              Version 2017-09-21"
+                URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
+                Version 2017-09-21"
     (interactive)
     (progn
       (backward-char)
@@ -11221,14 +11646,14 @@
   (defun xah-delete-backward-bracket-pairs ()
     "Delete the matching brackets/quotes to the left of cursor.
 
-              After the command, mark is set at the left matching bracket position, so you can `exchange-point-and-mark' to select it.
+                After the command, mark is set at the left matching bracket position, so you can `exchange-point-and-mark' to select it.
 
-              This command assumes the left of point is a right bracket, and there's a matching one before it.
+                This command assumes the left of point is a right bracket, and there's a matching one before it.
 
-              What char is considered bracket or quote is determined by current syntax table.
+                What char is considered bracket or quote is determined by current syntax table.
 
-              URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
-              Version 2017-07-02"
+                URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
+                Version 2017-07-02"
     (interactive)
     (let (( $p0 (point)) $p1)
       (forward-sexp -1)
@@ -11244,16 +11669,16 @@
 
   (defun xah-delete-forward-bracket-pairs ( &optional @delete-inner-text-p)
     "Delete the matching brackets/quotes to the right of cursor.
-              If @delete-inner-text-p is true, also delete the inner text.
+                If @delete-inner-text-p is true, also delete the inner text.
 
-              After the command, mark is set at the left matching bracket position, so you can `exchange-point-and-mark' to select it.
+                After the command, mark is set at the left matching bracket position, so you can `exchange-point-and-mark' to select it.
 
-              This command assumes the char to the right of point is a left bracket or quote, and have a matching one after.
+                This command assumes the char to the right of point is a left bracket or quote, and have a matching one after.
 
-              What char is considered bracket or quote is determined by current syntax table.
+                What char is considered bracket or quote is determined by current syntax table.
 
-              URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
-              Version 2017-07-02"
+                URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
+                Version 2017-07-02"
     (interactive)
     (if @delete-inner-text-p
         (progn
@@ -11270,14 +11695,14 @@
 
   (defun xah-delete-forward-char-or-bracket-text ()
     "weiss: change backward to forward. 
-              Delete backward 1 character, but if it's a \"quote\" or bracket ()[]{}【】「」 etc, delete bracket and the inner text, push the deleted text to `kill-ring'.
+                Delete backward 1 character, but if it's a \"quote\" or bracket ()[]{}【】「」 etc, delete bracket and the inner text, push the deleted text to `kill-ring'.
 
-              What char is considered bracket or quote is determined by current syntax table.
+                What char is considered bracket or quote is determined by current syntax table.
 
-              If `universal-argument' is called first, do not delete inner text.
+                If `universal-argument' is called first, do not delete inner text.
 
-              URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
-              Version 2017-07-02"
+                URL `http://ergoemacs.org/emacs/emacs_delete_backward_char_or_bracket_text.html'
+                Version 2017-07-02"
     (interactive)
     (if (and delete-selection-mode (region-active-p))
         (kill-region (region-beginning) (region-end))
@@ -11311,9 +11736,9 @@
 
   (defun xah-fill-or-unfill ()
     "Reformat current paragraph or region to `fill-column', like `fill-paragraph' or “unfill”.
-                When there is a text selection, act on the selection, else, act on a text block separated by blank lines.
-                URL `http://ergoemacs.org/emacs/modernization_fill-paragraph.html'
-                Version 2017-01-08"
+                  When there is a text selection, act on the selection, else, act on a text block separated by blank lines.
+                  URL `http://ergoemacs.org/emacs/modernization_fill-paragraph.html'
+                  Version 2017-01-08"
     (interactive)
     ;; This command symbol has a property “'compact-p”, the possible values are t and nil. This property is used to easily determine whether to compact or uncompact, when this command is called again
     (let ( ($compact-p
@@ -11343,8 +11768,8 @@
 
   (defun xah-toggle-previous-letter-case ()
     "Toggle the letter case of the letter to the left of cursor.
-                  URL `http://ergoemacs.org/emacs/modernization_upcase-word.html'
-                  Version 2015-12-22"
+                    URL `http://ergoemacs.org/emacs/modernization_upcase-word.html'
+                    Version 2015-12-22"
     (interactive)
     (let ((case-fold-search nil))
       (left-char 1)
@@ -11407,16 +11832,16 @@
 
   (defun xah-reformat-lines (&optional @length)
     "Reformat current text block into 1 long line or multiple short lines.
-                    When there is a text selection, act on the selection, else, act on a text block separated by blank lines.
+                      When there is a text selection, act on the selection, else, act on a text block separated by blank lines.
 
-                    When the command is called for the first time, it checks the current line's length to decide to go into 1 line or multiple lines. If current line is short, it'll reformat to 1 long lines. And vice versa.
+                      When the command is called for the first time, it checks the current line's length to decide to go into 1 line or multiple lines. If current line is short, it'll reformat to 1 long lines. And vice versa.
 
-                    Repeated call toggles between formatting to 1 long line and multiple lines.
+                      Repeated call toggles between formatting to 1 long line and multiple lines.
 
-                    If `universal-argument' is called first, use the number value for min length of line. By default, it's 70.
+                      If `universal-argument' is called first, use the number value for min length of line. By default, it's 70.
 
-                    URL `http://ergoemacs.org/emacs/emacs_reformat_lines.html'
-                    Version 2019-06-09"
+                      URL `http://ergoemacs.org/emacs/emacs_reformat_lines.html'
+                      Version 2019-06-09"
     (interactive)
     ;; This command symbol has a property “'is-longline-p”, the possible values are t and nil. This property is used to easily determine whether to compact or uncompact, when this command is called again
     (let* (
@@ -11451,10 +11876,10 @@
 
   (defun xah-escape-quotes (@begin @end)
     "Replace 「\"」 by 「\\\"」 in current line or text selection.
-                      See also: `xah-unescape-quotes'
+                        See also: `xah-unescape-quotes'
 
-                      URL `http://ergoemacs.org/emacs/elisp_escape_quotes.html'
-                      Version 2017-01-11"
+                        URL `http://ergoemacs.org/emacs/elisp_escape_quotes.html'
+                        Version 2017-01-11"
     (interactive
      (if (use-region-p)
          (list (region-beginning) (region-end))
@@ -11469,11 +11894,11 @@
 
   (defun xah-clean-whitespace ()
     "Delete trailing whitespace, and replace repeated blank lines to just 1.
-                        Only space and tab is considered whitespace here.
-                        Works on whole buffer or text selection, respects `narrow-to-region'.
+                          Only space and tab is considered whitespace here.
+                          Works on whole buffer or text selection, respects `narrow-to-region'.
 
-                        URL `http://ergoemacs.org/emacs/elisp_compact_empty_lines.html'
-                        Version 2017-09-22"
+                          URL `http://ergoemacs.org/emacs/elisp_compact_empty_lines.html'
+                          Version 2017-09-22"
     (interactive)
     (let ($begin $end)
       (if (region-active-p)
@@ -11509,8 +11934,8 @@
 
   (defun weiss-comment-dwim ()
     "in weiss-select-mode  -> comment region
-                            with prefix-arg  -> add comment at end of line and activate insert mode
-                            t -> comment current line"
+                              with prefix-arg  -> add comment at end of line and activate insert mode
+                              t -> comment current line"
     (interactive)
     (if current-prefix-arg
         (progn
@@ -11534,13 +11959,13 @@
   (defun xah-shrink-whitespaces ()
     "Remove whitespaces around cursor to just one, or none.
 
-                              Shrink any neighboring space tab newline characters to 1 or none.
-                              If cursor neighbor has space/tab, toggle between 1 or 0 space.
-                              If cursor neighbor are newline, shrink them to just 1.
-                              If already has just 1 whitespace, delete it.
+                                Shrink any neighboring space tab newline characters to 1 or none.
+                                If cursor neighbor has space/tab, toggle between 1 or 0 space.
+                                If cursor neighbor are newline, shrink them to just 1.
+                                If already has just 1 whitespace, delete it.
 
-                              URL `http://ergoemacs.org/emacs/emacs_shrink_whitespace.html'
-                              Version 2019-06-13"
+                                URL `http://ergoemacs.org/emacs/emacs_shrink_whitespace.html'
+                                Version 2019-06-13"
     (interactive)
     (let* (
            ($eol-count 0)
@@ -11592,12 +12017,12 @@
 
   (defun xah-paste-or-paste-previous ()
     "Paste. When called repeatedly, paste previous.
-                              This command calls `yank', and if repeated, call `yank-pop'.
+                                This command calls `yank', and if repeated, call `yank-pop'.
 
-                              When `universal-argument' is called first with a number arg, paste that many times.
+                                When `universal-argument' is called first with a number arg, paste that many times.
 
-                              URL `http://ergoemacs.org/emacs/emacs_paste_or_paste_previous.html'
-                              Version 2017-07-25"
+                                URL `http://ergoemacs.org/emacs/emacs_paste_or_paste_previous.html'
+                                Version 2017-07-25"
     (interactive)
     (progn
       (when (and delete-selection-mode (region-active-p))
@@ -11656,7 +12081,7 @@
     (interactive)
     (end-of-line)
     (insert "
-                                    ")
+                                      ")
     (indent-according-to-mode)
     )
 
@@ -11696,10 +12121,10 @@
 
   (defun xah-toggle-letter-case ()
     "Toggle the letter case of current word or text selection.
-                                      Always cycle in this order: Init Caps, ALL CAPS, all lower.
+                                        Always cycle in this order: Init Caps, ALL CAPS, all lower.
 
-                                      URL `http://ergoemacs.org/emacs/modernization_upcase-word.html'
-                                      Version 2019-11-24"
+                                        URL `http://ergoemacs.org/emacs/modernization_upcase-word.html'
+                                        Version 2019-11-24"
     (interactive)
     (let (
           (deactivate-mark nil)
@@ -11752,6 +12177,8 @@
         )
        ((eq major-mode 'go-mode)
         (gofmt))
+       ((eq major-mode 'python-mode)
+        (yapfify-buffer))
        (t
         (deactivate-mark)
         (indent-region (point-min) (point-max)))
@@ -11781,15 +12208,15 @@
 
   (defun xah-cycle-hyphen-underscore-space ( &optional @begin @end )
     "Cycle {underscore, space, hyphen} chars in selection or inside quote/bracket or line.
-                                          When called repeatedly, this command cycles the {“_”, “-”, “ ”} characters, in that order.
+                                            When called repeatedly, this command cycles the {“_”, “-”, “ ”} characters, in that order.
 
-                                          The region to work on is by this order:
-                                           ① if there's active region (text selection), use that.
-                                           ② If cursor is string quote or any type of bracket, and is within current line, work on that region.
-                                           ③ else, work on current line.
+                                            The region to work on is by this order:
+                                             ① if there's active region (text selection), use that.
+                                             ② If cursor is string quote or any type of bracket, and is within current line, work on that region.
+                                             ③ else, work on current line.
 
-                                          URL `http://ergoemacs.org/emacs/elisp_change_space-hyphen_underscore.html'
-                                          Version 2019-02-12"
+                                            URL `http://ergoemacs.org/emacs/elisp_change_space-hyphen_underscore.html'
+                                            Version 2019-02-12"
     (interactive)
     ;; this function sets a property 「'state」. Possible values are 0 to length of $charArray.
     (let ($p1 $p2)
@@ -11841,6 +12268,148 @@
           (set-mark $p1)
           (setq deactivate-mark nil))
         (put 'xah-cycle-hyphen-underscore-space 'state (% (+ $nowState 1) $length)))))
+#+end_src
+**** kmacro
+#+begin_src elisp
+  (defvar weiss/kmacro-info nil)
+
+  (defun weiss-call-kmacro ()
+    "call kmacro once"
+    (interactive)
+    (weiss-before-kmacro)
+    (call-interactively 'call-last-kbd-macro)
+    )
+
+  (defun weiss-call-kmacro-infinite ()
+    "call kmacro up to error"
+    (interactive)
+    (undo-collapse-begin)
+    (call-last-kbd-macro 0 #'weiss-before-kmacro)
+    (undo-collapse-end)
+    )
+
+  (defun weiss-call-kmacro-dwim ()
+    "DOCSTRING"
+    (interactive)
+    (undo-collapse-begin)
+    (ignore-errors (shiftless-mode -1))
+    (let ((echo-keystrokes nil)
+          (single-line (eq
+                        (line-number-at-pos (region-beginning))
+                        (line-number-at-pos (region-end))))
+          )
+      (if single-line
+          (call-last-kbd-macro 1 #'weiss-before-kmacro)
+        (save-restriction
+          (narrow-to-region (region-beginning) (region-end))
+          (goto-char (point-min))
+          (call-last-kbd-macro 999 #'weiss-before-kmacro)
+          )
+        )
+      (ignore-errors (shiftless-mode 1))
+      ))
+
+  (defun weiss-before-kmacro ()
+    "go next line or search word according to weiss/kmacro-info"
+    (interactive)
+    (cond
+     ((stringp (car weiss/kmacro-info))
+      (let ((p (search-forward (car weiss/kmacro-info) nil t))
+            )
+        (when p
+          (goto-char (- p (cdr weiss/kmacro-info)))
+          )
+        p)
+      )
+     ((numberp (cdr weiss/kmacro-info))
+      (forward-line 1)
+      (goto-char (+ (line-beginning-position) (cdr weiss/kmacro-info)))
+      (not (eq (line-end-position) (point-max)))
+      )
+     (t t)
+     )
+    )
+
+  (defun weiss-start-kmacro ()
+    "DOCSTRING"
+    (interactive)
+    (unless (or executing-kbd-macro defining-kbd-macro)
+      (let ((current-prefix-arg)
+            )
+        (setq
+         weiss/kmacro-info
+         (if (use-region-p)
+             (let ((b (region-beginning))
+                   (e (region-end))
+                   )
+               (deactivate-mark)
+               `(,(buffer-substring-no-properties b e)
+                 . ,(- e (point)))
+               )
+           `(nil . ,(- (point) (line-beginning-position)))
+           ))))
+    (call-interactively 'kmacro-start-macro-or-insert-counter)
+    )
+
+  (defun weiss-end-kmacro ()
+    "end kmacro and call hydra"
+    (interactive)
+    (when defining-kbd-macro
+      (call-interactively 'kmacro-end-macro)
+      )
+    (hydra-kmacro/body)
+    )
+
+  (defun weiss-apply-macro-1 ()
+    "apply kmacro 1 times"
+    (interactive)
+    (call-last-kbd-macro 1 #'weiss-before-kmacro)
+    )
+  (defun weiss-apply-macro-2 ()
+    "apply kmacro 2 times"
+    (interactive)
+    (call-last-kbd-macro 2 #'weiss-before-kmacro)
+    )
+  (defun weiss-apply-macro-3 ()
+    "apply kmacro 3 times"
+    (interactive)
+    (call-last-kbd-macro 3 #'weiss-before-kmacro)
+    )
+  (defun weiss-apply-macro-4 ()
+    "apply kmacro 4 times"
+    (interactive)
+    (call-last-kbd-macro 4 #'weiss-before-kmacro)
+    )
+  (defun weiss-apply-macro-5 ()
+    "apply kmacro 5 times"
+    (interactive)
+    (call-last-kbd-macro 5 #'weiss-before-kmacro)
+    )
+  (defun weiss-apply-macro-6 ()
+    "apply kmacro 6 times"
+    (interactive)
+    (call-last-kbd-macro 6 #'weiss-before-kmacro)
+    )
+  (defun weiss-apply-macro-7 ()
+    "apply kmacro 7 times"
+    (interactive)
+    (call-last-kbd-macro 7 #'weiss-before-kmacro)
+    )
+  (defun weiss-apply-macro-8 ()
+    "apply kmacro 8 times"
+    (interactive)
+    (call-last-kbd-macro 8 #'weiss-before-kmacro)
+    )
+  (defun weiss-apply-macro-9 ()
+    "apply kmacro 9 times"
+    (interactive)
+    (call-last-kbd-macro 9 #'weiss-before-kmacro)
+    )
+  (defun weiss-apply-macro-0 ()
+    "apply kmacro 10 times"
+    (interactive)
+    (call-last-kbd-macro 10 #'weiss-before-kmacro)
+    )
 #+end_src
 **** cursor movement
 #+begin_src elisp
@@ -11993,33 +12562,33 @@
 
 
   (defvar weiss-non-stop-delimiters-list '(";" "	" " " "\n" "'" "\\"))
-  (defvar weiss-stop-delimiters-list '(":" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
+  (defvar weiss-stop-delimiters-list '("|" "`" ":" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
 
   ;; need mode-local.el
   (setq-mode-local
    python-mode
    weiss-non-stop-delimiters-list '(";" "	" " " "\n" "'" "\\")
-   weiss-stop-delimiters-list '(":" ":" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
+   weiss-stop-delimiters-list '("|" "`" ":" ":" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
 
   (setq-mode-local
    org-mode
    weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
-   weiss-stop-delimiters-list '(":" "&" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "|"))
+   weiss-stop-delimiters-list '("|" "`" ":" "&" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "|"))
 
   (setq-mode-local
    latex-mode
    weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
-   weiss-stop-delimiters-list '(":" "&" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
+   weiss-stop-delimiters-list '("|" "`" ":" "&" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
 
   (setq-mode-local
    sgml-mode
    weiss-non-stop-delimiters-list '(";" "	" " " "\n" "'" "\\")
-   weiss-stop-delimiters-list '(":" "<" ">" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
+   weiss-stop-delimiters-list '("|" "`" ":" "<" ">" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
 
   (setq-mode-local
    java-mode
    weiss-non-stop-delimiters-list '("	" " " "\n" "'" "\\")
-   weiss-stop-delimiters-list '(":" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
+   weiss-stop-delimiters-list '("|" "`" ":" ";" "." "," "\"" "-" "+" "_" "=" "/" "@" "$" "*"))
 
   (defun weiss--check-two-char (isForward firstList &optional secondList)
     "Check two char"
@@ -12479,6 +13048,10 @@
                          switch-to-buffer
                          other-window
                          find-file
+                         org-open-file
+                         dired-goto-file
+                         org-agenda-finalize
+                         wdired-finish-edit
                          )))
     (dolist (x function-list)
       (advice-add x :after #'weiss-after-change-frame-or-window)
@@ -12498,6 +13071,7 @@
                      text-mode-hook
                      fundamental-mode-hook
                      dired-mode-hook
+                     wdired-mode-hook
                      special-mode-hook
                      conf-mode-hook
                      quickrun-after-run-hook
@@ -12509,6 +13083,12 @@
 #+end_src
 **** select
 #+begin_src elisp
+  (defun weiss-deactivate-mark ()
+    "DOCSTRING"
+    (interactive)
+    (setq saved-region-selection nil)
+    (let (select-active-regions)
+      (deactivate-mark)))
 
   (defun weiss-expand-region-by-word ()
     "expand region word by word on the same side of cursor"
@@ -12855,7 +13435,8 @@
       URL `http://ergoemacs.org/emacs/emacs_dired_open_file_in_ext_apps.html'
       Version 2019-11-04"
     (interactive)
-    (save-buffer)
+    (unless (eq major-mode 'dired-mode)
+      (save-buffer))  
     (let* (
            ($file-list
             (if @fname
@@ -13249,6 +13830,55 @@
 *** hydra
 #+begin_src elisp
   (use-package hydra)
+
+  (defhydra hydra-kmacro (:foreign-keys run :hint nil)
+    "
+  _f_ call with func    _d_ call in region             _C-g_ deactivate-mark
+  _e_ call infinite     _s_ call                         _q_ Quit
+  "
+    ("f" weiss-call-kmacro)
+    ("e" weiss-call-kmacro-infinite :exit t)
+    ("s" call-last-kbd-macro)
+    ("d" weiss-call-kmacro-dwim  :exit t)
+    ("1" weiss-apply-macro-1)
+    ("2" weiss-apply-macro-2)
+    ("3" weiss-apply-macro-3)
+    ("4" weiss-apply-macro-4)
+    ("5" weiss-apply-macro-5)
+    ("6" weiss-apply-macro-6)
+    ("7" weiss-apply-macro-7)
+    ("8" weiss-apply-macro-8)
+    ("9" weiss-apply-macro-9)
+    ("0" weiss-apply-macro-0)
+    ("C-g" (deactivate-mark))  
+    ("q" nil nil)
+    )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   (defhydra hydra-error (global-map "M-g")
     "goto-error"
@@ -13754,6 +14384,11 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
                  ("v" yank-rectangle)
                  ("n" mc/mark-next-like-this)
                  ("a" mc/mark-all-like-this)
+                 ("s" weiss-start-kmacro)
+                 ;; ("l" weiss-kmacro-insert-letters)
+                 ("k" weiss-deactivate-mark)
+                 ("e" weiss-end-kmacro)
+                 ("c" kmacro-call-macro)
                  ("SPC" hydra-multiple-cursors-weiss/body)
                  ))
            ("p"  recenter-top-bottom)
@@ -13890,3 +14525,5 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
   (setq gc-cons-threshold (* (expt 1024 2) 32)
         gc-cons-percentage 0.5)
 #+end_src
+
+#  LocalWords:  appt

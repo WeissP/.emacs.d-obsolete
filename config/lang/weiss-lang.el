@@ -51,7 +51,6 @@
   ;; Format using YAPF
   ;; Install: pip install yapf
   (use-package yapfify
-    :disabled
     :diminish yapf-mode
     :hook (python-mode . yapf-mode))
   )

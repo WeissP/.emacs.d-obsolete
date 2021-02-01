@@ -14,6 +14,7 @@
 (require 'weiss-org)
 (require 'weiss-pdf)
 (require 'weiss-flycheck)
+(require 'weiss-flyspell)
 (require 'weiss-translation)
 (require 'weiss-snails)
 (require 'weiss-sql)

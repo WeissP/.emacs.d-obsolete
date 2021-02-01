@@ -55,19 +55,21 @@
 
 
 ;; [[file:../emacs-config.org::*predicate][predicate:1]]
-(defvar weiss-org-sp-sharp "^#\\+"
+(defvar weiss-org-sp-sharp "^\\(?:#\\+\\(?:\\(?:begin\\|end\\)_src\\)\\)"
   "Shortcut for the org's #+ regex.")
 
-(defvar weiss-org-sp-sharp-begin "^#\\+begin"
+(defvar weiss-org-sp-sharp-begin "^#\\+begin_src"
   "Shortcut for the org's #+ regex.")
 
-(defvar weiss-org-sp-sharp-end "^#\\+end"
+(defvar weiss-org-sp-sharp-end "^#\\+end_src"
   "Shortcut for the org's #+ regex.")
 
-(defvar weiss-org-sp-regex "^\\(?:\\*\\|#\\+\\)"
+(defvar weiss-org-sp-regex "^\\(?:\\*\\)"
   "Shortcut for weiss-org-sp's special regex.")
+(setq weiss-org-sp-regex "^\\(?:#\\+\\(?:\\(?:begin\\|end\\)_src\\)\\|\\*\\)" )
 
-(defvar weiss-org-sp-regex-full "^\\(?:\\*+ \\|#\\+\\|:\\)"
+
+(defvar weiss-org-sp-regex-full "^\\(?:\\*+ \\|:\\)"
   "Shortcut for weiss-org-sp's special regex.")
 
 (defun weiss-org-sp--special-p ()
@@ -77,6 +79,7 @@ calling `self-insert-command'."
   (and (bolp)
        (or
         (looking-at weiss-org-sp-regex)
+        (looking-at weiss-org-sp-sharp)
         (weiss-org-sp--at-property-p)
         (looking-back "^\\*+" (line-beginning-position))
         (looking-at "CLOCK:"))))

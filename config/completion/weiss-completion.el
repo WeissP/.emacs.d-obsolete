@@ -28,7 +28,8 @@
   :hook
   ((prog-mode . company-mode)
    (conf-mode . company-mode)
-   (eshell-mode . company-mode))
+   (eshell-mode . company-mode)
+   (org-mode . company-mode))
   :custom
   (company-tng-auto-configure nil)
   (company-frontends '(company-tng-frontend
@@ -60,6 +61,12 @@
   (company-global-modes '(not dired-mode dired-sidebar-mode))
   (company-tooltip-margin 1)
   :config
+  (setq-mode-local
+   org-mode
+   company-backends
+   '(company-bbdb company-semantic company-cmake company-clang company-files
+                  (company-dabbrev-code company-gtags company-etags company-keywords)
+                  company-oddmuse company-dabbrev))
   (defun weiss-company-select-next-or-toggle-main-frame ()
     "DOCSTRING"
     (interactive)
@@ -74,6 +81,11 @@
         (weiss-switch-buffer-or-otherside-frame-without-top)
       (company-select-previous)
       ))
+  (use-package company-box
+    :hook (company-mode . company-box-mode)
+    :config
+    (setq company-box-enable-icon nil)
+    )
   )
 
 (use-package yasnippet

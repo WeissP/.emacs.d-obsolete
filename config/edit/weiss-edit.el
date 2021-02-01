@@ -115,13 +115,14 @@
 
 ;; casease
 
-
 ;; [[file:../emacs-config.org::*casease][casease:1]]
 (use-package casease
   :quelpa (casease 
            :fetcher github 
            :repo DogLooksGood/casease)
   :config
+  (advice-add 'weiss--ahf-indent :after #'casease--end)
+  (advice-add 'weiss--ahf :after #'casease--end)
   (casease-setup
    :hook java-mode-hook
    :separator ?-

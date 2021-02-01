@@ -105,7 +105,7 @@
  org-agenda-files '("~/Dropbox/Org-roam/daily/")
  org-agenda-todo-ignore-scheduled t
  org-agenda-prefix-format "%t %s " ;hide files name
- org-tag-alist '(("China" . ?c)("shopping-list" . ?s)("board-game" . ?b)("emacs" . ?e) ("video" . ?v)("misc" . ?m)("article" . ?a) ("eaf") ("snails") ("dired")("roam"))
+ org-tag-alist '(("China" . ?c)("shoppingList" . ?s)("board-game" . ?b)("emacs" . ?e) ("video" . ?v)("misc" . ?m)("article" . ?a) ("eaf") ("snails") ("dired")("roam"))
 
  org-todo-keywords '((sequence "INPROGRESS(i)" "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c@)"))
  ;; (sequence "⚑(T)" "🏴(I)" "❓(H)" "|" "✔(D)" "✘(C)"))
@@ -113,6 +113,7 @@
  org-cycle-max-level 15
  org-agenda-skip-scheduled-if-done t
  org-hide-leading-stars nil
+ org-export-allow-bind-keywords t
  org-indent-mode-turns-on-hiding-stars nil
  org-list-description-max-indent 4
  org-startup-indented t
@@ -184,6 +185,7 @@
    ("\\.pdf\\'" . emacs)
    ("\\.mp4\\'" . "vlc \"%s\"")
    ("\\.txt\\'" . emacs)
+   ("\\.xopp\\'" . "xournalpp \"%s\"")
    )
  )
 ;; variables:1 ends here
@@ -224,6 +226,7 @@
       ("s" org-noter-sync-current-note)
       ("t" org-todo)
       ("b" org-mark-ring-goto)
+      ("j s" weiss-org-copy-heading-link)
       ))
 ("<escape> o" (
                ("e"
@@ -272,6 +275,21 @@
                 :name "sql babel")
                )
  )
+("<escape> <escape>" (
+                      ("RET"
+                       ignore
+                       :then ((lambda () (insert "$\\\\$\n")))
+                       :name "latex new line")
+                      ("s"
+                       ignore
+                       :then ((lambda ()(weiss-insert-bracket-pair "\\begin{right_indent}" "\\end{right_indent}" t)))
+                       :name "add subs")
+                      ("c"
+                       ignore
+                       :then ((lambda ()(weiss-insert-bracket-pair "$\\color{code}\\texttt{" "}$" nil)))
+                       :name "add color")
+
+                      ))
 (:mode 'org-agenda-mode)
 ("-" xah-backward-punct)
 ("=" xah-forward-punct)
@@ -290,6 +308,75 @@
 ;; functions
 
 ;; [[file:../emacs-config.org::*functions][functions:1]]
+(setq
+ weiss-org-xournal-note-dir "/home/weiss/Documents/OrgFiles/Bilder/xournal/xopp/"  ;; xopp 笔记存储目录
+ weiss-org-xournal-template-dir "/home/weiss/Documents/OrgFiles/Bilder/xournal/" ;; xournal 目标文件存储目录
+ weiss-org-xournal-default-template-name "Template.xopp" ;; 默认笔记模版名称，应该位于 org-xournal-template-dir
+ weiss-org-xournal-bin "/usr/bin/xournalpp" ;; xournal 执行文件
+ weiss-org-xournal-png-path "/home/weiss/Documents/OrgFiles/Bilder/xournal/png/"
+ weiss-org-xournal-process-picture-functon #'weiss-org-xournal-process-picture-functon
+ )
+
+(defun org-xournal-save-image (xournal-path png-path)
+  "Convert XOURNAL-PATH to PNG and write it to PNG-PATH."
+  (call-process-shell-command (format "%s %s -i %s" weiss-org-xournal-bin xournal-path png-path))
+  )
+
+(defun weiss-xournal--refresh-img (path png-path)
+  "refresh xournal image"
+  (interactive)
+  (org-xournal-save-image path png-path)
+  (call-process-shell-command (format "convert %s -resize 326x231 -quality 5%%  -trim +repage %s"   png-path png-path)))
+
+(defun weiss-xournal-refresh-img-manually ()
+  "DOCSTRING"
+  (interactive)
+  (let* ((context (org-element-context))
+         (type (org-element-type context))
+         (lineage (org-element-lineage context '(link) t))
+         (path (org-element-property :path lineage))
+         (png-path (concat
+                    weiss-org-xournal-png-path
+                    (file-name-sans-extension (file-name-nondirectory path)) ".png") )
+         )
+    ;; (message "path: %s\npng-path: %s" path png-path)
+    (weiss-xournal-refresh-img path png-path)
+    ))
+
+(defun weiss-insert-xournal-link ()
+  "DOCSTRING"
+  (interactive)
+  (let* ((name (read-string "xournal name:"))
+         (file-name (concat name ".xopp"))
+         (path (concat weiss-org-xournal-note-dir file-name))
+         (png-path (concat weiss-org-xournal-png-path name ".png"))
+         )
+    (unless (file-exists-p path)
+      (f-copy
+       (concat
+        weiss-org-xournal-template-dir
+        weiss-org-xournal-default-template-name)
+       path)
+      )
+    (insert (format "[[%s][%s]]" path file-name))
+    (let ((process-connection-type nil))
+      (start-process "" nil "xdg-open" path)
+      ) 
+    (weiss-xournal-refresh-img path png-path)
+    (insert (format "\n[[%s]]" png-path))
+    ))
+
+
+
+(defun weiss-org-copy-heading-link ()
+  "copy the current heading link in org format"
+  (interactive)
+  (let* ((title (substring-no-properties (org-get-heading t t t t)))
+         (des (read-string "Description: " title))
+         )
+    (kill-new (format "[[*%s][%s]]" title des))
+    ))
+
 (defun weiss-set-org-tags (&optional arg)
   "set tags with counsel, using org-use-fast-tag-selection if `arg' =4, align tags if `arg' = 16"
   (interactive "P")
@@ -311,7 +398,7 @@
 (defun weiss-org-exchange-point-or-switch-to-sp ()
   "exchange point if region is aktiv otherwise switch to `weiss-org-sp-mode'"
   (interactive)
-  (if (use-region-p)
+  (if (and (use-region-p) (> (- (region-end) (region-beginning)) 1)) 
       (exchange-point-and-mark)      
     (weiss-org-sp-switch)
     )
@@ -478,12 +565,12 @@ Return non-nil if the window was shrunk, nil otherwise."
       (let ((current-prefix-arg '(64)))
         (call-interactively 'org-latex-preview) 
         (org-remove-inline-images)
-        (when org-xournal-mode (org-xournal-hide-all))
+        (when (ignore-errors org-xournal-mode) (org-xournal-hide-all))
         )
     (let ((current-prefix-arg '(16)))
       (call-interactively 'org-latex-preview)
       (org-display-inline-images))
-    (when org-xournal-mode (org-xournal-show-current-link))
+    (when (ignore-errors org-xournal-mode) (org-xournal-show-current-link))
     )
   )
 
@@ -757,6 +844,7 @@ Return non-nil if the window was shrunk, nil otherwise."
   :init
   (add-hook 'after-init-hook 'org-roam-mode)
   (setq
+   org-roam-tag-separator ";"
    org-roam-directory "~/Dropbox/Org-roam/"
    org-roam-dailies-directory "daily/"
    org-agenda-files `(,(concat org-roam-directory org-roam-dailies-directory))
@@ -769,15 +857,25 @@ Return non-nil if the window was shrunk, nil otherwise."
    (
     ("t" org-roam-tag-add)
     ("n" org-roam-capture)
+    ("f" weiss-roam-add-focusing-tag)
     ("s" weiss-org-roam-copy-heading-link)    
     ))
 
   :config
+  (defun weiss-roam-add-focusing-tag ()
+    "add focusing tag with quote"
+    (interactive)
+    (goto-char (point-min))
+    (re-search-forward "#\\+roam_tags:")
+    (insert " \",focusing\" ")
+    )
+
   (defun weiss-roam--add-to-today-daily (content state)
     "add `content'  to the `state' heading in today daily file"
     (let* ((filename (concat
                       org-roam-directory
                       org-roam-dailies-directory
+                      "Ʀ"
                       (if (< (string-to-number (format-time-string "%H")) 4)
                           (format-time-string "d-%Y-%m-%d" (time-subtract (current-time) (* 24 3600)))                          
                         (format-time-string "d-%Y-%m-%d")
@@ -821,19 +919,29 @@ Return non-nil if the window was shrunk, nil otherwise."
     (org-roam--title-to-slug title)
     )
   (setq org-roam-title-to-slug-function 'weiss-org-roam--title-to-slug)
+
   (defun weiss-org-roam-copy-heading-link (&optional without-asking)
     "copy the current heading link in roam format"
     (interactive)
-    (let ((id (org-id-get-create))
-          (title
-           (if without-asking
-               (substring-no-properties (org-get-heading t t t t))
-             (read-string "Description: " (substring-no-properties (org-get-heading t t t t)))               
-             )
-           )
+    (if (string-prefix-p "Ʀ" (file-name-nondirectory (buffer-file-name))) 
+        (let ((id (org-id-get-create))
+              (title
+               (if without-asking
+                   (substring-no-properties (org-get-heading t t t t))
+                 (read-string "Description: " (substring-no-properties (org-get-heading t t t t)))               
+                 )
+               )
+              )
+          (kill-new (format " [[id:%s][%s]]" id title))
           )
-      (kill-new (format " [[id:%s][%s]]" id title))
+      (let* ((title (substring-no-properties (org-get-heading t t t t)))
+             (des (read-string "Description: " title))
+             )
+        (kill-new (format "[[*%s][%s]]" title des))
+        )
       )
+
+
     )
 
   ;; open link from roam direkt in browser
@@ -959,6 +1067,7 @@ This function is meant to be used as a possible tool for
            :file-name "daily/Ʀd-%<%Y-%m-%d>"
            :head "#+title: Daily-%<%Y-%m-%d>\n#+roam_tags: Daily\n"
            :olp ("Journey")
+           :unnarrowed t
            )
           ))
 
@@ -980,10 +1089,64 @@ This function is meant to be used as a possible tool for
   )
 ;; org-roam:1 ends here
 
+;; org-alert
+
+;; [[file:../emacs-config.org::*org-alert][org-alert:1]]
+(use-package org-alert
+  :disabled
+  :config
+  (setq alert-default-style 'libnotify)
+  (org-alert-enable)
+  )
+;; org-alert:1 ends here
+
+;; appt
+
+;; [[file:../emacs-config.org::*appt][appt:1]]
+(require 'appt)
+(appt-activate t)
+
+(setq appt-message-warning-time 5) ; Show notification 5 minutes before event
+(setq appt-display-interval appt-message-warning-time) ; Disable multiple reminders
+(setq appt-display-mode-line nil)
+
+; Use appointment data from org-mode
+(defun my-org-agenda-to-appt ()
+  (interactive)
+  (setq appt-time-msg-list nil)
+  (org-agenda-to-appt))
+
+; Update alarms when...
+; (1) ... Starting Emacs
+(my-org-agenda-to-appt)
+
+; (2) ... Everyday at 12:05am (useful in case you keep Emacs always on)
+(run-at-time "12:05am" (* 24 3600) 'my-org-agenda-to-appt)
+
+; (3) ... When TODO.txt is saved
+(add-hook 'after-save-hook
+          '(lambda ()
+             (if (string= (buffer-file-name) (concat (getenv "HOME") "/ideas/TODO.txt"))
+                 (my-org-agenda-to-appt))))
+
+; Display appointments as a window manager notification
+(setq appt-disp-window-function 'my-appt-display)
+(setq appt-delete-window-function (lambda () t))
+
+(setq my-appt-notification-app (concat (getenv "HOME") "/bin/appt-notification"))
+
+(defun my-appt-display (min-to-app new-time msg)
+  (if (atom min-to-app)
+    (start-process "my-appt-notification-app" nil my-appt-notification-app min-to-app msg)
+  (dolist (i (number-sequence 0 (1- (length min-to-app))))
+    (start-process "my-appt-notification-app" nil my-appt-notification-app (nth i min-to-app) (nth i msg)))))
+;; appt:1 ends here
+
 ;; org-xournal
 
 ;; [[file:../emacs-config.org::*org-xournal][org-xournal:1]]
 (use-package org-xournal
+  :disabled
   :quelpa (org-xournal 
            :fetcher github 
            :repo yuchen-lea/org-xournal)
@@ -1010,7 +1173,8 @@ This function is meant to be used as a possible tool for
     ;;   (message "%sx%s" (* 29.7 scale) (* 21 scale))
     ;;   (kill-new (format "%sx%s" (round (* 29.7 scale)) (* 21 scale)))
     ;;   )
-    (call-process-shell-command (format "convert %s -resize 653x462 -quality 5%%  -trim +repage %s" png-path png-path))
+    ;; (call-process-shell-command (format "convert %s -resize 653x462 -quality 5%%  -trim +repage %s" png-path png-path))
+    (call-process-shell-command (format "convert %s -resize 326x231 -quality 5%%  -trim +repage %s" png-path png-path))
     ;; (async-shell-command (format "convert %s -resize 653x462 -quality 1%%  -trim +repage %s" png-path png-path))
     )
   )

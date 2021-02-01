@@ -12,10 +12,7 @@
   "A conditional key definition for `expand-abbrev'.
 When  this was bound, it will expand abbrev at point if there're any possible
 abbrev.")
-(defun weiss-test ()
-  "DOCSTRING"
-  (interactive) 
-  (skip-syntax-backward "\\w"))
+
 (defun weiss-check-or-expand-abbrev (&optional check)
   "Check the string between the cursor and the last space"
   (interactive)
@@ -71,6 +68,11 @@ Version 2016-10-24"
     (when $found-p (delete-char 1))
     $found-p
     ))
+
+(defun weiss--ahf-avoid-casease ()
+  "indent after abbrev expand"
+  (casease--end)
+  t)
 
 (defun weiss--ahf-indent ()
   "indent after abbrev expand"
@@ -240,9 +242,17 @@ Version 2016-10-24"
     ("ltxeq" "\\begin{equation*}\n▮\n\\end{equation*}" weiss--ahf-indent)    
     ("ltxal" "\\begin{aligned}\n▮\n\\end{aligned}" weiss--ahf-indent)    
     ("ltxtb" "#+ATTR_LaTeX: :align |r|r|r|r|r|" weiss--ahf-indent)    
+    ("ltxmg" "#+ATTR_Latex: :options [leftmargin=▮8ex]" weiss--ahf-indent)    
+    ("ltximg" "#+ATTR_LATEX:  :width 0.9\\textwidth :center nil" weiss--ahf-indent)    
+    ("ltxmt" "#+ATTR_LATEX: :options xleftmargin=8ex" weiss--ahf-indent)    
+    ("orgimg" "#+ATTR_ORG: :width 600" weiss--ahf-indent)    
+    ("cc" "$\\color{code}\\texttt{▮}$" weiss--ahf-indent)    
 ;;;;; emoji
     ("zrl" ":relaxed:" weiss--ahf)
     ("zj" ":joy:" weiss--ahf)
+;;;;; for English language
+    ("intr" "introduction" weiss--ahf)    
+    ("ex" "example" weiss--ahf)    
 ;;;;; for Germany language
     ("algo" "Algorithmus" weiss--ahf)
     ("ht" "heute" weiss--ahf)
@@ -587,26 +597,32 @@ Version 2016-10-24"
 
 (define-abbrev-table 'go-mode-abbrev-table
   '(
+    ("ca" "case ▮:" weiss--ahf)
     ("d" "defer ▮" weiss--ahf)
     ("de" "default:\n▮" weiss--ahf-indent)
-    ("ca" "case ▮:" weiss--ahf)
     ("e" ":= ▮" weiss--ahf)
+    ("en" "errors.New(\"▮\")" weiss--ahf)
     ("f" "func ▮(){\n\n}" weiss--ahf-indent)
     ("fr" "for i, x := range ▮{\n\n}" weiss--ahf-indent)
-    ("im" "import (\n\"▮\"\n)" weiss--ahf-indent)
     ("ie" "if err != nil {\n▮\n}" weiss--ahf-indent)
+    ("im" "import (\n\"▮\"\n)" weiss--ahf-indent)
+    ("la" "<-" weiss--ahf)
     ("pa" "package ▮" weiss--ahf)
     ("pr" "fmt.Printf(\"%v\", ▮)")
+    ("prn" "fmt.Println(\"▮\")")
     ("rt" "return ▮" weiss--ahf)
+    ("rc" "regexp.MustCompile(`▮`)" weiss--ahf)
     ("st" "%T" weiss--ahf)
     ("sv" "%v" weiss--ahf)
-    ("ts" "type ▮ struct {\n\n}" weiss--ahf-indent)
+    ("sf" "fmt.Sprintf(\"%v\",▮)" weiss--ahf)
     ("ti" "type ▮ interface {\n\n}" weiss--ahf-indent)
+    ("ts" "type ▮ struct {\n\n}" weiss--ahf-indent)
     ("v" "var ▮" weiss--ahf)
     ))
 ;; go:1 ends here
 
 ;; elisp
+
 
 ;; [[file:../emacs-config.org::*elisp][elisp:1]]
 (when (boundp 'emacs-lisp-mode-abbrev-table)
@@ -752,6 +768,7 @@ Version 2016-10-24"
     ("sqa" "shell-quote-argument" weiss--ahf)
     ("stb" "switch-to-buffer" weiss--ahf)
     ("ste" "(string-equal ▮)" weiss--ahf)
+    ("stm" "set-transient-map" weiss--ahf)
     ("stn" "string-to-number" weiss--ahf)
     ("tap" "thing-at-point" weiss--ahf)
     ("urp" "use-region-p" weiss--ahf)
@@ -842,7 +859,7 @@ Version 2016-10-24"
     ("defcustom" "(defcustom ▮)" weiss--ahf)
     ("defface" "(defface ▮)" weiss--ahf)
     ("defimage" "(defimage ▮)" weiss--ahf)
-    ("define-key" "(define-key ▮ (kbd \"M-b\"))" weiss--ahf)
+    ("define-key" "(define-key ▮ (kbd \"\") #')" weiss--ahf)
     ("define-minor-mode" "(define-minor-mode ▮)" weiss--ahf)
     ("defsubst" "(defsubst ▮)" weiss--ahf)
     ("defun" "(defun ▮ ()\n  \"DOCSTRING\"\n  (interactive)\n  (let (())\n\n ))" weiss--ahf-indent)
@@ -1058,6 +1075,7 @@ Version 2016-10-24"
     ("set-text-properties" "(set-text-properties ▮)" weiss--ahf)
     ("set-visited-file-modtime" "(set-visited-file-modtime ▮)" weiss--ahf)
     ("set-visited-file-name" "(set-visited-file-name ▮)" weiss--ahf)
+    ("set-transient-map" "(set-transient-map\n(let ((map (make-sparse-keymap))\n)\n(define-key map (kbd \"▮\") #')\nmap)\nt)" weiss--ahf-indent)
     ("setq" "(setq ▮)" weiss--ahf)
     ("setf" "(setf ▮)" weiss--ahf)
     ("max" "(max ▮)" weiss--ahf)
@@ -1168,6 +1186,12 @@ Version 2016-10-24"
 (define-abbrev-table 'c++-mode-abbrev-table
   '(
     ("s" "std::" weiss--ahf)
+    )
+  )
+
+(define-abbrev-table 'text-mode-abbrev-table
+  '(
+    ("i" "&&&[IMG]pictures/▮.png" weiss--ahf)
     )
   )
 ;; misc:1 ends here

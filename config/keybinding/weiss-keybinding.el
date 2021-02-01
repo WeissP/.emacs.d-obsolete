@@ -1,76 +1,4 @@
 ;; -*- lexical-binding: t -*-
-;; weiss-variable-mode
-
-;; [[file:../emacs-config.org::*weiss-variable-mode][weiss-variable-mode:1]]
-(defvar weiss-variable-mode-map (make-sparse-keymap) "Keybinding for weiss-temp-insert minor mode.")
-(defvar weiss-variable-mode-start-point nil)
-(defvar weiss-variable-snake-case-list '(python-mode))
-(defvar weiss-variable-dash-case-list '(emacs-lisp-mode))
-
-(defun weiss-variable-mode-enable ()
-  "enable temp insert mode"
-  (interactive)
-  (setq weiss-variable-mode-start-point (point))
-  )
-
-(defun weiss-variable--process-string (s)
-  "DOCSTRING"
-  (interactive)
-  (let ((l (split-string s " "))
-        )
-    (cond
-     ((member major-mode weiss-variable-snake-case-list)
-      (s-join "_" l)
-      )     
-     ((member major-mode weiss-variable-dash-case-list)
-      (s-join "-" l)
-      )     
-     (t
-      (concat (pop l) (mapconcat 'capitalize l "")))
-     )
-    )
-  )
-
-(defun weiss-variable-mode-disable ()
-  "disable temp insert mode"
-  (when (> (- (point) weiss-variable-mode-start-point) 3)
-    (insert (weiss-variable--process-string (delete-and-extract-region weiss-variable-mode-start-point (point))))
-    )
-  (setq weiss-variable-mode-p nil)
-  )
-
-(defun weiss-variable-mode-start ()
-  "DOCSTRING"
-  (interactive)
-  (when (and (derived-mode-p 'prog-mode) (not ryo-modal-mode)) 
-    (weiss-variable-mode 1)
-    (setq-local cursor-type 'hbar)
-    )  
-  )
-(defun weiss-variable-mode-stop ()
-  "DOCSTRING"
-  (interactive)
-  (weiss-variable-mode -1)
-  (setq-local cursor-type 'box)
-  (ryo-modal-mode)
-  )
-;; (define-key weiss-variable-mode-map (kbd "RET") 'weiss-temp-insert-exit-and-keep-content)
-(define-key weiss-variable-mode-map [remap ryo-modal-mode] 'weiss-variable-mode-stop)
-(advice-add 'keyboard-quit :before 'weiss-variable-mode-start)
-;;;###autoload
-(define-minor-mode weiss-variable-mode
-  "Save selected text and activate insert mode, press enter to exit and keep the selected text. When direct go back to Command mode, the selected text will be deleted."
-  :lighter " variable" ; set a simple mode name in the minor-mode-alist
-  (if weiss-variable-mode
-      (weiss-variable-mode-enable)
-    (weiss-variable-mode-disable)
-    )
-  )
-
-
-(provide 'weiss-variable-mode)
-;; weiss-variable-mode:1 ends here
-
 ;; general
 
 
@@ -165,6 +93,55 @@
 
 ;; [[file:../emacs-config.org::*hydra][hydra:1]]
 (use-package hydra)
+
+(defhydra hydra-kmacro (:foreign-keys run :hint nil)
+  "
+_f_ call with func    _d_ call in region             _C-g_ deactivate-mark
+_e_ call infinite     _s_ call                         _q_ Quit
+"
+  ("f" weiss-call-kmacro)
+  ("e" weiss-call-kmacro-infinite :exit t)
+  ("s" call-last-kbd-macro)
+  ("d" weiss-call-kmacro-dwim  :exit t)
+  ("1" weiss-apply-macro-1)
+  ("2" weiss-apply-macro-2)
+  ("3" weiss-apply-macro-3)
+  ("4" weiss-apply-macro-4)
+  ("5" weiss-apply-macro-5)
+  ("6" weiss-apply-macro-6)
+  ("7" weiss-apply-macro-7)
+  ("8" weiss-apply-macro-8)
+  ("9" weiss-apply-macro-9)
+  ("0" weiss-apply-macro-0)
+  ("C-g" (deactivate-mark))  
+  ("q" nil nil)
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 (defhydra hydra-error (global-map "M-g")
   "goto-error"
