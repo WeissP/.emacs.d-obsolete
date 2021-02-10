@@ -610,6 +610,7 @@ Version 2016-10-24"
     ("en" "errors.New(\"▮\")" weiss--ahf)
     ("f" "func ▮(){\n\n}" weiss--ahf-indent)
     ("fr" "for i, x := range ▮{\n\n}" weiss--ahf-indent)
+    ("fi" "for i := 0; i < ▮; i++ {\n\n}" weiss--ahf-indent)
     ("ie" "if err != nil {\n▮\n}" weiss--ahf-indent)
     ("im" "import (\n\"▮\"\n)" weiss--ahf-indent)
     ("la" "<-" weiss--ahf)

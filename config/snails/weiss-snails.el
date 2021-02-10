@@ -232,8 +232,10 @@
           snails-backend-file-bookmark
           snails-backend-org-roam-link
           snails-backend-org-roam-focusing
+          snails-backend-org-roam-uc
           snails-backend-org-roam-project
           snails-backend-org-roam-note
+          snails-backend-org-roam-tutorial
           snails-backend-recentf-weiss
           snails-backend-org-roam-all
           snails-backend-org-roam-new

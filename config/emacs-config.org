@@ -886,6 +886,7 @@
       ("en" "errors.New(\"▮\")" weiss--ahf)
       ("f" "func ▮(){\n\n}" weiss--ahf-indent)
       ("fr" "for i, x := range ▮{\n\n}" weiss--ahf-indent)
+      ("fi" "for i := 0; i < ▮; i++ {\n\n}" weiss--ahf-indent)
       ("ie" "if err != nil {\n▮\n}" weiss--ahf-indent)
       ("im" "import (\n\"▮\"\n)" weiss--ahf-indent)
       ("la" "<-" weiss--ahf)
@@ -1713,8 +1714,10 @@
             snails-backend-file-bookmark
             snails-backend-org-roam-link
             snails-backend-org-roam-focusing
+            snails-backend-org-roam-uc
             snails-backend-org-roam-project
             snails-backend-org-roam-note
+            snails-backend-org-roam-tutorial
             snails-backend-recentf-weiss
             snails-backend-org-roam-all
             snails-backend-org-roam-new
@@ -10929,7 +10932,7 @@
             ("l" "link" plain (function org-roam-capture--get-point)
              "%?"
              :file-name "Ʀlink:${slug}"
-             :head "#+title: ${title}\n#+roam_alias: l-${slug}\n#+roam_key: %c\n"
+             :head "#+title: ${title}\n#+roam_tags: link#+roam_key: %c\n"
              )
             )
           )
@@ -10961,6 +10964,13 @@
              :unnarrowed t
              )
             ))
+    (setq org-roam-capture-ref-templates
+          '(
+            ("r" "ref" plain #'org-roam-capture--get-point
+             "%?"
+             :file-name "${slug}"
+             :head "#+title: ${title} #+roam_key: ${ref}"
+             :unnarrowed t)))
 
     (use-package org-roam-server
       :config
@@ -10971,6 +10981,7 @@
             org-roam-server-network-label-truncate t
             org-roam-server-network-label-truncate-length 60
             org-roam-server-network-label-wrap-length 20))
+    (use-package org-roam-protocol)
     (use-package org-transclusion
       ;; :quelpa (org-transclusion 
       ;;          :fetcher github 

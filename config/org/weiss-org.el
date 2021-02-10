@@ -1039,7 +1039,7 @@ This function is meant to be used as a possible tool for
           ("l" "link" plain (function org-roam-capture--get-point)
            "%?"
            :file-name "Ʀlink:${slug}"
-           :head "#+title: ${title}\n#+roam_alias: l-${slug}\n#+roam_key: %c\n"
+           :head "#+title: ${title}\n#+roam_tags: link#+roam_key: %c\n"
            )
           )
         )
@@ -1071,6 +1071,13 @@ This function is meant to be used as a possible tool for
            :unnarrowed t
            )
           ))
+  (setq org-roam-capture-ref-templates
+        '(
+          ("r" "ref" plain #'org-roam-capture--get-point
+           "%?"
+           :file-name "${slug}"
+           :head "#+title: ${title} #+roam_key: ${ref}"
+           :unnarrowed t)))
 
   (use-package org-roam-server
     :config
@@ -1081,6 +1088,7 @@ This function is meant to be used as a possible tool for
           org-roam-server-network-label-truncate t
           org-roam-server-network-label-truncate-length 60
           org-roam-server-network-label-wrap-length 20))
+  (use-package org-roam-protocol)
   (use-package org-transclusion
     ;; :quelpa (org-transclusion 
     ;;          :fetcher github 
