@@ -196,7 +196,7 @@
 ;; export
 
 ;; [[file:../emacs-config.org::*export][export:1]]
-;; (setq LaTeX-command-style '(("" "%(PDF)%(latex) -shell-escape %S%(PDFout)")))
+(setq LaTeX-command-style '(("" "%(PDF)%(latex) -shell-escape %S%(PDFout)")))
 
 (setq
  org-export-headline-levels 5
@@ -205,8 +205,9 @@
  org-latex-pdf-process
  '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
    "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")
+ LaTeX-command-style '(("" "%(PDF)%(latex) -shell-escape %S%(PDFout)"))
  )
-  ;; \\setlength\\parindent{0pt}
+;; \\setlength\\parindent{0pt}
 ;; \usepackage{xcolor}
 ;; \definecolor{code}{HTML}{986801}
 (add-to-list 'org-latex-packages-alist '("" "minted" t))

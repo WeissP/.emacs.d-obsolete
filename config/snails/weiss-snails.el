@@ -16,11 +16,18 @@
   (setq snails-fame-width-proportion 0.8)
   (setq snails-default-show-prefix-tips nil)
 
-  (require 'snails-backend-file-bookmark)
-  (require 'snails-backend-filter-buffer)
-  (require 'snails-backend-recentf-weiss)
-  (require 'snails-backend-rg-curdir)
-  (require 'snails-backend-filter-buffer)
+  (defun weiss-snails-fuzzy-match-input-p (input candidate-content)
+    "replace space as .* and replace two spaces as space"
+    (interactive)
+    (setq input (replace-regexp-in-string "  " "ⓨ" input)) 
+    (setq input (replace-regexp-in-string " " ".*" input))
+    (setq input (replace-regexp-in-string "ⓨ" " " input))
+    (string-match-p input candidate-content)
+    )
+
+  (advice-add 'snails-match-input-p :override #'weiss-snails-fuzzy-match-input-p)
+
+
 
   (defvar snails-current-dir nil)
   (defun weiss-snails-get-current-dir ()
@@ -54,13 +61,14 @@
         (setq filename (replace-regexp-in-string search-str replace-str filename t))
         )
       )  
-    (let ((limit 110)
+    (let ((limit 90)
           )
       (when (> (length filename) limit)
-        (setq filename (substring filename -limit)))      
+        (setq filename (substring filename (- limit))))      
       )    
     filename
     )
+
 
   (defun weiss-snails-create-window ()
     (setq snails-init-conf (current-window-configuration))
@@ -118,9 +126,98 @@
     (advice-add 'snails-init-face-with-theme :override 'weiss-snails-init-face-with-theme)
     )
 
+  (cl-defmacro snails-create-sync-backend-with-alt-do (&rest args &key name candidate-filter candidate-icon candidate-do candidate-alt-do)
+    "Macro to create sync backend code.
+
+`name' is backend name, such 'Foo Bar'.
+`candidate-filter' is function that accpet input string, and return candidate list, example format: ((display-name-1 candidate-1) (display-name-2 candidate-2))
+`candidate-do-function' is function that confirm candidate, accpet candidate search, and do anything you want.
+"
+    (let* ((backend-template-name (string-join (split-string (downcase name)) "-"))
+           (backend-name (intern (format "snails-backend-%s" backend-template-name)))
+           (search-function (intern (format "snails-backend-%s-search" backend-template-name))))
+      `(progn
+         (defun ,search-function(input input-ticker update-callback)
+           (funcall
+            update-callback
+            ,name
+            input-ticker
+            (funcall ,candidate-filter input)))
+
+         (defvar ,backend-name nil)
+
+         (setq ,backend-name
+               '(("name" . ,name)
+                 ("search" . ,search-function)
+                 ("icon" . ,candidate-icon)
+                 ("do" . ,candidate-do)
+                 ("alt-do" . ,candidate-alt-do)
+                 )
+               )
+         )))
+
+  (defun snails-backend-alt-do (backend-name candidate)
+    "Confirm candidate with special backend."
+    (catch 'backend-do
+      (dolist (backend snails-backends)
+        (let ((name (cdr (assoc "name" (eval backend))))
+              (do-func (cdr (assoc "alt-do" (eval backend)))))
+
+          (when (equal (eval name) backend-name)
+            ;; Quit frame first.
+            (snails-quit)
+
+            ;; Switch to init frame.
+            (when snails-show-with-frame
+              (select-frame snails-init-frame))
+
+            ;; Do.
+            (funcall do-func candidate)
+
+            (throw 'backend-do nil)
+            )))))
+
+  (defun snails-candidate-alt-do ()
+    "Confirm current candidate."
+    (interactive)
+    (let ((candidate-info (snails-candidate-get-info)))
+      (if candidate-info
+          (snails-backend-alt-do (nth 0 candidate-info) (nth 1 candidate-info))
+        (message "Nothing selected."))))
+
 
   (defun snails-render-web-icon ()
     (all-the-icons-faicon "globe"))
+
+
+  ;; (defun weiss-test ()
+  ;;   "DOCSTRING"
+  ;;   (interactive)
+  ;;   (snails '(snails-backend-rg-curdir)))
+  ;; (snails '(snails-backend-rg)))
+
+  (define-key snails-mode-map (kbd "C-j") #'snails-select-next-item)
+  (define-key snails-mode-map (kbd "C-k") #'snails-select-prev-item)
+  (define-key snails-mode-map (kbd "C-s") #'snails-select-prev-backend)
+  (define-key snails-mode-map (kbd "C-d") #'snails-select-next-backend)
+  (define-key snails-mode-map (kbd "M-RET") #'snails-candidate-alt-do)
+
+  (define-key snails-mode-map [remap next-line] #'snails-select-next-backend)
+  (define-key snails-mode-map [remap previous-line] #'snails-select-prev-backend)
+
+  (define-key snails-mode-map (kbd "8") 'snails-select-prev-item)
+  (define-key snails-mode-map (kbd "9") 'snails-select-next-item)
+
+  (setq snails-fuz-library-load-status "unload")
+  ;; (require 'fuz)
+  (use-package snails-roam)
+
+  (require 'snails-backend-file-bookmark)
+  (require 'snails-backend-filter-buffer)
+  (require 'snails-backend-recentf-weiss)
+  (require 'snails-backend-rg-curdir)
+  (require 'snails-backend-filter-buffer)
+  (require 'snails-backend-org-roam)
 
   (setq snails-prefix-backends
         '((";" '(snails-backend-projectile snails-backend-rg-curdir))
@@ -133,28 +230,15 @@
         '(
           snails-backend-filter-buffer
           snails-backend-file-bookmark
+          snails-backend-org-roam-link
+          snails-backend-org-roam-focusing
+          snails-backend-org-roam-project
+          snails-backend-org-roam-note
           snails-backend-recentf-weiss
+          snails-backend-org-roam-all
+          snails-backend-org-roam-new
           ))
 
-  ;; (defun weiss-test ()
-  ;;   "DOCSTRING"
-  ;;   (interactive)
-  ;;   (snails '(snails-backend-rg-curdir)))
-    ;; (snails '(snails-backend-rg)))
-
-  (define-key snails-mode-map (kbd "C-j") #'snails-select-next-item)
-  (define-key snails-mode-map (kbd "C-k") #'snails-select-prev-item)
-  (define-key snails-mode-map (kbd "C-s") #'snails-select-prev-backend)
-  (define-key snails-mode-map (kbd "C-d") #'snails-select-next-backend)
-
-  (define-key snails-mode-map [remap next-line] #'snails-select-next-backend)
-  (define-key snails-mode-map [remap previous-line] #'snails-select-prev-backend)
-
-  (define-key snails-mode-map (kbd "8") 'snails-select-prev-item)
-  (define-key snails-mode-map (kbd "9") 'snails-select-next-item)
-
-  (setq snails-fuz-library-load-status "unload")
-  ;; (require 'fuz)
   )
 
 (provide 'weiss-snails)

@@ -52,7 +52,8 @@
   ;; Install: pip install yapf
   (use-package yapfify
     :diminish yapf-mode
-    :hook (python-mode . yapf-mode))
+    ;; :hook (python-mode . yapf-mode)
+    )
   )
 ;; python:1 ends here
 
@@ -118,7 +119,7 @@
   ;; use  "bsd"  "java"  "k&r"  "stroustrup"  "whitesmith"  "banner"  "gnu"  "linux"   "horstmann"
   (setq c-default-style "linux"
         indent-tabs-mode nil
-        c-basic-offset 4)
+        c-basic-offset 2)
   ;; align a continued string under the one it continues
   (c-set-offset 'statement-cont 'c-lineup-string-cont)
   ;; align or indent after an assignment operator 

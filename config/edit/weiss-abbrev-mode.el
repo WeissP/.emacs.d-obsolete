@@ -543,7 +543,10 @@ Version 2016-10-24"
     ("wh" "while (▮) {\n\n}" weiss--ahf-indent)
 ;;;;; for clp
     ("tv" "TemporaryVar ▮ = TemporaryVar(\"\");" weiss--ahf)
-    ("ai" "addInstruction(▮);" weiss--ahf)
+    ("ai" "addInstruction(▮)" weiss--ahf)
+    ("vr" "VarRef(▮)" weiss--ahf)
+    ("ci" "ConstInt(▮)" weiss--ahf)
+    ("pt" "System.out.println(String.format(\"//// ▮: %s\", ));" weiss--ahf)
     ))
 ;; java:1 ends here
 

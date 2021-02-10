@@ -128,12 +128,16 @@
    :separator ?-
    :entries
    ((pascal "\\(=\\)[a-z]" "[A-Z]")
-    (camel "[a-z]")))
+    (snake "\\(\\,\\)[a-z]")
+    (camel "[a-z]")
+    ))
   (casease-setup
    :hook c++-mode-hook
    :separator ?-
    :entries
-   ((camel "[a-z]")))
+   ((pascal "\\(=\\)[a-z]" "[A-Z]")
+    (camel "[a-z]")
+    ))
   (casease-setup
    :hook go-mode-hook
    :separator ?-

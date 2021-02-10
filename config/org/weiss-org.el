@@ -126,6 +126,7 @@
 
   ;;;;; Export
 
+ org-export-with-sub-superscripts nil
  org-export-preserve-breaks nil
  org-export-with-creator nil
  org-export-with-author t
@@ -1000,7 +1001,7 @@ This function is meant to be used as a possible tool for
     (if (string-prefix-p "Ʀlink:" (file-name-nondirectory filename))
         (with-temp-buffer
           (insert-file-contents filename)
-          (goto-line 3)
+          (re-search-forward "#\\+roam_key: ")
           (browse-url (buffer-substring-no-properties (+ (line-beginning-position) 12) (line-end-position)))
           )
       (find-file filename wildcards)
@@ -1020,7 +1021,7 @@ This function is meant to be used as a possible tool for
            :head "#+title: ${title}\n#+roam_alias:\n#+roam_tags:\n")
           ("p" "project" plain (function org-roam-capture--get-point)
            "* ${title}\n** link:\n*** \n** %?"
-           :file-name "ƦProjecct-${slug}_%<%Y%m%d%H>"
+           :file-name "ƦProject-${slug}_%<%Y%m%d%H>"
            :head "#+title: Project-${title}\n#+roam_alias: p-${slug}\n#+roam_tags: project \n")
           ("n" "note" plain (function org-roam-capture--get-point)
            "* ${title}\n %?"

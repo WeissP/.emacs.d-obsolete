@@ -14,6 +14,7 @@
   )
 (global-set-key (kbd "<backtab>") 'indent-for-tab-command)
 (global-set-key (kbd "<S-delete>") (lambda () (interactive) (insert "\\")))
+(global-set-key (kbd "M-DEL") (lambda () (interactive) (insert "|")))
 (global-set-key (kbd "<f5>") 'revert-buffer)
 
 (define-key key-translation-map (kbd "<f12>") (kbd "C-g"))

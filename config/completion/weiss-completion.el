@@ -85,6 +85,7 @@
     :hook (company-mode . company-box-mode)
     :config
     (setq company-box-enable-icon nil)
+    (set-face-attribute 'company-tooltip-mouse nil :inherit nil :background nil :foreground nil)
     )
   )
 

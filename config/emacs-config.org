@@ -821,7 +821,10 @@
       ("wh" "while (▮) {\n\n}" weiss--ahf-indent)
   ;;;;; for clp
       ("tv" "TemporaryVar ▮ = TemporaryVar(\"\");" weiss--ahf)
-      ("ai" "addInstruction(▮);" weiss--ahf)
+      ("ai" "addInstruction(▮)" weiss--ahf)
+      ("vr" "VarRef(▮)" weiss--ahf)
+      ("ci" "ConstInt(▮)" weiss--ahf)
+      ("pt" "System.out.println(String.format(\"//// ▮: %s\", ));" weiss--ahf)
       ))
 #+end_src
 
@@ -1494,11 +1497,18 @@
     (setq snails-fame-width-proportion 0.8)
     (setq snails-default-show-prefix-tips nil)
 
-    (require 'snails-backend-file-bookmark)
-    (require 'snails-backend-filter-buffer)
-    (require 'snails-backend-recentf-weiss)
-    (require 'snails-backend-rg-curdir)
-    (require 'snails-backend-filter-buffer)
+    (defun weiss-snails-fuzzy-match-input-p (input candidate-content)
+      "replace space as .* and replace two spaces as space"
+      (interactive)
+      (setq input (replace-regexp-in-string "  " "ⓨ" input)) 
+      (setq input (replace-regexp-in-string " " ".*" input))
+      (setq input (replace-regexp-in-string "ⓨ" " " input))
+      (string-match-p input candidate-content)
+      )
+
+    (advice-add 'snails-match-input-p :override #'weiss-snails-fuzzy-match-input-p)
+
+
 
     (defvar snails-current-dir nil)
     (defun weiss-snails-get-current-dir ()
@@ -1532,13 +1542,14 @@
           (setq filename (replace-regexp-in-string search-str replace-str filename t))
           )
         )  
-      (let ((limit 110)
+      (let ((limit 90)
             )
         (when (> (length filename) limit)
-          (setq filename (substring filename -limit)))      
+          (setq filename (substring filename (- limit))))      
         )    
       filename
       )
+
 
     (defun weiss-snails-create-window ()
       (setq snails-init-conf (current-window-configuration))
@@ -1596,9 +1607,98 @@
       (advice-add 'snails-init-face-with-theme :override 'weiss-snails-init-face-with-theme)
       )
 
+    (cl-defmacro snails-create-sync-backend-with-alt-do (&rest args &key name candidate-filter candidate-icon candidate-do candidate-alt-do)
+      "Macro to create sync backend code.
+
+  `name' is backend name, such 'Foo Bar'.
+  `candidate-filter' is function that accpet input string, and return candidate list, example format: ((display-name-1 candidate-1) (display-name-2 candidate-2))
+  `candidate-do-function' is function that confirm candidate, accpet candidate search, and do anything you want.
+  "
+      (let* ((backend-template-name (string-join (split-string (downcase name)) "-"))
+             (backend-name (intern (format "snails-backend-%s" backend-template-name)))
+             (search-function (intern (format "snails-backend-%s-search" backend-template-name))))
+        `(progn
+           (defun ,search-function(input input-ticker update-callback)
+             (funcall
+              update-callback
+              ,name
+              input-ticker
+              (funcall ,candidate-filter input)))
+
+           (defvar ,backend-name nil)
+
+           (setq ,backend-name
+                 '(("name" . ,name)
+                   ("search" . ,search-function)
+                   ("icon" . ,candidate-icon)
+                   ("do" . ,candidate-do)
+                   ("alt-do" . ,candidate-alt-do)
+                   )
+                 )
+           )))
+
+    (defun snails-backend-alt-do (backend-name candidate)
+      "Confirm candidate with special backend."
+      (catch 'backend-do
+        (dolist (backend snails-backends)
+          (let ((name (cdr (assoc "name" (eval backend))))
+                (do-func (cdr (assoc "alt-do" (eval backend)))))
+
+            (when (equal (eval name) backend-name)
+              ;; Quit frame first.
+              (snails-quit)
+
+              ;; Switch to init frame.
+              (when snails-show-with-frame
+                (select-frame snails-init-frame))
+
+              ;; Do.
+              (funcall do-func candidate)
+
+              (throw 'backend-do nil)
+              )))))
+
+    (defun snails-candidate-alt-do ()
+      "Confirm current candidate."
+      (interactive)
+      (let ((candidate-info (snails-candidate-get-info)))
+        (if candidate-info
+            (snails-backend-alt-do (nth 0 candidate-info) (nth 1 candidate-info))
+          (message "Nothing selected."))))
+
 
     (defun snails-render-web-icon ()
       (all-the-icons-faicon "globe"))
+
+
+    ;; (defun weiss-test ()
+    ;;   "DOCSTRING"
+    ;;   (interactive)
+    ;;   (snails '(snails-backend-rg-curdir)))
+    ;; (snails '(snails-backend-rg)))
+
+    (define-key snails-mode-map (kbd "C-j") #'snails-select-next-item)
+    (define-key snails-mode-map (kbd "C-k") #'snails-select-prev-item)
+    (define-key snails-mode-map (kbd "C-s") #'snails-select-prev-backend)
+    (define-key snails-mode-map (kbd "C-d") #'snails-select-next-backend)
+    (define-key snails-mode-map (kbd "M-RET") #'snails-candidate-alt-do)
+
+    (define-key snails-mode-map [remap next-line] #'snails-select-next-backend)
+    (define-key snails-mode-map [remap previous-line] #'snails-select-prev-backend)
+
+    (define-key snails-mode-map (kbd "8") 'snails-select-prev-item)
+    (define-key snails-mode-map (kbd "9") 'snails-select-next-item)
+
+    (setq snails-fuz-library-load-status "unload")
+    ;; (require 'fuz)
+    (use-package snails-roam)
+
+    (require 'snails-backend-file-bookmark)
+    (require 'snails-backend-filter-buffer)
+    (require 'snails-backend-recentf-weiss)
+    (require 'snails-backend-rg-curdir)
+    (require 'snails-backend-filter-buffer)
+    (require 'snails-backend-org-roam)
 
     (setq snails-prefix-backends
           '((";" '(snails-backend-projectile snails-backend-rg-curdir))
@@ -1611,28 +1711,15 @@
           '(
             snails-backend-filter-buffer
             snails-backend-file-bookmark
+            snails-backend-org-roam-link
+            snails-backend-org-roam-focusing
+            snails-backend-org-roam-project
+            snails-backend-org-roam-note
             snails-backend-recentf-weiss
+            snails-backend-org-roam-all
+            snails-backend-org-roam-new
             ))
 
-    ;; (defun weiss-test ()
-    ;;   "DOCSTRING"
-    ;;   (interactive)
-    ;;   (snails '(snails-backend-rg-curdir)))
-      ;; (snails '(snails-backend-rg)))
-
-    (define-key snails-mode-map (kbd "C-j") #'snails-select-next-item)
-    (define-key snails-mode-map (kbd "C-k") #'snails-select-prev-item)
-    (define-key snails-mode-map (kbd "C-s") #'snails-select-prev-backend)
-    (define-key snails-mode-map (kbd "C-d") #'snails-select-next-backend)
-
-    (define-key snails-mode-map [remap next-line] #'snails-select-next-backend)
-    (define-key snails-mode-map [remap previous-line] #'snails-select-prev-backend)
-
-    (define-key snails-mode-map (kbd "8") 'snails-select-prev-item)
-    (define-key snails-mode-map (kbd "9") 'snails-select-next-item)
-
-    (setq snails-fuz-library-load-status "unload")
-    ;; (require 'fuz)
     )
 
   (provide 'weiss-snails)
@@ -1967,7 +2054,7 @@
        (catch 'search-end
          (dolist (candidate candidate-list)
            ;; (message "before: %s" candidate)
-         
+
            (let ((candidate-items (split-string candidate ":")))
              (snails-add-candiate
               'candidates
@@ -1989,7 +2076,7 @@
    ;;     (dolist (candidate candidate-list)
    ;;       (snails-add-candiate
    ;;        'candidates
- 
+
    ;;        candidate
    ;;        ;; (string-remove-prefix "/home/weiss" candidate)
    ;;        candidate)))
@@ -2819,7 +2906,7 @@
 
 ** export
 #+begin_src elisp 
-  ;; (setq LaTeX-command-style '(("" "%(PDF)%(latex) -shell-escape %S%(PDFout)")))
+  (setq LaTeX-command-style '(("" "%(PDF)%(latex) -shell-escape %S%(PDFout)")))
 
   (setq
    org-export-headline-levels 5
@@ -2828,8 +2915,9 @@
    org-latex-pdf-process
    '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
      "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")
+   LaTeX-command-style '(("" "%(PDF)%(latex) -shell-escape %S%(PDFout)"))
    )
-    ;; \\setlength\\parindent{0pt}
+  ;; \\setlength\\parindent{0pt}
   ;; \usepackage{xcolor}
   ;; \definecolor{code}{HTML}{986801}
   (add-to-list 'org-latex-packages-alist '("" "minted" t))
@@ -3149,6 +3237,55 @@
   (use-package web-beautify)
   (use-package origami)
 #+end_src
+
+** whitespace
+#+begin_src elisp
+  (use-package whitespace
+    :disabled
+    :ensure nil
+    :hook (prog-mode . whitespace-mode) ;; 注意，这里是全局打开
+    :config
+    ;; Don't use different background for tabs.
+    (face-spec-set 'whitespace-tab
+                   '((t :background unspecified)))
+    ;; Only use background and underline for long lines, so we can still have
+    ;; syntax highlight.
+
+    ;; For some reason use face-defface-spec as spec-type doesn't work.  My guess
+    ;; is it's due to the variables with the same name as the faces in
+    ;; whitespace.el.  Anyway, we have to manually set some attribute to
+    ;; unspecified here.
+    (face-spec-set 'whitespace-line
+                   '((((background light))
+                      :background "#d8d8d8" :foreground unspecified
+                      :underline t :weight unspecified)
+                     (t
+                      :background "#404040" :foreground unspecified
+                      :underline t :weight unspecified)))
+
+    ;; Use softer visual cue for space before tabs.
+    (face-spec-set 'whitespace-space-before-tab
+                   '((((background light))
+                      :background "#d8d8d8" :foreground "#de4da1")
+                     (t
+                      :inherit warning
+                      :background "#404040" :foreground "#ee6aa7")))
+
+    (setq
+     whitespace-line-column nil
+     whitespace-style
+     '(face             ; visualize things below:
+       ;; empty            ; empty lines at beginning/end of buffer
+       ;; lines-tail       ; lines go beyond `fill-column'
+       space-before-tab ; spaces before tab
+       ;; trailing         ; trailing blanks
+       tabs             ; tabs (show by face)
+       tab-mark         ; tabs (show by symbol)
+       )))
+
+
+
+#+end_src
 ** font
 #+begin_src elisp :tangle after-dump/weiss-after-dump.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
   (use-package ligature
@@ -3173,8 +3310,8 @@
                        "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
                        ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
                        "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
-                       "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
-                       "?=" "?." "??" ";;" "/*" "/=" "/>" "__" "~~" "(*" "*)"
+                       "##" "#?" "#_" "%%" ".-" ".." ".?" "+>" "++" "?:"
+                       "?=" "?." "??" ";;" "/*" "/>" "__" "~~" "(*" "*)"
                        "://"))
           )
       (ligature-set-ligatures 'prog-mode ligatures)    
@@ -3233,6 +3370,258 @@
 #+end_src
 *** elisp 
 #+begin_src elisp
+
+  (defface elisp-attribute-face
+    '((nil :background "#F0DFF9"))
+    "Face for :xxx."
+    :group 'emacs-lisp-mode )
+
+  (font-lock-add-keywords
+   'emacs-lisp-mode
+   `(
+     (,(regexp-opt xah-elisp-ampersand-words 'symbols) . font-lock-builtin-face)
+     (,(regexp-opt xah-elisp-functions 'symbols) . font-lock-function-name-face)
+     (,(regexp-opt xah-elisp-special-forms 'symbols) . font-lock-keyword-face)
+     (,(regexp-opt xah-elisp-macros 'symbols) . font-lock-keyword-face)
+     (,(regexp-opt xah-elisp-commands 'symbols) . 'font-lock-function-name-face)
+     (,(regexp-opt xah-elisp-user-options 'symbols) . font-lock-variable-name-face)
+     (,(regexp-opt xah-elisp-variables 'symbols) . font-lock-variable-name-face)
+     (":[a-z\\-]+\\b" . 'elisp-attribute-face)
+     ))
+
+#+end_src
+*** snails
+#+begin_src elisp
+  (when (featurep 'snails)
+    (set-face-attribute 'snails-header-line-face nil :inherit 'variable-pitch :foreground "#a626a4" :underline t :weight 'normal :slant 'italic :height 1.2)
+    (set-face-attribute 'snails-header-index-face nil :inherit 'snails-header-line-face :height 0.7 :slant 'italic)
+    (set-face-attribute 'snails-candiate-content-face nil :inherit 'variable-pitch :weight 'light :slant 'normal)
+    (set-face-attribute 'snails-input-buffer-face nil :inherit 'variable-pitch :font (font-spec :name "lato") :height 200)
+    (set-face-attribute 'snails-content-buffer-face nil :inherit 'variable-pitch :font (font-spec :name "lato") :height 150)
+    )
+#+end_src
+*** java
+#+begin_src elisp
+  (font-lock-add-keywords
+   'java-mode
+   '(
+     ("[a-z]<[a-zA-Z]+>"  . 'font-lock-type-face)
+     ))
+  (add-hook 'java-mode-hook 'weiss-java-face)
+
+  (defun weiss-java-face ()
+    (interactive)
+    (face-remap-add-relative
+     ;; 'font-lock-function-name-face '((:foreground "#383a42" :box '(:line-width 1))) font-lock-function-name-face)
+     'font-lock-function-name-face '((:foreground "#383a42" :background "#f8eed4")) font-lock-function-name-face)
+    (face-remap-add-relative
+     'font-lock-variable-name-face '((:foreground "#383a42" :underline t)) font-lock-variable-name-face)
+    (face-remap-add-relative
+     'c-annotation-face '((:foreground "#A9AAAE")))
+    (face-remap-add-relative
+     'font-lock-type-face '((:foreground "#737C79" :background "#F7EBFC")))
+    )
+#+end_src
+*** org
+#+begin_src elisp
+  (when (featurep 'org)
+    (add-hook 'org-mode-hook (lambda ()
+                               (variable-pitch-mode)
+                               ))
+    ;; fix indentation when variable-pitch-mode is called
+    (require 'org-indent)
+    (set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))  
+
+    (set-face-attribute 'bold  nil
+                        :weight 'demibold
+                        :slant 'normal
+                        :underline 'nil
+                        :foreground "#f5355e"
+                        :background nil)
+    (set-face-attribute 'italic nil
+                        :weight 'normal
+                        :underline 'nil
+                        :slant 'italic
+                        :height 0.95
+                        :foreground "#606060"
+                        :background nil)
+    (set-face-attribute 'underline nil
+                        :weight 'normal
+                        :underline 'nil
+                        :foreground "medium sea green"
+                        :background nil)
+    (set-face-attribute 'org-link nil
+                        :height 1.1
+                        :inherit nil
+                        :underline t
+                        )
+    (set-face-attribute 'org-block-begin-line nil
+                        :weight 'normal
+                        :slant 'normal
+                        :extend t
+                        :underline 'nil
+                        :foreground "#999999"
+                        :background "#FAFAFA")
+    (set-face-attribute 'org-checkbox nil
+                        :font "JetBrainsMono"
+                        :extend nil
+                        )
+    (set-face-attribute 'org-table nil
+                        :font "JetBrainsMono"
+                        :extend nil
+                        )
+
+    (set-face-attribute 'org-block nil
+                        :font "JetBrainsMono"
+                        :extend nil
+                        :background "#FAFAFA")
+
+    (set-face-attribute 'org-drawer nil
+                        :foreground "#999999"
+                        :slant 'normal
+                        :weight 'light
+                        :background nil)
+    (set-face-attribute 'org-special-keyword nil
+                        :height 'unspecified
+                        :foreground 'unspecified
+                        :weight 'bold
+                        :slant 'normal
+                        :inherit 'org-drawer)
+    (set-face-attribute 'org-property-value nil
+                        :weight 'normal
+                        :slant 'normal
+                        :height 1.0
+                        :inherit 'org-special-keyword)
+    (set-face-attribute 'org-headline-done nil
+                        :strike-through t
+                        :weight 'normal)
+
+    (set-face-attribute 'org-level-1 nil
+                        :height 1.35
+                        :foreground "#ff5a19"
+                        :weight 'bold)
+    (set-face-attribute 'org-level-2 nil
+                        :height 0.95
+                        :foreground "#040404"
+                        :weight 'normal
+                        :inherit 'org-level-1)
+    (set-face-attribute 'org-level-3 nil
+                        :height 0.95
+                        :foreground "#040404"
+                        :weight 'normal
+                        :inherit 'org-level-2)
+    (set-face-attribute 'org-level-4 nil
+                        :height 0.95
+                        :foreground "#040404"
+                        :weight 'normal
+                        :inherit 'org-level-3)
+    (set-face-attribute 'org-level-5 nil
+                        :height 1.0
+                        :foreground "#040404"
+                        :weight 'normal
+                        :inherit 'org-level-4)
+    (set-face-attribute 'org-level-6 nil
+                        :height 1.0
+                        :foreground "#040404"
+                        :weight 'normal
+                        :inherit 'org-level-5)
+    (set-face-attribute 'org-level-7 nil
+                        :height 1.0
+                        :foreground "#040404"
+                        :weight 'normal
+                        :inherit 'org-level-6)
+    (set-face-attribute 'org-level-8 nil
+                        :height 1.0
+                        :foreground "#040404"
+                        :weight 'normal
+                        :inherit 'org-level-7)
+
+    (font-lock-add-keywords 'org-mode
+                            '(("^.*:Frage:.*$" 0 'font-lock-keyword-face)))
+
+    (add-to-list 'org-tag-faces '("Frage" . (:foreground "red"  :weight 'bold)))
+    )
+#+end_src
+*** org-roam
+#+begin_src elisp
+  (set-face-attribute 'org-roam-tag nil :italic t :foreground "#808080" :weight 'light)
+#+end_src
+*** python
+#+begin_src elisp
+  (add-hook 'python-mode-hook '(lambda ()
+                                 (face-remap-add-relative
+                                  'font-lock-variable-name-face
+                                  '((:foreground "#383a42" :underline t))
+                                  font-lock-variable-name-face)
+                                 (face-remap-add-relative
+                                  'default
+                                  '((:weight normal))
+                                  )))
+
+#+end_src
+
+** face
+:PROPERTIES:
+:header-args: :tangle after-dump/weiss-after-dump.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
+:END:
+
+#+begin_src elisp
+  (set-face-attribute 'hl-line nil :inherit nil :box nil :background "#ffe8e8" :extend nil)
+  (defface box-hl-line
+    '((t (:inherit nil :extend nil :box (:line-width (-1 . -2) :color "#ededed" :style nil))))
+    "highlight the current line with box"
+    )
+  ;; (set (make-local-variable 'hl-line-face) 'box-hl-line)
+
+  (defface normal-hl-line
+    '((t :box nil :extend nil :background "#ffe8e8"))
+    "highlight the current line with background"
+    )
+
+  (defface emphasis-hl-line
+    '((t :box nil :extend nil :background "#ffb5ff"))
+    "highlight the current line with background"
+    )
+
+#+end_src
+
+#+RESULTS:
+
+** Functions & Variables
+#+begin_src elisp
+  (defvar weiss/disable-hl-mode-list '(snails-mode pdf-view-mode))
+
+  (defun weiss-toggle-hl-line ()
+    "toggle hl line using weiss-enable-hl-line"
+    (interactive)
+    (if hl-line-mode
+        (hl-line-mode -1)
+      (weiss-enable-hl-line)
+      )
+    )
+
+  (defun weiss-enable-hl-line ()
+    "change hl line face by major-mode"
+    (interactive)
+    (unless (member major-mode weiss/disable-hl-mode-list)
+      (hl-line-mode -1)
+      (cond
+       (weiss-dired-single-handed-mode
+        (set (make-local-variable 'hl-line-face) 'emphasis-hl-line)
+        )
+       ((eq major-mode 'dired-mode)
+        (set (make-local-variable 'hl-line-face) 'normal-hl-line)
+        )
+       ((eq major-mode 'org-agenda-mode)
+        (set (make-local-variable 'hl-line-face) 'normal-hl-line)
+        )
+       (t (set (make-local-variable 'hl-line-face) 'box-hl-line))
+       )
+      (hl-line-mode 1)
+      )
+    )
+
+
   (defvar xah-elisp-ampersand-words nil "List of elisp special syntax, just &optional and &rest,")
   (setq xah-elisp-ampersand-words '( "&optional" "&rest" "t" "nil"))
 
@@ -5794,256 +6183,6 @@
 
   (defvar xah-elisp-all-symbols nil "List of all elisp symbols.")
   (setq xah-elisp-all-symbols nil)
-
-  (defface elisp-attribute-face
-    '((nil :background "#F0DFF9"))
-    "Face for :xxx."
-    :group 'emacs-lisp-mode )
-
-  (font-lock-add-keywords
-   'emacs-lisp-mode
-   `(
-     (,(regexp-opt xah-elisp-ampersand-words 'symbols) . font-lock-builtin-face)
-     (,(regexp-opt xah-elisp-functions 'symbols) . font-lock-function-name-face)
-     (,(regexp-opt xah-elisp-special-forms 'symbols) . font-lock-keyword-face)
-     (,(regexp-opt xah-elisp-macros 'symbols) . font-lock-keyword-face)
-     (,(regexp-opt xah-elisp-commands 'symbols) . 'font-lock-function-name-face)
-     (,(regexp-opt xah-elisp-user-options 'symbols) . font-lock-variable-name-face)
-     (,(regexp-opt xah-elisp-variables 'symbols) . font-lock-variable-name-face)
-     (":[a-z\\-]+\\b" . 'elisp-attribute-face)
-     ))
-
-#+end_src
-*** snails
-#+begin_src elisp
-  (when (featurep 'snails)
-    (set-face-attribute 'snails-header-line-face nil :inherit 'variable-pitch :foreground "#a626a4" :underline t :weight 'normal :slant 'italic :height 1.2)
-    (set-face-attribute 'snails-header-index-face nil :inherit 'snails-header-line-face :height 0.7 :slant 'italic)
-    (set-face-attribute 'snails-candiate-content-face nil :inherit 'variable-pitch :weight 'light :slant 'normal)
-    (set-face-attribute 'snails-input-buffer-face nil :inherit 'variable-pitch :font (font-spec :name "lato") :height 200)
-    (set-face-attribute 'snails-content-buffer-face nil :inherit 'variable-pitch :font (font-spec :name "lato") :height 150)
-    )
-#+end_src
-*** java
-#+begin_src elisp
-  (font-lock-add-keywords
-   'java-mode
-   '(
-     ("[a-z]<[a-zA-Z]+>"  . 'font-lock-type-face)
-     ))
-  (add-hook 'java-mode-hook 'weiss-java-face)
-
-  (defun weiss-java-face ()
-    (interactive)
-    (face-remap-add-relative
-     ;; 'font-lock-function-name-face '((:foreground "#383a42" :box '(:line-width 1))) font-lock-function-name-face)
-     'font-lock-function-name-face '((:foreground "#383a42" :background "#f8eed4")) font-lock-function-name-face)
-    (face-remap-add-relative
-     'font-lock-variable-name-face '((:foreground "#383a42" :underline t)) font-lock-variable-name-face)
-    (face-remap-add-relative
-     'c-annotation-face '((:foreground "#A9AAAE")))
-    (face-remap-add-relative
-     'font-lock-type-face '((:foreground "#737C79" :background "#F7EBFC")))
-    )
-#+end_src
-*** org
-#+begin_src elisp
-  (when (featurep 'org)
-    (add-hook 'org-mode-hook (lambda ()
-                               (variable-pitch-mode)
-                               ))
-    ;; fix indentation when variable-pitch-mode is called
-    (require 'org-indent)
-    (set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))  
-
-    (set-face-attribute 'bold  nil
-                        :weight 'demibold
-                        :slant 'normal
-                        :underline 'nil
-                        :foreground "#f5355e"
-                        :background nil)
-    (set-face-attribute 'italic nil
-                        :weight 'normal
-                        :underline 'nil
-                        :slant 'italic
-                        :height 0.95
-                        :foreground "#606060"
-                        :background nil)
-    (set-face-attribute 'underline nil
-                        :weight 'normal
-                        :underline 'nil
-                        :foreground "medium sea green"
-                        :background nil)
-    (set-face-attribute 'org-link nil
-                        :height 1.1
-                        :inherit nil
-                        :underline t
-                        )
-    (set-face-attribute 'org-block-begin-line nil
-                        :weight 'normal
-                        :slant 'normal
-                        :extend t
-                        :underline 'nil
-                        :foreground "#999999"
-                        :background "#FAFAFA")
-    (set-face-attribute 'org-checkbox nil
-                        :font "JetBrainsMono"
-                        :extend nil
-                        )
-    (set-face-attribute 'org-table nil
-                        :font "JetBrainsMono"
-                        :extend nil
-                        )
-
-    (set-face-attribute 'org-block nil
-                        :font "JetBrainsMono"
-                        :extend nil
-                        :background "#FAFAFA")
-
-    (set-face-attribute 'org-drawer nil
-                        :foreground "#999999"
-                        :slant 'normal
-                        :weight 'light
-                        :background nil)
-    (set-face-attribute 'org-special-keyword nil
-                        :height 'unspecified
-                        :foreground 'unspecified
-                        :weight 'bold
-                        :slant 'normal
-                        :inherit 'org-drawer)
-    (set-face-attribute 'org-property-value nil
-                        :weight 'normal
-                        :slant 'normal
-                        :height 1.0
-                        :inherit 'org-special-keyword)
-    (set-face-attribute 'org-headline-done nil
-                        :strike-through t
-                        :weight 'normal)
-
-    (set-face-attribute 'org-level-1 nil
-                        :height 1.35
-                        :foreground "#ff5a19"
-                        :weight 'bold)
-    (set-face-attribute 'org-level-2 nil
-                        :height 0.95
-                        :foreground "#040404"
-                        :weight 'normal
-                        :inherit 'org-level-1)
-    (set-face-attribute 'org-level-3 nil
-                        :height 0.95
-                        :foreground "#040404"
-                        :weight 'normal
-                        :inherit 'org-level-2)
-    (set-face-attribute 'org-level-4 nil
-                        :height 0.95
-                        :foreground "#040404"
-                        :weight 'normal
-                        :inherit 'org-level-3)
-    (set-face-attribute 'org-level-5 nil
-                        :height 1.0
-                        :foreground "#040404"
-                        :weight 'normal
-                        :inherit 'org-level-4)
-    (set-face-attribute 'org-level-6 nil
-                        :height 1.0
-                        :foreground "#040404"
-                        :weight 'normal
-                        :inherit 'org-level-5)
-    (set-face-attribute 'org-level-7 nil
-                        :height 1.0
-                        :foreground "#040404"
-                        :weight 'normal
-                        :inherit 'org-level-6)
-    (set-face-attribute 'org-level-8 nil
-                        :height 1.0
-                        :foreground "#040404"
-                        :weight 'normal
-                        :inherit 'org-level-7)
-
-    (font-lock-add-keywords 'org-mode
-                            '(("^.*:Frage:.*$" 0 'font-lock-keyword-face)))
-
-    (add-to-list 'org-tag-faces '("Frage" . (:foreground "red"  :weight 'bold)))
-    )
-#+end_src
-*** org-roam
-#+begin_src elisp
-  (set-face-attribute 'org-roam-tag nil :italic t :foreground "#808080" :weight 'light)
-#+end_src
-*** python
-#+begin_src elisp
-  (add-hook 'python-mode-hook '(lambda ()
-                                 (face-remap-add-relative
-                                  'font-lock-variable-name-face
-                                  '((:foreground "#383a42" :underline t))
-                                  font-lock-variable-name-face)
-                                 (face-remap-add-relative
-                                  'default
-                                  '((:weight normal))
-                                  )))
-
-#+end_src
-
-** face
-:PROPERTIES:
-:header-args: :tangle after-dump/weiss-after-dump.el :mkdirp yes :comments both :shebang   ;; -*- lexical-binding: t -*-
-:END:
-
-#+begin_src elisp
-  (set-face-attribute 'hl-line nil :inherit nil :box nil :background "#ffe8e8" :extend nil)
-  (defface box-hl-line
-    '((t (:inherit nil :extend nil :box (:line-width (-1 . -2) :color "#ededed" :style nil))))
-    "highlight the current line with box"
-    )
-  ;; (set (make-local-variable 'hl-line-face) 'box-hl-line)
-
-  (defface normal-hl-line
-    '((t :box nil :extend nil :background "#ffe8e8"))
-    "highlight the current line with background"
-    )
-
-  (defface emphasis-hl-line
-    '((t :box nil :extend nil :background "#ffb5ff"))
-    "highlight the current line with background"
-    )
-
-#+end_src
-
-#+RESULTS:
-
-** Functions
-#+begin_src elisp
-  (defvar weiss/disable-hl-mode-list '(snails-mode pdf-view-mode))
-
-  (defun weiss-toggle-hl-line ()
-    "toggle hl line using weiss-enable-hl-line"
-    (interactive)
-    (if hl-line-mode
-        (hl-line-mode -1)
-      (weiss-enable-hl-line)
-      )
-    )
-
-  (defun weiss-enable-hl-line ()
-    "change hl line face by major-mode"
-    (interactive)
-    (unless (member major-mode weiss/disable-hl-mode-list)
-      (hl-line-mode -1)
-      (cond
-       (weiss-dired-single-handed-mode
-        (set (make-local-variable 'hl-line-face) 'emphasis-hl-line)
-        )
-       ((eq major-mode 'dired-mode)
-        (set (make-local-variable 'hl-line-face) 'normal-hl-line)
-        )
-       ((eq major-mode 'org-agenda-mode)
-        (set (make-local-variable 'hl-line-face) 'normal-hl-line)
-        )
-       (t (set (make-local-variable 'hl-line-face) 'box-hl-line))
-       )
-      (hl-line-mode 1)
-      )
-    )
 #+end_src
 ** icons
 #+begin_src elisp
@@ -6153,7 +6292,8 @@
   (set-face-attribute 'mc/cursor-bar-face nil :background weiss/cursor-color)
   (set-cursor-color weiss/cursor-color)
   (use-package emojify 
-    :diminish
+    :config
+    (setq emojify-emoji-styles '(unicode github))
     ;; :hook (after-init . global-emojify-mode)
     )
 #+end_src
@@ -6766,12 +6906,16 @@
      :separator ?-
      :entries
      ((pascal "\\(=\\)[a-z]" "[A-Z]")
-      (camel "[a-z]")))
+      (snake "\\(\\,\\)[a-z]")
+      (camel "[a-z]")
+      ))
     (casease-setup
      :hook c++-mode-hook
      :separator ?-
      :entries
-     ((camel "[a-z]")))
+     ((pascal "\\(=\\)[a-z]" "[A-Z]")
+      (camel "[a-z]")
+      ))
     (casease-setup
      :hook go-mode-hook
      :separator ?-
@@ -6903,6 +7047,7 @@
       :hook (company-mode . company-box-mode)
       :config
       (setq company-box-enable-icon nil)
+      (set-face-attribute 'company-tooltip-mouse nil :inherit nil :background nil :foreground nil)
       )
     )
 
@@ -6986,7 +7131,8 @@
     ;; Install: pip install yapf
     (use-package yapfify
       :diminish yapf-mode
-      :hook (python-mode . yapf-mode))
+      ;; :hook (python-mode . yapf-mode)
+      )
     )
 #+end_src
 
@@ -7050,7 +7196,7 @@
     ;; use  "bsd"  "java"  "k&r"  "stroustrup"  "whitesmith"  "banner"  "gnu"  "linux"   "horstmann"
     (setq c-default-style "linux"
           indent-tabs-mode nil
-          c-basic-offset 4)
+          c-basic-offset 2)
     ;; align a continued string under the one it continues
     (c-set-offset 'statement-cont 'c-lineup-string-cont)
     ;; align or indent after an assignment operator 
@@ -7904,6 +8050,7 @@
           ispell-extra-args '("--sug-mode=ultra" "--run-together"))
     (setq ispell-dictionary "de_DE,en_US")
     :config
+    (setq wucuo-spell-check-region-max 80000)
     ;; ispell-set-spellchecker-params has to be called
     ;; before ispell-hunspell-add-multi-dic will work
     (ispell-set-spellchecker-params)
@@ -9873,6 +10020,7 @@
 
     ;;;;; Export
 
+   org-export-with-sub-superscripts nil
    org-export-preserve-breaks nil
    org-export-with-creator nil
    org-export-with-author t
@@ -10743,7 +10891,7 @@
       (if (string-prefix-p "Ʀlink:" (file-name-nondirectory filename))
           (with-temp-buffer
             (insert-file-contents filename)
-            (goto-line 3)
+            (re-search-forward "#\\+roam_key: ")
             (browse-url (buffer-substring-no-properties (+ (line-beginning-position) 12) (line-end-position)))
             )
         (find-file filename wildcards)
@@ -10763,7 +10911,7 @@
              :head "#+title: ${title}\n#+roam_alias:\n#+roam_tags:\n")
             ("p" "project" plain (function org-roam-capture--get-point)
              "* ${title}\n** link:\n*** \n** %?"
-             :file-name "ƦProjecct-${slug}_%<%Y%m%d%H>"
+             :file-name "ƦProject-${slug}_%<%Y%m%d%H>"
              :head "#+title: Project-${title}\n#+roam_alias: p-${slug}\n#+roam_tags: project \n")
             ("n" "note" plain (function org-roam-capture--get-point)
              "* ${title}\n %?"
@@ -13751,6 +13899,7 @@
     )
   (global-set-key (kbd "<backtab>") 'indent-for-tab-command)
   (global-set-key (kbd "<S-delete>") (lambda () (interactive) (insert "\\")))
+  (global-set-key (kbd "M-DEL") (lambda () (interactive) (insert "|")))
   (global-set-key (kbd "<f5>") 'revert-buffer)
 
   (define-key key-translation-map (kbd "<f12>") (kbd "C-g"))
@@ -14508,6 +14657,7 @@ Ryo-modal-mode can not bind void functions, so we bind keys at last.
                        "<none>.tex"
                        "frag-master.tex"
                        "_region_.tex"
+                       "COMMIT_EDITMSG\\'"
                        ))
     )
 
