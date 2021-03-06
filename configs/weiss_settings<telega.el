@@ -1,17 +1,17 @@
-(add-hook 'telega-chat-mode #'(lambda ()
-                                (set (make-local-variable 'company-backends)
-                                     (append '(telega-company-emoji
-                                               telega-company-username
-                                               telega-company-hashtag)
-                                             (when (telega-chat-bot-p telega-chatbuf--chat)
-                                               '(telega-company-botcmd))))
-                                (company-mode 1)
-                                (emojify-mode)
-                                ))
+(add-hook 'telega-chat-mode-hook #'(lambda ()
+                                     (set (make-local-variable 'company-backends)
+                                          (append '(telega-company-emoji
+                                                    telega-company-username
+                                                    telega-company-hashtag)
+                                                  (when (telega-chat-bot-p telega-chatbuf--chat)
+                                                    '(telega-company-botcmd))))
+                                     (company-mode 1)
+                                     (emojify-mode)
+                                     ))
 
-(add-hook 'telega-root-mode #'(lambda () 
-                                (emojify-mode)
-                                ))
+(add-hook 'telega-root-mode-hook #'(lambda () 
+                                     (emojify-mode)
+                                     ))
 
 (with-eval-after-load 'telega
   (defun weiss-get-telega-marked-text ()

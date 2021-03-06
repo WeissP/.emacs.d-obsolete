@@ -67,6 +67,7 @@
                 )
          )
         (company :then (company-box))
+
         (rotate-text :github "nschum/rotate-text.el")
         (casease :github "DogLooksGood/casease")
         (shiftless :local t)
@@ -83,6 +84,11 @@
                 )
          )
         (sql :then ((sql-indent :github "alex-hhh/emacs-sql-indent")))
+
+        (lsp-mode
+         :then (lsp-ui lsp-java lsp-python-ms)
+         )
+
         (magit :then (
                       git-timemachine git-messenger browse-at-remote gitattributes-mode
                       gitignore-mode gitconfig-mode))
