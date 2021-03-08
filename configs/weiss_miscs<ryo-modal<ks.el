@@ -12,8 +12,8 @@
       )
     )
 
-  (add-to-list 'weiss/after-buffer-change-function-list 'weiss-check-ryo)
-  (add-to-list 'weiss/after-major-mode-function-list 'weiss-check-ryo)
+  ;; (add-to-list 'weiss/after-buffer-change-function-list 'weiss-check-ryo)
+  ;; (add-to-list 'weiss/after-major-mode-function-list 'weiss-check-ryo)
 
   (setq ryo-modal-cursor-color weiss/cursor-color)
   :config

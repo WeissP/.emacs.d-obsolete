@@ -266,7 +266,7 @@
                  ("n" mc/mark-next-like-this)
                  ("a" mc/mark-all-like-this)
                  ("s" weiss-start-kmacro)
-                 ;; ("l" weiss-kmacro-insert-letters)
+                 ("l" weiss-kmacro-insert-letter)
                  ("k" weiss-deactivate-mark)
                  ("e" weiss-end-kmacro)
                  ("c" kmacro-call-macro)

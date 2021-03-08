@@ -150,7 +150,7 @@
     ("wcb" "with-current-buffer" weiss--ahf)
     ("wtb" "with-temp-buffer" weiss--ahf)
     ("wtf" "with-temp-file" weiss--ahf)
-    ("wlp" "weiss-load-packages" weiss--ahf)
+    ("wdk" "wks-define-key" weiss--ahf)
 
     ("weal" "with-eval-after-load" weiss--ahf)
 
@@ -508,7 +508,7 @@
     ("write-char" "(write-char ▮)" weiss--ahf)
     ("write-file" "(write-file ▮)" weiss--ahf)
     ("write-region" "(write-region (point-min) (point-max) ▮)" weiss--ahf)
-    ("weiss-load-packages" "(weiss-load-packages\n '(\n▮\n))" weiss--ahf-indent)
+    ("wks-define-key" "(wks-define-key\n \"\"\n '(\n▮\n))" weiss--ahf)
     ("y-or-n-p" "(y-or-n-p \"▮ \")" weiss--ahf)
     ("yes-or-no-p" "(yes-or-no-p \"▮ \")" weiss--ahf)
 

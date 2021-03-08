@@ -69,4 +69,9 @@
 (defvar ryo-void-fun-list '(org-noter-sync-current-note weiss-add-enumerate-to-all-headlines weiss-test))
 (weiss-empty-defun-list ryo-void-fun-list)
 
+(setq
+ eval-expression-print-level nil
+ eval-expression-print-length nil
+ )
+
 (provide 'weiss_user-settings<global)
