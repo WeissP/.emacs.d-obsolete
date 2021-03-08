@@ -17,6 +17,7 @@
 (set-cursor-color weiss/cursor-color)
 (setq-default cursor-type weiss/cursor-type)
 
+(setq y-or-n-p-use-read-key t)
 (fset 'yes-or-no-p 'y-or-n-p)
 
 ;;Bookmarks

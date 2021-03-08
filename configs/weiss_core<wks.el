@@ -50,6 +50,6 @@
 
 (wks-unset-key help-mode-map '("SPC" "9" "-" "0" "l"))
 (wks-unset-key messages-buffer-mode-map '("SPC" "9" "-" "0"))
-(wks-unset-key magit-status-mode-map '("SPC" "9" "-" "0"))
+(wks-unset-key special-mode-map '("SPC" "9" "-" "0"))
 
 (provide 'weiss_core<wks)

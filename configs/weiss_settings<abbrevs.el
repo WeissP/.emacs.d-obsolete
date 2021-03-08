@@ -90,11 +90,12 @@ Version 2016-10-24"
     keymap
     )
   (when weiss-abbrev-mode
-    (when (eq (caar (nth (1- wks-init-emulation-order) emulation-mode-map-alists)) 'weiss-abbrev-mode)
-      (pop emulation-mode-map-alists)
+    (let ((alist `((weiss-abbrev-mode . ,weiss-abbrev-mode-map)))
+          )
+      (unless (member alist emulation-mode-map-alists)
+        (add-to-ordered-list 'emulation-mode-map-alists alist)
+        )      
       )    
-    (add-to-ordered-list 'emulation-mode-map-alists
-		                 `((weiss-abbrev-mode . ,weiss-abbrev-mode-map)) wks-init-emulation-order)    
     )
   (abbrev-mode -1)
   )
@@ -105,5 +106,7 @@ Version 2016-10-24"
   (lambda () (interactive) (abbrev-mode -1) (weiss-abbrev-mode)))
 
 (weiss-abbrev-global-mode)
+
+
 
 (provide 'weiss_settings<abbrevs)

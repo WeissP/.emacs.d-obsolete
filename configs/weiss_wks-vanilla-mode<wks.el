@@ -4,6 +4,7 @@
 (defun wks-vanilla-mode-enable ()
   "DOCSTRING"
   (interactive)
+  (message "last-command: %s" last-command)
   (deactivate-mark)
   (cond
    ((eq major-mode 'snails-mode)
@@ -35,14 +36,9 @@
   :keymap wks-vanilla-mode-map
   (if wks-vanilla-mode
       (progn
-        (when (eq (caar (nth wks-init-emulation-order emulation-mode-map-alists)) 'wks-vanilla-mode)
-          (pop emulation-mode-map-alists)
-          )        
-        (add-to-ordered-list 'emulation-mode-map-alists
-		                     `((wks-vanilla-mode . ,wks-vanilla-mode-map)) (1+ wks-init-emulation-order))
-
-        (set-cursor-color wks-vanilla-mode-cursor-color)
-        )
+        (setq minor-mode-overriding-map-alist (assq-delete-all 'wks-vanilla-mode minor-mode-overriding-map-alist))
+        (push `(wks-vanilla-mode . ,wks-vanilla-mode-map) minor-mode-overriding-map-alist)        
+        )    
     (set-cursor-color wks-command-mode-cursor-color)
     )
   )

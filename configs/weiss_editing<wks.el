@@ -60,10 +60,6 @@
               (insert @left-bracket)
               (when @new-line (insert "\n"))
               (goto-char (+ $p2 (length @left-bracket)))))))))
-  (when quick-insert-if-exit-ryo
-    (ryo-modal-mode -1)
-    (setq quick-insert-if-exit-ryo nil)
-    )
   )
 
 
