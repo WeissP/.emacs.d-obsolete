@@ -1,5 +1,5 @@
 (defvar wks-command-mode-cursor-color weiss/cursor-color)
-(defvar wks-insert-mode-cursor-color "#ff0000")
+(defvar wks-vanilla-mode-cursor-color "#ff0000")
 
 (defun meow-setup-indicator ()
   "Setup indicator appending the return of function `meow-indicator' to the modeline.

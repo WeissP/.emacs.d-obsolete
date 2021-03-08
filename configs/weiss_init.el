@@ -1,3 +1,4 @@
+(setq vanilla-global-map (current-global-map))
 (defvar weiss-dumped-p nil)
 (if weiss-dumped-p
     (progn

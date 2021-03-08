@@ -24,15 +24,28 @@
    key-cmd-alist)
   )
 
-;; (global-unset-key (kbd "t"))
-;; (wks-define-key
-;;  global-map ""
-;;  `(
-;;    ("t e" . (weiss-execute-te (execute-kbd-macro ,(kbd "C-c '"))))
-;;    ("t u" . (weiss-execute-tu (insert "asdf"))))
-;;  )
+(defun wks-unset-key (map keys)
+  "DOCSTRING"
+  (interactive)
+  (mapc '(lambda (x) (define-key map (kbd x) nil)) keys)
+  )
 
-;; (apply '(message "left char"))
+(defun wks-define-vanilla-keymap (keymap)
+  "DOCSTRING"
+  (interactive)
+  (let ((key-list
+         (append
+          '("SPC")
+          (mapcar '(lambda (x) (format "%c" x)) (number-sequence 33 126))
+          )
+         )
+        )
+    (dolist (x key-list) 
+      (define-key keymap (kbd x) #'self-insert-command)
+      )
+    )
+  )
+
 ;; (require 'weiss_ui<wks)
 ;; (require 'weiss_insert-mode<wks)
-;; (provide 'weiss_core<wks)
+(provide 'weiss_core<wks)

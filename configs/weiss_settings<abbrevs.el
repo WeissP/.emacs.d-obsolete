@@ -89,6 +89,10 @@ Version 2016-10-24"
     (define-key keymap (kbd ",") expand-abbrev-maybe)
     keymap
     )
+  (when weiss-abbrev-mode
+    (add-to-ordered-list 'emulation-mode-map-alists
+		                 `((weiss-abbrev-mode . ,weiss-abbrev-mode-map)))    
+    )
   (abbrev-mode -1)
   )
 

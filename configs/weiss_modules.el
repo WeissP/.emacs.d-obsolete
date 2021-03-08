@@ -2,18 +2,27 @@
       '(
         (global :skip-install t)    
         rg (server :after-dump t :local t) quickrun esup which-key super-save keyfreq
-        (ks ;; keybinding system
+        ;; (ks ;; keybinding system
+        ;;  :skip-install t)
+        (wks
          :skip-install t
          :first (
                  (weiss-select-mode :local t)
                  (weiss-temp-insert-mode :local t)
-                 (weiss-overriding-ryo-mode :local t)
-                 (weiss-origin-mode :local t)
-                 ryo-modal hydra
+                 hydra
                  ))
+        ;; (ks ;; keybinding system
+        ;;  :skip-install t
+        ;;  :first (
+        ;;          (weiss-select-mode :local t)
+        ;;          (weiss-temp-insert-mode :local t)
+        ;;          (weiss-overriding-ryo-mode :local t)
+        ;;          (weiss-origin-mode :local t)
+        ;;          ryo-modal hydra
+        ;;          ))
         (org
          :local t
-         :first ((weiss-org-sp-mode :skip-install t))
+         ;; :first ((weiss-org-sp-mode :skip-install t))
          :then (
                 (babel
                  :skip-install t
@@ -36,7 +45,7 @@
         (dired
          :local t
          :then (
-                diredfl all-the-icons-dired dired-hacks-utils dired-avfs dired-collapse
+                wdired diredfl all-the-icons-dired dired-hacks-utils dired-avfs dired-collapse
                 dired-quick-sort peep-dired dired-filter (weiss-dired-single-handed-mode :local t)
                 )
          )
