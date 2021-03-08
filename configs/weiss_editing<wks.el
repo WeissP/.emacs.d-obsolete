@@ -2,7 +2,7 @@
   "DOCSTRING"
   (interactive)
   (deactivate-mark)
-  (call-interactively 'new-line)
+  (call-interactively 'newline)
   )
 
 ;; comes from xah-fly-key
@@ -26,6 +26,7 @@
           (goto-char (+ $p2 2))
           (when @new-line
             (insert "\n")
+            (message ": %s" "indent")
             (indent-region $p1 $p2)
             (indent-according-to-mode)
             )

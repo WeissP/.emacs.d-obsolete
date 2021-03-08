@@ -1,5 +1,3 @@
-;; (setq diredzJ)
-
 (wks-unset-key
  dired-mode-map
  (mapcar 'number-to-string (number-sequence 0 9))
@@ -58,6 +56,7 @@
    ("p" .  peep-dired)
    ("q" .  quit-window)
    ("r" .  dired-do-rename)
+   ("s" . snails)
    ("S" .  hydra-dired-quick-sort/body)
    ("t" .  dired-toggle-marks)
    ("u" .  dired-unmark)

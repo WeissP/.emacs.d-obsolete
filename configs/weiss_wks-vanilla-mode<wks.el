@@ -1,10 +1,16 @@
-(defvar wks-vanilla-mode-map (make-sparse-keymap))
-(wks-define-vanilla-keymap wks-vanilla-mode-map)
+(setq wks-vanilla-mode-map (make-sparse-keymap))
+(set-keymap-parent wks-vanilla-mode-map wks-vanilla-keymap)  
 
 (defun wks-vanilla-mode-enable ()
   "DOCSTRING"
   (interactive)
   (deactivate-mark)
+  (cond
+   ((eq major-mode 'snails-mode)
+    ;; (make-local-variable 'wks-vanilla-mode-map)
+    (setq-local wks-vanilla-mode-map wks-snails-vanilla-mode-map)
+    )
+   )
   (wks-vanilla-mode 1)
   )
 
@@ -29,10 +35,11 @@
   :keymap wks-vanilla-mode-map
   (if wks-vanilla-mode
       (progn
-        ;; (add-to-ordered-list 'emulation-mode-map-alists
-		;; `((wks-vanilla-mode . ,wks-vanilla-mode-map)))
-        (add-to-ordered-list 'minor-mode-overriding-map-alist
-		                     `((wks-vanilla-mode . ,wks-vanilla-mode-map)))
+        (when (eq (caar (nth wks-init-emulation-order emulation-mode-map-alists)) 'wks-vanilla-mode)
+          (pop emulation-mode-map-alists)
+          )        
+        (add-to-ordered-list 'emulation-mode-map-alists
+		                     `((wks-vanilla-mode . ,wks-vanilla-mode-map)) (1+ wks-init-emulation-order))
 
         (set-cursor-color wks-vanilla-mode-cursor-color)
         )
