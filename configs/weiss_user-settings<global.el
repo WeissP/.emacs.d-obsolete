@@ -56,19 +56,8 @@
 (setq locale-coding-system 'utf-8
       default-process-coding-system '(utf-8 . utf-8))
 
-(defun weiss-empty-defun-list (fun-list)
-  "Ryo don't support void function, so we need define some functions before."
-  (interactive)
-  (dolist (fun fun-list)
-    (defalias fun (lambda ()
-                    (interactive)
-                    (message "function [%s] is void!" (symbol-name fun))))))
-
 ;; save sh file auto with executable permission
 (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
-
-(defvar ryo-void-fun-list '(org-noter-sync-current-note weiss-add-enumerate-to-all-headlines weiss-test))
-(weiss-empty-defun-list ryo-void-fun-list)
 
 (setq
  eval-expression-print-level nil

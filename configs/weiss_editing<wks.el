@@ -491,7 +491,7 @@ Version 2017-08-19"
               end-pos (cdr bounds))))
     (insert (format "( %s)" (delete-and-extract-region start-pos end-pos)))
     (goto-char (1+ cursor-position))
-    (ryo-modal-mode -1)
+    (wks-vanilla-mode-enable)
     ))
 
 (defun weiss-delete-or-add-parent-sexp ()
@@ -622,7 +622,7 @@ Version 2017-08-19"
       (progn
         (end-of-line)
         (comment-dwim nil)
-        (ryo-modal-mode -1))
+        (wks-vanilla-mode))
     (let (($lbp (line-beginning-position))
           ($lep (line-end-position)))
       (if (and (region-active-p)

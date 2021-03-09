@@ -47,16 +47,16 @@
   (defun weiss-company-select-next-or-toggle-main-frame ()
     "DOCSTRING"
     (interactive)
-    (if ryo-modal-mode
-        (weiss-switch-to-otherside-top-frame)
-      (company-complete-common-or-cycle 1)
+    (if wks-vanilla-mode
+        (company-complete-common-or-cycle 1)
+      (weiss-switch-to-otherside-top-frame)      
       ))
   (defun weiss-company-select-previous-other-window ()
     "DOCSTRING"
     (interactive)
-    (if ryo-modal-mode
-        (weiss-switch-buffer-or-otherside-frame-without-top)
-      (company-select-previous)
+    (if wks-vanilla-mode
+        (company-select-previous)
+      (weiss-switch-buffer-or-otherside-frame-without-top)
       ))
   )
 

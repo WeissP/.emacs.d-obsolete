@@ -9,6 +9,7 @@
     ("u" "unless" weiss--ahf)
     ("i" "insert" weiss--ahf)
     ("l" "let" weiss--ahf)
+    ("r" "&rest " weiss--ahf)
     ("m" "message" weiss--ahf)
     ("o" "&optional " weiss--ahf)
     ("p" "point" weiss--ahf)

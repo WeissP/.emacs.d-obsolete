@@ -1,22 +1,24 @@
 (defvar wks-command-mode-cursor-color weiss/cursor-color)
-(defvar wks-vanilla-mode-cursor-color "#ff0000")
+(defvar wks-vanilla-mode-cursor-color "#FF9239")
 
-(defun meow-setup-indicator ()
-  "Setup indicator appending the return of function `meow-indicator' to the modeline.
-This function should be called after you setup other parts of the mode-line and will work well for most cases.
-If this function is not enough for your requirements, use `meow-indicator' to get the raw text for indicator and put it anywhere you want."
-  (unless (-contains? mode-line-format '(:eval (meow-indicator)))
-    (setq-default mode-line-format (append '((:eval (meow-indicator)) " ") mode-line-format))))
-
-;; (setq-default mode-line-format (append '((:eval (wks-indicator)) " ") mode-line-format))
-
-(defun wks-indicator ()
-  "DOCSTRING"
+(defun weiss-update-cursor-face (&rest args)
+  "disable cursor in dired-mode"
   (interactive)
-  (if wks-vanilla-mode
-      "vanilla"
-    "commmand"
+  (if (eq major-mode 'dired-mode)
+      (setq cursor-type nil)
+    (if wks-vanilla-mode
+        (progn
+          (setq cursor-type 'hbar)
+          (set-cursor-color wks-vanilla-mode-cursor-color)                  
+          )
+      (setq cursor-type 'bar)
+      (set-cursor-color wks-command-mode-cursor-color)        
+      )
     )
+
   )
+
+(add-hook 'window-state-change-functions #'weiss-update-cursor-face)
+(add-hook 'wks-switch-state-hook #'weiss-update-cursor-face)
 
 (provide 'weiss_ui<wks)

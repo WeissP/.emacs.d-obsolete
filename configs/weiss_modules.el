@@ -2,8 +2,6 @@
       '(
         (global :skip-install t)    
         rg (server :after-dump t :local t) quickrun esup which-key super-save keyfreq
-        ;; (ks ;; keybinding system
-        ;;  :skip-install t)
         (wks
          :skip-install t
          :first (
@@ -11,15 +9,6 @@
                  (weiss-temp-insert-mode :local t)
                  hydra
                  ))
-        ;; (ks ;; keybinding system
-        ;;  :skip-install t
-        ;;  :first (
-        ;;          (weiss-select-mode :local t)
-        ;;          (weiss-temp-insert-mode :local t)
-        ;;          (weiss-overriding-ryo-mode :local t)
-        ;;          (weiss-origin-mode :local t)
-        ;;          ryo-modal hydra
-        ;;          ))
         (org
          :local t
          :first ((weiss-org-sp-mode :skip-install t))
@@ -109,7 +98,7 @@
         (telega :after-dump t)
         (yasdcv :local t)
         projectile maxima magit
-        (tramp :after-dump t :local t :then (sudo-edit counsel-tramp docker-tramp))
+        (tramp :after-dump-all t :local t :then (sudo-edit counsel-tramp docker-tramp))
         (recentf :after-dump t :local t)
         (emacs-yakuake :local t :after-dump t)
         ))

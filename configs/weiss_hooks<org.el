@@ -11,10 +11,6 @@
                 (weiss-org-sp-mode 1)
               (weiss-org-sp-mode -1)                           
               )
-            (when ryo-modal-mode
-              (ryo-modal-mode -1)
-              (ryo-modal-mode 1)
-              )
             (make-local-variable 'company-minimum-prefix-length)
             (setq company-minimum-prefix-length 5)
             (iimage-mode)

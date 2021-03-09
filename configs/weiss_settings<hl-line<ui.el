@@ -18,7 +18,7 @@
 
   (defvar weiss/disable-hl-mode-list '(snails-mode pdf-view-mode))
 
-  (defun weiss-enable-hl-line ()
+  (defun weiss-enable-hl-line (&rest args)
     "change hl line face by major-mode"
     (interactive)
     (unless (member major-mode weiss/disable-hl-mode-list)
@@ -48,8 +48,9 @@
       )
     )
 
-  (add-to-list 'weiss/after-buffer-change-function-list 'weiss-enable-hl-line)
-  (add-to-list 'weiss/after-major-mode-function-list 'weiss-enable-hl-line)
+  (add-hook 'window-state-change-functions #'weiss-enable-hl-line)
+  ;; (add-to-list 'weiss/after-buffer-change-function-list 'weiss-enable-hl-line)
+  ;; (add-to-list 'weiss/after-major-mode-function-list 'weiss-enable-hl-line)
   )
 
 (provide 'weiss_settings<hl-line<ui)

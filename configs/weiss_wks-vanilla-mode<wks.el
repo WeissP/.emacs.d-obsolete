@@ -1,3 +1,5 @@
+(defvar wks-switch-state-hook nil)
+
 (setq wks-vanilla-mode-map (make-sparse-keymap))
 (set-keymap-parent wks-vanilla-mode-map wks-vanilla-keymap)  
 
@@ -5,6 +7,10 @@
   "DOCSTRING"
   (interactive)
   (deactivate-mark)
+  (when current-prefix-arg
+    (insert " ")
+    (left-char)        
+    )
   (cond
    ((derived-mode-p 'prog-mode)
     (indent-according-to-mode)
@@ -40,8 +46,9 @@
       (progn
         (setq minor-mode-overriding-map-alist (assq-delete-all 'wks-vanilla-mode minor-mode-overriding-map-alist))
         (push `(wks-vanilla-mode . ,wks-vanilla-mode-map) minor-mode-overriding-map-alist)        
+        (run-hooks 'wks-switch-state-hook)
         )    
-    (set-cursor-color wks-command-mode-cursor-color)
+    (run-hooks 'wks-switch-state-hook)
     )
   )
 

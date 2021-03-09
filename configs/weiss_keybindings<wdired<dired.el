@@ -1,7 +1,7 @@
 (wks-define-key
  wdired-mode-map ""
  '(
-   ("C-q" . (weiss-dired-exit-wdired (wdired-exit)(wks-vanilla-mode-disable)))
+   ("C-q" . weiss-exit-wdired-mode)
    )
  )
 

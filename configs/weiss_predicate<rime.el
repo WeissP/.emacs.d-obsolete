@@ -33,15 +33,15 @@ Can be used in `rime-disable-predicates' and `rime-inline-predicates'."
     (and (> (point) (save-excursion (back-to-indentation) (point)))
          (looking-back "[a-zA-Z] " 1)))
 
-  (defun weiss-ryo-modal-mode-p ()
+  (defun weiss-command-mode-p ()
     "DOCSTRING"
     (interactive)
-    ryo-modal-mode
+    (not wks-vanilla-mode)
     )
 
   (setq rime-disable-predicates
         '(
-          weiss-ryo-modal-mode-p
+          weiss-command-mode-p
           rime-predicate-after-alphabet-char-p
           rime-predicate-auto-english-p
           rime-predicate-punctuation-line-begin-p

@@ -31,12 +31,11 @@
 (wks-define-key
  (current-global-map) ""
  `(
-   ;; ("'"  ryo-modal-repeat)
    ("," . xah-backward-left-bracket)
    ("-" . weiss-switch-to-same-side-frame)
    ("=" . xah-cycle-hyphen-underscore-space)
    ("." . xah-forward-right-bracket)
-   ;; (";"  rotate-text)
+   (";"  rotate-text)
    (";" . (weiss-copy-whole-buffer
            (kill-new (buffer-substring-no-properties (point-min) (point-max)))))
    ("/" . weiss-mark-brackets)

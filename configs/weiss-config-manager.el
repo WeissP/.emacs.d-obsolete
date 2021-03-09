@@ -1,7 +1,7 @@
 (require 'org-roam)
 
 (setq weiss-config-manager-after-dump-tags
-  '("font-lock-face" "recentf" "emacs-yakuake" "tramp" "keybindings" "doom-modeline" "all-the-icons" "frame" "font"))
+      '("font-lock-face" "recentf" "emacs-yakuake" "tramp" "keybindings" "doom-modeline" "all-the-icons" "frame" "font"))
 
 (defun weiss-process-git-link (link)
   "process git link as the format of quelpa"
@@ -39,7 +39,7 @@
   "DOCSTRING"
   (interactive)
   (org-roam-db-query
-  ;; (emacsql-flatten-sql   
+   ;; (emacsql-flatten-sql   
    (vconcat
     [:select :distinct tags:file :from tags]
     `[:where
@@ -81,8 +81,9 @@
       )
     ))
 
+
 (defun weiss-load-module (package-list after-dump &optional log-file)
-  "DOCSTRING"
+  "`after-dump' means only skip installing package, after-dump-all means skip package and also all configs"
   (interactive)
   (dolist (package package-list)
     (if (listp package)
@@ -91,6 +92,8 @@
               (condition (plist-get (cdr package) :when))
               )
           (when (and (not (plist-get plist :disabled))
+                     (or (not (plist-member plist :after-dump-all))
+                         (eq after-dump (plist-get plist :after-dump-all)))
                      (or (not condition)
                          (if (listp (eval condition))
                              (eval (eval condition))

@@ -36,7 +36,8 @@
     (interactive)
     (wdired-finish-edit)
     (dired-revert)
-    (ryo-modal-restart))
+    (wks-vanilla-mode-disable)
+    )
 
   (defun weiss-dired-delete-files-force ()
     "delete files without ask"
