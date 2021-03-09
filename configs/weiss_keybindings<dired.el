@@ -4,7 +4,7 @@
  )
 (wks-unset-key
  dired-mode-map
- '("SPC" "g")
+ '("SPC" "g" "n")
  )
 
 (wks-define-key

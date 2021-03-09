@@ -1,3 +1,5 @@
+(wks-unset-key pdf-view-mode-map '("SPC" "9" "-" "0" "s"))
+
 (wks-define-key
  pdf-view-mode-map ""
  '(

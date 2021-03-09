@@ -7,10 +7,10 @@
 
 (add-hook 'org-mode-hook
           (lambda ()
-            ;; (if (eq major-mode 'org-mode)
-            ;;     (weiss-org-sp-mode 1)
-            ;;   (weiss-org-sp-mode -1)                           
-            ;;   )
+            (if (eq major-mode 'org-mode)
+                (weiss-org-sp-mode 1)
+              (weiss-org-sp-mode -1)                           
+              )
             (when ryo-modal-mode
               (ryo-modal-mode -1)
               (ryo-modal-mode 1)

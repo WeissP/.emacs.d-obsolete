@@ -48,6 +48,22 @@
   )
 (setq wks-vanilla-keymap (wks-define-vanilla-keymap))
 
+(defun wks-conditional-define-key (keymap key-cmd-list fun)
+    (interactive)
+    (mapc
+     (lambda (cmd-key)
+       (let ((key (car cmd-key))
+             (cmd (cdr cmd-key))
+             )
+         (define-key keymap (kbd key)
+           `(menu-item "" ,cmd
+                       :filter ,fun)
+           )
+         )
+       )
+     key-cmd-list)
+    )
+
 (wks-unset-key help-mode-map '("SPC" "9" "-" "0" "l"))
 (wks-unset-key messages-buffer-mode-map '("SPC" "9" "-" "0"))
 (wks-unset-key special-mode-map '("SPC" "9" "-" "0"))

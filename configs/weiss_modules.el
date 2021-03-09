@@ -22,7 +22,7 @@
         ;;          ))
         (org
          :local t
-         ;; :first ((weiss-org-sp-mode :skip-install t))
+         :first ((weiss-org-sp-mode :skip-install t))
          :then (
                 (babel
                  :skip-install t

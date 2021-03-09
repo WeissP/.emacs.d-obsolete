@@ -4,9 +4,11 @@
 (defun wks-vanilla-mode-enable ()
   "DOCSTRING"
   (interactive)
-  (message "last-command: %s" last-command)
   (deactivate-mark)
   (cond
+   ((derived-mode-p 'prog-mode)
+    (indent-according-to-mode)
+    )
    ((eq major-mode 'snails-mode)
     ;; (make-local-variable 'wks-vanilla-mode-map)
     (setq-local wks-vanilla-mode-map wks-snails-vanilla-mode-map)
