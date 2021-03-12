@@ -2,7 +2,10 @@
   (defun weiss-org-screenshot ()
     "call flameshot to capture screen shot"
     (interactive)
-    (weiss-org-insert-image "flameshot-caputre.png" (concat "flameshot gui -p " weiss/org-img-path))
+    (weiss-org-insert-image
+     "flameshot-caputre.png"
+     (concat "flameshot gui -p " weiss/org-img-path)
+     t)
     )
 
   (defun weiss-org-download-img ()

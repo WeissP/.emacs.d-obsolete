@@ -35,6 +35,7 @@
    )
  )
 
+(wks-unset-key org-agenda-mode-map '("9" "-" "SPC"))
 (wks-define-key
  org-agenda-mode-map ""
  '(

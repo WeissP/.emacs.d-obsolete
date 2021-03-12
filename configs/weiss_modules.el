@@ -5,8 +5,8 @@
         (wks
          :skip-install t
          :first (
-                 (weiss-select-mode :local t)
-                 (weiss-temp-insert-mode :local t)
+                 ;; (weiss-select-mode :local t)
+                 ;; (weiss-temp-insert-mode :local t)
                  hydra
                  ))
         (org

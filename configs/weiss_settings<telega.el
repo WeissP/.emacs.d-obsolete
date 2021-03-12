@@ -28,6 +28,15 @@ If chatbuf is supergroups, channels or secret chat, then always revoke."
       (mapconcat (lambda (msg) (telega-tl-str (plist-get msg :content) :text)) marked-messages "\n\n")    
       ))
 
+  (defun weiss-telega-copy-msg ()
+    "DOCSTRING"
+    (interactive)
+    (if (use-region-p)
+        (xah-copy-line-or-region)        
+      (kill-new (weiss-get-telega-marked-text))
+      )
+    )
+
   (setq telega-open-file-function 'org-open-file)
   ;; (setq telega-server-libs-prefix "/usr/lib")
   (telega-notifications-mode 1)

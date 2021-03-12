@@ -8,8 +8,9 @@
   (interactive)
   (deactivate-mark)
   (when current-prefix-arg
+    ;; (insert "123")
     (insert " ")
-    (left-char)        
+    ;; (left-char)        
     )
   (cond
    ((derived-mode-p 'prog-mode)

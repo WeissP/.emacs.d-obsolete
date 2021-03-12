@@ -26,10 +26,17 @@
    key-cmd-alist)
   )
 
-(defun wks-unset-key (map keys)
+(defun wks-unset-key (map keys &optional number alphabet)
   "DOCSTRING"
   (interactive)
   (mapc '(lambda (x) (define-key map (kbd x) nil)) keys)
+  (when number
+    (mapc '(lambda (x) (define-key map (kbd x) nil))
+          (mapcar 'number-to-string (number-sequence 0 9))))
+  (when alphabet
+    (mapc '(lambda (x) (define-key map (kbd x) nil))
+          (mapcar '(lambda (x) (format "%c" x)) (append (number-sequence 65 90)
+                                                        (number-sequence 97 122)))))
   )
 
 (defun wks-define-vanilla-keymap ()
@@ -49,22 +56,22 @@
 (setq wks-vanilla-keymap (wks-define-vanilla-keymap))
 
 (defun wks-conditional-define-key (keymap key-cmd-list fun)
-    (interactive)
-    (mapc
-     (lambda (cmd-key)
-       (let ((key (car cmd-key))
-             (cmd (cdr cmd-key))
-             )
-         (define-key keymap (kbd key)
-           `(menu-item "" ,cmd
-                       :filter ,fun)
+  (interactive)
+  (mapc
+   (lambda (cmd-key)
+     (let ((key (car cmd-key))
+           (cmd (cdr cmd-key))
            )
+       (define-key keymap (kbd key)
+         `(menu-item "" ,cmd
+                     :filter ,fun)
          )
        )
-     key-cmd-list)
-    )
+     )
+   key-cmd-list)
+  )
 
-(wks-unset-key help-mode-map '("SPC" "9" "-" "0" "l"))
+(wks-unset-key help-mode-map '("SPC" "-" "l") t)
 (wks-unset-key messages-buffer-mode-map '("SPC" "9" "-" "0"))
 (wks-unset-key special-mode-map '("SPC" "9" "-" "0"))
 

@@ -10,7 +10,7 @@
   (interactive)
   (weiss-temp-insert--remove-overlay t)
   (when weiss-temp-insert-mode (weiss-temp-insert-mode -1))
-  (wks-vanilla-mode-disable)
+  ;; (wks-vanilla-mode-disable)
   )
 
 (defun weiss-temp-insert-exit-and-remove-content ()
@@ -18,8 +18,11 @@
   (interactive)
   (weiss-temp-insert--remove-overlay nil)
   (when weiss-temp-insert-mode (weiss-temp-insert-mode -1))
-  (wks-vanilla-mode-disable)
+  ;; (wks-vanilla-mode-disable)
   )
+
+(advice-add 'weiss-temp-insert-exit-and-keep-content :after #'wks-vanilla-mode-disable)
+(advice-add 'weiss-temp-insert-exit-and-remove-content :after #'wks-vanilla-mode-disable)
 
 (defun weiss-temp-insert--set-overlay (p1 p2)
   "set overlay between p1 and p2"
@@ -46,10 +49,13 @@
         )
       ))
   )
-
+()
 (defun weiss-temp-insert-mode-enable ()
   "enable temp insert mode"
   (interactive)
+  (setq minor-mode-overriding-map-alist
+        (assq-delete-all 'weiss-temp-insert-mode minor-mode-overriding-map-alist))
+  (push `(weiss-temp-insert-mode . ,weiss-temp-insert-mode-map) minor-mode-overriding-map-alist)
   (wks-vanilla-mode-enable)
   (undo-collapse-begin)
   (when weiss-select-mode (weiss-select-mode-turn-off))
@@ -79,13 +85,18 @@
   (setq weiss-temp-insert-mode-p nil)
   )
 
-(define-key weiss-temp-insert-mode-map (kbd "RET") 'weiss-temp-insert-exit-and-keep-content)
-(define-key weiss-temp-insert-mode-map [remap wks-vanilla-mode-disable] 'weiss-temp-insert-exit-and-remove-content)
+(wks-define-key
+ weiss-temp-insert-mode-map ""
+ '(
+   ("<end>" . weiss-temp-insert-exit-and-remove-content)
+   ("RET" . weiss-temp-insert-exit-and-keep-content)
+   ))
 
 ;;;###autoload
 (define-minor-mode weiss-temp-insert-mode
   "Save selected text and activate insert mode, press enter to exit and keep the selected text. When direct go back to Command mode, the selected text will be deleted."
   :lighter " temp" ; set a simple mode name in the minor-mode-alist
+  :keymap weiss-temp-insert-mode-map
   (if weiss-temp-insert-mode
       (weiss-temp-insert-mode-enable)
     (weiss-temp-insert-mode-disable)

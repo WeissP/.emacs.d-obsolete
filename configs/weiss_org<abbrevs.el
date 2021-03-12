@@ -73,6 +73,7 @@
     ("ul" "unterschiedlich" weiss--ahf)
     ("us" "Unterschied" weiss--ahf)
     ("vl" "Vorlesung" weiss--ahf)
+    ("vlt" "vielleicht " weiss--ahf)
     ("wr" "während" weiss--ahf)
     ("zm" "zusammen" weiss--ahf)
     ("zf" "Zusammenfassung" weiss--ahf)

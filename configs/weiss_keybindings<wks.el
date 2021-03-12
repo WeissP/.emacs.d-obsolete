@@ -23,7 +23,7 @@
  (current-global-map) "<escape>"
  '(
    ("," . previous-buffer)
-   ("." . previous-buffer)
+   ("." . next-buffer)
    )
  )
 
@@ -35,9 +35,7 @@
    ("-" . weiss-switch-to-same-side-frame)
    ("=" . xah-cycle-hyphen-underscore-space)
    ("." . xah-forward-right-bracket)
-   (";"  rotate-text)
-   (";" . (weiss-copy-whole-buffer
-           (kill-new (buffer-substring-no-properties (point-min) (point-max)))))
+   (";" . rotate-text)
    ("/" . weiss-mark-brackets)
 
    ("1" .  scroll-down)
@@ -67,7 +65,7 @@
    ("n" . swiper-isearch)
    ("o" . weiss-expand-region-by-word)
    ("p" . (weiss-insert-line-and-goto-insert-mode (weiss-insert-line) (wks-vanilla-mode-enable)))
-   ;; ("q" . )
+   ("q" . weiss-temp-insert-mode)
    ("r" . weiss-delete-forward-with-region)
    ("s" . snails)
 
@@ -76,6 +74,7 @@
    ("t k" . (wks-C-c-C-k (execute-kbd-macro ,(kbd "C-c C-k"))))
    ("t o" . (wks-C-c-C-o (execute-kbd-macro ,(kbd "C-c C-o"))))
    ("t l" . (wks-C-c-C-l (execute-kbd-macro ,(kbd "C-c C-l"))))
+   ("t t" . weiss-move-next-bracket-contents)
 
    ("u" . weiss-delete-or-add-parent-sexp)
    ("v" . xah-paste-or-paste-previous)
