@@ -49,14 +49,14 @@
         )
       ))
   )
-()
+
 (defun weiss-temp-insert-mode-enable ()
   "enable temp insert mode"
   (interactive)
   (setq minor-mode-overriding-map-alist
         (assq-delete-all 'weiss-temp-insert-mode minor-mode-overriding-map-alist))
   (push `(weiss-temp-insert-mode . ,weiss-temp-insert-mode-map) minor-mode-overriding-map-alist)
-  (wks-vanilla-mode-enable)
+  (wks-vanilla-mode 1)
   (undo-collapse-begin)
   (when weiss-select-mode (weiss-select-mode-turn-off))
   (setq weiss-temp-insert-mode-selected-text nil

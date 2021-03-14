@@ -1,38 +1,6 @@
 (defvar weiss-right-frame-pos 1690 "the position of left bord of right frame")
 (defvar weiss-is-laptop nil)
 
-;; (car (frame-edges))
-;; (frame-width)
-;; (frame-height)
-
-(defvar weiss-desktop-left-frame-alist
-  '((tool-bar-lines . 0)
-    (width . 104) ; chars
-    (height . 48) ; lines
-    (left . 1680)
-    (top . 0)))
-
-(defvar weiss-desktop-right-frame-alist
-  '((tool-bar-lines . 0)
-    (width . 104) ; chars
-    (height . 48) ; lines
-    (left . 2639)
-    (top . 0)))
-
-(defvar weiss-laptop-left-frame-alist
-  '((tool-bar-lines . 0)
-    (width . 104) ; chars
-    (height . 48) ; lines
-    (left . 0)
-    (top . 0)))
-
-(defvar weiss-laptop-right-frame-alist
-  '((tool-bar-lines . 0)
-    (width . 104) ; chars
-    (height . 48) ; lines
-    (left . 840)
-    (top . 0)))
-
 (advice-add 'weiss-new-frame :after (lambda (&rest args) (interactive) (weiss-update-top-windows t)))
 ;; (advice-add 'delete-frame :after (lambda () (interactive) (weiss-update-top-windows t)))
 (add-hook 'window-state-change-functions #'(lambda (&rest args) (interactive) (weiss-update-top-windows t)))

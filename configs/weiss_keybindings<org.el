@@ -29,6 +29,7 @@
    ("t s" . org-noter-sync-current-note)
    ("t t" . org-todo)
    ("t b" . org-mark-ring-goto)
+   ("t <tab>" . org-table-create-with-table\.el)
    ("t j s" . weiss-org-copy-heading-link)
 
    ("<escape> <escape>" . wks-org-quick-insert-keymap)

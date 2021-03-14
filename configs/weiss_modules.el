@@ -1,6 +1,6 @@
 (setq weiss/modules
       '(
-        (global :skip-install t)    
+        (global :skip-install t) (table :skip-install t)
         rg (server :after-dump t :local t) quickrun esup which-key super-save keyfreq
         (wks
          :skip-install t

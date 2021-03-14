@@ -491,7 +491,7 @@ Version 2017-08-19"
               end-pos (cdr bounds))))
     (insert (format "( %s)" (delete-and-extract-region start-pos end-pos)))
     (goto-char (1+ cursor-position))
-    (wks-vanilla-mode-enable)
+    (wks-vanilla-mode 1)
     ))
 
 (defun weiss-delete-or-add-parent-sexp ()

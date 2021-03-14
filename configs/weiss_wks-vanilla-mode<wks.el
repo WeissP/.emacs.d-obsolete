@@ -3,14 +3,15 @@
 (setq wks-vanilla-mode-map (make-sparse-keymap))
 (set-keymap-parent wks-vanilla-mode-map wks-vanilla-keymap)  
 
+(defvar wks-vanilla-black-list '(dired-do-rename))
+
 (defun wks-vanilla-mode-enable ()
   "DOCSTRING"
   (interactive)
   (deactivate-mark)
   (when current-prefix-arg
-    ;; (insert "123")
     (insert " ")
-    ;; (left-char)        
+    (left-char)        
     )
   (cond
    ((derived-mode-p 'prog-mode)
@@ -21,7 +22,7 @@
     (setq-local wks-vanilla-mode-map wks-snails-vanilla-mode-map)
     )
    )
-  (wks-vanilla-mode 1)
+  (wks-vanilla-mode 1)  
   )
 
 (defun wks-vanilla-mode-disable ()
@@ -36,9 +37,23 @@
   (wks-vanilla-mode-enable)
   )
 
-(dolist (x '(snails-mode-hook minibuffer-setup-hook)) 
-  (add-hook x #'wks-vanilla-mode-enable)  
+(defun wks-vanilla-mode-auto-enable (&rest args)
+  "DOCSTRING"
+  (interactive)
+  (unless (member last-command wks-vanilla-black-list)
+    (wks-vanilla-mode 1)
+    )
   )
+
+(dolist (x '(
+             snails-mode-hook
+             minibuffer-setup-hook
+             )) 
+
+  (add-hook x #'wks-vanilla-mode-auto-enable)  
+  )
+
+;; (advice-add 'dired-query :after #'wks-vanilla-mode-disable)
 
 (define-minor-mode wks-vanilla-mode
   "insert mode"

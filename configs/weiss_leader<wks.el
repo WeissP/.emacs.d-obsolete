@@ -28,7 +28,7 @@
    ("b" . xah-toggle-previous-letter-case)
 
    ("c a" . weiss-kill-append)
-   ("c b" . (weiss-copy-whole-buffer (kill-new (buffer-substring))))
+   ("c b" . (weiss-copy-whole-buffer (kill-new (buffer-substring (point-min) (point-max)))))
    ("c e" . weiss-exchange-region-kill-ring-car)
    ("c f" . (weiss-copy-file-name (kill-new (buffer-file-name))))
    ("c k" . save-buffers-kill-terminal)
