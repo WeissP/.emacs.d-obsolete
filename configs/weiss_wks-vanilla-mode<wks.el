@@ -42,6 +42,10 @@
   (interactive)
   (unless (member last-command wks-vanilla-black-list)
     (wks-vanilla-mode 1)
+    (when (eq major-mode 'snails-mode)
+      ;; (make-local-variable 'wks-vanilla-mode-map)
+      (setq-local wks-vanilla-mode-map wks-snails-vanilla-mode-map)
+      )
     )
   )
 
