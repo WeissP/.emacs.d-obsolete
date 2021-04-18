@@ -7,7 +7,7 @@
 
 (with-eval-after-load 'org-roam
   (setq
-   org-roam-db-update-idle-seconds 0
+   org-roam-db-update-idle-seconds 1
    org-roam-db-update-method 'immediate
    )
   )

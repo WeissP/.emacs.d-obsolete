@@ -105,7 +105,6 @@
 
             ;; (message "load: %s" name)
             (weiss-load-config (symbol-name name) after-dump log-file)
-
             (cond
              ((plist-get plist :local)
               (ignore)
@@ -122,8 +121,13 @@
                               :path ,(plist-get plist :file)))
               )
              ((plist-member plist :quelpa)
+              ;; (message "quelpa: %s" (plist-get plist :quelpa))
               (quelpa (plist-get plist :quelpa))
               )
+             ;; ((plist-member plist :name)
+             ;;  (message ": %s" (plist-get plist :quelpa))
+             ;;  ;; (quelpa (plist-get plist :quelpa))
+             ;;  )
              (t (quelpa name))
              )
 

@@ -16,6 +16,14 @@
  )
 
 (wks-define-key
+ dired-mode-map "<deletechar> l"
+ '(
+   ("r" . dired-toggle-read-only)
+   ("v" . weiss-dired-single-handed-mode)
+   )
+ )
+
+(wks-define-key
  dired-mode-map "g"
  '(
    ("d" . (weiss-dired-find-downloads (find-file "/home/weiss/Downloads")))

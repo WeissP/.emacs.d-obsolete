@@ -9,7 +9,7 @@
   (defun weiss-execute-buffer-python ()
     "execute cell if in jupyter otherwise execute buffer"
     (interactive)
-    (if ein:notebook-mode
+    (if (ignore-errors ein:notebook-mode)
         (call-interactively 'ein:worksheet-execute-cell) 
       (weiss-execute-buffer))
     )

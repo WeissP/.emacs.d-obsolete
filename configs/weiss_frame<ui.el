@@ -2,34 +2,35 @@
 ;; (frame-width)
 ;; (frame-height)
 ;; (frame-edges)
-(defvar weiss-desktop-left-frame-alist
-  '((tool-bar-lines . 0)
-    (width . 103) ; chars
-    (height . 48) ; lines
-    (left . 1680)
-    (top . 0)))
+(setq frame-resize-pixelwise t)
 
-(defvar weiss-desktop-right-frame-alist
-  '((tool-bar-lines . 0)
-    (width . 104) ; chars
-    (height . 48) ; lines
-    (left . 2640)
-    (top . 0)))
-
-(defvar weiss-laptop-left-frame-alist
+(setq weiss-desktop-left-frame-alist
   '((tool-bar-lines . 0)
     (width . 104) ; chars
     (height . 48) ; lines
     (left . 0)
     (top . 0)))
 
-(defvar weiss-laptop-right-frame-alist
+(setq weiss-desktop-right-frame-alist
+  '((tool-bar-lines . 0)
+    (width . 104) ; chars
+    (height . 48) ; lines
+    (left . 960)
+    (top . 0)))
+
+(setq weiss-laptop-left-frame-alist
+  '((tool-bar-lines . 0)
+    (width . 104) ; chars
+    (height . 48) ; lines
+    (left . 0)
+    (top . 0)))
+
+(setq weiss-laptop-right-frame-alist
   '((tool-bar-lines . 0)
     (width . 104) ; chars
     (height . 48) ; lines
     (left . 840)
     (top . 0)))
-
 
 
 (if (display-graphic-p)

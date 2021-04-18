@@ -1,7 +1,7 @@
 (setq
  lsp-log-io nil                       ;; enable log only for debug
  lsp-response-timeout 100
- lsp-auto-guess-root t        ; Detect project root
+ lsp-auto-guess-root nil        ; Detect project root
  lsp-keep-workspace-alive nil ; Auto-kill LSP server
  lsp-enable-indentation t
  lsp-enable-on-type-formatting nil    ;; disable formatting on the fly

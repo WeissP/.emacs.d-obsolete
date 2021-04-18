@@ -1,5 +1,5 @@
 ;; (setq pdf-view-mode-map (wks-define-vanilla-keymap))
-(wks-unset-key pdf-view-mode-map '("SPC" "9" "-" "0" "s") t)
+(wks-unset-key pdf-view-mode-map '("SPC" "-" "s" "g") t)
 ;; (wks-unset-key pdf-view-mode-map )
 
 (wks-define-key

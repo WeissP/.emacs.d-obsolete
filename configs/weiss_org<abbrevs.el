@@ -34,7 +34,7 @@
     ("bh" "Behauptung" weiss--ahf)
     ("bdi" "Beweis durch Induktion" weiss--ahf)
     ("bj" "bis jetzt")
-    ("bp" "Beispiel" weiss--ahf)
+    ("bsp" "Beispiel" weiss--ahf)
     ("def" "Definition" weiss--ahf)
     ("dw" "deswegen")
     ("eb" "ein bisschen")

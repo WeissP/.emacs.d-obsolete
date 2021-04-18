@@ -3,7 +3,7 @@
 (setq wks-vanilla-mode-map (make-sparse-keymap))
 (set-keymap-parent wks-vanilla-mode-map wks-vanilla-keymap)  
 
-(defvar wks-vanilla-black-list '(dired-do-rename))
+(defvar wks-vanilla-black-list '(dired-do-rename dired-do-delete))
 
 (defun wks-vanilla-mode-enable ()
   "DOCSTRING"
@@ -56,8 +56,6 @@
 
   (add-hook x #'wks-vanilla-mode-auto-enable)  
   )
-
-;; (advice-add 'dired-query :after #'wks-vanilla-mode-disable)
 
 (define-minor-mode wks-vanilla-mode
   "insert mode"

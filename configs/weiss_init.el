@@ -28,8 +28,8 @@
 (dbus-init-bus :session)   ; for EAF DUMP
 
 (setq weiss-right-top-window (selected-frame))
-(setq weiss-left-top-window (make-frame-command))
-(select-frame-set-input-focus weiss-right-top-window)
+;; (setq weiss-left-top-window (make-frame-command))
+;; (select-frame-set-input-focus weiss-right-top-window)
 
 (setq gc-cons-threshold (* (expt 1024 2) 32)
       gc-cons-percentage 0.5)

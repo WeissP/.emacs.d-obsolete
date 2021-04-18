@@ -136,6 +136,8 @@
     ("of" "\\frac{▮}" weiss--ahf)
     ("oc" "\\circ " weiss--ahf)
     ("och" "\\choose " weiss--ahf)
+    ("ofl" "\\lfloor ▮ \\rfloor" weiss--ahf)
+    ("oce" "\\lceil ▮ \\rceil" weiss--ahf)
 
 ;;;;; arrows
     ("ar" "\\Rightarrow " weiss--ahf)

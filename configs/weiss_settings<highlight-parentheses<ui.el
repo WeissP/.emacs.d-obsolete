@@ -1,3 +1,4 @@
+
 (add-hook 'prog-mode-hook #'highlight-parentheses-mode)
 
 (with-eval-after-load 'highlight-parentheses

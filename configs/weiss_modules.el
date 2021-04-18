@@ -84,7 +84,7 @@
         (sql :then ((sql-indent :github "alex-hhh/emacs-sql-indent")))
 
         (lsp-mode
-         :then (lsp-ui lsp-java lsp-python-ms)
+         :then (lsp-ui lsp-java lsp-python-ms ccls)
          )
 
         (magit :then (

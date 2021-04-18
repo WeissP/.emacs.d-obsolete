@@ -6,6 +6,7 @@
 
 (setq package-archives
       '(("gnu"   . "http://elpa.gnu.org/packages/")
+        ("org" . "https://orgmode.org/elpa/")
         ("melpa" . "http://melpa.org/packages/")))
 
 (unless (package-installed-p 'quelpa)
@@ -28,6 +29,8 @@
   (normal-top-level-add-subdirs-to-load-path)
   )
 (add-to-list 'load-path "/usr/local/texlive/2020/bin/x86_64-linux")
+(add-to-list 'load-path "/home/weiss/.emacs.d/org-mode/lisp/")
+
 (setq weiss-dumped-load-path load-path)
 
 (require 'weiss-config-manager)

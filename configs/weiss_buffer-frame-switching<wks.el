@@ -1,4 +1,5 @@
-(defvar weiss-right-frame-pos 1690 "the position of left bord of right frame")
+;; (defvar weiss-right-frame-pos 1690 "the position of left bord of right frame")
+(defvar weiss-right-frame-pos 950 "the position of left bord of right frame")
 (defvar weiss-is-laptop nil)
 
 (advice-add 'weiss-new-frame :after (lambda (&rest args) (interactive) (weiss-update-top-windows t)))

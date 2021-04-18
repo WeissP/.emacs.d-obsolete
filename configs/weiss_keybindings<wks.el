@@ -11,8 +11,8 @@
  '(
    ("M-i" . wks-vanilla-mode-disable)
    ("<backtab>" . indent-for-tab-command)
-   ("<S-delete>" . (weiss-insert-slash (insert "\\")))
-   ("M-DEL" . (weiss-insert-slash (insert "|")))
+   ("<S-delete>" . (weiss-insert-single-slash (insert "\\")))
+   ("M-DEL" . (weiss-insert-single-vertical-bar (insert "|")))
    ("<f5>" . revert-buffer)
    ("M-e" . eldoc)
    ("<escape>" . wks-global-quick-insert-keymap)
@@ -85,6 +85,7 @@
    ("z" . weiss-comment-dwim)
    ("<end>" . wks-vanilla-mode-disable)
    ("SPC" . wks-leader-keymap)
+   ("<deletechar>" . wks-leader-keymap)
    )
  )
 

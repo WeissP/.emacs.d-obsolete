@@ -1,4 +1,4 @@
-(add-hook 'text-mode-hook #'wucuo-start)
+;; (add-hook 'text-mode-hook #'wucuo-start)
 
 (with-eval-after-load 'wucuo
   (defun weiss-wucuo-spell-check-visible-region ()

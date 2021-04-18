@@ -58,7 +58,7 @@
 
 (wks-define-key  wks-global-quick-insert-keymap ""
                  '(
-                   ("RET" . (weiss-insert-new-line (insert "\n")))
+                   ("RET" . (weiss-insert-new-line (insert "\\n")))
                    )
                  )
 
