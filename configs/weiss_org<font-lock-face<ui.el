@@ -25,7 +25,7 @@
                       :foreground "medium sea green"
                       :background nil)
   (set-face-attribute 'org-link nil
-                      :height 1.1
+                      :height 1.0
                       :inherit nil
                       :underline t
                       )

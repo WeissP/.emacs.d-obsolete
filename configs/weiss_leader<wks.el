@@ -5,6 +5,7 @@
  '(
    (", e" .  weiss-execute-buffer)
    (", c" .  quickrun-compile-only)
+   (", s" .  weiss-run-java-spring)
    (", d" .  eval-defun)
    (", m" .  weiss-eval-last-sexp-this-line)
    (", r" .  eval-expression)

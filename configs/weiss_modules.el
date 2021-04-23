@@ -17,7 +17,8 @@
                  :skip-install t
                  :first (
                          ob-fsharp ob-C ob-go ob-rust ob-java ob-sql-mode
-                         (ob-javascript :github "zweifisch/ob-javascript")))
+                                   (ob-javascript :github "zweifisch/ob-javascript"))
+                 )
                 (org-agenda :local t)
                 (org-tempo :local t)
                 (org-roam
@@ -84,7 +85,7 @@
         (sql :then ((sql-indent :github "alex-hhh/emacs-sql-indent")))
 
         (lsp-mode
-         :then (lsp-ui lsp-java lsp-python-ms ccls)
+         :then (lsp-ui lsp-java lsp-python-ms ccls lsp-haskell)
          )
 
         (magit :then (

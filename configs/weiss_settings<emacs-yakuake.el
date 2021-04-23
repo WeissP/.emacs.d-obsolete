@@ -1,4 +1,20 @@
+(setq yakuake-spring-session-id nil)
+
 (with-eval-after-load 'emacs-yakuake
+  (defun weiss-run-java-spring ()
+    "DOCSTRING"
+    (interactive)
+    (save-buffer)
+    (when yakuake-spring-session-id
+      (ignore-errors (yakuake-remove-session yakuake-spring-session-id))
+      )
+    (yakuake-add-session)
+    (setq yakuake-spring-session-id (yakuake-active-session-id))
+    (yakuake-set-tab-title yakuake-spring-session-id "spring")      
+    (yakuake-run-command-in-session yakuake-spring-session-id "cd /home/weiss/Documents/Vorlesungen/db-project-grpbb/")
+    (yakuake-run-command-in-session yakuake-spring-session-id "mvn spring-boot:run")
+    )
+  
   (defun weiss-dired-rsync ()
     "DOCSTRING"
     (interactive)

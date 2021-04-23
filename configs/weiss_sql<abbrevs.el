@@ -34,7 +34,7 @@
     ("ua" "UNION ALL ")
     ("wh" "WHERE ")
     ("rn" "RAISE NOTICE '▮'" weiss--ahf)
-    ("lj" "NATURAL JOIN ")
+    ("lj" "INNER JOIN ")
     ("ljo" "INNER JOIN ▮ ON " weiss--ahf)
     ("llj" "LEFT OUTER JOIN ▮ ON " weiss--ahf)
     ("lrj" "RIGHT OUTER JOIN ▮ ON " weiss--ahf)
