@@ -3,6 +3,18 @@
 (setq wks-vanilla-mode-map (make-sparse-keymap))
 (set-keymap-parent wks-vanilla-mode-map wks-vanilla-keymap)  
 
+(wks-define-key
+ wks-vanilla-mode-map
+ ""
+ '(
+   ("<end>" . wks-vanilla-mode-disable)
+   ("ß" . self-insert-command)
+   ("`" . self-insert-command)
+   ("S-<dead-grave>" . (weiss-insert-backquote (insert "`")))
+   ("<left>" . left-char)
+   ("<right>" . right-char)
+))
+
 (defvar wks-vanilla-black-list '(dired-do-rename dired-do-delete))
 
 (defun wks-vanilla-mode-enable ()
@@ -15,7 +27,9 @@
     )
   (cond
    ((derived-mode-p 'prog-mode)
-    (indent-according-to-mode)
+    (unless (eq major-mode 'haskell-mode)
+      (indent-according-to-mode)
+      )
     )
    ((eq major-mode 'snails-mode)
     ;; (make-local-variable 'wks-vanilla-mode-map)

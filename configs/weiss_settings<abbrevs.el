@@ -9,6 +9,11 @@
 When  this was bound, it will expand abbrev at point if there're any possible
 abbrev.")
 
+(defun weiss-test ()
+  "DOCSTRING"
+  (interactive)
+  (message ": %s" (org-element-type (org-element-context (org-element-at-point)))))
+
 (defun weiss-check-or-expand-abbrev (&optional check)
   "Check the string between the cursor and the last space"
   (interactive)
@@ -28,7 +33,11 @@ abbrev.")
       ;; (message "matched string: %s" abrStr)
       (when (and
              (eq major-mode 'org-mode)
-             (eq 'latex-fragment (org-element-type (org-element-context (org-element-at-point)))))          
+             (or
+              (eq 'latex-fragment (org-element-type (org-element-context (org-element-at-point))))
+              (eq 'latex-environment (org-element-type (org-element-context (org-element-at-point))))
+              )
+             )          
         (setq local-abbrev-table latex-mode-abbrev-table)
         (when (string-prefix-p "$" abrStr)
           (setq abrStr (string-remove-prefix "$" abrStr)

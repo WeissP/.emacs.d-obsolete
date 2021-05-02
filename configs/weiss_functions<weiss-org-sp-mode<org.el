@@ -150,12 +150,13 @@ otherwise, go to next special position
                     type (org-element-type context)))
             (pcase type
               (`headline
-               (when (or (org-element-property :todo-type context)
-                         (org-element-property :scheduled context))
-                 (org-todo
-                  (if (eq (org-element-property :todo-type context) 'done)
-                      '"TODO"
-                    '"DONE")))
+               (if (or (org-element-property :todo-type context)
+                       (org-element-property :scheduled context))
+                   (org-todo
+                    (if (eq (org-element-property :todo-type context) 'done)
+                        '"TODO"
+                      '"DONE")))
+               (call-interactively 'org-cycle)               
                )
               (`link
                (let* ((lineage (org-element-lineage context '(link) t))

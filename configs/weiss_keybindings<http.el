@@ -5,6 +5,7 @@
                  )
 
 (with-eval-after-load 'mhtml-mode
+  (wks-unset-key mhtml-mode-map '("ß"))
   (wks-define-key mhtml-mode-map ""
                   '(
                     ("<tab>" . weiss-indent)

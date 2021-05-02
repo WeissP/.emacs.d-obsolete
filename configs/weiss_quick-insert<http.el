@@ -27,7 +27,7 @@
                  )
 
 
-(wks-define-key  wks-http-quick-insert-keymap "n "
+(wks-define-key  wks-http-quick-insert-keymap "<end> "
                  (weiss-http-insert-pair-alist t)
                  )
 

@@ -3,8 +3,8 @@
  '(
    ("<tab>" . company-complete-common-or-cycle)
    ("TAB" . company-complete-common-or-cycle)
-   ("9" . weiss-company-select-next-or-toggle-main-frame)
-   ("8" . (weiss-company-select-previous (company-complete-common-or-cycle -1)))
+   ("C-M-S-s-j" . weiss-company-select-next-or-toggle-main-frame)
+   ("C-M-S-s-k" . (weiss-company-select-previous (company-complete-common-or-cycle -1)))
    ;; ("<escape>" . nil)
    ;; ("<return>" . nil)
    ;; ("RET" . nil)

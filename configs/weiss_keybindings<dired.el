@@ -4,7 +4,7 @@
  )
 (wks-unset-key
  dired-mode-map
- '("SPC" "g" "n")
+ '("SPC" "g" "n" "=")
  )
 
 (wks-define-key
@@ -45,7 +45,7 @@
    ("," . beginning-of-buffer)
    ("." . end-of-buffer)
    (";" . dired-maybe-insert-subdir)
-   ("5" . revert-buffer)
+   ("-" . revert-buffer)
    ("8" .  dired-hide-details-mode)
    ("a" .  dired-sort-toggle-or-edit)
    ("A" .  hydra-dired-filter-actress/body)

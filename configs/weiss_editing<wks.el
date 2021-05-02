@@ -30,6 +30,7 @@
             (indent-region $p1 $p2)
             (indent-according-to-mode)
             )
+          (goto-char $p1)
           ))
     (progn ; no text selection
       (let ($p1 $p2)
@@ -856,6 +857,8 @@ Version 2017-08-19"
       (deactivate-mark)
       (web-beautify-html-buffer)
       )
+     ((eq major-mode 'haskell-mode)
+      (ormolu-format-buffer))
      ((eq major-mode 'go-mode)
       (gofmt))
      ((eq major-mode 'python-mode)

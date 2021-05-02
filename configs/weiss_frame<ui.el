@@ -1,36 +1,37 @@
 ;; (car (frame-edges))
 ;; (frame-width)
 ;; (frame-height)
-;; (frame-edges)
+(frame-edges)
+;;LEFT TOP RIGHT BOTTOM
 (setq frame-resize-pixelwise t)
 
 (setq weiss-desktop-left-frame-alist
-  '((tool-bar-lines . 0)
-    (width . 104) ; chars
-    (height . 48) ; lines
-    (left . 0)
-    (top . 0)))
+      '((tool-bar-lines . 0)
+        (width . 104) ; chars
+        (height . 48) ; lines
+        (left . 0)
+        (top . 29)))
 
 (setq weiss-desktop-right-frame-alist
-  '((tool-bar-lines . 0)
-    (width . 104) ; chars
-    (height . 48) ; lines
-    (left . 960)
-    (top . 0)))
+      '((tool-bar-lines . 0)
+        (width . 104) ; chars
+        (height . 48) ; lines
+        (left . 952)
+        (top . 34)))
 
 (setq weiss-laptop-left-frame-alist
-  '((tool-bar-lines . 0)
-    (width . 104) ; chars
-    (height . 48) ; lines
-    (left . 0)
-    (top . 0)))
+      '((tool-bar-lines . 0)
+        (width . 104) ; chars
+        (height . 48) ; lines
+        (left . 0)
+        (top . 0)))
 
 (setq weiss-laptop-right-frame-alist
-  '((tool-bar-lines . 0)
-    (width . 104) ; chars
-    (height . 48) ; lines
-    (left . 840)
-    (top . 0)))
+      '((tool-bar-lines . 0)
+        (width . 104) ; chars
+        (height . 48) ; lines
+        (left . 840)
+        (top . 0)))
 
 
 (if (display-graphic-p)

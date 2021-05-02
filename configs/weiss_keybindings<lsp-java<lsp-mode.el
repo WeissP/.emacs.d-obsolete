@@ -1,4 +1,4 @@
-(wks-unset-key java-mode-map '(","))
+(wks-unset-key java-mode-map '("," ";"))
 
 (wks-define-key
  java-mode-map "t"

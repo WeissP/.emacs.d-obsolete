@@ -116,6 +116,7 @@ Version 2018-06-04"
   (push-mark nil t)
   (xah-goto-matching-bracket)
   (setq mark-active t)
+  (exchange-point-and-mark)
   )
 
 

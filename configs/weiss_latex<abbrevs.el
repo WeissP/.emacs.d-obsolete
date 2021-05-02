@@ -126,6 +126,7 @@
     ("en" "\\neq " weiss--ahf)
     ("ea" "\\approx " weiss--ahf)
     ("ep" "\\prec " weiss--ahf)
+    ("et" "\\equiv " weiss--ahf)
 
 ;;;;; operation symbols
     ("op" "\\cdot " weiss--ahf)

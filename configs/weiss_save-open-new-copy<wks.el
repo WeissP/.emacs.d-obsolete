@@ -27,15 +27,27 @@ Version 2018-06-06"
             (revert-buffer))
         (user-error "buffer not file nor dired")))))
 
-(defun weiss-kill-append ()
+(defun weiss-kill-append (&optional sep)
   "append region to kill-ring"
   (interactive)
   (when (use-region-p)
     (let ((rbeg (region-beginning))
           (rend (region-end))
           )
-      (kill-append (buffer-substring-no-properties rbeg rend) nil)
+      (kill-append (format "%s%s" sep (buffer-substring-no-properties rbeg rend))  nil)
       )))
+
+(defun weiss-kill-append-with-space ()
+  "DOCSTRING"
+  (interactive)
+  (weiss-kill-append " ")
+  )
+
+(defun weiss-kill-append-with-comma ()
+  "DOCSTRING"
+  (interactive)
+  (weiss-kill-append ",")
+  )
 
 (defun weiss-exchange-region-kill-ring-car ()
   "insert pop current kill-ring and kill region"

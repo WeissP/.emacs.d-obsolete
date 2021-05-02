@@ -4,8 +4,14 @@
   "DOCSTRING"
   (interactive)
   (let ((kmacro-counter-format "%c")
-        (kmacro-initial-counter-value (string-to-number (read-string "A:65, a:97: " "97"))))
-    (call-interactively 'weiss-start-kmacro)
+        )
+    (if (or executing-kbd-macro defining-kbd-macro)
+        (call-interactively 'weiss-start-kmacro)        
+      (let ((kmacro-initial-counter-value (string-to-number (read-string "A:65, a:97: " "97")))
+            )
+        (call-interactively 'weiss-start-kmacro) 
+        )
+      )
     ))
 
 (defun weiss-call-kmacro ()

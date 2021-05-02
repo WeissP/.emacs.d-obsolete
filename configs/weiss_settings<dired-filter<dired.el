@@ -13,17 +13,21 @@
       "发射"
     (:description "发射")
     (let ((case-fold-search t))
-      (string-match-p "发射" file-name)))
+      (or (string-match-p "发射" file-name)
+          (string-match-p "cumshot" file-name))
+      ))
   (dired-filter-define bdsm
       "bdsm"
     (:description "bdsm")
     (let ((case-fold-search t))
-      (or (string-match-p "sm" file-name)
-          (string-match-p "拘束" file-name)
-          (string-match-p "凌辱" file-name)
-          (string-match-p "调教" file-name)
-          (string-match-p "捆绑" file-name)
-          (string-match-p "紧缚" file-name))))
+      (or
+       (string-match-p "bdsm" file-name)
+       (string-match-p "sm" file-name)
+       (string-match-p "拘束" file-name)
+       (string-match-p "凌辱" file-name)
+       (string-match-p "调教" file-name)
+       (string-match-p "捆绑" file-name)
+       (string-match-p "紧缚" file-name))))
   (dired-filter-define uncensored
       "uncensored"
     (:description "uncensored")
@@ -41,12 +45,14 @@
     (:description "stocking")
     (let ((case-fold-search t))
       (or  (string-match-p "连裤袜" file-name)
+           (string-match-p "stocking" file-name)
            (string-match-p "恋腿癖" file-name))))
   (dired-filter-define positiv
       "positiv"
     (:description "positiv")
     (let ((case-fold-search t))
       (or  (string-match-p "主动" file-name)
+           (string-match-p "positiv" file-name)
            (string-match-p "淫乱" file-name)
            (string-match-p "荡妇" file-name))))
   (dired-filter-define bigtits
@@ -55,43 +61,53 @@
     (let ((case-fold-search t))
       (or  (string-match-p "巨乳" file-name)
            (string-match-p "乳交" file-name)
+           (string-match-p "bigtits" file-name)
            (string-match-p "恋乳癖" file-name)
            (string-match-p "乳房" file-name))))
   (dired-filter-define prostitute
       "妓女"
     (:description "妓女")
     (let ((case-fold-search t))
-      (or  (string-match-p "妓女" file-name))))
+      (or  (string-match-p "prostitute" file-name)
+           (string-match-p "妓女" file-name))))
   (dired-filter-define blowjob
       "口交"
     (:description "口交")
     (let ((case-fold-search t))
-      (or  (string-match-p "口交" file-name)
-           (string-match-p "深喉" file-name))))
+      (or
+       (string-match-p "blowjob" file-name)
+       (string-match-p "口交" file-name)
+       (string-match-p "深喉" file-name))))
   (dired-filter-define pov
       "pov"
     (:description "pov")
     (let ((case-fold-search t))
-      (or  (string-match-p "主观视角" file-name)
-           (string-match-p "第一人称摄影" file-name))))
+      (or
+       (string-match-p "pov" file-name)
+       (string-match-p "主观视角" file-name)
+       (string-match-p "第一人称摄影" file-name))))
   (dired-filter-define grinding
       "grinding"
     (:description "grinding")
     (let ((case-fold-search t))
       (or  (string-match-p "女上位" file-name)
-           ;; (string-match-p "深喉" file-name)
+           (string-match-p "grinding" file-name)
            (string-match-p "颜面骑乘" file-name))))
   (dired-filter-define mature
       "mature"
     (:description "mature")
     (let ((case-fold-search t))
       (or  (string-match-p "成熟的女人" file-name)
+           (string-match-p "mature" file-name)
            (string-match-p "已婚妇女" file-name))))
   (dired-filter-define wafuku
       "和服"
     (:description "wafuku")
     (let ((case-fold-search t))
-      (string-match-p "和服" file-name)))
+      (or
+       (string-match-p "wafuku" file-name)
+       (string-match-p "和服" file-name))
+      ))
 
 
   (dired-filter-define qiaoben

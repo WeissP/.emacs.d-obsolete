@@ -10,12 +10,15 @@
  (current-global-map) ""
  '(
    ("M-i" . wks-vanilla-mode-disable)
-   ("<backtab>" . indent-for-tab-command)
+   ("<backtab>" . weiss-indent)
    ("<S-delete>" . (weiss-insert-single-slash (insert "\\")))
    ("M-DEL" . (weiss-insert-single-vertical-bar (insert "|")))
    ("<f5>" . revert-buffer)
    ("M-e" . eldoc)
    ("<escape>" . wks-global-quick-insert-keymap)
+   ("<dead-circumflex>" . (weiss-insert-grave (insert "^")))
+   ("<right>" . scroll-up)
+   ("<left>" . scroll-down)
    )
  )
 
@@ -27,31 +30,45 @@
    )
  )
 
+(wks-unset-key help-mode-map '("h"))
+(wks-unset-key messages-buffer-mode-map '("h"))
+(wks-unset-key image-mode-map '("SPC"))
+(with-eval-after-load 'man-mode
+  (wks-unset-key Man-mode-map '("k"))
+  )
+
 (global-unset-key (kbd "t"))
 (wks-define-key
  (current-global-map) ""
  `(
+   ("S-<dead-grave>" . weiss-delete-other-window)
+   ("`" . weiss-delete-other-window)
+   ("&" . weiss-test)
+   ("ß" . save-buffer)
+   ("$" . (wks-C-c-C-e (execute-kbd-macro ,(kbd "C-c C-e"))))
+
    ("," . xah-backward-left-bracket)
-   ("-" . weiss-switch-to-same-side-frame)
-   ("=" . xah-cycle-hyphen-underscore-space)
+   ("-" . mark-defun)
+   ("=" . split-window-below)
    ("." . xah-forward-right-bracket)
    (";" . rotate-text)
    ("/" . weiss-mark-brackets)
 
-   ("1" .  scroll-down)
-   ("2" .  scroll-up)
-   ("3" .  weiss-delete-other-window)
-   ("4" .  split-window-below)
-   ("5" .  weiss-test)
-   ("6" .  mark-defun)
-   ("7" .  xah-select-text-in-quote)
-   ("8" .  (wks-C-c-C-e (execute-kbd-macro ,(kbd "C-c C-e"))))
-   ("9" .  weiss-switch-to-otherside-top-frame)
-   ("0" .  weiss-switch-buffer-or-otherside-frame-without-top)
+   ;; ("1" .  scroll-down)
+   ;; ("2" .  scroll-up)
+   ;; ("3" .  weiss-delete-other-window)
+   ;; ("4" .  split-window-below)
+   ;; ("5" .  weiss-test)
+   ;; ("6" .  mark-defun)
+   ;; ("7" .  xah-select-text-in-quote)
+   ;; ("8" .  (wks-C-c-C-e (execute-kbd-macro ,(kbd "C-c C-e"))))
+   ;; ("9" .  weiss-switch-to-otherside-top-frame)
+   ;; ("0" .  weiss-switch-buffer-or-otherside-frame-without-top)
 
    ("a" . weiss-open-line-and-indent)
    ("b" . xah-toggle-letter-case)
    ("c" . xah-copy-line-or-region)
+   ("C" . weiss-kill-append-with-comma)
    ("d" . weiss-cut-line-or-delete-region)
    ("e" . weiss-delete-backward-with-region)
    ("f" . wks-vanilla-mode-enable)
@@ -83,13 +100,18 @@
    ("x" . weiss-exange-point-or-beginning-of-line)
    ("y" . undo)
    ("z" . weiss-comment-dwim)
-   ("<end>" . wks-vanilla-mode-disable)
+   ("<end>" . weiss-simulate-c-g)
    ("SPC" . wks-leader-keymap)
    ("<deletechar>" . wks-leader-keymap)
+
+   ("C-M-S-s-j" . weiss-switch-buffer-or-otherside-frame-without-top)
+   ("C-M-S-s-k" . weiss-switch-to-same-side-frame)
+   ("C-M-S-s-l" . weiss-switch-to-otherside-top-frame)
    )
  )
 
+;; (define-key key-translation-map (kbd "<f12>") (kbd "C-g"))
 
-(define-key key-translation-map (kbd "<f12>") (kbd "C-g"))
+
 
 (provide 'weiss_keybindings<wks)

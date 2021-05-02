@@ -11,11 +11,11 @@
    ("g" . (weiss-org-babel-insert-go (weiss-insert-pair "#+begin_src go" "#+end_src" t)))
    ("s" . (weiss-org-babel-insert-sh (weiss-insert-pair "#+begin_src sh" "#+end_src" t)))
    ("r" . (weiss-org-babel-insert-r (weiss-insert-pair "#+begin_src R" "#+end_src" t)))
-   ("c" . (weiss-org-babel-insert-conf (weiss-insert-pair "#+begin_src conf" "#+end_src" t)))
+   ("c" . (weiss-org-babel-insert-conf (weiss-insert-pair "#+begin_src c" "#+end_src" t)))
    ("q" . (weiss-org-babel-insert-sql (weiss-insert-pair "#+begin_src sql" "#+end_src" t)))
 
    ("RET" . (weiss-org-latex-insert-newline (insert "$\\\\$\n")))
-   ("c" . (weiss-org-latex-insert-color (weiss-insert-pair "$\\color{code}\\texttt{" "}$" nil)))
+   ;; ("c" . (weiss-org-latex-insert-color (weiss-insert-pair "$\\color{code}\\texttt{" "}$" nil)))
    )
  )
 

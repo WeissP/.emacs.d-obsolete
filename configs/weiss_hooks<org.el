@@ -18,6 +18,7 @@
             (make-local-variable 'shiftless-upper-rules)
             (shiftless-Umlaut)
             (visual-line-mode)
+            (eldoc-mode -1)
             ))
 
 (provide 'weiss_hooks<org)

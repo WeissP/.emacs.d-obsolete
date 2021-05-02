@@ -88,9 +88,11 @@
 (wks-define-key
  weiss-temp-insert-mode-map ""
  '(
-   ("<end>" . weiss-temp-insert-exit-and-remove-content)
    ("RET" . weiss-temp-insert-exit-and-keep-content)
    ))
+
+(define-key weiss-temp-insert-mode-map
+  [remap wks-vanilla-mode-disable] #'weiss-temp-insert-exit-and-remove-content)
 
 ;;;###autoload
 (define-minor-mode weiss-temp-insert-mode

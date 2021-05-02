@@ -28,7 +28,13 @@
    :entries
    ((pascal "\\(=\\)[a-z]" "[A-Z]")
     (snake "[a-z]")))
-
+  (casease-setup
+   :hook c-mode-hook
+   :separator ?-
+   :entries
+   ((screaming "\\(=\\)[a-z]")
+    (snake "[a-z]")
+    ))
   )
 
 (provide 'weiss_settings<casease)

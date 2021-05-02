@@ -1,3 +1,8 @@
+(defun weiss-simulate-c-g ()
+  "DOCSTRING"
+  (interactive)
+  (setq unread-command-events (listify-key-sequence "\C-g")))
+
 (defun weiss-is-today ()
   "return `t' if now is before 4AM"
   (< (string-to-number (format-time-string "%H")) 4)

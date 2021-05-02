@@ -17,14 +17,14 @@
                  :skip-install t
                  :first (
                          ob-fsharp ob-C ob-go ob-rust ob-java ob-sql-mode
-                                   (ob-javascript :github "zweifisch/ob-javascript"))
+                         (ob-javascript :github "zweifisch/ob-javascript"))
                  )
                 (org-agenda :local t)
                 (org-tempo :local t)
                 (org-roam
                  :then (org-roam-server org-roam-protocol (org-transclusion :disabled t)))
                 org-fancy-priorities
-
+                (org-table-to-qmk-keymap :local t)
                 (org-bullets :disabled t)
                 (org-rich-yank :disabled t)
                 )
@@ -72,6 +72,8 @@
         (shiftless :local t)
         expand-region    
 
+        (js :skip-install t :then (js-format))
+        json-mode
         (python :local t :then (yapfify ein))
         (http :then (auto-rename-tag)) (markdown-mode :local t) (cup-java-mode :local t)
         php-mode jastadd-ast-mode llvm-mode dockerfile-mode
@@ -84,10 +86,11 @@
          )
         (sql :then ((sql-indent :github "alex-hhh/emacs-sql-indent")))
 
+        (haskell :disabled nil :skip-install t :then ((dante :disabled t) (hasky-stack :disabled t) ormolu))
         (lsp-mode
-         :then (lsp-ui lsp-java lsp-python-ms ccls lsp-haskell)
+         :then (lsp-ui lsp-java lsp-python-ms ccls (lsp-haskell :disabled nil))
          )
-
+        csv-mode
         (magit :then (
                       git-timemachine git-messenger browse-at-remote gitattributes-mode
                       gitignore-mode gitconfig-mode))

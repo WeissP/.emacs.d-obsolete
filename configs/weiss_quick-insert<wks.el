@@ -8,9 +8,9 @@
             (weiss-insert-pair "[" "]" ,new-line)))
     ("l" . (,(if new-line 'weiss-insert-brace-new-line 'weiss-insert-brace)
             (weiss-insert-pair "{" "}" ,new-line)))
-    (";" . (,(if new-line 'weiss-insert-double-quote-new-line 'weiss-insert-double-quote)
+    ("i" . (,(if new-line 'weiss-insert-double-quote-new-line 'weiss-insert-double-quote)
             (weiss-insert-pair "\"" "\"" ,new-line)))
-    ("'" . (,(if new-line 'weiss-insert-single-quote-new-line 'weiss-insert-single-quote)
+    ("o" . (,(if new-line 'weiss-insert-single-quote-new-line 'weiss-insert-single-quote)
             (weiss-insert-pair "'" "'" ,new-line)))
     ("-" . (,(if new-line 'weiss-insert-underline-new-line 'weiss-insert-underline)
             (weiss-insert-pair "_" "_" ,new-line)))
@@ -26,7 +26,7 @@
             (weiss-insert-pair "*" "*" ,new-line)))
     ("/" . (,(if new-line 'weiss-insert-slash-new-line 'weiss-insert-slash)
             (weiss-insert-pair "/" "/" ,new-line)))
-    ("4" . (,(if new-line 'weiss-insert-dollar-new-line 'weiss-insert-dollar)
+    ("$" . (,(if new-line 'weiss-insert-dollar-new-line 'weiss-insert-dollar)
             (weiss-insert-pair "$" "$" ,new-line)))
     ("7" . (,(if new-line 'weiss-insert-and-new-line 'weiss-insert-and)
             (weiss-insert-pair "&" "&" ,new-line)))
@@ -66,7 +66,7 @@
                  (weiss-global-insert-escape-pair-alist nil)
                  )
 
-(wks-define-key  wks-global-quick-insert-keymap "n "
+(wks-define-key  wks-global-quick-insert-keymap "<end> "
                  (weiss-global-insert-pair-alist t)
                  )
 
