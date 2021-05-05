@@ -3,8 +3,8 @@
  '(
    ("<tab>" . weiss-indent)
    ("<RET>" . weiss-deactivate-mark-and-new-line)
-   ("<right>" . right-char)
-   ("<left>" . left-char)
+   ;; ("<right>" . right-char)
+   ;; ("<left>" . left-char)
    )
  )
 
@@ -21,10 +21,10 @@
    ("<dead-circumflex>" . (weiss-insert-grave (insert "^")))
    ("C-<tab>" .  text-scale-increase)
    ("C-S-<iso-lefttab>" .  text-scale-decrease)
-   ;; ("<right>" . scroll-up)
-   ("<down>" . scroll-up)
-   ;; ("<left>" . scroll-down)
-   ("<up>" . scroll-down)
+   ("<right>" . scroll-up)
+   ;; ("<down>" . scroll-up)
+   ("<left>" . scroll-down)
+   ;; ("<up>" . scroll-down)
    )
  )
 
