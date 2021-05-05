@@ -7,9 +7,9 @@
  '(
    ("," . (weiss-pdf-scroll-down (image-previous-line 2)))
    ("." . (weiss-pdf-scroll-up (image-next-line 2)))
-   ("=" .  pdf-view-scale-reset)
-   ("[" .  pdf-view-shrink )
-   ("]" .  pdf-view-enlarge)
+   ("=" .  split-window-below)
+   ("C-<tab>" .  pdf-view-enlarge )
+   ("C-S-<iso-lefttab>" .  pdf-view-shrink)
    ("1" .  weiss-pdf-view-previous-page-quickly)
    ("<left>" .  weiss-pdf-view-previous-page-quickly)
    ("2" .  weiss-pdf-view-next-page-quickly)

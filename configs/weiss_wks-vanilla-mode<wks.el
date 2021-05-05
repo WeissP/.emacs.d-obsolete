@@ -13,6 +13,8 @@
    ("S-<dead-grave>" . (weiss-insert-backquote (insert "`")))
    ("<left>" . left-char)
    ("<right>" . right-char)
+   ;; ("<down>" . next-line)
+   ;; ("<up>" . previous-line)
 ))
 
 (defvar wks-vanilla-black-list '(dired-do-rename dired-do-delete))

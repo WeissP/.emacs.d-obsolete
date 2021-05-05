@@ -3,6 +3,8 @@
  '(
    ("<tab>" . weiss-indent)
    ("<RET>" . weiss-deactivate-mark-and-new-line)
+   ("<right>" . right-char)
+   ("<left>" . left-char)
    )
  )
 
@@ -17,8 +19,12 @@
    ("M-e" . eldoc)
    ("<escape>" . wks-global-quick-insert-keymap)
    ("<dead-circumflex>" . (weiss-insert-grave (insert "^")))
-   ("<right>" . scroll-up)
-   ("<left>" . scroll-down)
+   ("C-<tab>" .  text-scale-increase)
+   ("C-S-<iso-lefttab>" .  text-scale-decrease)
+   ;; ("<right>" . scroll-up)
+   ("<down>" . scroll-up)
+   ;; ("<left>" . scroll-down)
+   ("<up>" . scroll-down)
    )
  )
 

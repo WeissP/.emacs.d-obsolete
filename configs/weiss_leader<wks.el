@@ -37,6 +37,7 @@
    ("c p" . xah-copy-file-path)
    ("c SPC" . weiss-kill-append-with-space)
    ("c ," . weiss-kill-append-with-comma)
+   ("c l" . weiss-kill-append-with-pipe)
 
    ("d a" .  weiss-custom-daily-agenda)
    ("d b" .  weiss-save-current-content)

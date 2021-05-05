@@ -16,8 +16,8 @@
       '((tool-bar-lines . 0)
         (width . 104) ; chars
         (height . 48) ; lines
-        (left . 952)
-        (top . 34)))
+        (left . 960)
+        (top . 29)))
 
 (setq weiss-laptop-left-frame-alist
       '((tool-bar-lines . 0)

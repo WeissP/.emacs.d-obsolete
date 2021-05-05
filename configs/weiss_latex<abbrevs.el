@@ -17,6 +17,7 @@
     ("gD" "\\Delta" weiss--ahf)
 
     ("ge" "\\epsilon" weiss--ahf)
+    ("gve" "\\varepsilon" weiss--ahf)
     ("gge" "\\Epsilon" weiss--ahf)
     ("gE" "\\Epsilon" weiss--ahf)
 
@@ -28,9 +29,9 @@
     ("ggg" "\\Gamma" weiss--ahf)
     ("gG" "\\Gamma" weiss--ahf)
 
-    ("ge" "\\eta" weiss--ahf)
-    ("gge" "\\Eta" weiss--ahf)
-    ("gE" "\\Eta" weiss--ahf)
+    ("gh" "\\eta" weiss--ahf)
+    ("ggh" "\\Eta" weiss--ahf)
+    ("gH" "\\Eta" weiss--ahf)
 
     ("gk" "\\kappa" weiss--ahf)
     ("ggk" "\\Kappa" weiss--ahf)
@@ -165,6 +166,9 @@
     ("sqed" "$\\hfill\\blacksquare$" weiss--ahf)
     ("sl" "\\lim_{n \\to \\infty}" weiss--ahf)
     ("sm" "\\mid " weiss--ahf)
+    ("sn" "\\nabla " weiss--ahf)
+    ("sh" "\\hat{▮} " weiss--ahf)
+    ("sp" "\\partial " weiss--ahf)
 
 ;;;;; Fast input
     ("frp" "\\mathbb{R}^+" weiss--ahf)
