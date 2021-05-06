@@ -38,7 +38,20 @@
 
 (wks-unset-key help-mode-map '("h"))
 (wks-unset-key messages-buffer-mode-map '("h"))
+
 (wks-unset-key image-mode-map '("SPC"))
+(wks-define-key
+ image-mode-map ""
+ '(
+   ("j" . next-line)
+   ("k" . previous-line)
+   ("i" . left-char)
+   ("l" . right-char)
+   ("C-<tab>" .  image-increase-size)
+   ("C-S-<iso-lefttab>" .  image-decrease-size)
+   )
+ )
+
 (with-eval-after-load 'man-mode
   (wks-unset-key Man-mode-map '("k"))
   )
