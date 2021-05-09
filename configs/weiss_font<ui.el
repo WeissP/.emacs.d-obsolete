@@ -17,8 +17,10 @@
            return (set-fontset-font t 'unicode font nil 'prepend))
 
   ;; Specify font for Chinese characters
-  (cl-loop for font in '("WenQuanYi Micro Hei" "Microsoft Yahei")
+  (cl-loop for font in '("FZPingXianYaSongS-R-GB" "WenQuanYi Micro Hei" "Microsoft Yahei" "LXGW WenKai")
            when (font-installed-p font)
            return (set-fontset-font t '(#x4e00 . #x9fff) font)))
+
+;; (setq face-font-rescale-alist '(("LXGW WenKai" . 1.2) ("WenQuanYi Zen Hei" . 1.2)))
 
 (provide 'weiss_font<ui)

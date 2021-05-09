@@ -70,7 +70,7 @@
    ("-" . mark-defun)
    ("=" . split-window-below)
    ("." . xah-forward-right-bracket)
-   (";" . rotate-text)
+   ("@" . rotate-text)
    ("/" . weiss-mark-brackets)
 
    ;; ("1" .  scroll-down)
@@ -111,6 +111,7 @@
    ("t o" . (wks-C-c-C-o (execute-kbd-macro ,(kbd "C-c C-o"))))
    ("t l" . (wks-C-c-C-l (execute-kbd-macro ,(kbd "C-c C-l"))))
    ("t t" . weiss-move-next-bracket-contents)
+   ("t f" . flycheck-list-errors)
 
    ("u" . weiss-delete-or-add-parent-sexp)
    ("v" . xah-paste-or-paste-previous)

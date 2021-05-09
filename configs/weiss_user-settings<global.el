@@ -23,8 +23,8 @@
 ;;Bookmarks
 (bookmark-load "/home/weiss/.emacs.d/bookmarks" t t t)
 (setq bookmark-save-flag 1)
-(bookmark-delete "org-capture-last-stored")
-(bookmark-delete "org-refile-last-stored")
+;;(bookmark-delete "org-capture-last-stored")
+;;(bookmark-delete "org-refile-last-stored")
 
 (save-place-mode -1)
 (delete-selection-mode 1)

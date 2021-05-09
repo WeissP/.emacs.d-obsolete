@@ -2,6 +2,7 @@
   (setq rotate-text-words
         '(("true" "false")
           ("nil" "t")
+          ("yes" "no")
           ("car" "cdr")
           ("add" "remove")
           ("width" "height")

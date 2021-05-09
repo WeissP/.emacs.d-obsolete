@@ -17,6 +17,9 @@
           (switch-to-buffer "*haskell*")
           )
       (other-window 1)
+      (unless (string= (buffer-name) "*haskell*")
+        (switch-to-buffer "*haskell*")
+        )
       )
     )
 

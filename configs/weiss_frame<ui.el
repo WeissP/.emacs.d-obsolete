@@ -1,7 +1,7 @@
 ;; (car (frame-edges))
 ;; (frame-width)
 ;; (frame-height)
-(frame-edges)
+;; (frame-edges)
 ;;LEFT TOP RIGHT BOTTOM
 (setq frame-resize-pixelwise t)
 

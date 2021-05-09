@@ -36,6 +36,7 @@
    ("c k" . save-buffers-kill-terminal)
    ("c p" . xah-copy-file-path)
    ("c SPC" . weiss-kill-append-with-space)
+   ("c RET" . weiss-kill-append-with-newline)
    ("c ," . weiss-kill-append-with-comma)
    ("c l" . weiss-kill-append-with-pipe)
 

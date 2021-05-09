@@ -5,6 +5,8 @@
   (wks-define-key
    wks-snails-vanilla-mode-map ""
    '(
+     ("<left>" . left-char)
+     ("<right>" . right-char)
      ("<down>" . snails-select-next-item)
      ("<up>" . snails-select-prev-item)
      ("C-j" . snails-select-next-item)
@@ -13,7 +15,7 @@
      ("C-M-S-s-j" . snails-select-next-backend)
      ("C-s" . snails-select-prev-backend)
      ("C-d" . snails-select-next-backend)
-     ("M-RET" . snails-candidate-alt-do)
+     ("C-<return>" . snails-candidate-alt-do)
      ("<end>" . wks-vanilla-mode-disable)
      )
    )

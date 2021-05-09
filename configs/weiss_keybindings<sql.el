@@ -1,9 +1,10 @@
+(wks-unset-key sql-mode-map '("t"))
 (wks-define-key
  sql-mode-map ""
  '(
    ("<backtab>" . weiss-indent-paragraph)
-   ("t" . weiss-sql-send-paragraph-or-region)
-   ("u" . weiss-insert-semicolon)
+   ("u" . weiss-sql-send-paragraph-or-region)
+   ("t s" . weiss-insert-semicolon)
    )
  )
 

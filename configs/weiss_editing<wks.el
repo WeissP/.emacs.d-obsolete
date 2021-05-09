@@ -862,6 +862,7 @@ Version 2017-08-19"
      ((eq major-mode 'go-mode)
       (gofmt))
      ((eq major-mode 'python-mode)
+      (indent-region (region-beginning) (region-end))
       (yapfify-buffer))
      (t
       (deactivate-mark)

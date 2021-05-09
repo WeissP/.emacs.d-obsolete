@@ -5,7 +5,7 @@
  '(
    ("t" . lsp-java-generate-to-string)
    ("s" . weiss-run-java-spring)
-   ("f" . weiss-format-current-java-file)
+   ;; ("f" . weiss-format-current-java-file)
    ("F" . weiss-format-current-java-dir)
    ("j" . weiss-add-javadoc)
    ("e" . lsp-java-generate-equals-and-hash-code)

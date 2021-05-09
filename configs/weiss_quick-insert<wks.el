@@ -45,9 +45,9 @@
             (weiss-insert-pair "\\[" "\\]" ,new-line)))
     ("l" . (,(if new-line 'weiss-insert-escape-brace-new-line 'weiss-insert-escape-brace)
             (weiss-insert-pair "\\{" "\\}" ,new-line)))
-    (";" . (,(if new-line 'weiss-insert-escape-quote-new-line 'weiss-insert-escape-quote)
+    ("i" . (,(if new-line 'weiss-insert-escape-quote-new-line 'weiss-insert-escape-quote)
             (weiss-insert-pair "\\\"" "\\\"" ,new-line)))
-    ("'" . (,(if new-line 'weiss-insert-escape-single-quote-new-line 'weiss-insert-escape-single-quote)
+    ("o" . (,(if new-line 'weiss-insert-escape-single-quote-new-line 'weiss-insert-escape-single-quote)
             (weiss-insert-pair "\\'" "\\'" ,new-line)))
     )
   )
@@ -70,7 +70,7 @@
                  (weiss-global-insert-pair-alist t)
                  )
 
-(wks-define-key  wks-global-quick-insert-keymap "n e "
+(wks-define-key  wks-global-quick-insert-keymap "<end> e "
                  (weiss-global-insert-escape-pair-alist t)
                  )
 

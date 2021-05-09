@@ -55,6 +55,12 @@ Version 2018-06-06"
   (weiss-kill-append "|")
   )
 
+(defun weiss-kill-append-with-newline ()
+  "DOCSTRING"
+  (interactive)
+  (weiss-kill-append "\n")
+  )
+
 (defun weiss-exchange-region-kill-ring-car ()
   "insert pop current kill-ring and kill region"
   (interactive)
