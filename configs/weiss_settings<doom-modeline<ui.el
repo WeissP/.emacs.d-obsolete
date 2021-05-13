@@ -42,6 +42,7 @@ and `xha-fly-kyes', etc."
               boon
               sep)))
   )
+
 ;; (setq doom-modeline-minor-modes t)
 (line-number-mode -1)
 (add-hook 'after-init-hook #'doom-modeline-mode)

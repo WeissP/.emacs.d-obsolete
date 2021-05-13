@@ -7,7 +7,7 @@
    rime-inline-ascii-trigger 'control-r
    )
 
-(defun weiss-rime-return ()
+  (defun weiss-rime-return ()
     "DOCSTRING"
     (interactive)
     (if (and (enter-rime--should-inline-ascii-p)
@@ -17,7 +17,6 @@
       (rime--return)
       )
     )
-
   )
 
 (provide 'weiss_settings<rime)

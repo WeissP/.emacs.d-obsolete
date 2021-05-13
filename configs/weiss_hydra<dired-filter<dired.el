@@ -65,7 +65,7 @@ _b_: ?q? 坂道みる      _w_: ?q? 鈴木心春      _s_: ?q? 山岸逢花     
 _f_: ?q? 楓カレン      _d_: ?q? 明里つむぎ     _S_: ?q? 松永さな      _v_: ?q? 宇都宮しをん
 _g_: ?q? 高桥圣子      _D_: ?q? 美竹すず      _t_: ?q? 天使もえ    _F_: ?q? 有坂深雪
 _G_: ?q? 岬ななみ      _q_: ?q? 橋本ありな      ^           ^  _r_: ?q? 桜空もも
-_n_: ?n? at point    ^                 ^    ^           ^ _z_: ?q? 朱音ゆい 
+_v_: ?v? at point    ^                 ^    ^           ^ _z_: ?q? 朱音ゆい 
 "
     ("!" dired-filter-negate "negate"  :column "general")
     ("@" dired-filter-or "or")
@@ -92,7 +92,7 @@ _n_: ?n? at point    ^                 ^    ^           ^ _z_: ?q? 朱音ゆい
     ("F" dired-filter-by-youban "")
     ("v" dired-filter-by-yudugong "")
     ("z" dired-filter-by-zhuyin "")
-    ("n" weiss-filter-video-by-actress-at-point "")
+    ("V" weiss-filter-video-by-actress-at-point "")
     ("C-g" nil)
     ("<escape>" nil))
 

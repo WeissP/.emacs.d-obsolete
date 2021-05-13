@@ -34,6 +34,7 @@
          :then (snails-roam))
         (dired
          :local t
+         ;; :after-dump-all t
          :then (
                 wdired diredfl all-the-icons-dired dired-hacks-utils dired-avfs dired-collapse
                 dired-quick-sort peep-dired dired-filter (weiss-dired-single-handed-mode :local t)

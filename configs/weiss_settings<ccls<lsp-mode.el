@@ -1,8 +1,8 @@
 (with-eval-after-load 'emacs-ccls
-  ;; (with-eval-after-load 'projectile
-  ;;   (setq projectile-project-root-files-top-down-recurring
-  ;;         (append '("compile_commands.json" ".ccls")
-  ;;                 projectile-project-root-files-top-down-recurring)))
+  (with-eval-after-load 'projectile
+    (setq projectile-project-root-files-top-down-recurring
+          (append '("compile_commands.json" ".ccls")
+                  projectile-project-root-files-top-down-recurring)))
   (require 'ccls)
   (dolist (x '(c-mode c++-mode objc-mode cuda-mode)) 
     (add-hook x #'(lambda () (lsp)))

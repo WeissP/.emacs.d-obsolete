@@ -13,8 +13,18 @@
   (load "/home/weiss/.emacs.d/configs/weiss_startup.el")
   (weiss-load-module weiss/modules nil)
   )
-  
-(weiss-load-module weiss/modules t)
+;; (require 'dired)
+;; (weiss-load-module weiss/modules t)
+;; (load "/home/weiss/.emacs.d/configs/weiss_settings<dired.el")
+;; (load "/home/weiss/.emacs.d/configs/weiss_compress<dired.el")
+(weiss-load-after-dump-configs)
+
+(let ((after-dump '(all-the-icons doom-modeline display-line-numbers server rime telega recentf emacs-yakuake tramp))
+      )
+  (dolist (x after-dump) 
+    (require x)
+    )
+  )
 
 (bookmark-load "/home/weiss/.emacs.d/bookmarks" t t t)
 (setq bookmark-save-flag 1)

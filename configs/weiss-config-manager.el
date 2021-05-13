@@ -1,7 +1,7 @@
 (require 'org-roam)
 
 (setq weiss-config-manager-after-dump-tags
-      '("font-lock-face" "recentf" "emacs-yakuake" "tramp" "keybindings" "doom-modeline" "all-the-icons" "frame" "font"))
+      '("font-lock-face" "recentf" "emacs-yakuake" "tramp" "keybindings" "doom-modeline" "all-the-icons" "frame" "font" "rime" "telega"))
 
 (defun weiss-process-git-link (link)
   "process git link as the format of quelpa"
@@ -34,7 +34,7 @@
   (interactive)
   `(like tags:tags ',(weiss-config-manager-process-tag tag))
   )
-;; (weiss-config-manager-get-after-dump-config '("ui"))
+
 (defun weiss-config-manager-get-after-dump-config (tags)
   "DOCSTRING"
   (interactive)
@@ -182,6 +182,37 @@
     )
   )
 
+(defun weiss-load-after-dump-configs ()
+  "DOCSTRING"
+  (interactive)
+  (let ((files (org-roam-db-query
+                ;; (emacsql-flatten-sql   
+                (vconcat
+                 [:select :distinct tags:file :from tags]
+                 `[:where
+                   ,(append
+                     '(and)
+                     ;; (mapcar 'weiss-config-manager-add-tag-conditions (append tags '("emacs" "dotfiles")))
+                     `(,(append
+                         '(or)
+                         (mapcar 'weiss-config-manager-add-tag-conditions weiss-config-manager-after-dump-tags)
+                         ))
+                     `((not ,(weiss-config-manager-add-tag-conditions "dumped")))
+                     `((not ,(weiss-config-manager-add-tag-conditions "keybindings")))
+                     )
+                   ]     
+                 )))
+        )
+    (dolist (file files) 
+      (message "file: %s" (car file))
+      (require (intern (weiss-process-provide (car file))))
+      )        
+    )
+  )
+;; (require 'weiss_elisp<font-lock-face<ui)
+
+;; (weiss-process-provide "/home/weiss/Dropbox/Org-roam/emacs-config/ƦEmacs_Config>elisp<font-lock-face<ui.org")
+;; (load "/home/weiss/Dropbox/Org-roam/emacs-config/ƦEmacs_Config>elisp<font-lock-face<ui.org")
 ;; (weiss-require-config-by-tags `("server" "first-order") "server" nil "/home/weiss/.emacs.d/dumped-packages.el")
 (defun weiss-require-config-by-tags (tags package after-dump  &optional log-file)
   "DOCSTRING"

@@ -17,5 +17,4 @@
 
 (save-place-mode -1)
 
-
 (dump-emacs-portable "~/.emacs.d/emacs.pdmp")

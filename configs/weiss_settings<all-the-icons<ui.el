@@ -20,5 +20,4 @@
       (message "Reset all-the-icons")))
   )
 
-
 (provide 'weiss_settings<all-the-icons<ui)

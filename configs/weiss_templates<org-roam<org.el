@@ -50,7 +50,7 @@
            :olp ("Fleeting notes")
            )
           ("j" "Journey" entry #'org-roam-capture--get-point
-           "* %<%H:%M>\n** %?"
+           "* %<%H:%M>\n %?"
            :file-name "daily/Ʀd-%<%Y-%m-%d>"
            :head "#+title: Daily-%<%Y-%m-%d>\n#+roam_tags: Daily\n"
            :olp ("Journey")

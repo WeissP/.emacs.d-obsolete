@@ -17,6 +17,7 @@
    ("M-DEL" . (weiss-insert-single-vertical-bar (insert "|")))
    ("<f5>" . revert-buffer)
    ("M-e" . eldoc)
+   ("C-n" . recenter-top-bottom)
    ("<escape>" . wks-global-quick-insert-keymap)
    ("<dead-circumflex>" . (weiss-insert-grave (insert "^")))
    ("C-<tab>" .  text-scale-increase)

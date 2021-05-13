@@ -573,6 +573,12 @@ Version 2017-08-19"
       (while (search-forward "\"" nil t)
         (replace-match "\\\"" "FIXEDCASE" "LITERAL")))))
 
+(defun weiss-remove-empty-lines ()
+  "DOCSTRING"
+  (interactive)
+  (flush-lines "^\\s-*$")
+  )
+
 
 (defun xah-clean-whitespace ()
   "Delete trailing whitespace, and replace repeated blank lines to just 1.
