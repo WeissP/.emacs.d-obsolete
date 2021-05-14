@@ -23,15 +23,15 @@
           (goto-char $p1)
           (insert @left-bracket)
           (when @new-line (insert "\n"))
-          (goto-char (+ $p2 2))
+          (goto-char (+ 1 $p2 (length @left-bracket)))
           (when @new-line
             (insert "\n")
-            (message ": %s" "indent")
             (indent-region $p1 $p2)
             (indent-according-to-mode)
             )
           (goto-char $p1)
-          ))
+          )
+        )
     (progn ; no text selection
       (let ($p1 $p2)
         (cond

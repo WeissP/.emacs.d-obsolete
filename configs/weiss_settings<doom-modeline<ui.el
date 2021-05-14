@@ -1,12 +1,5 @@
-(setq doom-modeline-window-width-limit fill-column
-      ;; doom-modeline-project-detection
-      ;; doom-modeline-buffer-file-name-style 'relative-to-project
-      ;; doom-modeline-bar-width 6
-      doom-modeline-window-width-limit 110
-      )
-
 (with-eval-after-load 'doom-modeline
-  (setq doom-modeline-modal-icon t)
+  (setq doom-modeline-modal-icon nil)
   (defsubst doom-modeline--wks ()
     "The current `wks' state."
     ;; (when (bound-and-true-p xah-fly-keys)
@@ -41,10 +34,16 @@ and `xha-fly-kyes', etc."
               (and xf (concat xf (and boon vsep)))
               boon
               sep)))
-  )
+  ;; (setq doom-modeline-minor-modes t)
+  (line-number-mode -1)
+  (add-hook 'after-init-hook #'doom-modeline-mode)
 
-;; (setq doom-modeline-minor-modes t)
-(line-number-mode -1)
-(add-hook 'after-init-hook #'doom-modeline-mode)
+  (setq doom-modeline-window-width-limit fill-column
+        ;; doom-modeline-project-detection
+        ;; doom-modeline-buffer-file-name-style 'relative-to-project
+        ;; doom-modeline-bar-width 6
+        doom-modeline-window-width-limit 110
+        )
+  )
 
 (provide 'weiss_settings<doom-modeline<ui)

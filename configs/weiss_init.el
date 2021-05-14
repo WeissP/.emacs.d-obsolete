@@ -17,14 +17,15 @@
 ;; (weiss-load-module weiss/modules t)
 ;; (load "/home/weiss/.emacs.d/configs/weiss_settings<dired.el")
 ;; (load "/home/weiss/.emacs.d/configs/weiss_compress<dired.el")
-(weiss-load-after-dump-configs)
+;; (weiss-load-after-dump-configs)
 
-(let ((after-dump '(all-the-icons doom-modeline display-line-numbers server rime telega recentf emacs-yakuake tramp))
+(let ((after-dump '(weiss_after-dump-misc all-the-icons display-line-numbers server rime telega recentf emacs-yakuake tramp gcmh))
       )
   (dolist (x after-dump) 
     (require x)
     )
   )
+(load "/home/weiss/weiss/emacs/lisp/dired.el")
 
 (bookmark-load "/home/weiss/.emacs.d/bookmarks" t t t)
 (setq bookmark-save-flag 1)
@@ -41,7 +42,7 @@
 (setq weiss-left-top-window (make-frame-command))
 (select-frame-set-input-focus weiss-right-top-window)
 
-(setq gc-cons-threshold (* (expt 1024 2) 32)
+(setq gc-cons-threshold (* (expt 1024 2) 128)
       gc-cons-percentage 0.5)
 
 (message "Emacs is ready, startup cost: %.3f seconds." (time-to-seconds (time-since weiss/launch-time)))

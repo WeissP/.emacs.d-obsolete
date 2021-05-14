@@ -56,6 +56,22 @@
       ]     
     )))
 
+(defun weiss-config-manager-get-config (tags)
+  "DOCSTRING"
+  (interactive)
+  (org-roam-db-query
+   (vconcat
+    [:select :distinct tags:file :from tags]
+    `[:where
+      ,(append
+        '(and)
+        (mapcar 'weiss-config-manager-add-tag-conditions (append tags '("emacs" "dotfiles")))
+        `((not ,(weiss-config-manager-add-tag-conditions "keybindings")))
+        )
+      ]     
+    ))
+  )
+
 (defun weiss-config-manager-get-dumped-config (tags)
   "DOCSTRING"
   (interactive)
@@ -81,8 +97,7 @@
       )
     ))
 
-
-(defun weiss-load-module (package-list after-dump &optional log-file)
+(defun weiss-load-module (package-list &optional log-file)
   "`after-dump' means only skip installing package, after-dump-all means skip package and also all configs"
   (interactive)
   (dolist (package package-list)
@@ -92,8 +107,6 @@
               (condition (plist-get (cdr package) :when))
               )
           (when (and (not (plist-get plist :disabled))
-                     (or (not (plist-member plist :after-dump-all))
-                         (eq after-dump (plist-get plist :after-dump-all)))
                      (or (not condition)
                          (if (listp (eval condition))
                              (eval (eval condition))
@@ -101,51 +114,50 @@
                            )
                          )
                      )
-            (weiss-load-module (plist-get plist :first) after-dump log-file)
+            (weiss-load-module (plist-get plist :first) log-file)
 
-            ;; (message "load: %s" name)
-            (weiss-load-config (symbol-name name) after-dump log-file)
-            (cond
-             ((plist-get plist :local)
-              (ignore)
-              )
-             ((plist-get plist :skip-install)
-              (ignore)
-              )
-             ((plist-member plist :github)
-              (quelpa `(,name :fetcher github-ssh
-                              :repo ,(weiss-process-git-link (plist-get plist :github))))
-              )
-             ((plist-member plist :file)
-              (quelpa `(,name :fetcher file
-                              :path ,(plist-get plist :file)))
-              )
-             ((plist-member plist :quelpa)
-              ;; (message "quelpa: %s" (plist-get plist :quelpa))
-              (quelpa (plist-get plist :quelpa))
-              )
-             ;; ((plist-member plist :name)
-             ;;  (message ": %s" (plist-get plist :quelpa))
-             ;;  ;; (quelpa (plist-get plist :quelpa))
-             ;;  )
-             (t (quelpa name))
-             )
+            (weiss-load-config (symbol-name name) log-file)
 
-            (when (and (not (plist-get plist :skip-install))
-                       (eq after-dump (plist-get plist :after-dump))) 
+            (when (not (plist-get plist :skip-install)) 
               (if log-file
-                  (weiss-insert-require log-file (symbol-name name))
+                  (unless (plist-get plist :after-dump)
+                    (weiss-insert-require log-file (symbol-name name))
+                    )
+                (cond
+                 ((plist-get plist :local)
+                  (ignore)
+                  )
+                 ((plist-get plist :skip-install)
+                  (ignore)
+                  )
+                 ((plist-member plist :github)
+                  (quelpa `(,name :fetcher github-ssh
+                                  :repo ,(weiss-process-git-link (plist-get plist :github))))
+                  )
+                 ((plist-member plist :file)
+                  (quelpa `(,name :fetcher file
+                                  :path ,(plist-get plist :file)))
+                  )
+                 ((plist-member plist :quelpa)
+                  ;; (message "quelpa: %s" (plist-get plist :quelpa))
+                  (quelpa (plist-get plist :quelpa))
+                  )
+                 ;; ((plist-member plist :name)
+                 ;;  (message ": %s" (plist-get plist :quelpa))
+                 ;;  ;; (quelpa (plist-get plist :quelpa))
+                 ;;  )
+                 (t (quelpa name))
+                 )
                 (require name)
                 )
               )
-
-            (weiss-load-module (plist-get plist :then) after-dump log-file)
+            (weiss-load-module (plist-get plist :then) log-file)
             ))        
       ;; (message "load: %s" (symbol-name package))
-      (weiss-load-config (symbol-name package) after-dump log-file)
-      (quelpa package)
+      (weiss-load-config (symbol-name package) log-file)
       (if log-file
           (weiss-insert-require log-file (symbol-name package))
+        (quelpa package)
         (require package)
         )
       )
@@ -204,7 +216,7 @@
                  )))
         )
     (dolist (file files) 
-      (message "file: %s" (car file))
+      ;; (message "file: %s" (car file))
       (require (intern (weiss-process-provide (car file))))
       )        
     )
@@ -214,10 +226,10 @@
 ;; (weiss-process-provide "/home/weiss/Dropbox/Org-roam/emacs-config/ƦEmacs_Config>elisp<font-lock-face<ui.org")
 ;; (load "/home/weiss/Dropbox/Org-roam/emacs-config/ƦEmacs_Config>elisp<font-lock-face<ui.org")
 ;; (weiss-require-config-by-tags `("server" "first-order") "server" nil "/home/weiss/.emacs.d/dumped-packages.el")
-(defun weiss-require-config-by-tags (tags package after-dump  &optional log-file)
+(defun weiss-require-config-by-tags (tags package &optional log-file)
   "DOCSTRING"
   (interactive)
-  (when-let ((files (weiss-roam-search-emacs-config tags after-dump))
+  (when-let ((files (weiss-config-manager-get-config tags))
              )
     ;; (message "files: %s" (reverse files))
     (dolist (file-list files)
@@ -237,13 +249,13 @@
       )
     ))
 
-(defun weiss-load-config (package after-dump &optional log-file)
+(defun weiss-load-config (package &optional log-file)
   "DOCSTRING"
   (interactive)
-  (weiss-require-config-by-tags `(,package "first-order") package after-dump log-file)
-  (weiss-require-config-by-tags `(,package "second-order") package after-dump log-file)
-  (weiss-require-config-by-tags `(,package "third-order") package after-dump log-file)
-  (weiss-require-config-by-tags `(,package) package after-dump log-file)
+  (weiss-require-config-by-tags `(,package "first-order") package log-file)
+  (weiss-require-config-by-tags `(,package "second-order") package log-file)
+  (weiss-require-config-by-tags `(,package "third-order") package log-file)
+  (weiss-require-config-by-tags `(,package) package log-file)
   )
 
 (defun weiss-insert-require-to-log-file ()
@@ -253,7 +265,7 @@
         )
     (find-file file)
     (erase-buffer)
-    (weiss-load-module weiss/modules nil file)    
+    (weiss-load-module weiss/modules file)    
     )
   )
 

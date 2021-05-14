@@ -56,7 +56,9 @@
         (ui     
          :skip-install t
          :then (
-                popwin nyan-mode (doom-modeline :after-dump t) highlight-indent-guides
+                (modeline :skip-install t) popwin
+                (doom-modeline :after-dump t :disabled t) (nyan-mode :disabled t)
+                highlight-indent-guides
                 rainbow-mode highlight-parentheses hl-todo (color-outline :local t)
                 highlight-symbol anzu hl-line web-beautify origami (whitespace :disabled t)
                 (ligature :github "mickeynp/ligature.el")
@@ -106,6 +108,7 @@
         (tramp :after-dump-all t :local t :then (sudo-edit counsel-tramp docker-tramp))
         (recentf :after-dump t :local t)
         (emacs-yakuake :local t :after-dump t)
+        (gcmh :after-dump t)
         ))
 
 (provide 'weiss_modules)
