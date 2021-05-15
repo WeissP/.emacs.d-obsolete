@@ -1,3 +1,30 @@
+(defun weiss-delete-current-block ()
+  "DOCSTRING"
+  (interactive)
+  (skip-chars-forward " \n\t")
+  (when (re-search-backward "\n[ \t]*\n" nil "move")
+    (re-search-forward "\n[ \t]*\n"))
+  (let ((pb (point))
+        )
+    (re-search-forward "\n[ \t]*\n" nil "move")    
+    (kill-region pb (point))
+    )
+  )
+
+(defun weiss-insert-space ()
+  "DOCSTRING"
+  (interactive)
+  (save-excursion
+    (insert " ")
+    )
+  )
+
+(defun weiss-kill-line-backward ()
+  "DOCSTRING"
+  (interactive)
+  (kill-region (line-beginning-position) (point))
+  )
+
 (defun weiss-deactivate-mark-and-new-line ()
   "DOCSTRING"
   (interactive)
@@ -806,6 +833,21 @@ Version 2017-08-19"
    )
   )
 
+(defun weiss-downcase-region ()
+  "DOCSTRING"
+  (interactive)
+  (let (
+        (deactivate-mark nil)
+        $p1 $p2)
+    (if (use-region-p)
+        (setq $p1 (region-beginning) $p2 (region-end))
+      (save-excursion
+        (skip-chars-backward "0-9A-Za-z")
+        (setq $p1 (point))
+        (skip-chars-forward "0-9A-Za-z")
+        (setq $p2 (point))))
+    (downcase-region $p1 $p2))
+  )
 
 (defun xah-toggle-letter-case ()
   "Toggle the letter case of current word or text selection.
@@ -835,7 +877,8 @@ Version 2017-08-19"
       (put this-command 'state 2))
      ((equal 2 (get this-command 'state))
       (downcase-region $p1 $p2)
-      (put this-command 'state 0)))))
+      (upcase-initials-region $p1 $p2)
+      (put this-command 'state 1)))))
 
 (defun weiss-indent-nearby-lines ()
   "DOCSTRING"

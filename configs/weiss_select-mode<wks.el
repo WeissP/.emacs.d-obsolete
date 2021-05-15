@@ -38,6 +38,8 @@
 (advice-add 'weiss-select-sexp :after #'weiss-select-mode-turn-on)
 (advice-add 'weiss-expand-region-by-word :after #'weiss-select-mode-turn-on)
 (advice-add 'mark-whole-buffer :after #'weiss-select-mode-turn-on)
+(advice-add 'weiss-move-to-next-punctuation :after #'weiss-select-mode-turn-on)
+(advice-add 'weiss-move-to-previous-punctuation :after #'weiss-select-mode-turn-on)
 
 (if (featurep 'expand-region)
     (advice-add 'er/expand-region :after #'weiss-select-mode-turn-on)    
@@ -62,6 +64,8 @@
 (advice-add 'xah-open-file-at-cursor :before #'weiss-deactivate-mark-unless-in-select-mode)
 (advice-add 'weiss-delete-or-add-parent-sexp :before #'weiss-deactivate-mark-unless-in-select-mode)
 (advice-add 'org-roam-dailies--capture :before #'weiss-deactivate-mark-unless-in-select-mode)
+(advice-add 'weiss-move-to-next-block :before #'weiss-deactivate-mark-unless-in-select-mode)
+(advice-add 'weiss-move-to-previous-block :before #'weiss-deactivate-mark-unless-in-select-mode)
 ;; (advice-add 'newline :before #'weiss-deactivate-mark-unless-in-select-mode)
 
 (defun anzu-query-replace (arg)

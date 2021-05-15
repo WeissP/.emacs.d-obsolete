@@ -1,3 +1,27 @@
+(defun weiss-move-to-next-block ()
+  "DOCSTRING"
+  (interactive)
+  (re-search-forward "\n[\t\n ]*\n+" nil "move")
+  )
+
+(defun weiss-move-to-previous-block ()
+  "DOCSTRING"
+  (interactive)
+  (re-search-backward "\n[\t\n ]*\n+" nil "move")
+  )
+
+(defun weiss-move-to-next-punctuation ()
+  "DOCSTRING"
+  (interactive)
+  (skip-chars-forward "[a-zA-Z\\-_]")  
+  )
+
+(defun weiss-move-to-previous-punctuation ()
+  "DOCSTRING"
+  (interactive)
+  (skip-chars-backward "[a-zA-Z\\-_]")  
+  )
+
 (defun xah-beginning-of-line-or-block ()
   "Move cursor to beginning of line or previous paragraph.
 

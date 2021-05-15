@@ -159,7 +159,7 @@
    ("o e" . weiss-end-kmacro)
    ("o c" . kmacro-call-macro)
 
-   ("p" . recenter-top-bottom)
+   ("p" . (weiss-insert-line-and-goto-insert-mode (weiss-insert-line) (wks-vanilla-mode-enable)))
    ("q" . xah-fill-or-unfill)
    ("r" . anzu-query-replace)
    ("s" . exchange-point-and-mark)

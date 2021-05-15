@@ -1,19 +1,20 @@
-(add-hook 'telega-chat-mode-hook #'(lambda ()
-                                     (set (make-local-variable 'company-backends)
-                                          (append '(telega-company-emoji
-                                                    telega-company-username
-                                                    telega-company-hashtag)
-                                                  (when (telega-chat-bot-p telega-chatbuf--chat)
-                                                    '(telega-company-botcmd))))
-                                     (company-mode 1)
-                                     (emojify-mode)
-                                     ))
-
-(add-hook 'telega-root-mode-hook #'(lambda () 
-                                     (emojify-mode)
-                                     ))
-
 (with-eval-after-load 'telega
+  (add-hook 'telega-chat-mode-hook #'(lambda ()
+                                       (set (make-local-variable 'company-backends)
+                                            (append '(telega-company-emoji
+                                                      telega-company-username
+                                                      telega-company-hashtag)
+                                                    (when (telega-chat-bot-p telega-chatbuf--chat)
+                                                      '(telega-company-botcmd))))
+                                       (company-mode 1)
+                                       (emojify-mode)
+                                       ))
+
+  (add-hook 'telega-root-mode-hook #'(lambda () 
+                                       (emojify-mode)
+                                       ))
+
+
   (defun weiss-get-telega-marked-text ()
     "Delete marked messages in chatbuf.
 If `\\[universal-argument]' is specified, then kill

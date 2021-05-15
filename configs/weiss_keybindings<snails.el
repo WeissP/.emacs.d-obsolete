@@ -17,6 +17,8 @@
      ("C-d" . snails-select-next-backend)
      ("C-<return>" . snails-candidate-alt-do)
      ("<end>" . wks-vanilla-mode-disable)
+     ("S-<dead-grave>" . weiss-snails-paste)
+     ("`" . weiss-snails-paste)
      )
    )
   ;; (define-key snails-mode-map [remap next-line] #'snails-select-next-backend)

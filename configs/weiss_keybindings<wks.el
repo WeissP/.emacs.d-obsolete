@@ -71,6 +71,7 @@
    ("-" . mark-defun)
    ("=" . split-window-below)
    ("." . xah-forward-right-bracket)
+   ("!" . wks-repeat-command)
    ("@" . rotate-text)
    ("/" . weiss-mark-brackets)
 

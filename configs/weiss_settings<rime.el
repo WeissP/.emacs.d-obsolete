@@ -1,6 +1,5 @@
 (with-eval-after-load 'rime
   (setq default-input-method "rime")
-
   (setq
    rime-show-candidate 'minibuffer
    rime-translate-keybindings  '("C-f" "C-b" "C-n" "C-p" "C-g" "`" ";" "<dead-grave>")

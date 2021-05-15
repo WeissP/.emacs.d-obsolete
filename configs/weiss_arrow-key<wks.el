@@ -60,7 +60,11 @@
         (forward-char)
         (setq mark-active t))
 
-    (weiss-forward-and-select-word)))
+    (if (string= current-input-method "rime")
+        (call-interactively 'right-char)
+      (weiss-forward-and-select-word)
+      )
+    ))
 
 (defun weiss-left-key ()
   "smart decide whether move by word or by char"
@@ -72,8 +76,10 @@
         (backward-char)
         (setq mark-active t)
         (weiss-select-mode-turn-on))    
-    (weiss-backward-and-select-word)
-    ))
+    (if (string= current-input-method "rime")
+        (call-interactively 'left-char)
+      (weiss-backward-and-select-word)
+      )))
 
 (defun weiss-forward-and-select-word ()
   "Forward and select word, if in quote, then select all"

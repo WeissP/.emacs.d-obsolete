@@ -42,7 +42,7 @@
 (setq weiss-left-top-window (make-frame-command))
 (select-frame-set-input-focus weiss-right-top-window)
 
-(setq gc-cons-threshold (* (expt 1024 2) 128)
+(setq gc-cons-threshold (* (expt 1024 2) 32)
       gc-cons-percentage 0.5)
 
 (message "Emacs is ready, startup cost: %.3f seconds." (time-to-seconds (time-since weiss/launch-time)))

@@ -1,3 +1,32 @@
+(defun xah-select-current-block ()
+  "Select the current block of text between blank lines.
+
+URL `http://ergoemacs.org/emacs/modernization_mark-word.html'
+Version 2017-07-02"
+  (interactive)
+  (progn
+    (skip-chars-forward " \n\t")
+    (when (re-search-backward "\n[ \t]*\n" nil "move")
+      (re-search-forward "\n[ \t]*\n"))
+    (push-mark (point) t t)
+    (re-search-forward "\n[ \t]*\n" nil "move")))
+
+(defun xah-select-block ()
+  "Select the current/next block of text between blank lines.
+If region is active, extend selection downward by block.
+
+URL `http://ergoemacs.org/emacs/modernization_mark-word.html'
+Version 2019-12-26"
+  (interactive)
+  (if (region-active-p)
+      (re-search-forward "\n[ \t]*\n" nil "move")
+    (progn
+      (skip-chars-forward " \n\t")
+      (when (re-search-backward "\n[ \t]*\n" nil "move")
+        (re-search-forward "\n[ \t]*\n"))
+      (push-mark (point) t t)
+      (re-search-forward "\n[ \t]*\n" nil "move"))))
+
 (defun weiss-deactivate-mark ()
   "DOCSTRING"
   (interactive)
