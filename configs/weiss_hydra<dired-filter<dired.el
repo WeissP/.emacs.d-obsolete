@@ -50,7 +50,7 @@
     )  
   )
 
-(dolist (x '("bdsm" "blowjob" "bigtits" "cumshot" "gruppensex" "mature" "positiv" "prostitute" "grinding" "pov" "stocking" "swag" "uncensored" "wafuku")) 
+(dolist (x '("bdsm" "blowjob" "bigtits" "cumshot" "gruppensex" "mature" "positiv" "prostitute" "grinding" "pov" "stocking" "swag" "uncensored" "wafuku" "asmr")) 
   (eval `(weiss-dired-new-modify-tags ,x))
   )
 
@@ -122,7 +122,8 @@ _v_: ?v? at point    ^                 ^    ^           ^ _z_: ?q? 朱音ゆい
 
   (defhydra hydra-dired-add-tag (:hint nil :color pink)
 
-    ("a" weiss-dired-add-tag-bdsm       "bdsm" :column "a-z")
+    ("a" weiss-dired-add-tag-asmr       "asmr" :column "a-z")
+    ("A" weiss-dired-add-tag-bdsm       "bdsm")
     ("b" weiss-dired-add-tag-blowjob    "blowjob")
     ("B" weiss-dired-add-tag-bigtits    "bigtits")
     ("c" weiss-dired-add-tag-cumshot    "cumshot")
