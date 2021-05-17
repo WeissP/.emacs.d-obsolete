@@ -15,10 +15,12 @@
                 (line-number-mode "L%l/")
                 (line-number-mode weiss-mode-line-buffer-line-count)
                 (column-number-mode " C%c ")        
+                ;; weiss-mode-line-flycheck-errors
                 "   "
                 "Root:" weiss-mode-line-projectile-root-dir
                 "   "
                 "%e" mode-line-buffer-identification "   " 
+                ;; weiss-mode-line-git
                 (vc-mode vc-mode)
                 "  " mode-line-misc-info mode-line-end-spaces
                 ))
