@@ -79,7 +79,7 @@
         json-mode
         (python :local t :then (yapfify ein))
         (http :then (auto-rename-tag)) (markdown-mode :local t) (cup-java-mode :local t)
-        php-mode jastadd-ast-mode llvm-mode dockerfile-mode
+        web-mode jastadd-ast-mode llvm-mode dockerfile-mode
         (go-mode
          :then (
                 go-dlv go-impl go-fill-struct
