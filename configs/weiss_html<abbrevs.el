@@ -31,6 +31,7 @@
     ("eq" "&quot;" weiss--ahf)
 
     ("pre" "<pre>\n▮\n</pre>" weiss--ahf-indent)    
+    ("php" "<?php\n▮\n?>" weiss--ahf)
     ("div" "<div> ▮ </div>")
 
     ("code" "<pre>\n<code>\n▮\n</code>\n</pre>" weiss--ahf-indent)
