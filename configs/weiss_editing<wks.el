@@ -671,6 +671,26 @@ Version 2017-08-19"
       ))
   )
 
+(defun weiss-comment-downward ()
+  "DOCSTRING"
+  (interactive)
+  (let ((beg (point))
+        (commented (comment-only-p (line-beginning-position) (line-end-position)))
+        (continue t)
+        end 
+        )    
+    (while (and continue (eq commented (comment-only-p (line-beginning-position) (line-end-position))))
+      (forward-line)
+      (when (or (weiss-line-empty-p)
+                (eq (line-end-position) (point-max)))
+        (setq continue nil))
+      )    
+    (previous-line)    
+    (setq end (line-end-position))
+    (comment-or-uncomment-region beg end)
+    )
+  )
+
 (defun xah-shrink-whitespaces ()
   "Remove whitespaces around cursor to just one, or none.
 

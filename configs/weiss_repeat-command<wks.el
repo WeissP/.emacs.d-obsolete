@@ -31,6 +31,8 @@
 
         (wks-find-symbol-forward . wks-find-last-found)
         (wks-find-symbol-backward . wks-find-last-found)
+
+        (weiss-comment-dwim . weiss-comment-downward)
         ))
 
 (setq wks-repeat-command-blacklist

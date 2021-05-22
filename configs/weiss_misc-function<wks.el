@@ -1,3 +1,9 @@
+(defun weiss-line-empty-p ()
+  "https://emacs.stackexchange.com/questions/16792/easiest-way-to-check-if-current-line-is-empty-ignoring-whitespace"
+  (interactive)
+  (string-match-p "\\`\\s-*$" (thing-at-point 'line))
+  )
+
 (defun weiss-simulate-c-g ()
   "DOCSTRING"
   (interactive)
