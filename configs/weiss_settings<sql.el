@@ -1,7 +1,7 @@
 (with-eval-after-load 'sql
   (setq sql-postgres-login-params
         '((user :default "weiss")
-          (database :default "dbproject")
+          (database :default "kse")
           (server :default "localhost")
           ))
   ;; (defalias 'sql-get-login 'ignore)

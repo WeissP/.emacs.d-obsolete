@@ -14,6 +14,15 @@
     )
   )
 
+(defun weiss-split-or-delete-window ()
+  "DOCSTRING"
+  (interactive)
+  (if (one-window-p)
+      (call-interactively 'split-window-below)
+    (weiss-delete-other-window)    
+    )
+  )
+
 (defun weiss-delete-other-window ()
   "If the current buffer ist org src file, switch between maximize window size(but not delete other windows) and half window size, else delete other windows"
   (interactive)

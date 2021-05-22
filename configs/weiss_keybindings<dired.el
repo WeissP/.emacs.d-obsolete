@@ -4,7 +4,7 @@
  )
 (wks-unset-key
  dired-mode-map
- '("SPC" "g" "n" "=" "!")
+ '("SPC" "g" "n" "=" "!" "a")
  )
 
 (wks-define-key
@@ -47,7 +47,7 @@
    (";" . dired-maybe-insert-subdir)
    ("-" . revert-buffer)
    ("8" .  dired-hide-details-mode)
-   ("a" .  dired-sort-toggle-or-edit)
+   ("=" .  dired-sort-toggle-or-edit)
    ("A" .  hydra-dired-filter-actress/body)
    ("c" .  dired-do-copy)
    ("C" .  weiss-dired-rsync)
@@ -70,7 +70,7 @@
    ("u" .  dired-unmark)
    ("U" .  (weiss-dired-unmark-all-and-revert (dired-unmark-all-marks) (revert-buffer)))
    ("v" .  weiss-dired-git-clone)
-   ("w" .  weiss-dired-copy-file-name)
+   ("!" .  weiss-dired-copy-file-name)
    ("x" .  dired-do-flagged-delete)
    ("z" .  dired-do-compress)
    ("Z" .  dired-do-compress-to)

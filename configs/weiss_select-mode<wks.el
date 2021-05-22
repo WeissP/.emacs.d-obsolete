@@ -105,14 +105,14 @@
   :lighter " select"
   :keymap
   (let ((keymap (make-sparse-keymap)))
-    (define-key keymap (kbd ";") 'xah-beginning-of-line-or-block)
+    ;; (define-key keymap (kbd ";") 'xah-beginning-of-line-or-block)
     (define-key keymap (kbd "h") 'xah-end-of-line-or-block)
     (define-key keymap (kbd "p") 'weiss-contract-region-by-word)
     (define-key keymap (kbd "i") 'backward-char)
     (define-key keymap (kbd "j") 'next-line)
     (define-key keymap (kbd "k") 'previous-line)
     (define-key keymap (kbd "l") 'forward-char)
-    (define-key keymap (kbd "x") 'exchange-point-and-mark)
+    (define-key keymap (kbd "!") 'exchange-point-and-mark)
     keymap
     )
   :group 'weiss-select-mode

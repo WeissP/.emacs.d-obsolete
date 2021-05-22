@@ -44,7 +44,7 @@
 
 (setq gc-cons-threshold (* (expt 1024 3) 3)
       gc-cons-percentage 0.5
-      garbage-collection-messages t)
+      garbage-collection-messages nil)
 
 (message "Emacs is ready, startup cost: %.3f seconds." (time-to-seconds (time-since weiss/launch-time)))
 (setq weiss/launch-time nil)

@@ -15,7 +15,7 @@
    ("<right>" . right-char)
    ;; ("<down>" . next-line)
    ;; ("<up>" . previous-line)
-))
+   ))
 
 (defvar wks-vanilla-black-list '(dired-do-rename dired-do-delete))
 
@@ -23,11 +23,11 @@
   "DOCSTRING"
   (interactive)
   (deactivate-mark)
-  (when current-prefix-arg
-    (insert " ")
-    (left-char)        
-    )
   (cond
+   (current-prefix-arg
+    (insert " ")
+    (left-char) 
+    )
    ((derived-mode-p 'prog-mode)
     (unless (eq major-mode 'haskell-mode)
       (indent-according-to-mode)

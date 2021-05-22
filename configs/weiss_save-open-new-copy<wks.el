@@ -1,3 +1,10 @@
+(defun weiss-copy-block ()
+  "DOCSTRING"
+  (interactive)
+  (xah-select-current-block)
+  (copy-region-as-kill (region-beginning) (region-end))
+  )
+
 (defun xah-make-backup ()
   "Make a backup copy of current file or dired marked files.
 If in dired, backup current file or marked files.

@@ -1,9 +1,9 @@
-(add-hook 'after-init-hook #'recentf-mode)
+(with-eval-after-load 'weiss_after-dump-misc
+  (add-hook 'after-init-hook #'recentf-mode)
 
-(load (weiss--get-config-file-path "recentf"))
-(setq recentf-save-file (weiss--get-config-file-path "recentf"))
+  (load (weiss--get-config-file-path "recentf"))
+  (setq recentf-save-file (weiss--get-config-file-path "recentf"))
 
-(with-eval-after-load 'recentf
   (defun snug/recentf-save-list-silence ()
     (interactive)
     (let ((message-log-max nil))

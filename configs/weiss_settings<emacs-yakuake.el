@@ -62,7 +62,7 @@
     (interactive)
     (let* ((session (yakuake-add-session))
            (git-path (current-kill 0 t))
-           (command (format "cd \"%s\" & git clone %s" (file-truename default-directory) git-path)))
+           (command (format "cd \"%s\" && git clone %s" (file-truename default-directory) git-path)))
       (if (string-prefix-p  "git@" git-path)
           (yakuake-run-command-in-session session command)
         (message "check your clipboard!" ))      

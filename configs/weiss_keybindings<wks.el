@@ -40,7 +40,7 @@
 (wks-unset-key help-mode-map '("h"))
 (wks-unset-key messages-buffer-mode-map '("h"))
 
-(wks-unset-key image-mode-map '("SPC"))
+(wks-unset-key image-mode-map '("SPC" "a"))
 (wks-define-key
  image-mode-map ""
  '(
@@ -61,17 +61,17 @@
 (wks-define-key
  (current-global-map) ""
  `(
-   ("S-<dead-grave>" . weiss-delete-other-window)
-   ("`" . weiss-delete-other-window)
+   ("S-<dead-grave>" . weiss-open-line-and-indent)
+   ("`" . weiss-open-line-and-indent)
    ("&" . weiss-test)
    ("ß" . save-buffer)
    ("$" . (wks-C-c-C-e (execute-kbd-macro ,(kbd "C-c C-e"))))
 
    ("," . xah-backward-left-bracket)
    ("-" . mark-defun)
-   ("=" . split-window-below)
+   ("=" . xah-shrink-whitespaces)
    ("." . xah-forward-right-bracket)
-   ("!" . wks-repeat-command)
+   ("!" . weiss-exchange-point-or-beginning-of-line)
    ("@" . rotate-text)
    ("/" . weiss-mark-brackets)
 
@@ -86,7 +86,7 @@
    ;; ("9" .  weiss-switch-to-otherside-top-frame)
    ;; ("0" .  weiss-switch-buffer-or-otherside-frame-without-top)
 
-   ("a" . weiss-open-line-and-indent)
+   ("a" . weiss-split-or-delete-window)
    ("b" . xah-toggle-letter-case)
    ("c" . xah-copy-line-or-region)
    ("C" . weiss-kill-append-with-comma)
@@ -113,15 +113,15 @@
    ("t o" . (wks-C-c-C-o (execute-kbd-macro ,(kbd "C-c C-o"))))
    ("t l" . (wks-C-c-C-l (execute-kbd-macro ,(kbd "C-c C-l"))))
    ("t t" . weiss-move-next-bracket-contents)
-   ("t f" . flycheck-list-errors)
+   ("t f" . weiss-flycheck-diwm)
 
-   ("u" . weiss-delete-or-add-parent-sexp)
+   ("u" . undo)
    ("v" . xah-paste-or-paste-previous)
    ("V" .  weiss-paste-with-linebreak)
-   ("w" . xah-shrink-whitespaces)
-   ("x" . weiss-exange-point-or-beginning-of-line)
-   ("y" . undo)
-   ("z" . weiss-comment-dwim)
+   ("w" . wks-repeat-command)
+   ("x" . weiss-comment-dwim)
+   ("y" . weiss-delete-or-add-parent-sexp)
+   ("z" . split-window-below)
    ("<end>" . weiss-simulate-c-g)
    ("SPC" . wks-leader-keymap)
    ("<deletechar>" . wks-leader-keymap)

@@ -105,7 +105,7 @@ Version 2018-06-04"
   (interactive "p")
   (re-search-forward xah-punctuation-regex nil t n))
 
-(defun weiss-exange-point-or-beginning-of-line ()
+(defun weiss-exchange-point-or-beginning-of-line ()
   "if there is nothing or only one point selected, move to beginning-of-line , else exchange point"
   (interactive)
   (if (or (not (use-region-p))

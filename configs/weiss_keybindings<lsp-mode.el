@@ -8,7 +8,7 @@
    ("t a" . lsp-execute-code-action)
    ("t i" . lsp-organize-imports)
    ("t d" . lsp-describe-thing-at-point)
-   ("u" . lsp-rename)            
+   ("y" . lsp-rename)            
    ))
 
 (with-eval-after-load 'lsp-mode
@@ -19,7 +19,7 @@
               ("t a" . lsp-execute-code-action)
               ("t i" . lsp-organize-imports)
               ("t d" . lsp-describe-thing-at-point)
-              ("u" . lsp-rename)            
+              ("y" . lsp-rename)            
               )))    
     )
   )

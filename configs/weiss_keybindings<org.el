@@ -17,7 +17,7 @@
    ("d" . weiss-org-cut-line-or-delete-region)
    ("j" . (weiss-org-next-line (next-line) (deactivate-mark)))
    ("k" . (weiss-org-previous-line (previous-line) (deactivate-mark)))
-   ("u" . weiss-org-preview-latex-and-image)
+   ("y" . weiss-org-preview-latex-and-image)
    ("n" . weiss-org-search)
    ("x" . weiss-org-exchange-point-or-switch-to-sp)
    ("X" . org-refile)

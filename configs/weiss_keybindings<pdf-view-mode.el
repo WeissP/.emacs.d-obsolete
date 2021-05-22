@@ -1,5 +1,5 @@
 ;; (setq pdf-view-mode-map (wks-define-vanilla-keymap))
-(wks-unset-key pdf-view-mode-map '("SPC" "-" "s" "g") t)
+(wks-unset-key pdf-view-mode-map '("SPC" "-" "s" "g" "u") t)
 ;; (wks-unset-key pdf-view-mode-map )
 
 (wks-define-key
@@ -11,9 +11,9 @@
    ("C-<tab>" .  pdf-view-enlarge )
    ("C-S-<iso-lefttab>" .  pdf-view-shrink)
    ("1" .  weiss-pdf-view-previous-page-quickly)
-   ("<left>" .  weiss-pdf-view-previous-page-quickly)
+   ("<right>" .  weiss-pdf-view-previous-page-quickly)
    ("2" .  weiss-pdf-view-next-page-quickly)
-   ("<right>" .  weiss-pdf-view-next-page-quickly)
+   ("<left>" .  weiss-pdf-view-next-page-quickly)
    ;; ("a"  weiss-direct-annot-and-insert-note)
    ("c" .  pdf-view-kill-ring-save)
    ;; ("d"  weiss-direct-insert-note)

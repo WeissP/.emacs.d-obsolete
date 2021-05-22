@@ -7,4 +7,13 @@
  ;; flycheck-emacs-lisp-load-path 'inherit
  )
 
+(defun weiss-flycheck-diwm ()
+  "DOCSTRING"
+  (interactive)
+  (if lsp-mode
+      (call-interactively 'lsp-ui-flycheck-list)
+    (call-interactively 'flycheck-list-errors)
+    )
+  )
+
 (provide 'weiss_settings<flycheck)

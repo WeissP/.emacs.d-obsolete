@@ -3,7 +3,7 @@
  sql-mode-map ""
  '(
    ("<backtab>" . weiss-indent-paragraph)
-   ("u" . weiss-sql-send-paragraph-or-region)
+   ("y" . weiss-sql-send-paragraph-or-region)
    ("t s" . weiss-insert-semicolon)
    )
  )

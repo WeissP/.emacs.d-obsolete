@@ -1,3 +1,10 @@
+(defun weiss-exchange-point-and-select-block-backward ()
+  "DOCSTRING"
+  (interactive)
+  (exchange-point-and-mark)
+  (xah-beginning-of-line-or-block)
+  )
+
 (defun xah-select-current-block ()
   "Select the current block of text between blank lines.
 
@@ -49,8 +56,8 @@ Version 2019-12-26"
   "expand region word by word on the same side of cursor"
   (interactive)
   (if (eq (point) (region-beginning))
-        (forward-word)
-      (backward-word))
+      (forward-word)
+    (backward-word))
   ) 
 
 (defun weiss-select-line-downward ()

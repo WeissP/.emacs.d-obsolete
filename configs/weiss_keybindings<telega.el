@@ -9,9 +9,9 @@
    )
  )
 
-(wks-unset-key telega-root-mode-map '("s" "i"))
-(wks-unset-key telega-chat-button-map '("s" "i"))
-(wks-unset-key telega-msg-button-map '("k" "l" "i" "="))
+(wks-unset-key telega-root-mode-map '("s" "i" "a"))
+(wks-unset-key telega-chat-button-map '("s" "i" "a"))
+(wks-unset-key telega-msg-button-map '("k" "l" "i" "=" "a"))
 
 
 

@@ -3,12 +3,13 @@
         (weiss-delete-forward-with-region . kill-line)
         (weiss-delete-backward-with-region . weiss-kill-line-backward)
         (xah-shrink-whitespaces . weiss-insert-space)
-        (weiss-select-line-downward . xah-select-current-block)
+        (weiss-select-line-downward . weiss-exchange-point-and-select-block-backward)
         (xah-select-current-block . xah-select-block)
         (weiss-cut-line-or-delete-region . weiss-delete-current-block)
         (kill-region . weiss-delete-current-block)
         (er/expand-region . weiss-expand-region-outside)
         (xah-toggle-letter-case . weiss-downcase-region)
+        (weiss-exchange-point-and-select-block-backward . xah-beginning-of-line-or-block)
         (undo . undo-redo)
 
         (weiss-down-key . weiss-move-to-next-block)
@@ -17,15 +18,19 @@
         (weiss-up-key . weiss-move-to-previous-block)
         (previous-line . weiss-move-to-previous-block)
 
-        (weiss-right-key . weiss-move-to-next-punctuation)
-        (right-char . weiss-move-to-next-punctuation)
-        (forward-char . weiss-move-to-next-punctuation)
+        (weiss-right-key . wks-find-symbol-forward)
+        (right-char . wks-find-symbol-forward)
+        (forward-char . wks-find-symbol-forward)
 
-        (weiss-left-key . weiss-move-to-previous-punctuation)
-        (left-char . weiss-move-to-previous-punctuation)
+        (weiss-left-key . wks-find-symbol-backward)
+        (left-char . wks-find-symbol-backward)
         (backward-char . weiss-move-to-previous-punctuation)
 
+        (xah-copy-line-or-region . weiss-copy-block)
         (xah-paste-or-paste-previous . yank)
+
+        (wks-find-symbol-forward . wks-find-last-found)
+        (wks-find-symbol-backward . wks-find-last-found)
         ))
 
 (setq wks-repeat-command-blacklist
