@@ -42,7 +42,7 @@
 (setq weiss-left-top-window (make-frame-command))
 (select-frame-set-input-focus weiss-right-top-window)
 
-(setq gc-cons-threshold (* (expt 1024 3) 3)
+(setq gc-cons-threshold (* (expt 1024 3) 4)
       gc-cons-percentage 0.5
       garbage-collection-messages nil)
 
