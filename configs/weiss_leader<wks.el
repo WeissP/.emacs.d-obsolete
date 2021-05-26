@@ -140,6 +140,7 @@
    ("l c" .  dired-collapse-mode)
    ("l e" .  eshell)
    ("l h" .  weiss-toggle-hl-line)
+   ("l t" .  toggle-truncate-lines)
    ("l l" .  highlight-symbol)             ;wrap-line
    ("l m" .  shell-command)
    ("l n" .  display-line-numbers-mode)

@@ -1,3 +1,21 @@
+(defmacro +measure-time-1 (&rest body)
+  "Measure the time it takes to evaluate BODY."
+  `(let ((time (current-time)))
+     ,@body
+     (message "%.03fms"
+              (* 1000 (float-time (time-since time))))))
+
+(defmacro +measure-time (&rest body)
+  "Measure the time it takes to evalutae BODY, repeat 10 times."
+  `(let ((time (current-time))
+         (n 10))
+     (dotimes (_ n),@body)
+     (message "%.03fms"
+              (/ (* (float-time (time-since time)) 1000) n))))
+
+;; (+measure-time (format-mode-line mode-line-format))
+
+
 (defun weiss-line-empty-p ()
   "https://emacs.stackexchange.com/questions/16792/easiest-way-to-check-if-current-line-is-empty-ignoring-whitespace"
   (interactive)

@@ -41,6 +41,24 @@ Version 2019-12-26"
   (let (select-active-regions)
     (deactivate-mark)))
 
+(defun weiss-expand-region-by-sexp ()
+  "DOCSTRING"
+  (interactive)
+  (unless (use-region-p) (push-mark nil t))
+  (if (and (use-region-p) (eq (point) (region-beginning)))
+      (call-interactively 'paredit-backward)
+    (call-interactively 'paredit-forward))
+  (setq mark-active t)
+  )
+
+(defun weiss-contract-region-by-sexp ()
+  "DOCSTRING"
+  (interactive)
+  (if (eq (point) (region-beginning))
+      (call-interactively 'paredit-forward)
+    (call-interactively 'paredit-backward))
+  )
+
 (defun weiss-expand-region-by-word ()
   "expand region word by word on the same side of cursor"
   (interactive)

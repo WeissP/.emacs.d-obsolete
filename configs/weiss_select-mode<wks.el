@@ -11,15 +11,21 @@
     )
   )
 
-(defun weiss-select-mode-turn-off (&optional o)
+(defun weiss-select-mode-turn-off (&rest args)
   "turn off weiss select mode"
   (interactive)
   (when weiss-select-mode (weiss-select-mode -1))  
   )
 
-(defun weiss-select-mode-turn-on (&optional o)
+(defun weiss-select-mode-turn-on (&rest args)
   "turn on weiss select mode"
   (interactive)
+  (unless weiss-select-mode (weiss-select-mode 1))  
+  )
+
+(defun weiss-select-mode-turn-on-interactive (&rest args)
+  "turn on weiss select mode"
+  (interactive "p")
   (unless weiss-select-mode (weiss-select-mode 1))  
   )
 
@@ -37,14 +43,16 @@
 (advice-add 'mark-defun :after #'weiss-select-mode-turn-on)
 (advice-add 'weiss-select-sexp :after #'weiss-select-mode-turn-on)
 (advice-add 'weiss-expand-region-by-word :after #'weiss-select-mode-turn-on)
+(advice-add 'weiss-contract-region-by-word :after #'weiss-select-mode-turn-on)
+(advice-add 'weiss-expand-region-by-sexp :after #'weiss-select-mode-turn-on)
+(advice-add 'weiss-contract-region-by-sexp :after #'weiss-select-mode-turn-on)
 (advice-add 'mark-whole-buffer :after #'weiss-select-mode-turn-on)
 (advice-add 'weiss-move-to-next-punctuation :after #'weiss-select-mode-turn-on)
 (advice-add 'weiss-move-to-previous-punctuation :after #'weiss-select-mode-turn-on)
 
-(if (featurep 'expand-region)
-    (advice-add 'er/expand-region :after #'weiss-select-mode-turn-on)    
+(with-eval-after-load 'expand-region
+  (advice-add 'er/expand-region :after #'weiss-select-mode-turn-on-interactive)
   )
-
 
 (defun weiss-deactivate-mark-unless-in-select-mode (&optional a b c)
   "deactivate mark unless in select mode"
@@ -107,7 +115,6 @@
   (let ((keymap (make-sparse-keymap)))
     ;; (define-key keymap (kbd ";") 'xah-beginning-of-line-or-block)
     (define-key keymap (kbd "h") 'xah-end-of-line-or-block)
-    (define-key keymap (kbd "p") 'weiss-contract-region-by-word)
     (define-key keymap (kbd "i") 'backward-char)
     (define-key keymap (kbd "j") 'next-line)
     (define-key keymap (kbd "k") 'previous-line)

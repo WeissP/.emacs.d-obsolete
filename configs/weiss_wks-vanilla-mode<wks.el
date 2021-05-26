@@ -30,7 +30,7 @@
     )
    ((derived-mode-p 'prog-mode)
     (unless (eq major-mode 'haskell-mode)
-      (indent-according-to-mode)
+      (ignore-errors (indent-according-to-mode))
       )
     )
    ((eq major-mode 'snails-mode)

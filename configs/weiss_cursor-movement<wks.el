@@ -122,27 +122,6 @@ Version 2018-06-04"
     )
   )
 
-(defun weiss-mark-brackets ()
-  "DOCSTRING"
-  (interactive)
-  ;; (re-search-forward (regexp-opt xah-right-brackets) nil t)
-  (when (eq last-command this-command)
-    (when-let ((p1 (region-beginning))
-               (p2 (region-end))
-               (rb1 (save-excursion (re-search-backward (regexp-opt xah-left-brackets) nil t)))
-               )
-
-      )
-    )
-  (right-char 1)
-  (re-search-forward (regexp-opt xah-right-brackets) nil t)
-  ;; (left-char 1)
-  (push-mark nil t)
-  (xah-goto-matching-bracket)
-  (setq mark-active t)
-  (exchange-point-and-mark)
-  )
-
 
 (defun weiss-select-current-word ()
   "select current word, if current char is not word, backward char until it's a word"
