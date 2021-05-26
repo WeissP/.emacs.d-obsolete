@@ -1,5 +1,5 @@
 (with-eval-after-load 'gcmh
-  (setq gcmh-idle-delay 30)
+  (setq gcmh-idle-delay 40)
   (gcmh-mode 1)
   )
 
