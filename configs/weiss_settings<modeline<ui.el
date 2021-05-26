@@ -12,9 +12,9 @@
                 "   "
                 mode-line-mule-info mode-line-modified mode-line-remote
                 "   "
-                (line-number-mode "L%l/")
-                (line-number-mode weiss-mode-line-buffer-line-count)
-                (column-number-mode " C%c ")        
+                (,line-number-mode "L%l/")
+                (,line-number-mode weiss-mode-line-buffer-line-count)
+                (,column-number-mode " C%c ")        
                 ;; weiss-mode-line-flycheck-errors
                 "   "
                 "Root:" weiss-mode-line-projectile-root-dir
