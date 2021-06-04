@@ -10,10 +10,10 @@
 (defun weiss-flycheck-diwm ()
   "DOCSTRING"
   (interactive)
-  (if lsp-mode
-      (call-interactively 'lsp-ui-flycheck-list)
+  ;; (if lsp-mode
+      ;; (call-interactively 'lsp-ui-flycheck-list)
     (call-interactively 'flycheck-list-errors)
-    )
+    ;; )
   )
 
 (provide 'weiss_settings<flycheck)

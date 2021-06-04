@@ -140,6 +140,7 @@
     ("och" "\\choose " weiss--ahf)
     ("ofl" "\\lfloor ▮ \\rfloor" weiss--ahf)
     ("oce" "\\lceil ▮ \\rceil" weiss--ahf)
+    ("om" "\\begin{bmatrix} \n▮ & b \\\\ \nc & d\n\\end{bmatrix}" weiss--ahf)
 
 ;;;;; arrows
     ("ar" "\\Rightarrow " weiss--ahf)

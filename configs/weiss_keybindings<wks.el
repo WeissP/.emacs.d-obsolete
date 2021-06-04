@@ -1,7 +1,7 @@
 (wks-define-key
  prog-mode-map ""
  '(
-   ("<tab>" . weiss-indent)
+   ("<tab>" . weiss-indent-paragraph)
    ("<RET>" . weiss-deactivate-mark-and-new-line)
    ;; ("<right>" . right-char)
    ;; ("<left>" . left-char)
@@ -40,7 +40,10 @@
 (wks-unset-key help-mode-map '("h"))
 (wks-unset-key messages-buffer-mode-map '("h"))
 
-(wks-unset-key image-mode-map '("SPC" "a"))
+(with-eval-after-load 'image-mode
+  (wks-unset-key image-mode-map '("SPC" "a"))
+  )
+
 (wks-define-key
  image-mode-map ""
  '(

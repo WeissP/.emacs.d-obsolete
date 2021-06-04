@@ -33,6 +33,7 @@
         (wks-find-symbol-backward . wks-find-last-found)
 
         (weiss-comment-dwim . weiss-comment-downward)
+        (weiss-indent-paragraph . weiss-indent)
         ))
 
 (setq wks-repeat-command-blacklist

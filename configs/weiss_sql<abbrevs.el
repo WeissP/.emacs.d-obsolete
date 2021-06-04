@@ -23,6 +23,7 @@
     ("nt" "CREATE TABLE ▮ \n(\n\n)" weiss--ahf-indent)
     ("nv" "CREATE VIEW ▮ AS\n(\n\n)" weiss--ahf-indent)
     ("nf" "CREATE OR REPLACE FUNCTION ▮ ()\nRETURNS  AS $$\nDECLARE\nBEGIN\n\nRETURN;\nEND; $$ LANGUAGE plpgsql;\n" weiss--ahf-indent)
+    ("np" "CREATE OR REPLACE PROCEDURE ▮ ()\n LANGUAGE plpgsql; AS $$\nDECLARE\nBEGIN\n\nRETURN;\nEND; $$\n" weiss--ahf-indent)
     ("ntr" "CREATE TRIGGER ▮ \nBEFORE INSERT ON \nFOR EACH ROW \nEXECUTE PROCEDURE ;" weiss--ahf-indent)
     ("ob" "ORDER BY ")
     ("ov" "OVER (▮) AS" weiss--ahf)

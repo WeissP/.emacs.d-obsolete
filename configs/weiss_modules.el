@@ -71,7 +71,7 @@
         (company :then (company-box))
 
         (rotate-text :github "nschum/rotate-text.el")
-        (casease :github "DogLooksGood/casease")
+        (casease :github "DogLooksGood/casease" :disabled t)
         (shiftless :local t)
         expand-region    
 

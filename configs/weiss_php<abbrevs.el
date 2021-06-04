@@ -2,27 +2,19 @@
   (when (boundp 'php-mode-abbrev-table)
     (clear-abbrev-table php-mode-abbrev-table))
 
-  (define-abbrev-table 'php-mode-abbrev-table
-    (append weiss-html-mode-abbrev-table
-            '(
-              ("php" "<?php\n▮\n?>" weiss--ahf)
-              ("e" "echo ▮;" weiss--ahf)
-              ("rt" "return ▮;" weiss--ahf)
-              ("g" "global ▮;" weiss--ahf)
-              )
-            )
-    )
+  (setq weiss-php-mode-abbrev-table
+        (append weiss-html-mode-abbrev-table
+                '(
+                  ("php" "<?php\n▮\n?>" weiss--ahf)
+                  ("e" "echo ▮;" weiss--ahf)
+                  ("rt" "return ▮;" weiss--ahf)
+                  ("g" "global ▮;" weiss--ahf)
+                  ("for" "for ($i = 1; $i <= $▮; $i++) {\n\n}" weiss--ahf-indent)
+                  )
+                ))
 
-  (define-abbrev-table 'web-mode-abbrev-table
-    (append weiss-html-mode-abbrev-table
-            '(
-              ("php" "<?php\n▮\n?>" weiss--ahf)
-              ("e" "echo ▮;" weiss--ahf)
-              ("rt" "return ▮;" weiss--ahf)
-              ("g" "global ▮;" weiss--ahf)
-              )
-            )
-    )
+  (define-abbrev-table 'php-mode-abbrev-table weiss-php-mode-abbrev-table)
+  (define-abbrev-table 'web-mode-abbrev-table weiss-php-mode-abbrev-table)
   )
 
 
