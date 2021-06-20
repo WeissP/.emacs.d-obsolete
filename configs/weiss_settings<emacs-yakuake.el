@@ -51,7 +51,7 @@
             (yakuake-run-command-in-session (yakuake-add-session) (format "docker cp %s %s" (format "\"%s\"" x) docker-path))          
             ))        
         )
-       (t (yakuake-run-command-in-session (yakuake-add-session) (format "rsync -aAXv %s %s" (format "\"%s\"" (mapconcat 'identity marked-files "\" \"")) target-path)))
+       (t (yakuake-run-command-in-session (yakuake-add-session) (format "rsync -PaAXv %s %s" (format "\"%s\"" (mapconcat 'identity marked-files "\" \"")) target-path)))
        )      
       )
     (yakuake-toggle-window)        

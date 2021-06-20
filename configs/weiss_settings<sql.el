@@ -1,7 +1,7 @@
 (with-eval-after-load 'sql
   (setq sql-postgres-login-params
         '((user :default "weiss")
-          (database :default "kse")
+          (database :default "imdb")
           (server :default "localhost")
           ))
   ;; (defalias 'sql-get-login 'ignore)

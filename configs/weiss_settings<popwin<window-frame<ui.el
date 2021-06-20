@@ -5,6 +5,7 @@
   ;; (push '("weiss_abbrevs.el" :height 30) popwin:special-display-config)
   (push '("*quickrun*" :height 10) popwin:special-display-config)
   (push '("*meghanada-typeinfo*" :height 30) popwin:special-display-config)
+  (push '("*compilation*" :height 10) popwin:special-display-config)
   ;; *Org Src abgabe-blatt01-AlgoDat.org[ LaTeX environment ]*
   (setq popwin:special-display-config (delete '(occur-mode :noselect t) popwin:special-display-config))
   )

@@ -20,6 +20,7 @@
         )
     (ligature-set-ligatures 'prog-mode ligatures)    
     (ligature-set-ligatures 'sgml-mode ligatures)    
+    (ligature-set-ligatures 'org-mode ligatures)    
     )
   (global-ligature-mode t)
   )

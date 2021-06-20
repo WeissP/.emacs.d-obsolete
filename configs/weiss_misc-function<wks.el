@@ -19,7 +19,7 @@
 (defun weiss-line-empty-p ()
   "https://emacs.stackexchange.com/questions/16792/easiest-way-to-check-if-current-line-is-empty-ignoring-whitespace"
   (interactive)
-  (string-match-p "\\`\\s-*$" (thing-at-point 'line))
+  (ignore-errors (string-match-p "\\`\\s-*$" (thing-at-point 'line)))  
   )
 
 (defun weiss-simulate-c-g ()
@@ -177,6 +177,13 @@ Version 2019-12-02"
    ((string-prefix-p "/home/weiss/KaRat/datenbank/KaRat-Quizzes/" (file-name-directory (buffer-file-name)))
     ;; (message ": %s" 123)
     (message "%s" (shell-command-to-string "go run /home/weiss/KaRat/datenbank/KaRat-Quizzes/main.go -tomlPath=/home/weiss/KaRat/datenbank/KaRat-Quizzes/input.toml"))
+    )
+   ((and (eq major-mode 'go-mode)
+         (not (string= weiss-mode-line-projectile-root-dir "nil")))
+    (let ((compilation-read-command)
+              )
+          (call-interactively 'projectile-run-project)
+          )
     )
    (t (quickrun))
    )

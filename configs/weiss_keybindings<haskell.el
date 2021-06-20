@@ -6,6 +6,7 @@
      ""
      '(
        ("-" . weiss-haskell-load-process-and-switch-buffer)
+       ("<tab>" . weiss-indent)
        ))
     (wks-define-key
      haskell-interactive-mode-map

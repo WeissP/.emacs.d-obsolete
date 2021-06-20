@@ -1,4 +1,9 @@
 (with-eval-after-load 'dired-filter
+  (dired-filter-define asmr
+      "swag"
+    (:description "asmr")
+    (let ((case-fold-search t))
+      (string-match-p "asmr" file-name)))
   (dired-filter-define swag
       "swag"
     (:description "swag")

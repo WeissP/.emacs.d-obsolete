@@ -13,6 +13,11 @@
   (load "/home/weiss/.emacs.d/configs/weiss_startup.el")
   (weiss-load-module weiss/modules nil)
   )
+(when ros-docker
+  (setq counsel-fzf-cmd "/home/weiss/fzf/bin/fzf -f \"%s\"")
+  (setq rg-executable "/home/weiss/ripgrep/rg")
+  )
+
 ;; (require 'dired)
 ;; (weiss-load-module weiss/modules t)
 ;; (load "/home/weiss/.emacs.d/configs/weiss_settings<dired.el")

@@ -20,6 +20,7 @@
 (setq quelpa-self-upgrade nil)
 
 (defvar weiss/config-path "/home/weiss/.emacs.d/configs/")
+(defvar weiss/configs-path weiss/config-path)
 (defvar weiss/local-package-path "/home/weiss/.emacs.d/local-package/")
 (defvar weiss/launch-time (current-time))
 

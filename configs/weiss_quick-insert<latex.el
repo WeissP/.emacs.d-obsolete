@@ -8,6 +8,7 @@
    ("b" . (weiss-latex-insert-mathbb (weiss--quick-add-latex-style "mathbb")))
    ("r" . (weiss-latex-insert-textrm (weiss--quick-add-latex-style "textrm")))
    ("s" . (weiss-latex-insert-textsc (weiss--quick-add-latex-style "textsc")))
+   ("e" . (weiss-latex-insert-textem (weiss--quick-add-latex-style "emph")))
    ("u" . (weiss-latex-insert-underline (weiss--quick-add-latex-style "underline")))
    ("f" . (weiss-latex-insert-textbf (weiss--quick-add-latex-style "textbf")))
    ("h" . (weiss-latex-insert-hat (weiss--quick-add-latex-style "hat")))

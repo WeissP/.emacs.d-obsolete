@@ -3,9 +3,10 @@
 
 (define-abbrev-table 'java-mode-abbrev-table
   '(
-    ("rt" "return ▮;")
+    ("rt" "return ▮;" weiss--ahf)
     ("pr" "System.out.println(▮);" weiss--ahf)
     ("sf" "String.format(\"%s\", ▮)" weiss--ahf)
+    ("fa" "for (▮:)  {\n\n}" weiss--ahf-indent)
     ("for" "for (int i = 0; i < ▮; i++) {\n\n}" weiss--ahf-indent)
     ("forj" "for (int j = 0; j < ▮; j++) {\n\n}" weiss--ahf-indent)
     ("if" "if (▮) {\n\n}" weiss--ahf-indent)

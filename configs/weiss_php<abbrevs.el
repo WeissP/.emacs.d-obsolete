@@ -10,6 +10,7 @@
                   ("rt" "return ▮;" weiss--ahf)
                   ("g" "global ▮;" weiss--ahf)
                   ("for" "for ($i = 1; $i <= $▮; $i++) {\n\n}" weiss--ahf-indent)
+                  ("hs" "htmlspecialchars(▮)" weiss--ahf)
                   )
                 ))
 

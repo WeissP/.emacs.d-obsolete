@@ -66,11 +66,12 @@
  `(
    ("S-<dead-grave>" . weiss-open-line-and-indent)
    ("`" . weiss-open-line-and-indent)
-   ("&" . weiss-test)
+   ("&" . weiss-expand-region-by-sexp)
    ("ß" . save-buffer)
    ("$" . (wks-C-c-C-e (execute-kbd-macro ,(kbd "C-c C-e"))))
 
    ("," . xah-backward-left-bracket)
+   (";" . weiss-insert-semicolon)
    ("-" . mark-defun)
    ("=" . xah-shrink-whitespaces)
    ("." . xah-forward-right-bracket)
@@ -106,7 +107,7 @@
    ("n" . swiper-isearch)
    ("o" . weiss-expand-region-by-word)
    ("O" . weiss-contract-region-by-word)
-   ("p" . weiss-expand-region-by-sexp)
+   ("p" . weiss-indent)
    ("P" . weiss-contract-region-by-sexp)
    ("q" . weiss-temp-insert-mode)
    ("r" . weiss-delete-forward-with-region)
